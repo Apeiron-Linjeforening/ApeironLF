@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pensum — Apeiron · NTNU</title>
+<link rel="icon" href="assets/apeiron-logo.png" type="image/png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<style>
+/* ── Subpage header ── */
+.subhero {
+  background:
+    radial-gradient(100% 80% at 90% 0%, rgba(212,175,55,.12), transparent 55%),
+    radial-gradient(70% 60% at 5% 100%, rgba(118,17,15,.28), transparent 60%),
+    var(--navy);
+  color: var(--paper);
+  padding: 148px 0 72px;
+  position: relative;
+  overflow: hidden;
+}
+.subhero__seal {
+  position: absolute; right: -4%; top: 50%; transform: translateY(-50%);
+  width: min(44vw, 540px); opacity: .09; pointer-events: none;
+  filter: drop-shadow(0 0 1px rgba(212,175,55,.4));
+}
+.subhero__inner { position: relative; max-width: var(--maxw); margin: 0 auto; padding: 0 28px; }
+.subhero h1 {
+  color: var(--paper);
+  font-size: clamp(3rem, 8vw, 6.5rem);
+  line-height: .95; letter-spacing: .01em; margin: .22em 0 .35em;
+}
+.subhero__lede { font-size: 1.18rem; color: rgba(244,236,217,.8); max-width: 52ch; line-height: 1.65; }
+.subhero__back {
+  display: inline-flex; align-items: center; gap: .5em;
+  font-size: .82rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--gold); opacity: .85; margin-bottom: 1.6em;
+  transition: opacity .2s;
+}
+.subhero__back:hover { opacity: 1; }
+.subhero__back::before { content: "←"; }
+
+/* ── Tab filter bar ── */
+.ps-tabs {
+  display: flex; gap: 0; border: 1px solid rgba(35,39,64,.26);
+  border-radius: 3px; overflow: hidden; flex-wrap: wrap;
+}
+.ps-tab {
+  font-family: var(--body); font-size: .88rem; font-weight: 600; letter-spacing: .04em;
+  padding: .68em 1.3em; background: transparent; color: var(--ink-soft);
+  border: 0; border-right: 1px solid rgba(35,39,64,.18); cursor: pointer;
+  transition: background .2s, color .2s;
+}
+.ps-tab:last-child { border-right: 0; }
+.ps-tab:hover { color: var(--navy); }
+.ps-tab.is-active { background: var(--navy); color: var(--paper); }
+.ps-toolbar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap; margin-bottom: 42px;
+}
+.ps-count {
+  font-size: .84rem; font-style: italic; color: var(--ink-soft);
+}
+
+/* ── Course cards ── */
+.ps-grid { display: flex; flex-direction: column; gap: 0; }
+
+.ps-course {
+  position: relative;
+  border-top: 1px solid rgba(35,39,64,.18);
+  padding: 44px 0;
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 52px;
+  align-items: start;
+  transition: opacity .3s ease;
+}
+.ps-course::after {
+  content: ""; position: absolute; left: 0; right: 0; top: 3px;
+  border-top: 1px solid rgba(35,39,64,.18);
+}
+.ps-course:last-child { border-bottom: 1px solid rgba(35,39,64,.18); }
+.ps-course.hidden { display: none; }
+
+.ps-course__meta { position: relative; }
+.ps-course__badges { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; align-items: center; }
+.ps-badge {
+  font-size: .64rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--paper); background: var(--maroon); border-radius: 2px; padding: .38em .8em;
+}
+.ps-badge--fil { background: var(--navy); }
+.ps-badge--etikk { background: var(--maroon); }
+.ps-badge--felles { background: var(--gold-ink); }
+.ps-badge--master { background: #3d2b6e; }
+.ps-semester {
+  font-size: .76rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft);
+}
+.ps-course__code {
+  font-family: var(--body); font-size: .8rem; letter-spacing: .12em; font-weight: 600;
+  color: var(--accent-ink); text-transform: uppercase; margin-bottom: .4em; display: block;
+}
+.ps-course h3 {
+  font-size: clamp(1.5rem, 2.4vw, 1.9rem); color: var(--navy);
+  line-height: 1.1; margin-bottom: .5em;
+}
+.ps-course__desc {
+  font-size: .96rem; color: var(--ink-soft); line-height: 1.6; max-width: 28ch;
+}
+
+/* ── Book list ── */
+.ps-books { list-style: none; display: flex; flex-direction: column; gap: 0; }
+.ps-books__lbl {
+  font-size: .68rem; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+  color: var(--accent-ink); margin-bottom: 14px; display: block;
+}
+.ps-book {
+  display: grid;
+  grid-template-columns: 2em 1fr;
+  gap: .5em 1em;
+  align-items: baseline;
+  padding: 14px 0;
+  border-top: 1px solid rgba(35,39,64,.1);
+}
+.ps-book:first-of-type { border-top: 0; padding-top: 0; }
+.ps-book__num {
+  font-family: var(--display); font-style: italic; font-size: 1.1rem;
+  color: var(--gold-ink); text-align: right; padding-top: .1em;
+}
+.ps-book__title {
+  font-family: var(--display); font-size: 1.18rem; font-weight: 600;
+  color: var(--navy); line-height: 1.2; font-style: italic;
+}
+.ps-book__author {
+  display: block; font-size: .88rem; color: var(--ink-soft); margin-top: .22em;
+}
+.ps-book__detail {
+  display: block; font-size: .78rem; color: var(--ink-soft); opacity: .75;
+  letter-spacing: .03em; margin-top: .15em;
+}
+.ps-book--placeholder .ps-book__title { opacity: .45; font-style: normal; }
+.ps-book--placeholder .ps-book__author { opacity: .35; }
+
+/* ── Empty / contribute state ── */
+.ps-empty {
+  display: grid; gap: .3em;
+  border: 1px dashed rgba(35,39,64,.3);
+  border-radius: 4px;
+  padding: 18px 20px;
+  background: rgba(35,39,64,.025);
+  max-width: 46ch;
+}
+.ps-empty b {
+  font-family: var(--body); font-weight: 600; font-size: .78rem;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--accent-ink);
+}
+.ps-empty span { font-size: .92rem; color: var(--ink-soft); line-height: 1.55; }
+.ps-empty a { color: var(--maroon); text-decoration: underline; text-underline-offset: 2px; }
+.ps-empty a:hover { color: var(--gold-ink); }
+
+.ps-note {
+  display: inline-flex; align-items: center; gap: .6em; margin-top: 18px;
+  font-size: .8rem; color: var(--ink-soft); font-style: italic; opacity: .8;
+}
+.ps-note::before { content: "⚠"; font-style: normal; }
+
+.ps-section-divider {
+  padding: 52px 0 18px;
+  display: flex; align-items: center; gap: 18px;
+}
+.ps-section-divider h2 {
+  font-size: 1rem; font-weight: 700; letter-spacing: .24em; text-transform: uppercase;
+  color: var(--accent-ink); white-space: nowrap;
+}
+.ps-section-divider::after {
+  content: ""; flex: 1; height: 1px; background: var(--accent-ink); opacity: .35;
+}
+
+/* ── Kjøp & bytte teaser ── */
+.marked-teaser {
+  background: var(--navy); color: var(--paper);
+  border-radius: 6px; padding: 54px 52px;
+  display: grid; grid-template-columns: 1fr auto;
+  gap: 32px; align-items: center;
+  position: relative; overflow: hidden; margin-top: 80px;
+}
+.marked-teaser::before {
+  content: "⇄"; position: absolute; right: 52px; top: 50%; transform: translateY(-50%);
+  font-size: 14rem; color: rgba(212,175,55,.06); pointer-events: none; line-height: 1;
+}
+.marked-teaser__tag {
+  display: inline-flex; align-items: center; gap: .6em;
+  font-size: .7rem; font-weight: 700; letter-spacing: .28em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 1em;
+}
+.marked-teaser__tag::before { content: ""; width: 24px; height: 1px; background: var(--gold); }
+.marked-teaser h2 { color: var(--paper); font-size: clamp(1.8rem, 3vw, 2.6rem); margin-bottom: .45em; }
+.marked-teaser p { color: rgba(244,236,217,.78); font-size: 1.04rem; max-width: 48ch; line-height: 1.6; }
+.marked-teaser__cta { flex-shrink: 0; }
+
+/* ── Responsive ── */
+@media (max-width: 860px) {
+  .ps-course { grid-template-columns: 1fr; gap: 22px; }
+  .ps-course__desc { max-width: none; }
+  .marked-teaser { grid-template-columns: 1fr; }
+  .marked-teaser::before { display: none; }
+}
+@media (max-width: 600px) {
+  .ps-tabs { width: 100%; }
+  .ps-tab { flex: 1; text-align: center; font-size: .8rem; padding: .65em .7em; }
+}
+</style>
+</head>
+<body data-mode="paper">
+
+<!-- ============ NAV ============ -->
+<header class="nav" id="nav">
+  <a class="nav__brand" href="index.html">
+    <img src="assets/apeiron-logo.png" alt="Apeiron segl" />
+    <span>
+      <span class="nm">APEIRON</span>
+      <span class="sub">Filosofi &amp; Etikk · NTNU</span>
+    </span>
+  </a>
+  <nav class="nav__links">
+    <a href="index.html#om">Om oss</a>
+    <a href="index.html#studiet">Studiet</a>
+    <a href="pensum.html" class="is-active">Pensum</a>
+    <a href="index.html#arrangementer">Arrangementer</a>
+    <a href="index.html#styret">Styret</a>
+    <a href="index.html#sak">S.A.K</a>
+    <a href="merch.html">Merch</a>
+    <a href="index.html#kontakt">Kontakt</a>
+    <a class="btn btn--gold nav__cta" href="index.html#bli-medlem">Bli medlem <span class="arr">→</span></a>
+  </nav>
+  <button class="nav__burger" id="burger" aria-label="Meny">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<div class="drawer" id="drawer">
+  <a href="index.html#om">Om oss</a>
+  <a href="index.html#studiet">Studiet</a>
+  <a href="pensum.html">Pensum</a>
+  <a href="index.html#arrangementer">Arrangementer</a>
+  <a href="index.html#styret">Styret</a>
+  <a href="index.html#sak">S.A.K</a>
+  <a href="merch.html">Merch</a>
+  <a href="index.html#kontakt">Kontakt</a>
+  <a href="index.html#bli-medlem">Bli medlem</a>
+</div>
+
+<!-- ============ SUBPAGE HEADER ============ -->
+<section class="subhero">
+  <img class="subhero__seal" src="assets/apeiron-logo.png" alt="" aria-hidden="true" />
+  <div class="subhero__inner">
+    <a class="subhero__back" href="index.html#studiet">Tilbake til studiet</a>
+    <span class="eyebrow hero__eyebrow">Studieressurser · NTNU</span>
+    <h1>Pensum</h1>
+    <p class="subhero__lede">Her finner du pensumlister for alle emner på filosofi og etikk. Listen oppdateres av styret hvert semester — meld fra om noe mangler eller er utdatert.</p>
+  </div>
+</section>
+
+<!-- frieze -->
+<div class="frieze" aria-hidden="true">
+  <div class="frieze__track">
+    <span>ΑΠΕΙΡΟΝ <i>✦</i> det uendelige <i>✦</i> ΦΙΛΟΣΟΦΙΑ <i>✦</i> visdomskjærlighet <i>✦</i> ΗΘΙΚΗ <i>✦</i> det gode liv <i>✦</i> ΛΟΓΟΣ <i>✦</i> fornuft &amp; tale <i>✦</i> </span>
+    <span>ΑΠΕΙΡΟΝ <i>✦</i> det uendelige <i>✦</i> ΦΙΛΟΣΟΦΙΑ <i>✦</i> visdomskjærlighet <i>✦</i> ΗΘΙΚΗ <i>✦</i> det gode liv <i>✦</i> ΛΟΓΟΣ <i>✦</i> fornuft &amp; tale <i>✦</i> </span>
+  </div>
+</div>
+
+<!-- ============ PENSUM-INNHOLD ============ -->
+<section class="section studier" id="pensum">
+  <div class="wrap">
+
+    <div class="ps-toolbar reveal">
+      <div class="ps-tabs" role="tablist" aria-label="Filtrer etter studieretning">
+        <button class="ps-tab is-active" data-filter="alle" type="button">Alle emner</button>
+        <button class="ps-tab" data-filter="felles" type="button">Felles</button>
+        <button class="ps-tab" data-filter="filosofi" type="button">Filosofi</button>
+        <button class="ps-tab" data-filter="etikk" type="button">Etikk</button>
+        <button class="ps-tab" data-filter="master" type="button">Master</button>
+      </div>
+      <span class="ps-count" id="psCount"></span>
+    </div>
+
+    <div class="ps-grid" id="psGrid">
+
+      <!-- ─── Felles / Exphil ─── -->
+      <div class="ps-section-divider reveal" data-section="felles">
+        <h2>Felles for alle</h2>
+      </div>
+
+      <article class="ps-course reveal" data-level="felles">
+        <div class="ps-course__meta">
+          <div class="ps-course__badges">
+            <span class="ps-badge ps-badge--felles">Felles</span>
+            <span class="ps-semester">1. semester</span>
+          </div>
+          <span class="ps-course__code">EXPH0300</span>
+          <h3>Examen Philosophicum</h3>
+          <p class="ps-course__desc">Obligatorisk innføringsemne for alle NTNU-studenter. Introduserer vitenskapsteori og etikk.</p>
+          <p class="ps-note">Sjekk med faglærer — pensum varierer noe mellom gruppene</p>
+        </div>
+        <div>
+          <span class="ps-books__lbl">Pensumliste</span>
+          <ul class="ps-books">
+            <li class="ps-book">
+              <span class="ps-book__num">1</span>
+              <div class="ps-book__info">
+                <span class="ps-book__title">Filosofihistorie</span>
+                <span class="ps-book__author">Skirbekk, G. &amp; Gilje, N.</span>
+                <span class="ps-book__detail">Universitetsforlaget · utvalgte kap.</span>
+              </div>
+            </li>
+            <li class="ps-book">
+              <span class="ps-book__num">2</span>
+              <div class="ps-book__info">
+                <span class="ps-book__title">Vitenskapsteori for nybegynnere</span>
+                <span class="ps-book__author">Gilje, N. &amp; Grimen, H.</span>
+                <span class="ps-book__detail">Universitetsforlaget · utvalgte kap.</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- ─── Filosofi ─── -->
+      <div class="ps-section-divider reveal" data-section="filosofi">
+        <h2>FILOSOFI</h2>
+      </div>
+
+      <article class="ps-course reveal" data-level="filosofi">
+        <div class="ps-course__meta">
+          <div class="ps-course__badges">
+            <span class="ps-badge ps-badge--fil">Filosofi</span>
+            <span class="ps-semester">1.–2. semester</span>
+          </div>
+          <span class="ps-course__code">FILOS1101</span>
+          <h3>Filosofihistorie 1</h3>
+          <p class="ps-course__desc">Fra Sokrates og Platon til Descartes. Vestlig filosofis grunnmur.</p>
+        </div>
+        <div>
+          <span class="ps-books__lbl">Pensumliste</span>
+          <ul class="ps-books">
+            <li class="ps-book">
+              <span class="ps-book__num">1</span>
+              <div class="ps-book__info">
+                <span class="ps-book__title">Staten (Politeia)</span>
+                <span class="ps-book__author">Platon</span>
+                <span class="ps-book__detail">Utvalgte bøker · norsk oversettelse</span>
+              </div>
+            </li>
+            <li class="ps-book">
+              <span class="ps-book__num">2</span>
+              <div class="ps-book__info">
+                <span class="ps-book__title">Meditasjoner over filosofiens grunnlag</span>
+                <span class="ps-book__author">Descartes, R.</span>
+                <span class="ps-book__detail">Meditasjoner 1–6</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="ps-course reveal d1" data-level="filosofi">
+        <div class="ps-course__meta">
+          <div class="ps-course__badges">
+            <span class="ps-badge ps-badge--fil">Filosofi</span>
+            <span class="ps-semester">3.–4. semester</span>
+          </div>
+          <span class="ps-course__code">FILOS1102</span>
+          <h3>Filosofihistorie 2</h3>
+          <p class="ps-course__desc">Fra Kant og idealismen til Wittgenstein og analytisk filosofi.</p>
+        </div>
+        <div>
+          <span class="ps-books__lbl">Pensumliste</span>
+          <ul class="ps-books">
+            <li class="ps-book">
+              <span class="ps-book__num">1</span>
+              <div class="ps-book__info">
+                <span class="ps-book__title">Grunnlegging til moralens metafysikk</span>
+                <span class="ps-book__author">Kant, I.</span>
+                <span class="ps-book__detail">Universitetsforlaget · norsk oversettelse</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="ps-course reveal" data-level="filosofi">
+        <div class="ps-course__meta">
+          <div class="ps-course__badges">
+            <span class="ps-badge ps-badge--fil">Filosofi</span>
+            <span class="ps-semester">3. semester</span>
+          </div>
+          <span class="ps-course__code">FILOS1300</span>
+          <h3>Tekst og argumentasjon</h3>
+          <p class="ps-course__desc">Hvordan lese, forstå og kritisere filosofiske tekster. Akademisk skriving.</p>
+        </div>
+        <div>
+          <span class="ps-books__lbl">Pensumliste</span>
+          <div class="ps-empty">
+            <b>Pensumliste kommer</b>
+            <span>Ikke registrert ennå. Sitter du på lista? <a href="index.html#kontakt">Send oss et tips</a> — så legger vi den ut.</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="ps-course reveal d1" data-level="filosofi">
+        <div class="ps-course__meta">
+          <div class="ps-course__badges">
+            <span class="ps-badge ps-badge--fil">Filosofi</span>
+            <span class="ps-semester">4.–5. semester</span>
+          </div>
+          <span class="ps-course__code">FILOS2100</span>
+          <h3>Samtidsfilosofi</h3>
+          <p class="ps-course__desc">1900- og 2000-tallets viktigste bevegelser: fenomenologi, eksistensialisme og kritisk teori.</p>
+        </div>
+        <div>
+          <span class="ps-books__lbl">Pensumliste</span>
+          <ul class="ps-books">
+            <li class="ps-book">
+              <span class="ps-book__num">1</span>
+              <div class="ps-book__info">
+                <span class="ps-book__title">Being and Time (utdrag)</span>
+                <span class="ps-book__author">Heidegger, M.</span>
+                <span class="ps-book__detail">Utvalgte seksjoner · engelsk</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- ─── Etikk ─── -->
+      <div class="ps-section-divider reveal" data-section="etikk">
+        <h2>ETIKK</h2>
+      </div>
+
+      <article class="ps-course reveal" data-level="etikk">
+        <div class="ps-course__meta">
+          <div class="ps-course__badges">
+            <span class="ps-badge ps-badge--etikk">Etikk</span>
+            <span class="ps-semester">1.–2. semester</span>
+          </div>
+          <span class="ps-course__code">ETIKK1000</span>
+          <h3>Grunnleggende etikk</h3>
+          <p class="ps-course__desc">De klassiske etiske teoriene: dydsetikk, pliktetikk og konsekvensetikk.</p>
+        </div>
+        <div>
+          <span class="ps-books__lbl">Pensumliste</span>
+          <ul class="ps-books">
+            <li class="ps-book">
+              <span class="ps-book__num">1</span>
+              <div class="ps-book__info">
+                <span class="ps-book__title">Den nikomakiske etikk (utdrag)</span>
+                <span class="ps-book__author">Aristoteles</span>
+                <span class="ps-book__detail">Bok I, II &amp; X · norsk oversettelse</span>
+              </div>
+            </li>
+            <li class="ps-book">
+              <span class="ps-book__num">2</span>
+              <div class="ps-book__info">
+                <span class="ps-book__title">Utilitarisme</span>
+                <span class="ps-book__author">Mill, J.S.</span>
+                <span class="ps-book__detail">Komplett · norsk oversettelse</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="ps-course reveal d1" data-level="etikk">
+        <div class="ps-course__meta">
+          <div class="ps-course__badges">
+            <span class="ps-badge ps-badge--etikk">Etikk</span>
+            <span class="ps-semester">3.–4. semester</span>
+          </div>
+          <span class="ps-course__code">ETIKK2000</span>
+          <h3>Praktisk og anvendt etikk</h3>
+          <p class="ps-course__desc">Bioetikk, miljøetikk, medieetikk og andre anvendte etiske felt.</p>
+        </div>
+        <div>
+          <span class="ps-books__lbl">Pensumliste</span>
+          <ul class="ps-books">
+            <li class="ps-book">
+              <span class="ps-book__num">1</span>
+              <div class="ps-book__info">
+                <span class="ps-book__title">Praktisk etikk</span>
+                <span class="ps-book__author">Singer, P.</span>
+                <span class="ps-book__detail">Universitetsforlaget · 3. utg.</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="ps-course reveal" data-level="etikk">
+        <div class="ps-course__meta">
+          <div class="ps-course__badges">
+            <span class="ps-badge ps-badge--etikk">Etikk</span>
+            <span class="ps-semester">4.–5. semester</span>
+          </div>
+          <span class="ps-course__code">ETIKK2100</span>
+          <h3>Politisk filosofi</h3>
+          <p class="ps-course__desc">Rettferdighet, frihet og stat. Fra Rawls til den samtidige debatten.</p>
+        </div>
+        <div>
+          <span class="ps-books__lbl">Pensumliste</span>
+          <ul class="ps-books">
+            <li class="ps-book">
+              <span class="ps-book__num">1</span>
+              <div class="ps-book__info">
+                <span class="ps-book__title">A Theory of Justice (utdrag)</span>
+                <span class="ps-book__author">Rawls, J.</span>
+                <span class="ps-book__detail">Del I–II · engelsk</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="ps-course reveal d1" data-level="etikk">
+        <div class="ps-course__meta">
+          <div class="ps-course__badges">
+            <span class="ps-badge ps-badge--etikk">Etikk</span>
+            <span class="ps-semester">5. semester</span>
+          </div>
+          <span class="ps-course__code">ETIKK2200</span>
+          <h3>Etikk, teknologi &amp; samfunn</h3>
+          <p class="ps-course__desc">Teknologioptimisme og -pessimisme, AI-etikk, klima og ansvar.</p>
+        </div>
+        <div>
+          <span class="ps-books__lbl">Pensumliste</span>
+          <div class="ps-empty">
+            <b>Pensumliste kommer</b>
+            <span>Ikke registrert ennå. Sitter du på lista? <a href="index.html#kontakt">Send oss et tips</a> — så legger vi den ut.</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- ─── Master ─── -->
+      <div class="ps-section-divider reveal" data-section="master">
+        <h2>Master</h2>
+      </div>
+
+      <article class="ps-course reveal" data-level="master">
+        <div class="ps-course__meta">
+          <div class="ps-course__badges">
+            <span class="ps-badge ps-badge--master">Master</span>
+            <span class="ps-semester">1.–3. semester</span>
+          </div>
+          <span class="ps-course__code">FILOS/ETIKK 3xxx</span>
+          <h3>Fordypningsemner</h3>
+          <p class="ps-course__desc">Pensum varierer etter valgt fordypning og semesterets tilbud.</p>
+        </div>
+        <div>
+          <span class="ps-books__lbl">Pensumliste</span>
+          <div class="ps-empty">
+            <b>Avhenger av valgt fordypning</b>
+            <span>Pensum varierer med emnetilbudet hvert semester — se de aktuelle emnesidene på <a href="https://www.ntnu.no" target="_blank" rel="noopener">ntnu.no</a>, eller spør styret.</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="ps-course reveal d1" data-level="master">
+        <div class="ps-course__meta">
+          <div class="ps-course__badges">
+            <span class="ps-badge ps-badge--master">Master</span>
+            <span class="ps-semester">Alle semestre</span>
+          </div>
+          <span class="ps-course__code">FILOS/ETIKK 8001</span>
+          <h3>Vitenskapsteori og metode</h3>
+          <p class="ps-course__desc">Obligatorisk masterseminar. Vitenskapsteori for humanistiske fag.</p>
+        </div>
+        <div>
+          <span class="ps-books__lbl">Pensumliste</span>
+          <div class="ps-empty">
+            <b>Pensumliste kommer</b>
+            <span>Ikke registrert ennå. Sitter du på lista? <a href="index.html#kontakt">Send oss et tips</a> — så legger vi den ut.</span>
+          </div>
+        </div>
+      </article>
+
+    </div><!-- /ps-grid -->
+
+    <!-- ── Kjøp & bytte teaser ── -->
+    <div class="marked-teaser reveal">
+      <div class="marked-teaser__left">
+        <div class="marked-teaser__tag">Kommer snart</div>
+        <h2>Pensum-markedet</h2>
+        <p>Vil du selge pensumbøkene dine til neste kull — eller kjøpe brukte bøker til halv pris? Vi jobber med et marked for kjøp og bytte av pensum. Meld interesse, så er du tidlig ute.</p>
+      </div>
+      <div class="marked-teaser__cta">
+        <a class="btn btn--ghost-light" href="marked.html">Se hva som kommer <span class="arr">→</span></a>
+      </div>
+    </div>
+
+    <p class="studier__note reveal" style="margin-top:52px;">Pensumlister er ikke offisielle — sjekk alltid emnesidene på ntnu.no for oppdatert og bindende informasjon. Feil eller mangler? Send oss en mail.</p>
+
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="wrap">
+    <img src="assets/apeiron-logo.png" alt="Apeiron segl" />
+    <div class="footer__name">APEIRON</div>
+    <div class="footer__tag">filosofi &amp; etikk · NTNU Trondheim</div>
+    <div class="footer__links">
+      <a href="index.html#om">Om oss</a>
+      <a href="index.html#studiet">Studiet</a>
+      <a href="pensum.html">Pensum</a>
+      <a href="index.html#arrangementer">Arrangementer</a>
+      <a href="index.html#styret">Styret</a>
+      <a href="index.html#sak">S.A.K</a>
+      <a href="merch.html">Merch</a>
+      <a href="marked.html">Kjøp &amp; bytte</a>
+      <a href="index.html#bli-medlem">Bli medlem</a>
+      <a href="index.html#kontakt">Kontakt</a>
+    </div>
+    <div class="footer__fine">© 2026 Apeiron Linjeforening</div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  // Sticky nav
+  var nav = document.getElementById('nav');
+  function onScroll() {
+    nav.classList.toggle('is-stuck', window.scrollY > 40);
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // Mobile drawer
+  var burger = document.getElementById('burger');
+  var drawer = document.getElementById('drawer');
+  function closeDrawer() { drawer.classList.remove('is-open'); document.body.style.overflow = ''; }
+  if (burger) burger.addEventListener('click', function () {
+    var open = drawer.classList.toggle('is-open');
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+  if (drawer) drawer.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', closeDrawer); });
+
+  // Scroll reveal
+  var reveals = Array.prototype.slice.call(document.querySelectorAll('.reveal'));
+  if (!('IntersectionObserver' in window)) {
+    reveals.forEach(function (el) { el.classList.add('in'); });
+  } else {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.1, rootMargin: '0px 0px -6% 0px' });
+    reveals.forEach(function (el) { io.observe(el); });
+  }
+
+  // Tab filtering
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.ps-tab'));
+  var courses = Array.prototype.slice.call(document.querySelectorAll('.ps-course'));
+  var dividers = Array.prototype.slice.call(document.querySelectorAll('.ps-section-divider'));
+  var countEl = document.getElementById('psCount');
+
+  function updateCount(filter) {
+    var n = filter === 'alle'
+      ? courses.length
+      : courses.filter(function (c) { return c.dataset.level === filter; }).length;
+    countEl.textContent = n + ' emne' + (n === 1 ? '' : 'r') + ' vises';
+  }
+
+  function showDividers(filter) {
+    // Show a divider only if it has at least one visible course below it
+    dividers.forEach(function (div) {
+      if (filter === 'alle') { div.classList.remove('hidden'); return; }
+      var section = div.dataset.section;
+      var hasCourse = courses.some(function (c) { return c.dataset.level === section; });
+      div.classList.toggle('hidden', !hasCourse || filter !== section);
+    });
+  }
+
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      var filter = this.dataset.filter;
+      tabs.forEach(function (t) { t.classList.remove('is-active'); });
+      this.classList.add('is-active');
+      courses.forEach(function (c) {
+        c.classList.toggle('hidden', filter !== 'alle' && c.dataset.level !== filter);
+      });
+      showDividers(filter);
+      updateCount(filter);
+    });
+  });
+
+  updateCount('alle');
+})();
+</script>
+</body>
+</html>

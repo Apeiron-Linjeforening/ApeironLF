@@ -1,0 +1,125 @@
+/* Apeiron — interaksjoner: nav, mobilmeny, FAQ, scroll-reveal */
+(function () {
+  // Year
+  var y = document.getElementById('year');
+  if (y) y.textContent = new Date().getFullYear();
+
+  // Sticky nav
+  var nav = document.getElementById('nav');
+  function onScroll() {
+    if (window.scrollY > 40) nav.classList.add('is-stuck');
+    else nav.classList.remove('is-stuck');
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // Scrollspy: highlight the nav link for the section currently in view
+  var spyLinks = Array.prototype.slice.call(
+    document.querySelectorAll('.nav__links a[href^="#"]')
+  ).filter(function (a) { return !a.classList.contains('nav__cta'); });
+  var spyMap = spyLinks.map(function (a) {
+    var id = a.getAttribute('href').slice(1);
+    return { link: a, section: document.getElementById(id) };
+  }).filter(function (m) { return m.section; });
+
+  function onSpy() {
+    var pos = window.scrollY + 140; // account for sticky nav height
+    var current = null;
+    spyMap.forEach(function (m) {
+      if (m.section.offsetTop <= pos) current = m;
+    });
+    // near the very bottom, force-activate the last section
+    if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 4) {
+      current = spyMap[spyMap.length - 1];
+    }
+    spyMap.forEach(function (m) {
+      m.link.classList.toggle('is-active', m === current);
+    });
+  }
+  if (spyMap.length) {
+    window.addEventListener('scroll', onSpy, { passive: true });
+    window.addEventListener('resize', onSpy);
+    onSpy();
+  }
+
+  // Mobile drawer
+  var burger = document.getElementById('burger');
+  var drawer = document.getElementById('drawer');
+  function closeDrawer() {
+    drawer.classList.remove('is-open');
+    document.body.style.overflow = '';
+  }
+  if (burger) {
+    burger.addEventListener('click', function () {
+      var open = drawer.classList.toggle('is-open');
+      document.body.style.overflow = open ? 'hidden' : '';
+    });
+  }
+  drawer.querySelectorAll('a').forEach(function (a) {
+    a.addEventListener('click', closeDrawer);
+  });
+
+  // FAQ accordion
+  document.querySelectorAll('.faq__item').forEach(function (item) {
+    var q = item.querySelector('.faq__q');
+    var a = item.querySelector('.faq__a');
+    function setHeight() {
+      if (item.classList.contains('open')) a.style.maxHeight = a.scrollHeight + 'px';
+    }
+    // init open ones
+    if (item.classList.contains('open')) setHeight();
+    q.addEventListener('click', function () {
+      var isOpen = item.classList.contains('open');
+      // close all
+      document.querySelectorAll('.faq__item').forEach(function (it) {
+        it.classList.remove('open');
+        it.querySelector('.faq__a').style.maxHeight = null;
+      });
+      if (!isOpen) {
+        item.classList.add('open');
+        a.style.maxHeight = a.scrollHeight + 'px';
+      }
+    });
+    window.addEventListener('resize', function () {
+      if (item.classList.contains('open')) a.style.maxHeight = a.scrollHeight + 'px';
+    });
+  });
+
+  // Scroll reveal.
+  // Primary: IntersectionObserver — animates each block as it scrolls into view
+  // (works in every real browser). Fallback: a probe on an always-visible element
+  // detects environments where IO never fires (offscreen iframes / capture
+  // harnesses); only then do we reveal everything outright so nothing stays hidden.
+  var reveals = Array.prototype.slice.call(document.querySelectorAll('.reveal'));
+  function revealAll() { reveals.forEach(function (el) { el.classList.add('in'); }); reveals.length = 0; }
+
+  if (!('IntersectionObserver' in window)) {
+    revealAll();
+    // Allow late-injected content (events/fadderuke) to be revealed too.
+    window.apeironRescanReveals = function () {
+      document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+    };
+  } else {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -7% 0px' });
+    reveals.forEach(function (el) { io.observe(el); });
+
+    // Re-observe nodes injected after load (Google-kalender events, fadderuke).
+    window.apeironRescanReveals = function () {
+      document.querySelectorAll('.reveal:not(.in)').forEach(function (el) { io.observe(el); });
+    };
+
+    // Probe: observe the (always-visible-at-load) nav. If IO is alive it fires
+    // almost immediately; if it hasn't fired within 700ms, IO is dead here.
+    var ioAlive = false;
+    var probe = new IntersectionObserver(function (es) {
+      if (es.some(function (e) { return e.isIntersecting; })) ioAlive = true;
+      probe.disconnect();
+    }, {});
+    probe.observe(document.getElementById('nav'));
+    setTimeout(function () { if (!ioAlive) revealAll(); }, 700);
+  }
+})();

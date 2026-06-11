@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pensum-markedet — Apeiron · NTNU</title>
+<link rel="icon" href="assets/apeiron-logo.png" type="image/png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<style>
+/* ── Subpage header ── */
+.subhero {
+  background:
+    radial-gradient(100% 80% at 90% 0%, rgba(212,175,55,.12), transparent 55%),
+    radial-gradient(70% 60% at 5% 100%, rgba(118,17,15,.28), transparent 60%),
+    var(--navy);
+  color: var(--paper);
+  padding: 148px 0 72px;
+  position: relative;
+  overflow: hidden;
+}
+.subhero__seal {
+  position: absolute; right: -4%; top: 50%; transform: translateY(-50%);
+  width: min(44vw, 540px); opacity: .09; pointer-events: none;
+  filter: drop-shadow(0 0 1px rgba(212,175,55,.4));
+}
+.subhero__inner { position: relative; max-width: var(--maxw); margin: 0 auto; padding: 0 28px; }
+.subhero h1 {
+  color: var(--paper);
+  font-size: clamp(3rem, 8vw, 6.5rem);
+  line-height: .95; letter-spacing: .01em; margin: .22em 0 .35em;
+}
+.subhero__lede { font-size: 1.18rem; color: rgba(244,236,217,.8); max-width: 52ch; line-height: 1.65; }
+.subhero__back {
+  display: inline-flex; align-items: center; gap: .5em;
+  font-size: .82rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--gold); opacity: .85; margin-bottom: 1.6em;
+  transition: opacity .2s;
+}
+.subhero__back:hover { opacity: 1; }
+.subhero__back::before { content: "←"; }
+.subhero__tag-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 1.6em; }
+.subhero__pill {
+  display: inline-flex; align-items: center; gap: .6em;
+  font-size: .74rem; font-weight: 600; letter-spacing: .18em; text-transform: uppercase;
+  border: 1px solid rgba(212,175,55,.4); border-radius: 999px;
+  color: rgba(244,236,217,.7); padding: .5em 1.1em;
+}
+
+/* ── Coming soon core ── */
+.cs-wrap {
+  max-width: 780px; margin: 0 auto; text-align: center;
+  padding: 96px 0 80px;
+}
+.cs-symbol {
+  font-family: var(--display); font-size: 7rem; color: var(--maroon);
+  line-height: 1; margin-bottom: .3em; display: block;
+  opacity: .7;
+}
+.cs-wrap h2 { font-size: clamp(2.2rem, 5vw, 3.6rem); margin-bottom: .5em; }
+.cs-wrap .lede { font-size: 1.16rem; }
+
+/* ── Feature preview cards ── */
+.feat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+  margin: 64px 0 80px;
+}
+.feat {
+  background: var(--paper);
+  border: 1px solid rgba(35,39,64,.16);
+  border-top: 3px solid var(--gold);
+  border-radius: 4px;
+  padding: 32px 28px 28px;
+  text-align: left;
+}
+.feat__glyph {
+  font-family: var(--display); font-size: 2.8rem; color: var(--gold);
+  line-height: 1; margin-bottom: 18px; display: block; opacity: .8;
+}
+.feat h3 { font-size: 1.45rem; margin-bottom: .4em; }
+.feat p { font-size: .96rem; color: var(--ink-soft); line-height: 1.6; }
+
+/* ── Interest form ── */
+.interest-band {
+  background: var(--navy); color: var(--paper);
+  border-radius: 6px; padding: 52px 50px;
+  text-align: center;
+  position: relative; overflow: hidden;
+}
+.interest-band::after {
+  content: ""; position: absolute; inset: 10px;
+  border: 1px solid rgba(212,175,55,.28); border-radius: 4px; pointer-events: none;
+}
+.interest-band .eyebrow { color: var(--gold); justify-content: center; }
+.interest-band .eyebrow::after { content: ""; width: 30px; height: 1px; background: currentColor; opacity: .6; }
+.interest-band h2 { color: var(--paper); font-size: 2.2rem; margin: .3em 0 .5em; }
+.interest-band p { color: rgba(244,236,217,.8); font-size: 1.04rem; max-width: 46ch; margin: 0 auto 2em; }
+
+.interest-form {
+  display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+  position: relative; z-index: 1;
+}
+.interest-form input[type="email"] {
+  font-family: var(--body); font-size: 1rem;
+  background: rgba(244,236,217,.1); color: var(--paper);
+  border: 1px solid rgba(212,175,55,.4); border-radius: 2px;
+  padding: .82em 1.3em; min-width: 260px; outline: none;
+  transition: border-color .2s, background .2s;
+}
+.interest-form input[type="email"]::placeholder { color: rgba(244,236,217,.4); }
+.interest-form input[type="email"]:focus { border-color: var(--gold); background: rgba(244,236,217,.14); }
+.interest-form__note {
+  display: block; font-size: .8rem; color: rgba(244,236,217,.5);
+  margin-top: 14px; font-style: italic;
+}
+
+/* ── Timeline ── */
+.timeline {
+  max-width: 620px; margin: 0 auto 0;
+  display: flex; flex-direction: column; gap: 0;
+}
+.tl-item {
+  display: grid; grid-template-columns: 2em 1fr;
+  gap: 0 22px; align-items: start;
+  padding-bottom: 32px;
+  position: relative;
+}
+.tl-item:last-child { padding-bottom: 0; }
+.tl-dot {
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--paper-2); border: 2px solid rgba(35,39,64,.26);
+  margin-top: 4px; justify-self: center; position: relative; z-index: 1;
+  transition: background .2s, border-color .2s;
+}
+.tl-item.done .tl-dot { background: var(--gold); border-color: var(--gold); }
+.tl-item:not(:last-child) .tl-dot::after {
+  content: ""; position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
+  width: 2px; background: rgba(35,39,64,.18);
+  height: calc(100% + 32px);
+}
+.tl-item.done:not(:last-child) .tl-dot::after { background: var(--gold); opacity: .4; }
+.tl-body { padding-bottom: 4px; }
+.tl-body h4 { font-size: 1.2rem; margin-bottom: .2em; }
+.tl-body p { font-size: .9rem; color: var(--ink-soft); line-height: 1.5; }
+.tl-body .tl-when {
+  font-size: .7rem; font-weight: 600; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--accent-ink); margin-bottom: .4em; display: block;
+}
+.tl-item.done .tl-when { color: var(--gold-ink); }
+
+/* ── Responsive ── */
+@media (max-width: 860px) {
+  .feat-grid { grid-template-columns: 1fr 1fr; }
+  .interest-band { padding: 36px 28px; }
+}
+@media (max-width: 560px) {
+  .feat-grid { grid-template-columns: 1fr; }
+  .interest-form { flex-direction: column; align-items: stretch; }
+  .interest-form input[type="email"] { min-width: 0; }
+}
+</style>
+</head>
+<body data-mode="paper">
+
+<!-- ============ NAV ============ -->
+<header class="nav" id="nav">
+  <a class="nav__brand" href="index.html">
+    <img src="assets/apeiron-logo.png" alt="Apeiron segl" />
+    <span>
+      <span class="nm">APEIRON</span>
+      <span class="sub">Filosofi &amp; Etikk · NTNU</span>
+    </span>
+  </a>
+  <nav class="nav__links">
+    <a href="index.html#om">Om oss</a>
+    <a href="index.html#studiet">Studiet</a>
+    <a href="pensum.html">Pensum</a>
+    <a href="index.html#arrangementer">Arrangementer</a>
+    <a href="index.html#styret">Styret</a>
+    <a href="index.html#sak">S.A.K</a>
+    <a href="merch.html">Merch</a>
+    <a href="index.html#kontakt">Kontakt</a>
+    <a class="btn btn--gold nav__cta" href="index.html#bli-medlem">Bli medlem <span class="arr">→</span></a>
+  </nav>
+  <button class="nav__burger" id="burger" aria-label="Meny">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<div class="drawer" id="drawer">
+  <a href="index.html#om">Om oss</a>
+  <a href="index.html#studiet">Studiet</a>
+  <a href="pensum.html">Pensum</a>
+  <a href="index.html#arrangementer">Arrangementer</a>
+  <a href="index.html#styret">Styret</a>
+  <a href="index.html#sak">S.A.K</a>
+  <a href="merch.html">Merch</a>
+  <a href="index.html#kontakt">Kontakt</a>
+  <a href="index.html#bli-medlem">Bli medlem</a>
+</div>
+
+<!-- ============ SUBPAGE HEADER ============ -->
+<section class="subhero">
+  <img class="subhero__seal" src="assets/apeiron-logo.png" alt="" aria-hidden="true" />
+  <div class="subhero__inner">
+    <a class="subhero__back" href="pensum.html">Tilbake til pensum</a>
+    <span class="eyebrow hero__eyebrow">Kommer snart · Under utvikling</span>
+    <h1>Pensum-markedet</h1>
+    <p class="subhero__lede">Et sted å selge pensumbøkene du er ferdig med, og kjøpe brukte bøker fra studenter som var der før deg.</p>
+    <div class="subhero__tag-row">
+      <span class="subhero__pill">⇄ Kjøp &amp; bytte</span>
+      <span class="subhero__pill">✦ Logg inn med Google</span>
+      <span class="subhero__pill">📚 Alle pensum-emner</span>
+    </div>
+  </div>
+</section>
+
+<!-- frieze -->
+<div class="frieze" aria-hidden="true">
+  <div class="frieze__track">
+    <span>ΑΠΕΙΡΟΝ <i>✦</i> det uendelige <i>✦</i> ΦΙΛΟΣΟΦΙΑ <i>✦</i> visdomskjærlighet <i>✦</i> ΗΘΙΚΗ <i>✦</i> det gode liv <i>✦</i> ΛΟΓΟΣ <i>✦</i> fornuft &amp; tale <i>✦</i> </span>
+    <span>ΑΠΕΙΡΟΝ <i>✦</i> det uendelige <i>✦</i> ΦΙΛΟΣΟΦΙΑ <i>✦</i> visdomskjærlighet <i>✦</i> ΗΘΙΚΗ <i>✦</i> det gode liv <i>✦</i> ΛΟΓΟΣ <i>✦</i> fornuft &amp; tale <i>✦</i> </span>
+  </div>
+</div>
+
+<!-- ============ COMING SOON ============ -->
+<section class="section" style="background:var(--paper-2);">
+  <div class="wrap">
+    <div class="cs-wrap reveal">
+      <span class="cs-symbol">⇄</span>
+      <h2>Vi bygger noe nyttig</h2>
+      <p class="lede center">Pensum-markedet vil gjøre det enkelt å la bøker leve videre fra kull til kull — og spare alle for unødvendige utgifter.</p>
+    </div>
+
+    <div class="feat-grid">
+      <div class="feat reveal">
+        <span class="feat__glyph">📖</span>
+        <h3>List bøkene dine</h3>
+        <p>Logg inn med din NTNU Google-konto og legg ut bøker du er ferdig med. Sett pris, stand og semester.</p>
+      </div>
+      <div class="feat reveal d1">
+        <span class="feat__glyph">🔍</span>
+        <h3>Finn det du trenger</h3>
+        <p>Søk på emne eller tittel og se hva som er tilgjengelig. Filtrer på studieretning og semester.</p>
+      </div>
+      <div class="feat reveal d2">
+        <span class="feat__glyph">🤝</span>
+        <h3>Gjør en avtale</h3>
+        <p>Ta direkte kontakt med selger og avtal henting på Dragvoll. Ingen frakt, ingen mellomledd.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+
+<!-- ── Interesse ── -->
+<section class="section" style="background:var(--paper-2);">
+  <div class="wrap">
+    <div class="interest-band reveal">
+      <span class="eyebrow eyebrow--center">Vær tidlig ute</span>
+      <h2>Meld interesse</h2>
+      <p>Vil du bli varslet når markedet åpner — eller bidra til å bygge det? Send oss en mail, så noterer vi deg.</p>
+      <div class="interest-form">
+        <a class="btn btn--gold" href="mailto:apeironlinjeforening@gmail.com?subject=Interesse%3A%20Pensum-markedet&body=Hei!%20Jeg%20er%20interessert%20i%20pensum-markedet%20og%20vil%20gjerne%20bli%20varslet%20n%C3%A5r%20det%20%C3%A5pner.%0A%0ANavn%3A%20%0AStudieretning%3A%20">
+          Send interesse-mail <span class="arr">→</span>
+        </a>
+        <a class="btn btn--ghost-light" href="https://www.instagram.com/apeiron_linjeforening_ntnu/" target="_blank" rel="noopener">Følg oss på Instagram</a>
+      </div>
+      <span class="interest-form__note">Vi selger ikke data videre og spammer ikke. Vi varsler kun om markedet.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="wrap">
+    <img src="assets/apeiron-logo.png" alt="Apeiron segl" />
+    <div class="footer__name">APEIRON</div>
+    <div class="footer__tag">filosofi &amp; etikk · NTNU Trondheim</div>
+    <div class="footer__links">
+      <a href="index.html#om">Om oss</a>
+      <a href="index.html#studiet">Studiet</a>
+      <a href="pensum.html">Pensum</a>
+      <a href="index.html#arrangementer">Arrangementer</a>
+      <a href="index.html#styret">Styret</a>
+      <a href="index.html#sak">S.A.K</a>
+      <a href="merch.html">Merch</a>
+      <a href="marked.html">Kjøp &amp; bytte</a>
+      <a href="index.html#bli-medlem">Bli medlem</a>
+      <a href="index.html#kontakt">Kontakt</a>
+    </div>
+    <div class="footer__fine">© 2026 Apeiron Linjeforening</div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var nav = document.getElementById('nav');
+  function onScroll() { nav.classList.toggle('is-stuck', window.scrollY > 40); }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  var burger = document.getElementById('burger');
+  var drawer = document.getElementById('drawer');
+  function closeDrawer() { drawer.classList.remove('is-open'); document.body.style.overflow = ''; }
+  if (burger) burger.addEventListener('click', function () {
+    var open = drawer.classList.toggle('is-open');
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+  if (drawer) drawer.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', closeDrawer); });
+
+  var reveals = Array.prototype.slice.call(document.querySelectorAll('.reveal'));
+  if (!('IntersectionObserver' in window)) {
+    reveals.forEach(function (el) { el.classList.add('in'); });
+  } else {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.1, rootMargin: '0px 0px -6% 0px' });
+    reveals.forEach(function (el) { io.observe(el); });
+  }
+})();
+</script>
+</body>
+</html>
