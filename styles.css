@@ -841,7 +841,7 @@ body[data-mode="marine"] .cal-popup__opt:hover{ background:rgba(212,175,55,.1); 
 
 /* ============================================================
    RESPONSIVE
-   ============================================================ */
+    ============================================================ */
 /* Nav: burger vises tidlig nok til at alle 11 lenker aldri trenger å ramle ut */
 /* Nav: burger vises ved ~1080px — med færre toppnivå-lenker holder dette fint */
 @media (max-width:1080px){
