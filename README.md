@@ -32,7 +32,7 @@ Du trenger altså **ikke** å gjøre noe på Netlify manuelt — det skjer av se
 # Last ned siste versjon
 git pull
 
-# Gjør endringene dine i en teksteditor (f.eks. VS Code)
+# Gjør endringene dine i en teksteditor (f.eks. VS Codium)
 
 # Last opp endringene
 git add .
@@ -74,16 +74,16 @@ For hvert styremedlem finner du en blokk som ser slik ut:
 ```
 
 - Bytt ut initialer, navn, rolle og e-postadresse
-- Bilder kan dras inn i sirkel-plassholderen på nettsiden (de lagres lokalt i nettleseren)
 
 ### 📚 Pensum
 Rediger `pensum.html`. Hver emneblokk er en `<div class="course-block">` med tittel, emnekode og pensumliste.
+Vi skal snakke med instituttet for å se om det er mulig å få en API til NTNU sine nettsider, slik at dette også kan gå automatisk.
 
 ### 🛍️ Merch
-Rediger `merch.html`. Hvert produkt er et `<div class="merch-card">` — bytt ut navn, pris og beskrivelse.
+Dette er under oppbygging. Det som er der nå er kun plassholdere.
 
 ### 📖 Om oss / øvrig tekst
-All annen tekst (hero, om oss, studiene, FAQ, kontakt osv.) redigeres direkte i `index.html`.
+All annen tekst (om oss, studiene, FAQ, kontakt osv.) redigeres direkte i `index.html`.
 Finn riktig seksjon ved hjelp av kommentarene: `<!-- ============ OM OSS ============ -->` osv.
 
 ---
@@ -110,25 +110,12 @@ Finn riktig seksjon ved hjelp av kommentarene: `<!-- ============ OM OSS =======
 
 ## Første gangs oppsett (kun én gang)
 
-Hvis repoet ikke er koblet til Netlify ennå:
+Hvis repoet ikke er koblet til Netlify, eller om man ønsker å bytte Netlify bruker:
 
 1. Last opp filene til et GitHub-repo
 2. Gå til [app.netlify.com](https://app.netlify.com) → «Add new site» → «Import an existing project» → velg repoet
 3. La «Publish directory» stå som `.` (allerede satt i `netlify.toml`). Ingen build-kommando trengs.
 4. Trykk «Deploy» — fra nå av skjer alt automatisk
-
-### Last opp til GitHub første gang
-
-```bash
-git init
-git add .
-git commit -m "Apeiron nettside"
-git branch -M main
-git remote add origin https://github.com/BRUKERNAVN/apeiron-nettside.git
-git push -u origin main
-```
-
-(Bytt ut `BRUKERNAVN` og repo-navnet med ditt eget.)
 
 ---
 
