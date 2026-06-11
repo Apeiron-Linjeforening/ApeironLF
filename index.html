@@ -51,6 +51,8 @@
         <a href="#sak">S.A.K</a>
       </div>
     </div>
+    <a href="#lesesalen">Lesesalen</a>
+    <a href="galleri.html">Galleri</a>
     <a href="merch.html">Merch</a>
     <a href="#kontakt">Kontakt</a>
     <a class="btn btn--gold nav__cta" href="#bli-medlem">Bli medlem <span class="arr">→</span></a>
@@ -77,6 +79,8 @@
   <a href="#fadderuke">Fadderuke</a>
   <a href="#styret">Styret</a>
   <a href="#sak">S.A.K</a>
+  <a href="#lesesalen">Lesesalen</a>
+  <a href="galleri.html">Galleri</a>
   <a href="merch.html">Merch</a>
   <a href="marked.html">Kjøp &amp; bytte</a>
   <a href="#kontakt">Kontakt</a>
@@ -382,7 +386,7 @@ samtale &amp; vin
       <h2 class="h-section">Fadderukene</h2>
       <p class="lede">Studiestartens beste uker — bli kjent med faget, byen og hverandre. Velg en dag for å se programmet.</p>
       <span class="fadder__dates"><span class="fadder__dates-lbl">Datoer</span><span id="fadderDates">[ datoer kommer ]</span></span>
-      <p class="fadder__placeholder" id="fadderPlaceholder">⚠ Programmet under er plassholdere — kobles automatisk til fadderuke-kalenderen så snart den er satt opp. Bytt mellom oppsettene i Tweaks.</p>
+      <p class="fadder__placeholder" id="fadderPlaceholder">⚠ Programmet under er plassholdere — kobles automatisk til fadderuke-kalenderen så snart den er satt opp.</p>
     </div>
 
     <div class="fadder__stage" data-fadder-layout="picker">
@@ -547,6 +551,69 @@ samtale &amp; vin
   </div>
 </section>
 
+<!-- ============ LESESALEN ============ -->
+<section class="section lesesal" id="lesesalen" data-screen-label="Lesesalen">
+  <div class="wrap">
+    <div class="lesesal__grid">
+      <div class="reveal">
+        <span class="eyebrow">En skjult perle på Dragvoll</span>
+        <h2 class="h-section">Lesesalen</h2>
+        <p class="lesesal__lede">De fleste vet ikke at den finnes, men om du gjør det, er den vanskelig å gi fra seg. Lesesalen er filosofi og etikk studentenes eget lille tilfluktssted på Dragvoll: lun, romslig og med alt du trenger for en god studieøkt eller godt selskap.</p>
+        <ul class="lesesal__features">
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <div><strong>Eget bibliotek</strong><span>Hyllevis med filosofi, etikk og tilstøtende fag — pent sortert og fritt tilgjengelig.</span></div>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+            <div><strong>Gratis kaffe for medlemmer</strong><span>Alltid en varm kanne klar. En av de små godene ved å ha et Apeiron-kort i lomma.</span></div>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <div><strong>To sofaer og god plass</strong><span>Luftig lokale med to sofaer, god arbeidsplass og en atmosfære som faktisk innbyr til å sette seg ned.</span></div>
+          </li>
+        </ul>
+      </div>
+      <div class="lesesal__gallery reveal d1">
+        <div class="lesesal__img-main">
+          <image-slot id="ls1" shape="rect" placeholder="Lesesalen — oversiktsbilde" src="assets/lesesalen/lesesal1.jpg"></image-slot>
+        </div>
+        <div class="lesesal__marquee-wrap">
+          <div class="lesesal__marquee-track" id="lesesal-marquee"></div>
+        </div>
+        <script>
+          (async () => {
+            const probe = src => new Promise(resolve => {
+              const img = new Image();
+              img.onload = () => resolve(true);
+              img.onerror = () => resolve(false);
+              img.src = src;
+            });
+            const track = document.getElementById('lesesal-marquee');
+            const found = [];
+            for (let i = 2; i <= 99; i++) {
+              const src = `assets/lesesalen/lesesal${i}.jpg`;
+              if (!await probe(src)) break;
+              found.push(src);
+            }
+            if (!found.length) return;
+            const make = (src, i, suffix) => {
+              const el = document.createElement('image-slot');
+              el.id = `ls${i}${suffix}`;
+              el.setAttribute('shape', 'rect');
+              el.setAttribute('placeholder', `Lesesalen — bilde ${i}`);
+              el.setAttribute('src', src);
+              return el;
+            };
+            found.forEach((src, idx) => track.appendChild(make(src, idx + 2, '')));
+            found.forEach((src, idx) => track.appendChild(make(src, idx + 2, 'b')));
+          })();
+        </script>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ============ BLI MEDLEM ============ -->
 <section class="section join" id="bli-medlem" data-screen-label="Bli medlem">
   <div class="wrap">
@@ -621,7 +688,7 @@ samtale &amp; vin
         </div>
         <div class="contact__row">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 2.5 15.4 0 18M12 3c-2.5 2.6-2.5 15.4 0 18"/></svg>
-          <a href="#">apeironlf.netlify.com</a>
+          <a href="https://apeironlf.netlify.app" target="_blank" rel="noopener">apeironlf.netlify.app</a>
         </div>
         <div class="contact__socials">
           <a href="https://www.instagram.com/apeiron_linjeforening_ntnu/" target="_blank" rel="noopener" aria-label="Instagram" class="contact__social-link">
@@ -658,8 +725,10 @@ samtale &amp; vin
       <a href="#arrangementer">Arrangementer</a>
       <a href="#aporetisk">Aporetisk Aften</a>
       <a href="#fadderuke">Fadderuke</a>
+      <a href="galleri.html">Galleri</a>
       <a href="#styret">Styret</a>
       <a href="#sak">S.A.K</a>
+      <a href="#lesesalen">Lesesalen</a>
       <a href="pensum.html">Pensum</a>
       <a href="merch.html">Merch</a>
       <a href="marked.html">Kjøp &amp; bytte</a>
@@ -671,18 +740,11 @@ samtale &amp; vin
   </div>
 </footer>
 
-<!-- React + Babel for Tweaks panel -->
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 <script src="image-slot.js"></script>
 <script src="app.js"></script>
 <script src="apeiron-events.js"></script>
 <script src="aporetisk-cal.js"></script>
 <script src="apeiron-fadder.js"></script>
-<div id="tweaks-root"></div>
-<script type="text/babel" src="tweaks-panel.jsx"></script>
-<script type="text/babel" src="tweaks.jsx"></script>
 <script src="site-search.js"></script>
 </body>
 </html>

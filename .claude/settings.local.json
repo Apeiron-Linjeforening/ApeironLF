@@ -12,7 +12,9 @@
       "Read(//home/ibbi/**)",
       "Read(//tmp/**)",
       "Bash(DISPLAY=:99 /opt/brave.com/brave/brave --no-sandbox --disable-gpu --screenshot=/tmp/verify-merch/shot.png --window-size=1280,900 --virtual-time-budget=2000 \"http://localhost:8743/merch.html\")",
-      "Bash(grep -E '\\\\.\\(html|js|css\\)$')"
+      "Bash(grep -E '\\\\.\\(html|js|css\\)$')",
+      "Bash(command -v ffmpeg)",
+      "Bash(python3 -c \"import PIL; print\\('PIL:', PIL.__version__\\)\")"
     ]
   }
 }

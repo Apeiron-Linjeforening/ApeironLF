@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Galleri — Apeiron · NTNU</title>
+<meta name="description" content="Bilder fra Apeirons arrangementer — fester, fagkvelder, fadderuker og turer gjennom årene. Linjeforeningen for filosofi og etikk ved NTNU." />
+<meta property="og:title" content="Galleri — Apeiron · NTNU" />
+<meta property="og:description" content="Bilder fra Apeirons fester, fagkvelder og fadderuker gjennom årene." />
+<meta property="og:image" content="assets/apeiron-logo.png" />
+<meta property="og:type" content="website" />
+<meta name="theme-color" content="#232740" />
+<link rel="icon" href="assets/apeiron-logo.png" type="image/png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<style>
+/* ── Subpage header (shared pattern) ── */
+.subhero {
+  background:
+    radial-gradient(100% 80% at 90% 0%, rgba(212,175,55,.12), transparent 55%),
+    radial-gradient(70% 60% at 5% 100%, rgba(118,17,15,.28), transparent 60%),
+    var(--navy);
+  color: var(--paper);
+  padding: 148px 0 72px;
+  position: relative;
+  overflow: hidden;
+}
+.subhero__seal {
+  position: absolute; right: -4%; top: 50%; transform: translateY(-50%);
+  width: min(44vw, 540px); opacity: .09; pointer-events: none;
+  filter: drop-shadow(0 0 1px rgba(212,175,55,.4));
+}
+.subhero__inner { position: relative; max-width: var(--maxw); margin: 0 auto; padding: 0 28px; }
+.subhero h1 {
+  color: var(--paper);
+  font-size: clamp(3rem, 8vw, 6.5rem);
+  line-height: .95; letter-spacing: .01em; margin: .22em 0 .35em;
+}
+.subhero__lede { font-size: 1.18rem; color: rgba(244,236,217,.8); max-width: 52ch; line-height: 1.65; }
+.subhero__back {
+  display: flex; width: fit-content; align-items: center; gap: .5em;
+  font-size: .82rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--gold); opacity: .85; margin-bottom: 1.2em;
+  transition: opacity .2s;
+}
+.subhero__back:hover { opacity: 1; }
+.subhero__back::before { content: "←"; }
+
+/* ── Year tab bar ── */
+.gl-tabs {
+  display: flex; gap: 0; border: 1px solid rgba(35,39,64,.26);
+  border-radius: 3px; overflow: hidden; flex-wrap: wrap;
+}
+.gl-tab {
+  font-family: var(--body); font-size: .88rem; font-weight: 600; letter-spacing: .04em;
+  padding: .68em 1.4em; background: transparent; color: var(--ink-soft);
+  border: 0; border-right: 1px solid rgba(35,39,64,.18); cursor: pointer;
+  transition: background .2s, color .2s;
+}
+.gl-tab:last-child { border-right: 0; }
+.gl-tab:hover { color: var(--navy); }
+.gl-tab.is-active { background: var(--navy); color: var(--paper); }
+
+/* ── Event grid ── */
+.gl-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 18px;
+  margin-top: 28px;
+}
+
+/* ── Event card ── */
+.gl-card {
+  position: relative;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--navy);
+  aspect-ratio: 4/3;
+  box-shadow: 0 2px 12px rgba(0,0,0,.10);
+  transition: transform .22s ease, box-shadow .22s ease;
+}
+.gl-card:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,0,0,.18); }
+.gl-card__img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .4s ease;
+}
+.gl-card:hover .gl-card__img { transform: scale(1.04); }
+.gl-card__placeholder {
+  width: 100%; height: 100%;
+  background:
+    radial-gradient(ellipse at 30% 40%, rgba(212,175,55,.18), transparent 60%),
+    radial-gradient(ellipse at 80% 70%, rgba(118,17,15,.35), transparent 55%),
+    var(--navy);
+  display: flex; align-items: center; justify-content: center;
+}
+.gl-card__placeholder svg { width: 48px; height: 48px; opacity: .22; color: var(--paper); }
+.gl-card__overlay {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(to top, rgba(10,12,24,.82) 0%, transparent 100%);
+  padding: 28px 16px 14px;
+}
+.gl-card__name {
+  font-family: var(--display); font-style: italic; font-weight: 600;
+  font-size: 1.15rem; color: var(--paper); line-height: 1.2;
+  display: block;
+}
+.gl-card__count {
+  font-size: .76rem; color: rgba(244,236,217,.65);
+  letter-spacing: .05em; margin-top: 3px; display: block;
+}
+
+/* ── Loading / empty states ── */
+.gl-status {
+  text-align: center; padding: 64px 0;
+  color: var(--ink-soft); font-size: .95rem;
+}
+.gl-status__icon { font-size: 2.5rem; margin-bottom: 12px; display: block; opacity: .4; }
+.gl-status b { display: block; color: var(--ink); font-size: 1.1rem; margin-bottom: .35em; }
+
+.gl-skeleton {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 18px; margin-top: 28px;
+}
+.gl-skeleton__card {
+  aspect-ratio: 4/3; border-radius: 4px;
+  background: linear-gradient(90deg, rgba(35,39,64,.08) 25%, rgba(35,39,64,.14) 50%, rgba(35,39,64,.08) 75%);
+  background-size: 200% 100%;
+  animation: gl-shimmer 1.4s infinite;
+}
+@keyframes gl-shimmer { to { background-position: -200% 0; } }
+
+/* ── Config notice ── */
+.gl-setup {
+  border: 1px dashed rgba(35,39,64,.28);
+  border-radius: 6px; padding: 36px 40px;
+  background: rgba(35,39,64,.025);
+  max-width: 60ch; margin: 40px auto;
+  text-align: center;
+}
+.gl-setup__tag {
+  font-size: .7rem; font-weight: 700; letter-spacing: .28em; text-transform: uppercase;
+  color: var(--accent-ink); margin-bottom: .8em; display: block;
+}
+.gl-setup h3 { font-size: 1.4rem; margin-bottom: .5em; color: var(--navy); }
+.gl-setup p { font-size: .95rem; color: var(--ink-soft); line-height: 1.65; }
+.gl-setup code {
+  font-family: monospace; font-size: .88em;
+  background: rgba(35,39,64,.08); padding: .1em .4em; border-radius: 3px;
+  color: var(--accent-ink);
+}
+
+/* ── Lightbox ── */
+.gl-lightbox {
+  position: fixed; inset: 0; z-index: 9000;
+  background: rgba(5,7,18,.93);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity .22s ease;
+}
+.gl-lightbox.is-open { opacity: 1; pointer-events: all; }
+.gl-lightbox__img-wrap {
+  position: relative; max-width: min(92vw, 1200px); max-height: 88vh;
+  display: flex; align-items: center; justify-content: center;
+}
+.gl-lightbox__img {
+  max-width: 100%; max-height: 88vh;
+  object-fit: contain;
+  border-radius: 3px;
+  box-shadow: 0 24px 80px rgba(0,0,0,.6);
+  display: block;
+}
+.gl-lightbox__btn {
+  position: fixed; top: 50%; transform: translateY(-50%);
+  width: 52px; height: 52px; border-radius: 50%;
+  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18);
+  color: var(--paper); cursor: pointer; font-size: 1.4rem; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .18s;
+  backdrop-filter: blur(4px);
+}
+.gl-lightbox__btn:hover { background: rgba(255,255,255,.2); }
+.gl-lightbox__prev { left: 18px; }
+.gl-lightbox__next { right: 18px; }
+.gl-lightbox__close {
+  position: fixed; top: 20px; right: 22px;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18);
+  color: var(--paper); cursor: pointer; font-size: 1.3rem; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .18s;
+  backdrop-filter: blur(4px);
+}
+.gl-lightbox__close:hover { background: rgba(255,255,255,.2); }
+.gl-lightbox__info {
+  position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
+  text-align: center; color: rgba(255,255,255,.65);
+  font-size: .82rem; letter-spacing: .04em;
+  white-space: nowrap;
+}
+.gl-lightbox__info span { color: rgba(255,255,255,.4); margin: 0 .5em; }
+
+/* ── Marquee strip ── */
+.gl-marquee-wrap {
+  overflow: hidden;
+  background: var(--paper);
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(35,39,64,.09);
+}
+.gl-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: gl-marquee 52s linear infinite;
+}
+.gl-marquee-wrap:hover .gl-marquee-track { animation-play-state: paused; }
+.gl-marquee-img {
+  height: 150px;
+  width: auto;
+  aspect-ratio: 4/3;
+  border-radius: 5px;
+  object-fit: cover;
+  flex-shrink: 0;
+  display: block;
+  margin-right: 10px; /* margin instead of gap so each copy has identical width */
+}
+@keyframes gl-marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ── Event photo grid ── */
+.gl-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px;
+  margin-top: 20px;
+}
+.gl-photo-thumb {
+  aspect-ratio: 4/3;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--navy);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.gl-photo-thumb:hover { transform: scale(1.03); box-shadow: 0 6px 22px rgba(0,0,0,.2); }
+.gl-photo-thumb img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+  transition: transform .3s ease;
+}
+.gl-photo-thumb:hover img { transform: scale(1.07); }
+
+/* ── Event view header ── */
+.gl-event-header {
+  display: flex; align-items: center; gap: 1em;
+  flex-wrap: wrap; margin-bottom: 4px;
+}
+.gl-event-back {
+  font-size: .8rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--gold); cursor: pointer; background: none; border: none; padding: 0;
+  display: flex; align-items: center; gap: .4em;
+  opacity: .8; transition: opacity .2s;
+}
+.gl-event-back:hover { opacity: 1; }
+.gl-event-back::before { content: "←"; }
+.gl-event-title {
+  font-family: var(--display); font-style: italic;
+  font-size: 1.45rem; color: var(--navy);
+}
+.gl-event-count {
+  font-size: .8rem; color: var(--ink-soft); letter-spacing: .04em; margin-left: auto;
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .gl-tabs { width: 100%; }
+  .gl-tab { flex: 1; text-align: center; font-size: .82rem; padding: .65em .6em; }
+  .gl-lightbox__btn { width: 42px; height: 42px; font-size: 1.1rem; }
+  .gl-lightbox__prev { left: 8px; }
+  .gl-lightbox__next { right: 8px; }
+  .gl-setup { padding: 28px 22px; }
+  .gl-photo-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 6px; }
+  .gl-marquee-img { height: 110px; margin-right: 7px; }
+}
+</style>
+</head>
+<body data-mode="paper">
+
+<!-- ============ NAV ============ -->
+<header class="nav" id="nav">
+  <a class="nav__brand" href="index.html">
+    <img src="assets/apeiron-logo.png" alt="Apeiron segl" />
+    <span>
+      <span class="nm">APEIRON</span>
+      <span class="sub">Filosofi &amp; Etikk · NTNU</span>
+    </span>
+  </a>
+  <nav class="nav__links">
+    <a href="index.html#om">Om oss</a>
+    <div class="nav__dropdown">
+      <a class="nav__drop-trigger" href="index.html#studiet">Studiene <span class="nav__caret">▾</span></a>
+      <div class="nav__drop-menu">
+        <a href="index.html#studiet">Studiene</a>
+        <a href="pensum.html">Pensum</a>
+      </div>
+    </div>
+    <div class="nav__dropdown">
+      <a class="nav__drop-trigger" href="index.html#arrangementer">Arrangementer <span class="nav__caret">▾</span></a>
+      <div class="nav__drop-menu">
+        <a href="index.html#arrangementer">Arrangementer</a>
+        <a href="index.html#aporetisk">Aporetisk Aften</a>
+        <a href="index.html#fadderuke">Fadderuke</a>
+      </div>
+    </div>
+    <div class="nav__dropdown">
+      <a class="nav__drop-trigger" href="index.html#styret">Styret <span class="nav__caret">▾</span></a>
+      <div class="nav__drop-menu">
+        <a href="index.html#styret">Styret</a>
+        <a href="index.html#sak">S.A.K</a>
+      </div>
+    </div>
+    <a href="galleri.html" class="is-active">Galleri</a>
+    <a href="merch.html">Merch</a>
+    <a href="index.html#kontakt">Kontakt</a>
+    <a class="btn btn--gold nav__cta" href="index.html#bli-medlem">Bli medlem <span class="arr">→</span></a>
+  </nav>
+  <button class="nav__search-btn" type="button" aria-label="Søk på nettstedet">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+    <span class="nav__search-hint">Søk</span>
+  </button>
+  <button class="nav__burger" id="burger" aria-label="Meny">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<div class="drawer" id="drawer">
+  <button class="drawer__search-row nav__search-btn" type="button" aria-label="Søk på nettstedet">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+    Søk på nettstedet
+  </button>
+  <a href="index.html#om">Om oss</a>
+  <a href="index.html#studiet">Studiene</a>
+  <a href="pensum.html">Pensum</a>
+  <a href="index.html#arrangementer">Arrangementer</a>
+  <a href="index.html#styret">Styret</a>
+  <a href="index.html#sak">S.A.K</a>
+  <a href="galleri.html" class="is-active">Galleri</a>
+  <a href="merch.html">Merch</a>
+  <a href="index.html#kontakt">Kontakt</a>
+</div>
+
+<!-- ============ SUBHERO ============ -->
+<section class="subhero" id="top">
+  <img class="subhero__seal" src="assets/apeiron-logo.png" alt="" aria-hidden="true" />
+  <div class="subhero__inner">
+    <a class="subhero__back" href="index.html#arrangementer">Tilbake</a>
+    <h1>Galleri</h1>
+    <p class="subhero__lede">Øyeblikk fra det sosiale livet i Apeiron — fester, fagkvelder og alt imellom.</p>
+  </div>
+</section>
+
+<!-- ============ MARQUEE ============ -->
+<div class="gl-marquee-wrap" id="glMarquee" style="display:none" aria-hidden="true">
+  <div class="gl-marquee-track" id="glMarqueeTrack"></div>
+</div>
+
+<!-- ============ GALLERY ============ -->
+<section class="section" id="galleri">
+  <div class="wrap">
+
+    <!-- Year tabs -->
+    <div id="glTabBar" class="gl-tabs" role="tablist" aria-label="Velg år"></div>
+
+    <!-- Content area -->
+    <div id="glContent"></div>
+
+  </div>
+</section>
+
+<!-- ============ LIGHTBOX ============ -->
+<div class="gl-lightbox" id="glLightbox" role="dialog" aria-modal="true" aria-label="Bildegalleri">
+  <button class="gl-lightbox__close" id="glClose" aria-label="Lukk">&times;</button>
+  <div class="gl-lightbox__img-wrap">
+    <img class="gl-lightbox__img" id="glLbImg" src="" alt="" />
+  </div>
+  <button class="gl-lightbox__btn gl-lightbox__prev" id="glPrev" aria-label="Forrige bilde">&#8592;</button>
+  <button class="gl-lightbox__btn gl-lightbox__next" id="glNext" aria-label="Neste bilde">&#8594;</button>
+  <div class="gl-lightbox__info" id="glInfo"></div>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="wrap">
+    <img src="assets/apeiron-logo.png" alt="Apeiron segl" />
+    <div class="footer__name">APEIRON</div>
+    <div class="footer__tag">filosofi &amp; etikk · NTNU Trondheim</div>
+    <div class="footer__links">
+      <a href="index.html#om">Om oss</a>
+      <a href="index.html#studiet">Studiet</a>
+      <a href="pensum.html">Pensum</a>
+      <a href="index.html#arrangementer">Arrangementer</a>
+      <a href="index.html#styret">Styret</a>
+      <a href="index.html#sak">S.A.K</a>
+      <a href="galleri.html">Galleri</a>
+      <a href="merch.html">Merch</a>
+      <a href="marked.html">Kjøp &amp; bytte</a>
+      <a href="index.html#bli-medlem">Bli medlem</a>
+      <a href="index.html#kontakt">Kontakt</a>
+    </div>
+    <div class="footer__fine">© 2026 Apeiron Linjeforening</div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  // ─────────────────────────────────────────────
+  //  KONFIGURASJON
+  //  Mappestruktur i Drive (legg event-mapper direkte i rot-mappen):
+  //    ALT SOM LASTES OPP HER/
+  //      Halloweenfest 2025/   ← bilder her
+  //      Halloweenfest 2024/
+  //      Sommerfest 2025/
+  //  Årstallet i mappenavnet brukes til å lage år-faner automatisk.
+  // ─────────────────────────────────────────────
+  var CONFIG = {
+    API_KEY:        'AIzaSyDpJWruxDIh5tZ5yacb6uURhGlm6IbalBs',
+    ROOT_FOLDER_ID: '1EAhJQDIqptfYN8QhBsl49xS110JCpota',
+  };
+
+  var DRIVE = 'https://www.googleapis.com/drive/v3/files';
+
+  // ── State ────────────────────────────────────
+  var state = {
+    years: [],       // ['2025', '2024', ...] sorted desc
+    activeYear: null,
+    allFolders: [],  // [{id, name, year, coverId, count}] all event folders
+    lightbox: { images: [], idx: 0, eventName: '' },
+  };
+
+  // ── DOM refs ────────────────────────────────
+  var tabBar  = document.getElementById('glTabBar');
+  var content = document.getElementById('glContent');
+  var lb      = document.getElementById('glLightbox');
+  var lbImg   = document.getElementById('glLbImg');
+  var lbInfo  = document.getElementById('glInfo');
+  var lbClose = document.getElementById('glClose');
+  var lbPrev  = document.getElementById('glPrev');
+  var lbNext  = document.getElementById('glNext');
+
+  // ── Helpers ──────────────────────────────────
+  function driveUrl(params) {
+    var base = DRIVE + '?key=' + encodeURIComponent(CONFIG.API_KEY);
+    Object.keys(params).forEach(function (k) {
+      base += '&' + k + '=' + encodeURIComponent(params[k]);
+    });
+    return base;
+  }
+
+  function fetchJson(url, cb) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url);
+    xhr.onload = function () {
+      if (xhr.status === 200) { cb(null, JSON.parse(xhr.responseText)); }
+      else { cb(new Error('HTTP ' + xhr.status + ': ' + xhr.responseText)); }
+    };
+    xhr.onerror = function () { cb(new Error('Nettverksfeil')); };
+    xhr.send();
+  }
+
+  function thumbUrl(id) {
+    return 'https://drive.google.com/thumbnail?id=' + id + '&sz=w600';
+  }
+
+  function fullUrl(id) {
+    return 'https://drive.google.com/thumbnail?id=' + id + '&sz=w1600';
+  }
+
+  function extractYear(name) {
+    var m = name.match(/\b(20\d{2})\b/);
+    return m ? m[1] : 'Annet';
+  }
+
+  // ── Render skeletons ─────────────────────────
+  function showSkeletons(n) {
+    var cards = '';
+    for (var i = 0; i < (n || 6); i++) {
+      cards += '<div class="gl-skeleton__card"></div>';
+    }
+    content.innerHTML = '<div class="gl-skeleton">' + cards + '</div>';
+  }
+
+  // ── Render year tabs ─────────────────────────
+  function renderTabs() {
+    tabBar.innerHTML = '';
+    if (state.years.length <= 1) { tabBar.style.display = 'none'; return; }
+    tabBar.style.display = '';
+    state.years.forEach(function (yr) {
+      var btn = document.createElement('button');
+      btn.className = 'gl-tab' + (yr === state.activeYear ? ' is-active' : '');
+      btn.setAttribute('role', 'tab');
+      btn.setAttribute('aria-selected', yr === state.activeYear ? 'true' : 'false');
+      btn.textContent = yr;
+      btn.addEventListener('click', function () { selectYear(yr); });
+      tabBar.appendChild(btn);
+    });
+  }
+
+  // ── Render event grid for active year ────────
+  function renderEvents() {
+    var events = state.allFolders.filter(function (f) { return f.year === state.activeYear; });
+
+    if (events.length === 0) {
+      content.innerHTML = [
+        '<div class="gl-status">',
+        '  <span class="gl-status__icon">📷</span>',
+        '  <b>Ingen bilder ennå</b>',
+        '  Legg til mapper med "' + state.activeYear + '" i navnet i Drive-mappen.',
+        '</div>',
+      ].join('');
+      return;
+    }
+
+    var grid = document.createElement('div');
+    grid.className = 'gl-grid';
+
+    events.forEach(function (ev) {
+      var card = document.createElement('div');
+      card.className = 'gl-card';
+      card.setAttribute('role', 'button');
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('aria-label', ev.name);
+
+      if (ev.coverId) {
+        var img = document.createElement('img');
+        img.className = 'gl-card__img';
+        img.src = thumbUrl(ev.coverId);
+        img.alt = ev.name;
+        img.loading = 'lazy';
+        card.appendChild(img);
+      } else {
+        var ph = document.createElement('div');
+        ph.className = 'gl-card__placeholder';
+        ph.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
+        card.appendChild(ph);
+      }
+
+      var overlay = document.createElement('div');
+      overlay.className = 'gl-card__overlay';
+      overlay.innerHTML = [
+        '<span class="gl-card__name">' + ev.name + '</span>',
+        ev.count ? '<span class="gl-card__count">' + ev.count + ' bilder</span>' : '',
+      ].join('');
+      card.appendChild(overlay);
+
+      card.addEventListener('click', function () { openEvent(ev); });
+      card.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openEvent(ev); }
+      });
+
+      grid.appendChild(card);
+    });
+
+    content.innerHTML = '';
+    content.appendChild(grid);
+  }
+
+  // ── Load all event folders from root ─────────
+  function loadAllFolders() {
+    var q = "'" + CONFIG.ROOT_FOLDER_ID + "' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false";
+    var url = driveUrl({ q: q, fields: 'files(id,name)', orderBy: 'name desc', pageSize: '100' });
+    showSkeletons(6);
+    fetchJson(url, function (err, data) {
+      if (err || !data.files) { showError(err); return; }
+      var folders = data.files;
+
+      if (folders.length === 0) {
+        tabBar.style.display = 'none';
+        content.innerHTML = '<div class="gl-status"><span class="gl-status__icon">📁</span><b>Ingen mapper funnet</b>Legg til event-mapper i Drive-mappen for å komme i gang.</div>';
+        return;
+      }
+
+      // Extract years and build unique sorted list
+      var yearSet = {};
+      folders.forEach(function (f) { yearSet[extractYear(f.name)] = true; });
+      state.years = Object.keys(yearSet).sort(function (a, b) { return b.localeCompare(a); });
+      state.activeYear = state.years[0];
+      state.allFolders = folders.map(function (f) {
+        return { id: f.id, name: f.name, year: extractYear(f.name), coverId: null, count: null, previewIds: [] };
+      });
+
+      renderTabs();
+      renderEvents();
+
+      // Fetch preview images + count for each folder, re-render as they arrive
+      var done = 0;
+      folders.forEach(function (folder, i) {
+        var imgQ = "'" + folder.id + "' in parents and mimeType contains 'image/' and trashed=false";
+        var imgUrl = driveUrl({ q: imgQ, fields: 'files(id)', orderBy: 'name', pageSize: '50' });
+        fetchJson(imgUrl, function (err2, imgData) {
+          if (!err2 && imgData.files && imgData.files.length > 0) {
+            state.allFolders[i].coverId = imgData.files[0].id;
+            state.allFolders[i].count = imgData.files.length;
+            // Store up to 5 images for the marquee
+            state.allFolders[i].previewIds = imgData.files.slice(0, 5).map(function (f) { return f.id; });
+          }
+          done++;
+          if (done === folders.length) {
+            renderEvents();
+            renderMarquee();
+          }
+        });
+      });
+    });
+  }
+
+  // ── Switch active year ───────────────────────
+  function selectYear(yearName) {
+    if (yearName === state.activeYear) return;
+    state.activeYear = yearName;
+    renderTabs();
+    renderEvents();
+  }
+
+  // ── Open event → show photo grid ────────────
+  function openEvent(ev) {
+    content.innerHTML = [
+      '<div class="gl-status">',
+      '  <span class="gl-status__icon" style="opacity:.5;font-size:2rem">⏳</span>',
+      '  <b>Laster bilder…</b>',
+      '</div>',
+    ].join('');
+    var q = "'" + ev.id + "' in parents and mimeType contains 'image/' and trashed=false";
+    var url = driveUrl({ q: q, fields: 'files(id,name)', orderBy: 'name', pageSize: '200' });
+    fetchJson(url, function (err, data) {
+      if (err || !data.files || data.files.length === 0) {
+        content.innerHTML = [
+          '<div class="gl-status">',
+          '  <span class="gl-status__icon">📷</span>',
+          '  <b>Ingen bilder i denne mappen</b>',
+          '</div>',
+        ].join('');
+        return;
+      }
+      state.lightbox = { images: data.files, idx: 0, eventName: ev.name };
+      renderPhotoGrid(ev, data.files);
+    });
+  }
+
+  // ── Render photo grid for one event ─────────
+  function renderPhotoGrid(ev, images) {
+    var wrap = document.createElement('div');
+
+    var header = document.createElement('div');
+    header.className = 'gl-event-header';
+
+    var backBtn = document.createElement('button');
+    backBtn.className = 'gl-event-back';
+    backBtn.textContent = 'Alle album';
+    backBtn.addEventListener('click', function () { renderEvents(); });
+
+    var title = document.createElement('span');
+    title.className = 'gl-event-title';
+    title.textContent = ev.name;
+
+    var count = document.createElement('span');
+    count.className = 'gl-event-count';
+    count.textContent = images.length + ' bilder';
+
+    header.appendChild(backBtn);
+    header.appendChild(title);
+    header.appendChild(count);
+    wrap.appendChild(header);
+
+    var grid = document.createElement('div');
+    grid.className = 'gl-photo-grid';
+
+    images.forEach(function (img, i) {
+      var cell = document.createElement('div');
+      cell.className = 'gl-photo-thumb';
+      cell.setAttribute('role', 'button');
+      cell.setAttribute('tabindex', '0');
+      cell.setAttribute('aria-label', 'Bilde ' + (i + 1));
+
+      var imgEl = document.createElement('img');
+      imgEl.src = thumbUrl(img.id);
+      imgEl.alt = img.name;
+      imgEl.loading = 'lazy';
+      cell.appendChild(imgEl);
+
+      cell.addEventListener('click', function () { showLightbox(i); });
+      cell.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showLightbox(i); }
+      });
+
+      grid.appendChild(cell);
+    });
+
+    wrap.appendChild(grid);
+    content.innerHTML = '';
+    content.appendChild(wrap);
+
+    var galleriTop = document.getElementById('galleri');
+    if (galleriTop) { galleriTop.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  }
+
+  // ── Render image marquee at top ──────────────
+  function renderMarquee() {
+    var marqueeEl = document.getElementById('glMarquee');
+    var track     = document.getElementById('glMarqueeTrack');
+    if (!marqueeEl || !track) return;
+
+    // Collect all preview image IDs from all folders
+    var allIds = [];
+    state.allFolders.forEach(function (f) {
+      (f.previewIds || []).forEach(function (id) { allIds.push(id); });
+    });
+    if (allIds.length < 3) return;
+
+    // Shuffle
+    allIds.sort(function () { return Math.random() - 0.5; });
+
+    // Repeat set enough times so one copy is always wider than the viewport.
+    // We build 2 identical copies; the animation scrolls exactly -50% so the
+    // seam is invisible.  To be safe we ensure at least 12 images per copy.
+    var minPerCopy = 12;
+    var base = allIds.slice();
+    while (base.length < minPerCopy) { base = base.concat(allIds); }
+
+    var html = '';
+    [base, base].forEach(function (set) {
+      set.forEach(function (id) {
+        html += '<img class="gl-marquee-img" src="' + thumbUrl(id) + '" alt="" loading="lazy">';
+      });
+    });
+    track.innerHTML = html;
+    marqueeEl.style.display = '';
+  }
+
+  // ── Lightbox controls ────────────────────────
+  function showLightbox(idx) {
+    var images = state.lightbox.images;
+    if (!images.length) return;
+    idx = (idx + images.length) % images.length;
+    state.lightbox.idx = idx;
+    lbImg.src = fullUrl(images[idx].id);
+    lbImg.alt = images[idx].name;
+    lbInfo.innerHTML = state.lightbox.eventName + '<span>·</span>' + (idx + 1) + ' / ' + images.length;
+    lb.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    lb.classList.remove('is-open');
+    document.body.style.overflow = '';
+    lbImg.src = '';
+  }
+
+  lbClose.addEventListener('click', closeLightbox);
+  lbPrev.addEventListener('click', function () { showLightbox(state.lightbox.idx - 1); });
+  lbNext.addEventListener('click', function () { showLightbox(state.lightbox.idx + 1); });
+  lb.addEventListener('click', function (e) { if (e.target === lb) closeLightbox(); });
+  document.addEventListener('keydown', function (e) {
+    if (!lb.classList.contains('is-open')) return;
+    if (e.key === 'ArrowLeft')  { showLightbox(state.lightbox.idx - 1); }
+    if (e.key === 'ArrowRight') { showLightbox(state.lightbox.idx + 1); }
+    if (e.key === 'Escape')     { closeLightbox(); }
+  });
+
+  // ── Error state ──────────────────────────────
+  function showError(err) {
+    content.innerHTML = [
+      '<div class="gl-status">',
+      '  <span class="gl-status__icon">⚠</span>',
+      '  <b>Kunne ikke laste bilder</b>',
+      '  Sjekk at API-nøkkelen er gyldig og at mappen er delt offentlig.',
+      '</div>',
+    ].join('');
+    if (err) console.error('[Galleri]', err);
+  }
+
+  // ── Nav / drawer / reveal (standard) ─────────
+  var nav = document.getElementById('nav');
+  function onScroll() { nav.classList.toggle('is-stuck', window.scrollY > 40); }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  var burger = document.getElementById('burger');
+  var drawer = document.getElementById('drawer');
+  function closeDrawer() { drawer.classList.remove('is-open'); document.body.style.overflow = ''; }
+  if (burger) burger.addEventListener('click', function () {
+    var open = drawer.classList.toggle('is-open');
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+  if (drawer) {
+    drawer.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', closeDrawer); });
+    var dSearchBtn = drawer.querySelector('.drawer__search-row');
+    if (dSearchBtn) dSearchBtn.addEventListener('click', closeDrawer);
+  }
+
+  var reveals = Array.prototype.slice.call(document.querySelectorAll('.reveal'));
+  if (!('IntersectionObserver' in window)) {
+    reveals.forEach(function (el) { el.classList.add('in'); });
+  } else {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.1, rootMargin: '0px 0px -6% 0px' });
+    reveals.forEach(function (el) { io.observe(el); });
+  }
+
+  // ── Init ─────────────────────────────────────
+  loadAllFolders();
+})();
+</script>
+<script src="site-search.js"></script>
+</body>
+</html>

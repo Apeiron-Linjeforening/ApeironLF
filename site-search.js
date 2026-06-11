@@ -26,12 +26,15 @@
     /* Styret */
     { t: 'Stian Lauritzen', d: 'Leder · Apeiron 2025/26', u: 'index.html#styret', g: 'Styret' },
     { t: 'Dennis Cleophas', d: 'Nestleder · Apeiron 2025/26', u: 'index.html#styret', g: 'Styret' },
-    { t: 'Dagny — Økonomiansvarlig', d: 'Økonomiansvarlig · Apeiron 2025/26', u: 'index.html#styret', g: 'Styret' },
+    { t: 'Dagny Flakne', d: 'Økonomiansvarlig · Apeiron 2025/26', u: 'index.html#styret', g: 'Styret' },
     { t: 'Iver N. Edvardsen', d: 'Sosialansvarlig & S.A.K-medgrunnlegger · Apeiron 2025/26', u: 'index.html#styret', g: 'Styret' },
+    { t: 'Natalie Bellingmo', d: 'PR-ansvarlig · Apeiron 2025/26', u: 'index.html#styret', g: 'Styret' },
     { t: 'Anna Fagerli', d: 'Faddersjef · Apeiron 2025/26', u: 'index.html#styret', g: 'Styret' },
     { t: 'Robin M. Søraker', d: 'Fagansvarlig · Apeiron 2025/26', u: 'index.html#styret', g: 'Styret' },
-    { t: 'Natalie — PR-ansvarlig', d: 'PR-ansvarlig · Apeiron 2025/26', u: 'index.html#styret', g: 'Styret' },
-    { t: 'Martin — Potet', d: 'Styremedlem · Apeiron 2025/26', u: 'index.html#styret', g: 'Styret' },
+    { t: 'Martin R. Skauge', d: 'Potet & programtillitsvalgt (PTV) · Apeiron 2025/26', u: 'index.html#styret', g: 'Styret' },
+    { t: 'Helene P. Ruud', d: 'Potet · Apeiron 2025/26', u: 'index.html#styret', g: 'Styret' },
+    { t: 'Karoline B. Holthe', d: 'Potet · Apeiron 2025/26', u: 'index.html#styret', g: 'Styret' },
+    { t: 'Fredrik C.F. Rosenfors', d: 'A.S.A.P S.A.K & S.A.K-medgrunnlegger · Apeiron 2025/26', u: 'index.html#styret', g: 'Styret' },
     /* Pensum */
     { t: 'Pensum', d: 'Pensumlister for alle emner på filosofi og etikk ved NTNU.', u: 'pensum.html', g: 'Pensum' },
     { t: 'FI1001 — Filosofiens og etikkens historie', d: 'Felles · 15 sp · Platon: Staten · Descartes: Meditasjoner', u: 'pensum.html', g: 'Pensum' },
