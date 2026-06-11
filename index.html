@@ -29,25 +29,48 @@
   </a>
   <nav class="nav__links">
     <a href="#om">Om oss</a>
-    <a href="#studiet">Studiet</a>
-    <a href="pensum.html">Pensum</a>
-    <a href="#arrangementer">Arrangementer</a>
-    <a href="#aporetisk">Aporetisk Aften</a>
-    <a href="#fadderuke">Fadderukene</a>
-    <a href="#styret">Styret</a>
-    <a href="#sak">S.A.K</a>
+    <div class="nav__dropdown">
+      <button class="nav__drop-trigger" type="button">Studiene <span class="nav__caret">▾</span></button>
+      <div class="nav__drop-menu">
+        <a href="#studiet">Studiene</a>
+        <a href="pensum.html">Pensum</a>
+      </div>
+    </div>
+    <div class="nav__dropdown">
+      <button class="nav__drop-trigger" type="button">Arrangementer <span class="nav__caret">▾</span></button>
+      <div class="nav__drop-menu">
+        <a href="#arrangementer">Arrangementer</a>
+        <a href="#aporetisk">Aporetisk Aften</a>
+        <a href="#fadderuke">Fadderuke</a>
+      </div>
+    </div>
+    <div class="nav__dropdown">
+      <button class="nav__drop-trigger" type="button">Styret <span class="nav__caret">▾</span></button>
+      <div class="nav__drop-menu">
+        <a href="#styret">Styret</a>
+        <a href="#sak">S.A.K</a>
+      </div>
+    </div>
     <a href="merch.html">Merch</a>
     <a href="#kontakt">Kontakt</a>
     <a class="btn btn--gold nav__cta" href="#bli-medlem">Bli medlem <span class="arr">→</span></a>
   </nav>
+  <button class="nav__search-btn" type="button" aria-label="Søk på nettstedet">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+    <span class="nav__search-hint">Søk</span>
+  </button>
   <button class="nav__burger" id="burger" aria-label="Meny">
     <span></span><span></span><span></span>
   </button>
 </header>
 
 <div class="drawer" id="drawer">
+  <button class="drawer__search-row nav__search-btn" type="button" aria-label="Søk på nettstedet">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+    Søk på nettstedet
+  </button>
   <a href="#om">Om oss</a>
-  <a href="#studiet">Studiet</a>
+  <a href="#studiet">Studiene</a>
   <a href="pensum.html">Pensum</a>
   <a href="#arrangementer">Arrangementer</a>
   <a href="#aporetisk">Aporetisk Aften</a>
@@ -66,10 +89,10 @@
   <div class="hero__inner">
     <div class="hero__grid">
       <div>
-        <span class="eyebrow hero__eyebrow">Linjeforening siden 1981 · Dragvoll</span>
+        <span class="eyebrow hero__eyebrow">LINJEFORENING SIDEN 1981 · </span>
         <h1>Apeir<span class="infin">o</span>n</h1>
         <p class="hero__tag">det grenseløse fellesskapet</p>
-        <p class="hero__lede">Vi er linjeforeningen for filosofi og etikk ved NTNU. Vi tenker de store tankene, stiller de vanskelige spørsmålene — og tar oss en kaffe på det etterpå.</p>
+        <p class="hero__lede">Vi er linjeforeningen for filosofi og etikk ved NTNU. Vi tenker de store tankene, stiller de vanskelige spørsmålene og tar oss en kaffe på det etterpå.</p>
         <div class="hero__cta">
           <a class="btn btn--gold" href="#bli-medlem">Bli medlem <span class="arr">→</span></a>
           <a class="btn btn--ghost-light" href="#arrangementer">Se hva som skjer</a>
@@ -86,7 +109,22 @@
 <!-- frieze marquee -->
 <div class="frieze" aria-hidden="true">
   <div class="frieze__track">
-    <span>ΑΠΕΙΡΟΝ <i>✦</i> det uendelige <i>✦</i> ΦΙΛΟΣΟΦΙΑ <i>✦</i> visdomskjærlighet <i>✦</i> ΗΘΙΚΗ <i>✦</i> det gode liv <i>✦</i> ΣΥΜΠΟΣΙΟΝ <i>✦</i> samtale &amp; vin <i>✦</i> </span>
+    <span>ΑΠΕΙΡΟΝ
+✦
+det uendelige
+✦
+ΦΙΛΟΣΟΦΙΑ
+✦
+visdomskjærlighet
+✦
+ΗΘΙΚΗ
+✦
+jeg kan ikke lese
+✦
+ΣΥΜΠΟΣΙΟΝ
+✦
+samtale &amp; vin
+✦</span>
     <span>ΑΠΕΙΡΟΝ <i>✦</i> det uendelige <i>✦</i> ΦΙΛΟΣΟΦΙΑ <i>✦</i> visdomskjærlighet <i>✦</i> ΗΘΙΚΗ <i>✦</i> det gode liv <i>✦</i> ΣΥΜΠΟΣΙΟΝ <i>✦</i> samtale &amp; vin <i>✦</i> </span>
   </div>
 </div>
@@ -127,7 +165,10 @@
     <div class="center" style="margin-bottom:58px">
       <span class="eyebrow eyebrow--center">Hva du kan studere</span>
       <h2 class="h-section">Studieretningene</h2>
-      <p class="lede">Apeiron samler studentene på filosofi- og etikkfagene ved NTNU. På både bachelor og master velger du mellom to studieretninger, filosofi og etikk. Her er hva de handler om, sammen med en oversikt over gradene og lengden på dem.</p>
+      <p class="lede">Apeiron samler studentene på filosofi- og etikkfagene ved NTNU. På både bachelor og master velger du mellom to studieretninger: filosofi og etikk. Her er hva de handler om, sammen med en oversikt over gradene og lengden på dem.</p>
+      <div style="margin-top:32px">
+        <a class="btn btn--gold" href="pensum.html">Se fullstendig pensum <span class="arr">→</span></a>
+      </div>
     </div>
 
     <div class="track__grid">
@@ -137,9 +178,9 @@
         <h3>Filosofi</h3>
         <p>For deg som vil jobbe med de grunnleggende spørsmålene om mennesket, verden og kunnskap. Studieretningen vektlegger systematisk refleksjon og diskusjon som forstår og utfordrer etablerte svar — og tar for seg alt fra erkjennelse og virkelighet til kunst, religion, mening og menneskelig eksistens.</p>
         <ul class="track__points">
-          <li>Teoretisk filosofi: kunnskapens og virkelighetens natur</li>
-          <li>Filosofihistorien fra antikken til i dag</li>
-          <li>Logikk, språk og vitenskapsfilosofi</li>
+          <li>Filosofihistorie, samtidsfilosofi og vitenskapsteori (FI1001, FI1101, FI1003)</li>
+          <li>Metafysikk, bevissthetsfilosofi og logikk (FI1004, FI1005)</li>
+          <li>Valgfri fordypning og bacheloroppgave (FI2111/FI2211, FI2002)</li>
         </ul>
       </article>
       <article class="track reveal d1">
@@ -148,9 +189,9 @@
         <h3>Etikk</h3>
         <p>For deg som vil forstå hvordan vi bør handle og leve — som individer og fellesskap. Studieretningen vinkler filosofien mot praktiske og anvendte spørsmål: vårt ansvar overfor hverandre, dyr og naturen, og de etisk-politiske dilemmaene samtiden faktisk strever med.</p>
         <ul class="track__points">
-          <li>Praktisk og anvendt etikk</li>
-          <li>Politisk filosofi og områdeetikk</li>
-          <li>Moralsk ansvar i møte med samtidens dilemma</li>
+          <li>Innføring i etikk, metaetikk og etikkprosjekt (FI1210, FI1211)</li>
+          <li>Etikk og politisk filosofi (FI1002)</li>
+          <li>Sosial- og rettsfilosofi og bacheloroppgave (FI2211, FI2002)</li>
         </ul>
       </article>
     </div>
@@ -175,11 +216,11 @@
           <div class="prog__pensum">
             <span class="prog__pensum-lbl">Smakebiter fra pensum</span>
             <ul class="prog__chips">
-              <li>Examen philosophicum</li>
-              <li>Tekst og argumentasjon</li>
-              <li>Samtidens filosofi</li>
-              <li>Filosofihistorie 1 &amp; 2</li>
-              <li>Etikk</li>
+              <li>Examen philosophicum (EXPH0100)</li>
+              <li>Filosofiens og etikkens historie (FI1001)</li>
+              <li>Samtidens filosofi (FI1101)</li>
+              <li>Etikk og politisk filosofi (FI1002)</li>
+              <li>Kunnskaps- og vitenskapsteori (FI1003)</li>
             </ul>
           </div>
         </div>
@@ -201,10 +242,11 @@
           <div class="prog__pensum">
             <span class="prog__pensum-lbl">Smakebiter fra pensum</span>
             <ul class="prog__chips">
-              <li>Examen philosophicum</li>
-              <li>Etikk og politisk filosofi</li>
-              <li>Praktisk og anvendt etikk</li>
-              <li>Etikk, teknologi &amp; samfunn</li>
+              <li>Examen philosophicum (EXPH0200)</li>
+              <li>Filosofiens og etikkens historie (FI1001)</li>
+              <li>Innføring i etikk og metaetikk (FI1210)</li>
+              <li>Etikk og politisk filosofi (FI1002)</li>
+              <li>Etikkprosjekt og metode (FI1211)</li>
             </ul>
           </div>
         </div>
@@ -227,11 +269,11 @@
             <span class="prog__pensum-lbl">Smakebiter fra pensum</span>
             <ul class="prog__chips">
               <li>Examen philosophicum</li>
-              <li>Filosofihistorie 1 &amp; 2</li>
-              <li>Vitenskap, kunnskap, praksis</li>
-              <li>Politisk filosofi</li>
-              <li>Områdeetikk</li>
-              <li>Bacheloroppgave</li>
+              <li>Filosofiens og etikkens historie (FI1001)</li>
+              <li>Kunnskaps- og vitenskapsteori (FI1003)</li>
+              <li>Etikk og politisk filosofi (FI1002)</li>
+              <li>Fag 2 · 60 sp valgfritt</li>
+              <li>Bacheloroppgave (FI2002)</li>
             </ul>
           </div>
         </div>
@@ -264,7 +306,11 @@
 
     </div>
 
-    <p class="studier__note reveal">Studiepoeng og normert studietid følger NTNUs studieplaner (2025/26). Emnelistene er et utvalg — se ntnu.no for fullstendig pensum og oppdaterte krav.</p>
+    <p class="studier__note reveal">Studiepoeng og normert studietid følger NTNUs studieplaner (2025/26). Emnelistene er et utvalg.  Se ntnu.no for fullstendig pensum og oppdaterte krav.</p>
+
+    <div class="center" style="margin-top:48px">
+      <a class="btn btn--gold" href="pensum.html">Se fullstendig pensum <span class="arr">→</span></a>
+    </div>
   </div>
 </section>
 
@@ -308,10 +354,11 @@
         <h2 class="apo__title">Aporetisk Aften</h2>
         <p class="apo__lede">Én kveld i måneden samler vi oss rundt ett eneste spørsmål — uten pensum og uten fasit. Vi tenker høyt, er uenige i godt selskap, og går hjem med flere spørsmål enn vi kom med. Ferskinger og veteraner er like velkomne.</p>
         <div class="apo__meta">
-          <span class="apo__meta-item"><b>Når</b>Én gang i måneden</span>
-          <span class="apo__meta-item"><b>Hvor</b>Låven, Dragvoll</span>
+          <span class="apo__meta-item" id="apoWhen"><b>Når</b><span>—</span></span>
+          <span class="apo__meta-item" id="apoWhere"><b>Hvor</b><span>—</span></span>
           <span class="apo__meta-item"><b>For hvem</b>Åpent for alle</span>
         </div>
+        <div id="apoCalRoot" class="apo__cal-area"></div>
       </div>
       <aside class="apo__aside">
         <div class="apo__greek">ἀπορία
@@ -613,9 +660,11 @@
 <script src="image-slot.js"></script>
 <script src="app.js"></script>
 <script src="apeiron-events.js"></script>
+<script src="aporetisk-cal.js"></script>
 <script src="apeiron-fadder.js"></script>
 <div id="tweaks-root"></div>
 <script type="text/babel" src="tweaks-panel.jsx"></script>
 <script type="text/babel" src="tweaks.jsx"></script>
+<script src="site-search.js"></script>
 </body>
 </html>

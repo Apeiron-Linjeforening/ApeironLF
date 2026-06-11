@@ -42,6 +42,75 @@
     onSpy();
   }
 
+  // ── Dropdown trigger scrollspy: active highlight + dynamic label ──
+  // Collects all page <section id="…"> elements so non-nav sections (e.g. #bli-medlem)
+  // properly deactivate the dropdown group when scrolled into.
+  var allPageSections = Array.prototype.slice.call(document.querySelectorAll('section[id]'));
+
+  var dropGroups = [];
+  document.querySelectorAll('.nav__dropdown').forEach(function (dd) {
+    var trigger = dd.querySelector('.nav__drop-trigger');
+    if (!trigger) return;
+    var firstNode = trigger.firstChild;
+    var defaultText = (firstNode && firstNode.nodeType === 3)
+      ? firstNode.nodeValue.trim() : '';
+    // Only include links that point to a same-page anchor (#…)
+    var entries = Array.prototype.slice.call(
+      dd.querySelectorAll('.nav__drop-menu a[href^="#"]')
+    ).map(function (a) {
+      return { id: a.getAttribute('href').slice(1), label: a.textContent.trim() };
+    });
+    if (entries.length) {
+      dropGroups.push({ trigger: trigger, defaultText: defaultText, entries: entries });
+    }
+  });
+
+  // Build id → group lookup for O(1) matching
+  var dropSectionIds = {};
+  dropGroups.forEach(function (g) {
+    g.entries.forEach(function (e) { dropSectionIds[e.id] = g; });
+  });
+
+  function setTriggerLabel(btn, text) {
+    var node = btn.firstChild;
+    if (node && node.nodeType === 3) node.nodeValue = text + ' ';
+  }
+
+  // Only activate on pages that actually contain the linked sections
+  var hasDropSections = dropGroups.length > 0 &&
+    Object.keys(dropSectionIds).some(function (id) {
+      return !!document.getElementById(id);
+    });
+
+  if (hasDropSections) {
+    var updateDropTriggers = function () {
+      var pos = window.scrollY + 140;
+
+      // Find the last section (including non-nav ones) whose top is above the fold
+      var globalSection = null;
+      allPageSections.forEach(function (el) {
+        if (el.offsetTop <= pos) globalSection = el;
+      });
+      var globalId = globalSection ? globalSection.id : null;
+      var activeGroup = globalId ? (dropSectionIds[globalId] || null) : null;
+
+      dropGroups.forEach(function (g) {
+        var isActive = activeGroup === g;
+        var label = g.defaultText;
+        if (isActive) {
+          var matched = g.entries.filter(function (e) { return e.id === globalId; })[0];
+          if (matched) label = matched.label;
+        }
+        g.trigger.classList.toggle('nav__drop-trigger--active', isActive);
+        setTriggerLabel(g.trigger, label);
+      });
+    };
+
+    window.addEventListener('scroll', updateDropTriggers, { passive: true });
+    window.addEventListener('resize', updateDropTriggers);
+    updateDropTriggers();
+  }
+
   // Mobile drawer
   var burger = document.getElementById('burger');
   var drawer = document.getElementById('drawer');
@@ -58,6 +127,8 @@
   drawer.querySelectorAll('a').forEach(function (a) {
     a.addEventListener('click', closeDrawer);
   });
+  var dSearchBtn = drawer.querySelector('.drawer__search-row');
+  if (dSearchBtn) dSearchBtn.addEventListener('click', closeDrawer);
 
   // FAQ accordion
   document.querySelectorAll('.faq__item').forEach(function (item) {
