@@ -241,17 +241,30 @@ Hvis repoet ikke er koblet til Cloudflare Pages, eller om man ønsker å bytte C
 4. Trykk «Save and Deploy» — fra nå av skjer alt automatisk
 ---
 ## To do
-- [ ] Snakke med IFR/NTNU om API for automatisk oppdatering av Emner for studiene
-- [x] Legge til informasjon og bilder om Lesesalen
-- [x] Bildefremvisning av sosiale ting - Sjekke om dette kan gjøres med API eller automatisk med en enkel mappe i Github. Det er lettere for fremtidige styrer å laste opp bilder til en mappe.
+
+Kritisk:
+- [ ] Fikse bedre sikkerhet for API-nøkkelen.
+
+Medium:
 - [ ] Stressteste Galleriet
-- [ ] Legge til forklaring av vervene i styrene: Leder, nestleder, økonomiansvarlig, sosialansvarlig, PR-Ansvarlig, Faddersjef, Fagansvarlig, Potet, (PTV, ITV), S.A.K, H.I.V.
-- [x] Å trykke på "Arrangement", "Studiene" eller "Styret" burde ta deg rett til siden, og ikke tvinge brukeren til å velge "Arrangement", "Studiene" eller "Styret" i menyen som dukker opp.
-- [x] Søkefeltet i egne sider (Pensum og Merch) må endres.
 - [ ] Telefon: Menyen er for stor/lang.
 - [ ] Telefon: Søkefeltet er identisk med desktop.
-- [ ] Fikse bedre sikkerhet for API nøkkelen.
-- [ ] Når man er på "Bli medlem" blir fremdeles "Lesealen" markert i menyen.
+- [ ] Legge til egen Begrep side.
+
+Hadde vært kult:
+- [ ] Snakke med IFR/NTNU om API for automatisk oppdatering av emner for studiene
+- [ ] Få eget domene → Spør NTNU
+
+Lav:
+- [ ] Legge til forklaring av vervene i styret: Leder, nestleder, økonomiansvarlig, sosialansvarlig, PR-ansvarlig, Faddersjef, Fagansvarlig, Potet, (PTV, ITV), S.A.K, H.I.V. -> Dette krever en egen side for Styret.
+
+Fulfført:
+- [x] Å trykke på "Arrangement", "Studiene" eller "Styret" burde ta deg rett til siden, og ikke tvinge brukeren til å velge "Arrangement", "Studiene" eller "Styret" i menyen som dukker opp.
+- [x] Søkefeltet i egne sider (Pensum og Merch) må endres.
+- [x] Legge til informasjon og bilder om Lesesalen
+- [x] Bildefremvisning av sosiale ting - Sjekke om dette kan gjøres med API eller automatisk med en enkel mappe i Github. Det er lettere for fremtidige styrer å laste opp bilder til en mappe.
+- [x] Når man er på "Bli medlem" blir fremdeles "Lesealen" markert i menyen.
+- [x] Migrere til en mer fast løsning: Cloudflare
 
 ---
 
