@@ -52,9 +52,11 @@
     { t: 'EXPH0200 — Examen philosophicum (samfunn)', d: 'Etikk · 7,5 sp · obligatorisk innføring for samfunnsvitenskap', u: 'pensum.html', g: 'Pensum' },
     /* Merch */
     { t: 'Merch', d: 'Apeiron-merch i begrenset opplag. Bestill via e-post, hent på lesesalen.', u: 'merch.html', g: 'Merch' },
-    { t: 'Segl-pin', d: 'Emaljert pin med Apeirons timeglass-segl · 75,– (65,– for medlemmer)', u: 'merch.html#butikk', g: 'Merch' },
-    { t: 'Gresk tekst-pin', d: 'ΑΠΕΙΡΟΝ i gulltekst på marineblå bunn · 75,– (65,– for medlemmer)', u: 'merch.html#butikk', g: 'Merch' },
-    { t: 'Crew-neck genser', d: 'Marineblå genser med brodert segl · begrenset antall · str. S–XL', u: 'merch.html#butikk', g: 'Merch' },
+    { t: 'Segl-pin', d: 'Emaljert pin med Apeirons timeglass-segl. Hard emalje, gullkant. Ca. 2,5 cm · 75,– (65,– for medlemmer)', u: 'merch.html#butikk', g: 'Merch' },
+    { t: 'Gresk tekst-pin', d: 'ΑΠΕΙΡΟΝ i gulltekst på marineblå bunn. Soft emalje. Ca. 3 cm · 75,– (65,– for medlemmer)', u: 'merch.html#butikk', g: 'Merch' },
+    { t: 'Crew-neck genser', d: 'Marineblå genser med brodert segl på bryst · begrenset antall · str. S–XL · 450,– (405,– for medlemmer)', u: 'merch.html#butikk', g: 'Merch' },
+    { t: 'Tote-bag', d: 'Naturbeige canvas-bag med trykt segl og ΦΙΛΟΣΟΦΙΑ · 200,– (180,– for medlemmer)', u: 'merch.html#butikk', g: 'Merch' },
+    { t: 'Filosofkrus', d: 'Hvit keramikk med Γνῶθι σεαυτόν (kjenn deg selv) og seglet. 350 ml · 180,– (160,– for medlemmer)', u: 'merch.html#butikk', g: 'Merch' },
     { t: 'Pensum-markedet', d: 'Kjøp og bytte av brukt pensum — kommer snart.', u: 'marked.html', g: 'Merch' },
   ];
 
