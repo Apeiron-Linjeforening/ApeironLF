@@ -42,7 +42,9 @@
     { cat: '[ Kategori ]', title: '[ Arrangement ]', start: '2026-09-25T18:00:00', place: '[ sted ]', desc: '[ Kort beskrivelse av arrangementet kommer her. ]' }
   ];
 
-  var state = { view: 'list', cat: 'Alle', events: [], live: false };
+  var INITIAL_LIST = 4;
+  var INITIAL_GRID = 6;
+  var state = { view: 'list', cat: 'Alle', events: [], live: false, expanded: false };
 
   // ---- Hjelpere ----------------------------------------------------------
   function parseEvent(raw) {
@@ -124,7 +126,7 @@
       var b = document.createElement('button');
       b.className = 'ev-chip' + (c === state.cat ? ' is-active' : '');
       b.textContent = c;
-      b.addEventListener('click', function () { state.cat = c; buildFilters(); render(); });
+      b.addEventListener('click', function () { state.cat = c; state.expanded = false; buildFilters(); render(); });
       wrap.appendChild(b);
     });
   }
@@ -146,8 +148,10 @@
     if (cal) cal.style.display = state.view === 'calendar' ? '' : 'none';
 
     var data = filtered();
-    if (state.view === 'list') renderList(list, data);
-    if (state.view === 'grid') renderGrid(grid, data);
+    var listLimit = state.expanded ? data.length : INITIAL_LIST;
+    var gridLimit = state.expanded ? data.length : INITIAL_GRID;
+    if (state.view === 'list') renderList(list, data.slice(0, listLimit), data.length, INITIAL_LIST);
+    if (state.view === 'grid') renderGrid(grid, data.slice(0, gridLimit), data.length, INITIAL_GRID);
     if (state.view === 'calendar') renderCalendar(cal, data);
     if (window.apeironRescanReveals) window.apeironRescanReveals();
   }
@@ -156,7 +160,25 @@
     return '<p class="ev-empty">Ingen arrangementer i denne kategorien akkurat nå.</p>';
   }
 
-  function renderList(el, data) {
+  function toggleBtn(total, limit) {
+    if (state.expanded) {
+      return '<button class="ev-show-more" type="button" data-action="less">Vis færre <span class="arr">↑</span></button>';
+    }
+    if (total <= limit) return '';
+    var hidden = total - limit;
+    return '<button class="ev-show-more" type="button" data-action="more">Vis alle ' + total + ' arrangementer (' + hidden + ' til) <span class="arr">↓</span></button>';
+  }
+
+  function bindToggleBtn(el) {
+    var btn = el.querySelector('.ev-show-more');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      state.expanded = btn.dataset.action === 'more';
+      render();
+    });
+  }
+
+  function renderList(el, data, total, limit) {
     if (!el) return;
     if (!data.length) { el.innerHTML = emptyMsg(); return; }
     el.innerHTML = data.map(function (e) {
@@ -175,10 +197,11 @@
           '</div>' +
           '<div class="evrow__act">' + more + '</div>' +
         '</article>';
-    }).join('');
+    }).join('') + toggleBtn(total, limit);
+    bindToggleBtn(el);
   }
 
-  function renderGrid(el, data) {
+  function renderGrid(el, data, total, limit) {
     if (!el) return;
     if (!data.length) { el.innerHTML = emptyMsg(); return; }
     el.innerHTML = data.map(function (e) {
@@ -195,7 +218,8 @@
             '<div class="evcard__meta"><b>' + esc(whenStr(e)) + '</b>' + (e.place ? ' · ' + esc(e.place) : '') + '</div>' +
           '</div>' +
         '</article>';
-    }).join('');
+    }).join('') + toggleBtn(total, limit);
+    bindToggleBtn(el);
   }
 
   var MONTH_NAMES = ['januar', 'februar', 'mars', 'april', 'mai', 'juni',
@@ -233,15 +257,19 @@
       + '<div class="evcal-grid">';
     WD_MON.forEach(function (d) { html += '<div class="evcal-wd">' + d + '</div>'; });
     for (var p = 0; p < startWd; p++) html += '<div class="evcal-cell evcal-cell--pad"></div>';
+    var MAX_CHIPS = 2;
     for (var day = 1; day <= daysInMonth; day++) {
       var evs = byDay[day] || [];
       var isToday = today.getFullYear() === year && today.getMonth() === month && today.getDate() === day;
+      var visible = evs.slice(0, MAX_CHIPS);
+      var overflow = evs.length - MAX_CHIPS;
       html += '<div class="evcal-cell' + (evs.length ? ' has-ev' : '') + (isToday ? ' is-today' : '') + '">'
         + '<span class="evcal-num">' + day + '</span>'
         + '<div class="evcal-chips">'
-        + evs.map(function (e) {
+        + visible.map(function (e) {
             return '<span class="evcal-chip"><b>' + (e.allDay ? '' : esc(timeStr(e.start)) + ' ') + '</b>' + esc(e.title) + '</span>';
           }).join('')
+        + (overflow > 0 ? '<button class="evcal-overflow" type="button" data-day="' + day + '">+' + overflow + ' til</button>' : '')
         + '</div></div>';
     }
     html += '</div></div>';
@@ -250,6 +278,18 @@
       b.addEventListener('click', function () {
         state.calMonth = new Date(year, month + (b.dataset.cal === 'next' ? 1 : -1), 1);
         render();
+      });
+    });
+    el.querySelectorAll('.evcal-overflow').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var cell = b.closest('.evcal-cell');
+        var chips = cell.querySelector('.evcal-chips');
+        var day = parseInt(b.dataset.day, 10);
+        var evs = byDay[day] || [];
+        chips.innerHTML = evs.map(function (e) {
+          return '<span class="evcal-chip"><b>' + (e.allDay ? '' : esc(timeStr(e.start)) + ' ') + '</b>' + esc(e.title) + '</span>';
+        }).join('') + '<button class="evcal-overflow" type="button" data-day="' + day + '">Vis færre</button>';
+        chips.querySelector('.evcal-overflow').addEventListener('click', function () { render(); });
       });
     });
   }

@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Merch Admin — Apeiron</title>
+<link rel="icon" href="assets/apeiron-logo.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy: #232740; --gold: #d4af37; --gold-ink: #a07820;
+  --maroon: #76110f; --paper: #f4ecd9; --ink: #1a1d2e;
+  --ink-soft: rgba(26,29,46,.6); --border: rgba(35,39,64,.15);
+  --display: 'Cormorant Garamond', Georgia, serif;
+  --body: 'Spectral', Georgia, serif;
+}
+body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-height: 100vh; }
+
+/* ── Gate ── */
+#gate {
+  min-height: 100vh; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 18px; padding: 40px;
+}
+#gate img { width: 72px; opacity: .85; }
+#gate h1 { font-family: var(--display); font-size: 2rem; color: var(--navy); }
+#gate p { color: var(--ink-soft); font-size: .88rem; }
+.gate-row { display: flex; gap: 8px; }
+#pw-input {
+  padding: 9px 14px; border: 1.5px solid var(--border); border-radius: 4px;
+  font-family: var(--body); font-size: .95rem; background: white; width: 200px;
+}
+#pw-input:focus { outline: none; border-color: var(--navy); }
+.btn-login {
+  padding: 9px 18px; background: var(--navy); color: var(--paper);
+  border: none; border-radius: 4px; font-family: var(--body); font-size: .95rem; cursor: pointer;
+}
+.btn-login:hover { background: #1a1d2e; }
+#pw-err { color: var(--maroon); font-size: .82rem; min-height: 1.1em; }
+
+/* ── Admin shell ── */
+#admin { display: none; }
+#admin.on { display: block; }
+
+.a-header {
+  background: var(--navy); color: var(--paper); padding: 14px 24px;
+  display: flex; align-items: center; gap: 14px;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 16px rgba(0,0,0,.22);
+}
+.a-header img { width: 32px; opacity: .85; }
+.a-header h1 { font-family: var(--display); font-size: 1.3rem; letter-spacing: .04em; margin-right: auto; }
+.a-header a { color: rgba(244,236,217,.65); font-size: .78rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; text-decoration: none; }
+.a-header a:hover { color: var(--paper); }
+.btn-add {
+  padding: 7px 14px; background: rgba(212,175,55,.18); color: var(--gold);
+  border: 1px solid rgba(212,175,55,.4); border-radius: 4px;
+  font-family: var(--body); font-size: .82rem; font-weight: 700; cursor: pointer;
+  transition: background .15s;
+}
+.btn-add:hover { background: rgba(212,175,55,.3); }
+.btn-export {
+  padding: 7px 16px; background: var(--gold); color: var(--navy);
+  border: none; border-radius: 4px; font-family: var(--body); font-size: .82rem; font-weight: 700; cursor: pointer;
+  transition: filter .15s;
+}
+.btn-export:hover { filter: brightness(1.08); }
+
+.a-main { max-width: 860px; margin: 0 auto; padding: 28px 20px 80px; }
+
+/* ── Instructions ── */
+.tip {
+  background: white; border: 1px solid var(--border); border-left: 3px solid var(--gold);
+  border-radius: 4px; padding: 16px 20px; margin-bottom: 24px; font-size: .88rem;
+}
+.tip strong { color: var(--navy); font-size: .95rem; display: block; margin-bottom: 8px; }
+.tip ol { padding-left: 18px; }
+.tip li { margin: 5px 0; color: var(--ink-soft); line-height: 1.55; }
+.tip li b { color: var(--gold-ink); }
+.tip-note {
+  margin-top: 10px; padding: 7px 11px;
+  background: rgba(212,175,55,.08); border-radius: 3px;
+  color: var(--gold-ink); font-size: .81rem;
+}
+.tip-reset {
+  float: right; font-size: .76rem; color: var(--ink-soft); cursor: pointer;
+  text-decoration: underline; text-underline-offset: 2px; border: none; background: none; padding: 0;
+}
+.tip-reset:hover { color: var(--maroon); }
+
+/* ── Save toast ── */
+.toast {
+  position: fixed; bottom: 22px; right: 22px;
+  background: var(--navy); color: var(--paper);
+  padding: 8px 16px; border-radius: 4px; font-size: .8rem;
+  opacity: 0; transition: opacity .25s; pointer-events: none;
+}
+.toast.show { opacity: 1; }
+
+/* ── Products list ── */
+#plist { display: flex; flex-direction: column; gap: 14px; }
+
+/* ── Product card ── */
+.pcard {
+  background: white; border: 1px solid var(--border); border-radius: 6px;
+  transition: box-shadow .2s;
+}
+.pcard:hover { box-shadow: 0 4px 18px rgba(35,39,64,.09); }
+
+.pcard-head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; background: rgba(35,39,64,.03);
+  border-bottom: 1px solid rgba(35,39,64,.07);
+}
+.drag-handle { color: rgba(35,39,64,.25); font-size: 1.1rem; cursor: grab; flex-shrink: 0; }
+.pcard-title { font-family: var(--display); font-size: 1.05rem; color: var(--navy); flex: 1; font-weight: 600; }
+.order-btns { display: flex; gap: 3px; }
+.btn-ord {
+  width: 26px; height: 26px; border: 1px solid var(--border); border-radius: 3px;
+  background: white; cursor: pointer; font-size: .7rem; color: var(--ink-soft);
+  display: flex; align-items: center; justify-content: center; transition: background .1s;
+}
+.btn-ord:hover { background: rgba(35,39,64,.06); color: var(--navy); }
+.btn-del {
+  padding: 4px 10px; border: 1px solid rgba(118,17,15,.25); border-radius: 3px;
+  background: transparent; color: var(--maroon); font-size: .76rem; font-family: var(--body); cursor: pointer;
+  transition: background .1s;
+}
+.btn-del:hover { background: rgba(118,17,15,.06); }
+
+.pcard-body { display: grid; grid-template-columns: 160px 1fr; }
+
+/* Image zone */
+.img-zone {
+  width: 160px; height: 160px; background: var(--navy);
+  position: relative; cursor: pointer; overflow: hidden;
+  border-right: 1px solid rgba(35,39,64,.09); flex-shrink: 0;
+}
+.img-zone::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(60% 60% at 50% 40%, rgba(212,175,55,.14), transparent 70%);
+}
+.img-zone .img-preview {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; z-index: 2; display: none;
+}
+.img-zone .img-ph {
+  position: absolute; inset: 0; z-index: 1;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 7px; pointer-events: none;
+}
+.img-zone .img-ph img { width: 34px; opacity: .18; }
+.img-zone .img-ph span { font-size: .68rem; color: rgba(244,236,217,.35); text-align: center; padding: 0 10px; line-height: 1.45; }
+.img-zone .img-overlay {
+  position: absolute; inset: 0; z-index: 3;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,.42); color: white; font-size: .75rem;
+  font-family: var(--body); text-align: center;
+  opacity: 0; transition: opacity .15s; pointer-events: none;
+}
+.img-zone:hover .img-overlay { opacity: 1; }
+.img-zone[data-over] .img-overlay { opacity: 1; background: rgba(212,175,55,.25); color: var(--gold); }
+.btn-clr-img {
+  position: absolute; top: 5px; right: 5px; z-index: 4;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: rgba(0,0,0,.55); color: white; border: none; cursor: pointer;
+  font-size: .72rem; display: none; align-items: center; justify-content: center;
+}
+.img-zone:hover .btn-clr-img { display: flex; }
+
+/* Fields */
+.fields { padding: 16px 18px; display: flex; flex-direction: column; gap: 11px; }
+.frow { display: flex; gap: 10px; }
+.fg { display: flex; flex-direction: column; gap: 3px; flex: 1; }
+.fg label {
+  font-size: .63rem; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; color: var(--ink-soft);
+}
+.fg input, .fg textarea, .fg select {
+  font-family: var(--body); font-size: .88rem; color: var(--ink);
+  border: 1px solid var(--border); border-radius: 3px; padding: 6px 9px;
+  background: white; transition: border-color .12s; resize: none; width: 100%;
+}
+.fg input:focus, .fg textarea:focus, .fg select:focus { outline: none; border-color: var(--navy); }
+.fg textarea { min-height: 64px; line-height: 1.5; }
+.fg.narrow { flex: 0 0 110px; }
+
+/* Badge radios */
+.badge-opts { display: flex; gap: 6px; flex-wrap: wrap; padding-top: 1px; }
+.badge-opts input[type=radio] { display: none; }
+.badge-opts label {
+  padding: 4px 9px; border: 1px solid var(--border); border-radius: 3px;
+  font-size: .72rem; font-weight: 700; cursor: pointer; color: var(--ink-soft);
+  transition: all .12s;
+}
+.badge-opts input[type=radio]:checked + label { background: var(--navy); color: var(--paper); border-color: var(--navy); }
+.badge-opts label:hover { border-color: var(--navy); color: var(--navy); }
+
+/* Advanced / email fields */
+.adv-toggle {
+  background: none; border: none; cursor: pointer; color: var(--ink-soft); font-size: .76rem;
+  font-family: var(--body); padding: 0; text-align: left; text-decoration: underline;
+  text-underline-offset: 2px; margin-top: 2px;
+}
+.adv-toggle:hover { color: var(--navy); }
+.adv-fields { display: none; padding-top: 8px; border-top: 1px solid var(--border); margin-top: 8px; }
+.adv-fields.open { display: flex; flex-direction: column; gap: 10px; }
+
+@media (max-width: 580px) {
+  .pcard-body { grid-template-columns: 1fr; }
+  .img-zone { width: 100%; border-right: none; border-bottom: 1px solid rgba(35,39,64,.09); }
+  .a-header h1 { display: none; }
+  .frow { flex-direction: column; }
+  .fg.narrow { flex: 1; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── GATE ── -->
+<div id="gate">
+  <img src="assets/apeiron-logo.png" alt="Apeiron">
+  <h1>Merch Admin</h1>
+  <p>Logg inn for å redigere produkter og bilder</p>
+  <div class="gate-row">
+    <input type="password" id="pw-input" placeholder="Passord" autocomplete="off">
+    <button class="btn-login" id="pw-btn" type="button">Logg inn</button>
+  </div>
+  <p id="pw-err"></p>
+</div>
+
+<!-- ── ADMIN ── -->
+<div id="admin">
+  <header class="a-header">
+    <img src="assets/apeiron-logo.png" alt="">
+    <h1>Merch Admin</h1>
+    <a href="merch.html">← Se merch-siden</a>
+    <button class="btn-add" id="add-btn" type="button">+ Nytt produkt</button>
+    <button class="btn-export" id="export-btn" type="button">↓ Last ned merch-products.js</button>
+  </header>
+
+  <main class="a-main">
+    <div class="tip">
+      <button class="tip-reset" id="reset-btn" type="button">Tilbakestill til siste publiserte versjon</button>
+      <strong>Slik oppdaterer du merch-siden</strong>
+      <ol>
+        <li>Rediger produktene nedenfor — klikk på et felt for å redigere det</li>
+        <li>Last opp bilder ved å <b>klikke på bildefeltet</b> eller dra et bilde inn på det</li>
+        <li>Klikk <b>Last ned merch-products.js</b> — lagre filen fra nedlastingsmappen</li>
+        <li>Erstatt <code>merch-products.js</code> i GitHub-repositoriet og push/commit</li>
+        <li>Netlify oppdaterer nettsiden automatisk innen et minutt</li>
+      </ol>
+      <div class="tip-note">💾 Endringer lagres automatisk i nettleseren din — du mister dem ikke ved å laste siden på nytt. Last ned filen for å publisere til nettsiden.</div>
+    </div>
+
+    <div id="plist"></div>
+  </main>
+</div>
+
+<div class="toast" id="toast">Lagret i nettleseren</div>
+<input type="file" id="file-input" accept="image/png,image/jpeg,image/webp,image/avif" hidden>
+
+<script src="merch-products.js"></script>
+<script>
+(function () {
+  /* ─── CONFIG ─── */
+  const PASSWORD  = 'apeiron2026'; // ← endre passordet her
+  const LS_KEY    = 'apeiron-merch-v1';
+  const LS_AUTH   = 'apeiron-admin-auth';
+
+  /* ─── AUTH ─── */
+  const gate      = document.getElementById('gate');
+  const adminEl   = document.getElementById('admin');
+  const pwInput   = document.getElementById('pw-input');
+  const pwErr     = document.getElementById('pw-err');
+
+  function login(pw) {
+    if (pw === PASSWORD) {
+      sessionStorage.setItem(LS_AUTH, '1');
+      gate.style.display = 'none';
+      adminEl.classList.add('on');
+      init();
+    } else {
+      pwErr.textContent = 'Feil passord — prøv igjen';
+      pwInput.value = '';
+      pwInput.focus();
+    }
+  }
+
+  if (sessionStorage.getItem(LS_AUTH) === '1') {
+    gate.style.display = 'none';
+    adminEl.classList.add('on');
+    init();
+  } else {
+    document.getElementById('pw-btn').addEventListener('click', function () { login(pwInput.value); });
+    pwInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') login(pwInput.value); });
+  }
+
+  /* ─── DATA ─── */
+  let products = [];
+
+  function loadData() {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) {
+      try { products = JSON.parse(raw); return; } catch (_) {}
+    }
+    products = (window.MERCH_PRODUCTS || []).map(function (p) { return Object.assign({}, p); });
+  }
+
+  function saveData() {
+    localStorage.setItem(LS_KEY, JSON.stringify(products));
+    showToast('Lagret i nettleseren');
+  }
+
+  let saveTimer = null;
+  function lazySave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveData, 350); }
+
+  const toastEl = document.getElementById('toast');
+  let toastTimer = null;
+  function showToast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toastEl.classList.remove('show'); }, 2200);
+  }
+
+  /* ─── IMAGE PROCESSING ─── */
+  let imgTarget = null;
+  const fileInput = document.getElementById('file-input');
+
+  fileInput.addEventListener('change', function () {
+    const f = fileInput.files && fileInput.files[0];
+    if (f && imgTarget) processImage(f, imgTarget);
+    fileInput.value = '';
+  });
+
+  function openPicker(id) { imgTarget = id; fileInput.click(); }
+
+  function processImage(file, prodId) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const img = new Image();
+      img.onload = function () {
+        const MAX = 900;
+        let w = img.width, h = img.height;
+        if (Math.max(w, h) > MAX) {
+          const s = MAX / Math.max(w, h);
+          w = Math.round(w * s); h = Math.round(h * s);
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        const url = canvas.toDataURL('image/webp', 0.82);
+        setField(prodId, 'img', url);
+        const zone = document.querySelector('[data-id="' + prodId + '"] .img-zone');
+        if (zone) refreshImgZone(zone, url);
+        lazySave();
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  /* ─── FIELD UPDATE ─── */
+  function setField(id, field, val) {
+    const p = products.find(function (x) { return x.id === id; });
+    if (!p) return;
+    p[field] = val === '' && field !== 'badge' ? null : val;
+    if (field === 'name') {
+      const titleEl = document.querySelector('[data-id="' + id + '"] .pcard-title');
+      if (titleEl) titleEl.textContent = val || '(uten navn)';
+    }
+    lazySave();
+  }
+
+  /* ─── RENDER ─── */
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function uid() { return 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
+
+  function renderAll() {
+    const list = document.getElementById('plist');
+    list.innerHTML = '';
+    products.forEach(function (p, i) { list.appendChild(makeCard(p, i)); });
+  }
+
+  function refreshImgZone(zone, url) {
+    let preview = zone.querySelector('.img-preview');
+    const ph     = zone.querySelector('.img-ph');
+    const clrBtn = zone.querySelector('.btn-clr-img');
+    const overlay = zone.querySelector('.img-overlay');
+    if (url) {
+      if (!preview) {
+        preview = document.createElement('img');
+        preview.className = 'img-preview';
+        preview.alt = '';
+        zone.appendChild(preview);
+      }
+      preview.style.display = 'block';
+      preview.src = url;
+      ph.style.display    = 'none';
+      clrBtn.style.display = 'flex';
+      overlay.textContent  = '↺ Bytt bilde';
+    } else {
+      if (preview) { preview.style.display = 'none'; preview.src = ''; }
+      ph.style.display    = 'flex';
+      clrBtn.style.display = 'none';
+      overlay.textContent  = '📷 Last opp bilde';
+    }
+  }
+
+  function makeCard(p, idx) {
+    const card = document.createElement('div');
+    card.className = 'pcard';
+    card.setAttribute('data-id', p.id);
+
+    const badgeTypes = [
+      { v: '',           l: 'Ingen' },
+      { v: 'bestseller', l: 'Bestseller' },
+      { v: 'new',        l: 'Nyhet' },
+      { v: 'limited',    l: 'Begrenset' }
+    ];
+    const curBT = p.badgeType || '';
+    const radios = badgeTypes.map(function (bt) {
+      const rid = 'bt-' + p.id + '-' + (bt.v || 'none');
+      return '<input type="radio" id="' + rid + '" name="bt-' + p.id + '" value="' + bt.v + '"'
+        + (curBT === bt.v ? ' checked' : '') + '>'
+        + '<label for="' + rid + '">' + bt.l + '</label>';
+    }).join('');
+
+    card.innerHTML =
+      '<div class="pcard-head">'
+        + '<span class="drag-handle" title="Sorter">⠿</span>'
+        + '<span class="pcard-title">' + esc(p.name || '(uten navn)') + '</span>'
+        + '<div class="order-btns">'
+          + '<button class="btn-ord btn-up" type="button" title="Flytt opp">↑</button>'
+          + '<button class="btn-ord btn-dn" type="button" title="Flytt ned">↓</button>'
+        + '</div>'
+        + '<button class="btn-del" type="button">Slett</button>'
+      + '</div>'
+      + '<div class="pcard-body">'
+        + '<div class="img-zone">'
+          + '<div class="img-ph"><img src="assets/apeiron-logo.png" alt=""><span>Klikk eller dra inn bilde</span></div>'
+          + '<div class="img-overlay">📷 Last opp bilde</div>'
+          + '<button class="btn-clr-img" type="button" title="Fjern bilde">✕</button>'
+        + '</div>'
+        + '<div class="fields">'
+          + '<div class="frow">'
+            + '<div class="fg narrow"><label>Kategori</label>'
+              + '<input type="text" data-f="category" value="' + esc(p.category || '') + '" placeholder="f.eks. Tilbehør"></div>'
+            + '<div class="fg"><label>Produktnavn</label>'
+              + '<input type="text" data-f="name" value="' + esc(p.name || '') + '" placeholder="Navn på produktet"></div>'
+          + '</div>'
+          + '<div class="fg"><label>Beskrivelse</label>'
+            + '<textarea data-f="desc" placeholder="Kort beskrivelse av produktet...">' + esc(p.desc || '') + '</textarea></div>'
+          + '<div class="frow">'
+            + '<div class="fg narrow"><label>Pris (kr)</label>'
+              + '<input type="number" data-f="price" value="' + (p.price != null ? p.price : '') + '" min="0" step="1" placeholder="0"></div>'
+            + '<div class="fg narrow"><label>Medlemspris (kr)</label>'
+              + '<input type="number" data-f="memberPrice" value="' + (p.memberPrice != null ? p.memberPrice : '') + '" min="0" step="1" placeholder="tom = ingen"></div>'
+            + '<div class="fg"><label>Badge-tekst</label>'
+              + '<input type="text" data-f="badge" value="' + esc(p.badge || '') + '" placeholder="f.eks. Nyhet"></div>'
+          + '</div>'
+          + '<div class="fg"><label>Badge-type</label><div class="badge-opts">' + radios + '</div></div>'
+          + '<button class="adv-toggle" type="button">▸ Bestillingslenke (avansert)</button>'
+          + '<div class="adv-fields">'
+            + '<div class="fg"><label>E-post emne</label>'
+              + '<input type="text" data-f="emailSubject" value="' + esc(p.emailSubject || '') + '" placeholder="Bestilling: Produktnavn"></div>'
+            + '<div class="fg"><label>E-post forhåndsutfylt tekst</label>'
+              + '<input type="text" data-f="emailBody" value="' + esc(p.emailBody || '') + '" placeholder="f.eks. Størrelse: "></div>'
+          + '</div>'
+        + '</div>'
+      + '</div>';
+
+    // Image zone interactions
+    const zone = card.querySelector('.img-zone');
+    if (p.img) refreshImgZone(zone, p.img);
+    zone.addEventListener('click', function () { openPicker(p.id); });
+    zone.addEventListener('dragenter', function (e) { e.preventDefault(); zone.setAttribute('data-over', ''); });
+    zone.addEventListener('dragover',  function (e) { e.preventDefault(); });
+    zone.addEventListener('dragleave', function ()  { zone.removeAttribute('data-over'); });
+    zone.addEventListener('drop', function (e) {
+      e.preventDefault(); zone.removeAttribute('data-over');
+      const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+      if (f) processImage(f, p.id);
+    });
+    card.querySelector('.btn-clr-img').addEventListener('click', function (e) {
+      e.stopPropagation();
+      setField(p.id, 'img', null);
+      refreshImgZone(zone, null);
+    });
+
+    // Text field inputs
+    card.querySelectorAll('[data-f]').forEach(function (el) {
+      const field = el.getAttribute('data-f');
+      el.addEventListener('input', function () {
+        const v = el.type === 'number'
+          ? (el.value === '' ? null : Number(el.value))
+          : el.value;
+        setField(p.id, field, v);
+      });
+    });
+
+    // Badge radios
+    card.querySelectorAll('.badge-opts input[type=radio]').forEach(function (r) {
+      r.addEventListener('change', function () {
+        if (r.checked) setField(p.id, 'badgeType', r.value || null);
+      });
+    });
+
+    // Reorder
+    card.querySelector('.btn-up').addEventListener('click', function () { move(p.id, -1); });
+    card.querySelector('.btn-dn').addEventListener('click', function () { move(p.id,  1); });
+
+    // Delete
+    card.querySelector('.btn-del').addEventListener('click', function () {
+      if (confirm('Slett «' + (p.name || 'dette produktet') + '»?')) del(p.id);
+    });
+
+    // Advanced toggle
+    const advBtn = card.querySelector('.adv-toggle');
+    const advDiv = card.querySelector('.adv-fields');
+    advBtn.addEventListener('click', function () {
+      const open = advDiv.classList.toggle('open');
+      advBtn.textContent = (open ? '▾' : '▸') + ' Bestillingslenke (avansert)';
+    });
+
+    return card;
+  }
+
+  /* ─── ACTIONS ─── */
+  function add() {
+    const p = {
+      id: uid(), badge: null, badgeType: null,
+      category: 'Tilbehør', name: '', desc: '',
+      price: 0, memberPrice: null, img: null,
+      emailSubject: 'Bestilling: ', emailBody: ''
+    };
+    products.push(p);
+    renderAll(); lazySave();
+    setTimeout(function () {
+      const last = document.querySelector('#plist .pcard:last-child');
+      if (last) { last.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+    }, 60);
+  }
+
+  function del(id) {
+    products = products.filter(function (p) { return p.id !== id; });
+    renderAll(); lazySave();
+  }
+
+  function move(id, dir) {
+    const i = products.findIndex(function (p) { return p.id === id; });
+    if (i < 0) return;
+    const j = i + dir;
+    if (j < 0 || j >= products.length) return;
+    const tmp = products[i]; products[i] = products[j]; products[j] = tmp;
+    renderAll(); lazySave();
+  }
+
+  /* ─── EXPORT ─── */
+  function exportFile() {
+    const content =
+      '/* Produktdata for Apeiron merch-siden.\n'
+      + '   Sist oppdatert: ' + new Date().toLocaleDateString('no-NO') + '\n'
+      + '   Rediger direkte her, eller åpne merch-admin.html for visuell redigering.\n'
+      + '\n'
+      + '   badgeType: "bestseller" | "new" | "limited" | null\n'
+      + '   img: null (viser segl-watermark), base64-bilde fra admin,\n'
+      + '        eller "assets/merch/filnavn.jpg" for bilder i repoet */\n\n'
+      + 'window.MERCH_PRODUCTS = ' + JSON.stringify(products, null, 2) + ';\n';
+
+    const blob = new Blob([content], { type: 'text/javascript;charset=utf-8' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = 'merch-products.js';
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a); URL.revokeObjectURL(url);
+    showToast('Fil lastet ned — erstatt i GitHub og push!');
+  }
+
+  /* ─── RESET ─── */
+  document.getElementById('reset-btn').addEventListener('click', function () {
+    if (!confirm('Dette sletter alle ueksporterte endringer og laster inn siste publiserte versjon fra merch-products.js. Fortsette?')) return;
+    localStorage.removeItem(LS_KEY);
+    products = (window.MERCH_PRODUCTS || []).map(function (p) { return Object.assign({}, p); });
+    renderAll();
+    showToast('Tilbakestilt til publisert versjon');
+  });
+
+  /* ─── WIRE UP ─── */
+  document.getElementById('add-btn').addEventListener('click', add);
+  document.getElementById('export-btn').addEventListener('click', exportFile);
+
+  /* ─── INIT ─── */
+  function init() { loadData(); renderAll(); }
+})();
+</script>
+</body>
+</html>

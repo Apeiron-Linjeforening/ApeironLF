@@ -4,6 +4,39 @@
    Palett hentet fra logoen: marineblå · gull · vinrød · pergament
    ============================================================ */
 
+/* ============================================================
+   UNDER CONSTRUCTION — fjern hele denne blokken (og #wip-banner i index.html)
+   for å skjule "under oppbygging"-banneret.
+   ============================================================ */
+@keyframes wip-scroll {
+  from { background-position: 0 0; }
+  to   { background-position: 51px 0; }
+}
+#wip-banner {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  z-index: 10;
+  padding: .6rem 1rem;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    #f5c518 0px,  #f5c518 28px,
+    #111    28px, #111    36px
+  );
+  animation: wip-scroll 1.2s linear infinite;
+  display: flex; align-items: center; justify-content: center;
+}
+#wip-banner span {
+  background: #111;
+  color: #f5c518;
+  font-family: var(--body, sans-serif);
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: .25em .9em;
+  border: 2px solid #f5c518;
+}
+/* ============ SLUTT UNDER CONSTRUCTION ============ */
+
 :root {
   /* Brand */
   --navy:   #232740;
@@ -426,7 +459,7 @@ body[data-mode="marine"] .track__points li{ color:#f4ecd9; }
    ============================================================ */
 .aporetic{ background:var(--paper-2); border-top:1px solid rgba(35,39,64,.1); border-bottom:1px solid rgba(35,39,64,.1); }
 .apo{
-  display:grid; grid-template-columns:1.35fr .85fr; gap:48px; align-items:center;
+  display:grid; grid-template-columns:1.35fr .85fr; gap:48px; align-items:start;
   border:1px solid rgba(35,39,64,.16); border-radius:5px;
   background:var(--paper);
   padding:46px 50px; position:relative;
@@ -437,7 +470,7 @@ body[data-mode="marine"] .track__points li{ color:#f4ecd9; }
 .apo__meta{ display:flex; flex-wrap:wrap; gap:14px 30px; margin-top:1.6em; }
 .apo__meta-item{ display:flex; flex-direction:column; gap:.2em; font-size:1rem; color:var(--navy); }
 .apo__meta-item b{ font-family:var(--body); font-size:.66rem; font-weight:600; letter-spacing:.22em; text-transform:uppercase; color:var(--accent-ink); }
-.apo__aside{ border-left:1px solid rgba(35,39,64,.16); padding-left:42px; }
+.apo__aside{ border-left:1px solid rgba(35,39,64,.16); padding-left:42px; padding-top:2.8rem; }
 .apo__greek{ font-family:var(--display); font-size:clamp(2.4rem,5vw,3.6rem); color:var(--maroon); line-height:1; }
 .apo__greek small{ display:block; font-family:var(--body); font-size:.78rem; letter-spacing:.24em; text-transform:uppercase; color:var(--accent-ink); margin-top:.55em; }
 .apo__note{ margin-top:1.3em; font-size:.98rem; line-height:1.6; color:var(--ink-soft); font-style:italic; }
@@ -1052,6 +1085,21 @@ body[data-mode="marine"] .nav.is-stuck{ background:rgba(10,12,24,.92); }
   overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
 }
 .evcal-chip b{ color:var(--maroon); font-weight:700; }
+.evcal-overflow{
+  font-size:.72rem; font-weight:600; color:var(--maroon); background:none;
+  border:none; padding:2px 0; cursor:pointer; text-align:left; line-height:1.3;
+  opacity:.8;
+}
+.evcal-overflow:hover{ opacity:1; text-decoration:underline; }
+
+.ev-show-more{
+  display:block; width:100%; margin-top:24px;
+  padding:14px 20px; font-size:.95rem; font-weight:600;
+  color:var(--maroon); background:transparent;
+  border:2px solid var(--maroon); border-radius:6px; cursor:pointer;
+  transition:background .15s, color .15s;
+}
+.ev-show-more:hover{ background:var(--maroon); color:#fff; }
 
 .events__foot{ margin-top:42px; display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
 

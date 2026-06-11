@@ -9,7 +9,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="styles.css" />
-<script src="image-slot.js"></script>
 <style>
 /* ── Subpage header ── */
 .subhero {
@@ -35,9 +34,9 @@
 }
 .subhero__lede { font-size: 1.18rem; color: rgba(244,236,217,.8); max-width: 52ch; line-height: 1.65; }
 .subhero__back {
-  display: inline-flex; align-items: center; gap: .5em;
+  display: flex; width: fit-content; align-items: center; gap: .5em;
   font-size: .82rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
-  color: var(--gold); opacity: .85; margin-bottom: 1.6em;
+  color: var(--gold); opacity: .85; margin-bottom: 1.2em;
   transition: opacity .2s;
 }
 .subhero__back:hover { opacity: 1; }
@@ -70,10 +69,6 @@
   background: var(--navy);
   position: relative;
   overflow: hidden;
-}
-.product__img image-slot {
-  width: 100%; height: 100%;
-  display: block;
 }
 .product__img::before {
   content: "";
@@ -180,6 +175,16 @@
 .custom-band__text p { color: var(--ink-soft); font-size: .98rem; max-width: 50ch; }
 .custom-band__cta { flex-shrink: 0; }
 
+/* ── Product photo (from merch-products.js) ── */
+.product__photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 2;
+}
+
 /* ── Responsive ── */
 @media (max-width: 980px) {
   .merch-grid { grid-template-columns: repeat(2, 1fr); }
@@ -206,14 +211,14 @@
   <nav class="nav__links">
     <a href="index.html#om">Om oss</a>
     <div class="nav__dropdown">
-      <button class="nav__drop-trigger" type="button">Studiene <span class="nav__caret">▾</span></button>
+      <a class="nav__drop-trigger" href="index.html#studiet">Studiene <span class="nav__caret">▾</span></a>
       <div class="nav__drop-menu">
         <a href="index.html#studiet">Studiene</a>
         <a href="pensum.html">Pensum</a>
       </div>
     </div>
     <div class="nav__dropdown">
-      <button class="nav__drop-trigger" type="button">Arrangementer <span class="nav__caret">▾</span></button>
+      <a class="nav__drop-trigger" href="index.html#arrangementer">Arrangementer <span class="nav__caret">▾</span></a>
       <div class="nav__drop-menu">
         <a href="index.html#arrangementer">Arrangementer</a>
         <a href="index.html#aporetisk">Aporetisk Aften</a>
@@ -221,7 +226,7 @@
       </div>
     </div>
     <div class="nav__dropdown">
-      <button class="nav__drop-trigger" type="button">Styret <span class="nav__caret">▾</span></button>
+      <a class="nav__drop-trigger" href="index.html#styret">Styret <span class="nav__caret">▾</span></a>
       <div class="nav__drop-menu">
         <a href="index.html#styret">Styret</a>
         <a href="index.html#sak">S.A.K</a>
@@ -261,7 +266,6 @@
   <img class="subhero__seal" src="assets/apeiron-logo.png" alt="" aria-hidden="true" />
   <div class="subhero__inner">
     <a class="subhero__back" href="index.html">Tilbake til forsiden</a>
-    <span class="eyebrow hero__eyebrow">Apeiron · Butikk</span>
     <h1>Merch</h1>
     <p class="subhero__lede">Bær filosofien med deg. Alt av Apeiron-merch lages i begrenset opplag — bestill via Vipps og hent på lesesalen.</p>
   </div>
@@ -279,138 +283,8 @@
 <section class="section" id="butikk">
   <div class="wrap">
 
-    <div class="merch-grid">
-
-      <!-- Segl-pin -->
-      <article class="product reveal" id="prod-segl-pin">
-        <div class="product__img">
-          <span class="product__badge product__badge--bestseller">Bestseller</span>
-          <div class="product__watermark">
-            <img src="assets/apeiron-logo.png" alt="" />
-          </div>
-          <image-slot id="m1" shape="rect" placeholder="Bilde av Apeiron-segl-pin"></image-slot>
-        </div>
-        <div class="product__body">
-          <span class="product__cat">Tilbehør</span>
-          <h3>Segl-pin</h3>
-          <p class="product__desc">Emaljert pin med Apeirons timeglass-segl. Hard emalje, gullkant. Ca. 2,5 cm.</p>
-          <div class="product__footer">
-            <div class="product__price">
-              75,–
-              <small>kr pr. stk · <em>65,– for medlemmer</em></small>
-            </div>
-            <a class="btn btn--maroon" href="mailto:apeironlinjeforening@gmail.com?subject=Bestilling%3A%20Segl-pin">Bestill</a>
-          </div>
-        </div>
-      </article>
-
-      <!-- Gresk tekst-pin -->
-      <article class="product reveal d1" id="prod-gresk-pin">
-        <div class="product__img">
-          <div class="product__watermark">
-            <img src="assets/apeiron-logo.png" alt="" />
-          </div>
-          <image-slot id="m2" shape="rect" placeholder="Bilde av ΑΠΕΙΡΟΝ-tekstpin"></image-slot>
-        </div>
-        <div class="product__body">
-          <span class="product__cat">Tilbehør</span>
-          <h3>Gresk tekst-pin</h3>
-          <p class="product__desc">Soft emalje-pin med «ΑΠΕΙΡΟΝ» i gulltekst på marineblå bunn. Ca. 3 cm.</p>
-          <div class="product__footer">
-            <div class="product__price">
-              75,–
-              <small>kr pr. stk · <em>65,– for medlemmer</em></small>
-            </div>
-            <a class="btn btn--maroon" href="mailto:apeironlinjeforening@gmail.com?subject=Bestilling%3A%20Gresk%20tekst-pin">Bestill</a>
-          </div>
-        </div>
-      </article>
-
-      <!-- Crew-neck genser -->
-      <article class="product reveal d2" id="prod-genser">
-        <div class="product__img">
-          <span class="product__badge">Begrenset</span>
-          <div class="product__watermark">
-            <img src="assets/apeiron-logo.png" alt="" />
-          </div>
-          <image-slot id="m3" shape="rect" placeholder="Bilde av Apeiron-genser"></image-slot>
-        </div>
-        <div class="product__body">
-          <span class="product__cat">Klær</span>
-          <h3>Crew-neck genser</h3>
-          <p class="product__desc">Marineblå genser i tykk bomull med brodert segl på bryst. Str. S–XL. Bestilles i forkant — begrenset antall.</p>
-          <div class="product__footer">
-            <div class="product__price">
-              450,–
-              <small>kr pr. stk · <em>405,– for medlemmer</em></small>
-            </div>
-            <a class="btn btn--maroon" href="mailto:apeironlinjeforening@gmail.com?subject=Bestilling%3A%20Genser&body=Størrelse%3A%20">Bestill</a>
-          </div>
-        </div>
-      </article>
-
-      <!-- Tote-bag -->
-      <article class="product reveal" id="prod-tote-bag">
-        <div class="product__img">
-          <div class="product__watermark">
-            <img src="assets/apeiron-logo.png" alt="" />
-          </div>
-          <image-slot id="m4" shape="rect" placeholder="Bilde av Apeiron tote-bag"></image-slot>
-        </div>
-        <div class="product__body">
-          <span class="product__cat">Tilbehør</span>
-          <h3>Tote-bag</h3>
-          <p class="product__desc">Naturbeige canvas-bag med trykt segl og «ΦΙΛΟΣΟΦΙΑ» på siden. Passer til pensum og kaffekoppen.</p>
-          <div class="product__footer">
-            <div class="product__price">
-              200,–
-              <small>kr pr. stk · <em>180,– for medlemmer</em></small>
-            </div>
-            <a class="btn btn--maroon" href="mailto:apeironlinjeforening@gmail.com?subject=Bestilling%3A%20Tote-bag">Bestill</a>
-          </div>
-        </div>
-      </article>
-
-      <!-- Filosofkrus -->
-      <article class="product reveal d1" id="prod-filosofkrus">
-        <div class="product__img">
-          <span class="product__badge product__badge--new">Nyhet</span>
-          <div class="product__watermark">
-            <img src="assets/apeiron-logo.png" alt="" />
-          </div>
-          <image-slot id="m5" shape="rect" placeholder="Bilde av Apeiron-krus"></image-slot>
-        </div>
-        <div class="product__body">
-          <span class="product__cat">Kjøkkentøy</span>
-          <h3>Filosofkrus</h3>
-          <p class="product__desc">Hvit keramikk med «Γνῶθι σεαυτόν» (kjenn deg selv) og seglet. 350 ml. Tåler oppvaskmaskin.</p>
-          <div class="product__footer">
-            <div class="product__price">
-              180,–
-              <small>kr pr. stk · <em>160,– for medlemmer</em></small>
-            </div>
-            <a class="btn btn--maroon" href="mailto:apeironlinjeforening@gmail.com?subject=Bestilling%3A%20Filosofkrus">Bestill</a>
-          </div>
-        </div>
-      </article>
-
-      <!-- Kommende produkt -->
-      <article class="product reveal d2" id="prod-upcoming" style="border-style: dashed; opacity: .65;">
-        <div class="product__img" style="min-height: 220px; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:12px;">
-          <img src="assets/apeiron-logo.png" alt="" style="width:60px; opacity:.2;" />
-          <span style="font-family:var(--display); font-size:1.2rem; color:rgba(244,236,217,.4); font-style:italic;">Kommer snart</span>
-        </div>
-        <div class="product__body">
-          <span class="product__cat">Ukjent</span>
-          <h3 style="color:var(--ink-soft);">Neste produkt …</h3>
-          <p class="product__desc">Vi jobber med noe nytt. Følg oss på Instagram for å være tidlig ute.</p>
-          <div class="product__footer">
-            <div class="product__price" style="color:var(--ink-soft); font-size:1.3rem;">—,–</div>
-            <a class="btn btn--ghost" href="https://www.instagram.com/apeiron_linjeforening_ntnu/" target="_blank" rel="noopener">Følg oss</a>
-          </div>
-        </div>
-      </article>
-
+    <div class="merch-grid" id="merch-grid">
+      <!-- Rendres av merch-products.js -->
     </div><!-- /merch-grid -->
 
     <!-- ── Bestillingsinformasjon ── -->
@@ -507,6 +381,72 @@
     }, { threshold: 0.1, rootMargin: '0px 0px -6% 0px' });
     reveals.forEach(function (el) { io.observe(el); });
   }
+})();
+</script>
+<script src="merch-products.js"></script>
+<script>
+(function () {
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function renderMerch() {
+    var grid = document.getElementById('merch-grid');
+    var data = window.MERCH_PRODUCTS;
+    if (!grid || !data) return;
+
+    var html = '';
+    data.forEach(function (p, i) {
+      var delay = ['', ' d1', ' d2'][i % 3];
+      var badgeCls = p.badgeType === 'new' ? ' product__badge--new' : '';
+      var badge = p.badge
+        ? '<span class="product__badge' + badgeCls + '">' + esc(p.badge) + '</span>'
+        : '';
+      var photo = p.img
+        ? '<img class="product__photo" src="' + esc(p.img) + '" alt="' + esc(p.name) + '">'
+        : '';
+      var priceLine = p.memberPrice
+        ? p.price + ',–<small>kr pr. stk · <em>' + p.memberPrice + ',– for medlemmer</em></small>'
+        : p.price + ',–<small>kr pr. stk</small>';
+      var emailHref = 'mailto:apeironlinjeforening@gmail.com?subject='
+        + encodeURIComponent(p.emailSubject || 'Bestilling: ' + p.name)
+        + (p.emailBody ? '&body=' + encodeURIComponent(p.emailBody) : '');
+
+      html +=
+        '<article class="product reveal' + delay + '" id="prod-' + esc(p.id) + '">'
+        + '<div class="product__img">'
+        + badge
+        + '<div class="product__watermark"><img src="assets/apeiron-logo.png" alt=""></div>'
+        + photo
+        + '</div>'
+        + '<div class="product__body">'
+        + '<span class="product__cat">' + esc(p.category) + '</span>'
+        + '<h3>' + esc(p.name) + '</h3>'
+        + '<p class="product__desc">' + esc(p.desc) + '</p>'
+        + '<div class="product__footer">'
+        + '<div class="product__price product__price--member">' + priceLine + '</div>'
+        + '<a class="btn btn--maroon" href="' + esc(emailHref) + '">Bestill</a>'
+        + '</div></div></article>';
+    });
+
+    grid.innerHTML = html;
+
+    // Intersection observer for reveal-animasjon
+    var reveals = Array.prototype.slice.call(grid.querySelectorAll('.reveal'));
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -6% 0px' });
+      reveals.forEach(function (el) { io.observe(el); });
+    } else {
+      reveals.forEach(function (el) { el.classList.add('in'); });
+    }
+  }
+
+  renderMerch();
 })();
 </script>
 <script src="site-search.js"></script>

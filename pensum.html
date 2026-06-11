@@ -50,9 +50,9 @@
   font-size: 1.05rem; color: var(--gold); margin-right: .15em;
 }
 .subhero__back {
-  display: inline-flex; align-items: center; gap: .5em;
+  display: flex; width: fit-content; align-items: center; gap: .5em;
   font-size: .82rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
-  color: var(--gold); opacity: .85; margin-bottom: 1.6em;
+  color: var(--gold); opacity: .85; margin-bottom: 1.2em;
   transition: opacity .2s;
 }
 .subhero__back:hover { opacity: 1; }
@@ -351,14 +351,14 @@
   <nav class="nav__links">
     <a href="index.html#om">Om oss</a>
     <div class="nav__dropdown">
-      <button class="nav__drop-trigger nav__drop-trigger--active" type="button">Pensum <span class="nav__caret">▾</span></button>
+      <a class="nav__drop-trigger nav__drop-trigger--active" href="index.html#studiet">Pensum <span class="nav__caret">▾</span></a>
       <div class="nav__drop-menu">
         <a href="index.html#studiet">Studiene</a>
         <a href="pensum.html" class="is-active">Pensum</a>
       </div>
     </div>
     <div class="nav__dropdown">
-      <button class="nav__drop-trigger" type="button">Arrangementer <span class="nav__caret">▾</span></button>
+      <a class="nav__drop-trigger" href="index.html#arrangementer">Arrangementer <span class="nav__caret">▾</span></a>
       <div class="nav__drop-menu">
         <a href="index.html#arrangementer">Arrangementer</a>
         <a href="index.html#aporetisk">Aporetisk Aften</a>
@@ -366,7 +366,7 @@
       </div>
     </div>
     <div class="nav__dropdown">
-      <button class="nav__drop-trigger" type="button">Styret <span class="nav__caret">▾</span></button>
+      <a class="nav__drop-trigger" href="index.html#styret">Styret <span class="nav__caret">▾</span></a>
       <div class="nav__drop-menu">
         <a href="index.html#styret">Styret</a>
         <a href="index.html#sak">S.A.K</a>
@@ -378,7 +378,7 @@
   </nav>
   <button class="nav__search-btn" type="button" aria-label="Søk på nettstedet">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
-    <span class="nav__search-hint">⌘K</span>
+    <span class="nav__search-hint">Søk</span>
   </button>
   <button class="nav__burger" id="burger" aria-label="Meny">
     <span></span><span></span><span></span>
@@ -406,7 +406,6 @@
   <img class="subhero__seal" src="assets/apeiron-logo.png" alt="" aria-hidden="true" />
   <div class="subhero__inner">
     <a class="subhero__back" href="index.html#studiet">Tilbake til studiet</a>
-    <span class="eyebrow hero__eyebrow">Studieressurser · NTNU</span>
     <h1>Pensum</h1>
     <p class="subhero__lede">Her finner du pensumlister for alle emner på filosofi og etikk. Listen oppdateres av styret hvert semester — meld fra om noe mangler eller er utdatert.</p>
     <ul class="subhero__meta">

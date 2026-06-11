@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//usr/bin/**)",
+      "Bash(flatpak list *)",
+      "Bash(python3 -c ' *)",
+      "Bash(mkdir -p /tmp/verify-merch)",
+      "Bash(/opt/brave.com/brave/brave --headless=new --screenshot=/tmp/verify-merch/merch-hero.png --window-size=1280,900 \"http://localhost:8743/merch.html\")",
+      "Bash(echo \"exit=$?\")",
+      "Bash(Xvfb :99 -screen 0 1280x900x24)",
+      "Bash(DISPLAY=:99 /opt/brave.com/brave/brave --no-sandbox --disable-gpu --screenshot=/tmp/verify-merch/merch-hero.png --window-size=1280,900 \"http://localhost:8743/merch.html\")",
+      "Read(//home/ibbi/**)",
+      "Read(//tmp/**)",
+      "Bash(DISPLAY=:99 /opt/brave.com/brave/brave --no-sandbox --disable-gpu --screenshot=/tmp/verify-merch/shot.png --window-size=1280,900 --virtual-time-budget=2000 \"http://localhost:8743/merch.html\")",
+      "Bash(grep -E '\\\\.\\(html|js|css\\)$')"
+    ]
+  }
+}
