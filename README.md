@@ -48,6 +48,32 @@ Ta kontakt med Sosialansvarlig Iver N. Edvardsen for hjelp med dette.
 
 ---
 
+## Lokal kjøring på PC (VS Codium + GitHub Desktop)
+
+For større endringer anbefaler vi å jobbe lokalt på egen PC. Vi anbefaler **GitHub Desktop** (for å laste ned og opp endringer) og **VS Codium** (for å redigere filene).
+
+**Engangsoppsett:**
+
+1. Installer [GitHub Desktop](https://desktop.github.com/) og logg inn med GitHub-kontoen din
+2. Installer [VS Codium](https://vscodium.com/)
+3. I GitHub Desktop: **File → Clone repository** → velg Apeiron-repoet → velg en mappe på PC-en → **Clone**
+
+**Slik jobber du (hver gang):**
+
+1. Åpne GitHub Desktop og trykk **«Fetch origin» / «Pull origin»** for å hente siste versjon
+2. Trykk **«Open in VS Codium»** (eller åpne mappen i VS Codium manuelt)
+3. Gjør endringene dine og lagre filene
+4. Se endringen lokalt i nettleseren (se under)
+5. Gå tilbake til GitHub Desktop — endringene vises i listen til venstre
+6. Skriv en kort beskrivelse nederst til venstre og trykk **«Commit to main»**
+7. Trykk **«Push origin»** øverst — ferdig, Netlify oppdaterer siden automatisk
+
+**Se siden lokalt før du pusher:**
+
+Åpne `index.html` direkte i nettleseren — enten via filutforskeren, eller lim inn stien i adressefeltet: `file:///[mappe]/ApeironLF/index.html`
+
+---
+
 ## Hva kan du redigere, og hvor?
 
 ### 📅 Arrangementer
@@ -182,24 +208,26 @@ Finn riktig seksjon ved hjelp av kommentarene: `<!-- ============ OM OSS =======
 
 ## Filstruktur
 
-| Fil                 | Hva det er                                            |
-| ---------------------| -------------------------------------------------------|
-| `index.html`        | Forsiden (hoveddelen av nettsiden)                    |
-| `pensum.html`       | Pensum-oversikt                                       |
-| `merch.html`        | Merch-side (produkter hentes fra `merch-products.js`) |
-| `merch-admin.html`  | 'Passordbeskyttet' admin-panel for å redigere merch   |
-| `merch-products.js` | Produktdata for merch (redigeres via admin-panel)     |
-| `galleri.html`      | Bildegalleri (henter automatisk fra Google Drive)     |
-| `marked.html`       | Kjøp & bytte (pensum-marked)                          |
-| `styles.css`        | All styling                                           |
-| `app.js`            | Meny, scroll-animasjoner og generell funksjonalitet   |
-| `apeiron-events.js` | Henter arrangementer fra Google Kalender              |
-| `apeiron-fadder.js` | Henter fadderuke-program fra Google Kalender          |
-| `aporetisk-cal.js`  | Kalender for Aporetisk Aften                          |
-| `site-search.js`    | Søkefunksjon                                          |
-| `assets/merch/`     | Bilder for merch-produkter (alternativ til base64)    |
-| `assets/`           | Logo og andre bilder                                  |
-| `netlify.toml`      | Netlify-konfigurasjon (trenger normalt ikke røres)    |
+| Fil                               | Hva det er                                                         |
+| -----------------------------------| --------------------------------------------------------------------|
+| `index.html`                      | Forsiden (hoveddelen av nettsiden)                                 |
+| `pensum.html`                     | Pensum-oversikt                                                    |
+| `merch.html`                      | Merch-side (produkter hentes fra `merch-products.js`)              |
+| `merch-admin.html`                | 'Passordbeskyttet' admin-panel for å redigere merch                |
+| `merch-products.js`               | Produktdata for merch (redigeres via admin-panel)                  |
+| `galleri.html`                    | Bildegalleri (henter automatisk fra Google Drive)                  |
+| `marked.html`                     | Kjøp & bytte (pensum-marked)                                       |
+| `styles.css`                      | All styling                                                        |
+| `app.js`                          | Meny, scroll-animasjoner og generell funksjonalitet                |
+| `apeiron-events.js`               | Henter arrangementer fra Google Kalender                           |
+| `apeiron-fadder.js`               | Henter fadderuke-program fra Google Kalender                       |
+| `aporetisk-cal.js`                | Kalender for Aporetisk Aften                                       |
+| `site-search.js`                  | Søkefunksjon                                                       |
+| `image-slot.js`                   | Gjenbrukbar bildekomponent (`<image-slot>`), bl.a. for styrebilder |
+| `tweaks.jsx` / `tweaks-panel.jsx` | Internt design-/utviklingsverktøy — ikke en del av selve nettsiden |
+| `assets/merch/`                   | Bilder for merch-produkter (alternativ til base64)                 |
+| `assets/`                         | Logo og andre bilder                                               |
+| `netlify.toml`                    | Netlify-konfigurasjon (trenger normalt ikke røres)                 |
 
 ---
 
