@@ -1,22 +1,22 @@
 # Apeiron Linjeforening — nettside
 
 Nettsiden for Apeiron, linjeforeningen for filosofi og etikk ved NTNU.
-Statisk nettside (HTML/CSS/JS) — ingen byggesteg, ingen avhengigheter å installere.
+Statisk nettside (HTML/CSS/JS). Ingen byggesteg, ingen avhengigheter å installere.
 
 # OBS!: 
-## Nettsiden er under oppbygging. Det som står på siden burde tas kun som plassholdere. Netlify er en midlertidig løsning.
+## Nettsiden er under oppbygging. Det som står på siden burde tas kun som plassholdere.
 
 ---
 
-## Slik fungerer publisering (Netlify + GitHub)
+## Slik fungerer publisering (Cloudflare Pages + GitHub)
 
 Nettsiden er koblet opp slik:
 
 ```
-Du redigerer en fil  →  pusher til GitHub  →  Netlify oppdaterer siden automatisk
+Du redigerer en fil  →  pusher til GitHub  →  Cloudflare Pages oppdaterer siden automatisk
 ```
 
-Du trenger altså **ikke** å gjøre noe på Netlify manuelt — det skjer av seg selv når du lagrer endringer til GitHub-repoet. Vanligvis tar det under ett minutt fra du pusher til siden er live.
+Du trenger altså **ikke** å gjøre noe på Cloudflare manuelt — det skjer av seg selv når du lagrer endringer til GitHub-repoet. Vanligvis tar det under ett minutt fra du pusher til siden er live.
 
 ### Endre en fil og publisere (steg for steg)
 
@@ -27,7 +27,7 @@ Du trenger altså **ikke** å gjøre noe på Netlify manuelt — det skjer av se
 3. Trykk på blyant-ikonet (✏️ «Edit this file») øverst til høyre
 4. Gjør endringen din
 5. Rull ned og trykk **«Commit changes»**
-6. Ferdig — Netlify plukker opp endringen og oppdaterer siden automatisk
+6. Ferdig! Cloudflare Pages plukker opp endringen og oppdaterer siden automatisk
 
 **Alternativ B — lokalt på PC (for større endringer):**
 
@@ -41,10 +41,10 @@ git pull
 git add .
 git commit -m "Kort beskrivelse av hva du endret"
 git push
+# Ferdig — Cloudflare Pages oppdaterer siden automatisk
 ```
 
-**Alternativ B.2 - Lokalt på PC med hjelp av KI Modeller**
-Ta kontakt med Sosialansvarlig Iver N. Edvardsen for hjelp med dette.
+**Pro Tip: Claude Sonnet og Opus kan og bør brukes for å spare deg timer, om ikke dager av arbeid.** 
 
 ---
 
@@ -66,7 +66,7 @@ For større endringer anbefaler vi å jobbe lokalt på egen PC. Vi anbefaler **G
 4. Se endringen lokalt i nettleseren (se under)
 5. Gå tilbake til GitHub Desktop — endringene vises i listen til venstre
 6. Skriv en kort beskrivelse nederst til venstre og trykk **«Commit to main»**
-7. Trykk **«Push origin»** øverst — ferdig, Netlify oppdaterer siden automatisk
+7. Trykk **«Push origin»** øverst — ferdig, Cloudflare Pages oppdaterer siden automatisk
 
 **Se siden lokalt før du pusher:**
 
@@ -117,7 +117,7 @@ Merch-produkter styres via filen `merch-products.js` — **ikke** direkte i `mer
 
 #### Enklest: bruk admin-panelet (`merch-admin.html`)
 
-Åpne `merch-admin.html` i nettleseren (lokalt eller på nettsiden). Dette gjør du ved å legge til `/merch-admin.html` på slutten av nettadressen (https://apeironlf.netlify.app/merch-admin.html).
+Åpne `merch-admin.html` i nettleseren (lokalt eller på nettsiden). Dette gjør du ved å legge til `/merch-admin.html` på slutten av nettadressen (https://apeironlf.pages.dev/merch-admin.html).
 Du logger inn med passordet — spør sosialansvarlig eller sjekk med styret.
 
 I admin-panelet kan du:
@@ -227,18 +227,18 @@ Finn riktig seksjon ved hjelp av kommentarene: `<!-- ============ OM OSS =======
 | `tweaks.jsx` / `tweaks-panel.jsx` | Internt design-/utviklingsverktøy — ikke en del av selve nettsiden |
 | `assets/merch/`                   | Bilder for merch-produkter (alternativ til base64)                 |
 | `assets/`                         | Logo og andre bilder                                               |
-| `netlify.toml`                    | Netlify-konfigurasjon (trenger normalt ikke røres)                 |
+| `_headers`                        | Cloudflare Pages — HTTP-sikkerhetsheadere                          |
 
 ---
 
-## Første gangs oppsett (om noe skulle skje hos Netlify)
+## Første gangs oppsett (om noe skulle skje hos Cloudflare)
 
-Hvis repoet ikke er koblet til Netlify, eller om man ønsker å bytte Netlify bruker:
+Hvis repoet ikke er koblet til Cloudflare Pages, eller om man ønsker å bytte Cloudflare-bruker:
 
 1. Last opp filene til et GitHub-repo
-2. Gå til [app.netlify.com](https://app.netlify.com) → «Add new site» → «Import an existing project» → velg repoet
-3. La «Publish directory» stå som `.` (allerede satt i `netlify.toml`). Ingen build-kommando trengs.
-4. Trykk «Deploy» — fra nå av skjer alt automatisk
+2. Gå til [dash.cloudflare.com](https://dash.cloudflare.com) → «Workers & Pages» → «Create» → «Pages» → «Connect to Git» → velg repoet
+3. Sett «Framework preset» til «None» og la «Build command» stå tom. «Build output directory» settes til `/`.
+4. Trykk «Save and Deploy» — fra nå av skjer alt automatisk
 ---
 ## To do
 - [ ] Snakke med IFR/NTNU om API for automatisk oppdatering av Emner for studiene

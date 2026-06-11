@@ -5,5 +5,5 @@
 .vscode/
 .idea/
 
-# Netlify
-.netlify/
+# Claude Code
+.claude/
