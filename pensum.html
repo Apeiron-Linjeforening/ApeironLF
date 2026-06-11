@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pensum — Apeiron · NTNU</title>
+<link rel="icon" href="assets/apeiron-logo.png" type="image/png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<style>
+/* ── Subpage header ── */
+.subhero {
+  background:
+    radial-gradient(100% 80% at 90% 0%, rgba(212,175,55,.12), transparent 55%),
+    radial-gradient(70% 60% at 5% 100%, rgba(118,17,15,.28), transparent 60%),
+    var(--navy);
+  color: var(--paper);
+  padding: 148px 0 72px;
+  position: relative;
+  overflow: hidden;
+}
+.subhero__seal {
+  position: absolute; right: -4%; top: 50%; transform: translateY(-50%);
+  width: min(44vw, 540px); opacity: .09; pointer-events: none;
+  filter: drop-shadow(0 0 1px rgba(212,175,55,.4));
+}
+.subhero__inner { position: relative; max-width: var(--maxw); margin: 0 auto; padding: 0 28px; }
+.subhero h1 {
+  color: var(--paper);
+  font-size: clamp(3rem, 8vw, 6.5rem);
+  line-height: .95; letter-spacing: .01em; margin: .22em 0 .35em;
+}
+.subhero__lede { font-size: 1.18rem; color: rgba(244,236,217,.8); max-width: 52ch; line-height: 1.65; }
+.subhero__meta {
+  list-style: none; display: flex; flex-wrap: wrap; align-items: center;
+  gap: 10px 22px; margin-top: 30px;
+}
+.subhero__meta li {
+  position: relative; font-size: .82rem; letter-spacing: .04em;
+  color: rgba(244,236,217,.72); padding-right: 22px; white-space: nowrap;
+}
+.subhero__meta li:not(:last-child)::after {
+  content: ""; position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+  width: 1px; height: 13px; background: rgba(212,175,55,.4);
+}
+.subhero__meta b {
+  font-family: var(--display); font-style: italic; font-weight: 600;
+  font-size: 1.05rem; color: var(--gold); margin-right: .15em;
+}
+.subhero__back {
+  display: inline-flex; align-items: center; gap: .5em;
+  font-size: .82rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--gold); opacity: .85; margin-bottom: 1.6em;
+  transition: opacity .2s;
+}
+.subhero__back:hover { opacity: 1; }
+.subhero__back::before { content: "←"; }
+
+/* ── Tab filter bar ── */
+.ps-tabs {
+  display: flex; gap: 0; border: 1px solid rgba(35,39,64,.26);
+  border-radius: 3px; overflow: hidden; flex-wrap: wrap;
+}
+.ps-tab {
+  font-family: var(--body); font-size: .88rem; font-weight: 600; letter-spacing: .04em;
+  padding: .68em 1.3em; background: transparent; color: var(--ink-soft);
+  border: 0; border-right: 1px solid rgba(35,39,64,.18); cursor: pointer;
+  transition: background .2s, color .2s;
+}
+.ps-tab:last-child { border-right: 0; }
+.ps-tab:hover { color: var(--navy); }
+.ps-tab.is-active { background: var(--navy); color: var(--paper); }
+.ps-toolbar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap; margin-bottom: 14px;
+}
+
+/* ── Search ── */
+.ps-search {
+  display: inline-flex; align-items: center; gap: .55em;
+  background: var(--paper); border: 1px solid rgba(35,39,64,.26);
+  border-radius: 3px; padding: 0 .7em; min-width: 280px;
+  transition: border-color .2s, box-shadow .2s;
+}
+.ps-search:focus-within {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(212,175,55,.16);
+}
+.ps-search svg { width: 16px; height: 16px; color: var(--ink-soft); flex-shrink: 0; }
+.ps-search input {
+  flex: 1; border: 0; background: none; outline: none;
+  font-family: var(--body); font-size: .92rem; color: var(--ink);
+  padding: .62em 0;
+}
+.ps-search input::placeholder { color: var(--ink-soft); opacity: .7; }
+.ps-search__clear {
+  border: 0; background: none; cursor: pointer; color: var(--ink-soft);
+  font-size: 1.2rem; line-height: 1; padding: 0 .1em; opacity: 0;
+  pointer-events: none; transition: opacity .15s, color .15s;
+}
+.ps-search.has-value .ps-search__clear { opacity: .7; pointer-events: auto; }
+.ps-search__clear:hover { color: var(--maroon); opacity: 1; }
+
+/* ── Sub-bar: count + expand all ── */
+.ps-subbar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 14px; flex-wrap: wrap; margin-bottom: 30px;
+  padding-bottom: 14px; border-bottom: 1px solid rgba(35,39,64,.14);
+}
+.ps-count {
+  font-size: .84rem; font-style: italic; color: var(--ink-soft);
+}
+.ps-count mark { background: none; color: var(--maroon); font-style: normal; font-weight: 600; }
+.ps-expand-all {
+  font-family: var(--body); font-size: .76rem; font-weight: 600;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--accent-ink); background: none; border: 0; cursor: pointer;
+  display: inline-flex; align-items: center; gap: .5em; padding: .2em 0;
+  border-bottom: 1px solid transparent; transition: border-color .2s, color .2s;
+}
+.ps-expand-all:hover { color: var(--maroon); border-bottom-color: currentColor; }
+.ps-expand-all::after { content: "▾"; font-size: .8em; transition: transform .25s; }
+.ps-expand-all.is-all-open::after { transform: rotate(180deg); }
+
+/* ── No results ── */
+.ps-noresults {
+  display: none; text-align: center; padding: 60px 20px 40px;
+}
+.ps-noresults.is-shown { display: block; }
+.ps-noresults__glyph {
+  font-family: var(--display); font-size: 3.4rem; color: var(--gold-ink);
+  opacity: .55; line-height: 1; margin-bottom: .25em;
+}
+.ps-noresults p { color: var(--ink-soft); font-size: 1.02rem; }
+.ps-noresults button {
+  margin-top: 1em; font-family: var(--body); font-size: .9rem; font-weight: 600;
+  color: var(--maroon); background: none; border: 0; cursor: pointer;
+  border-bottom: 1px solid currentColor; padding: 0 0 1px;
+}
+
+/* mark/highlight inside results */
+.ps-course__name mark, .ps-book__title mark, .ps-book__author mark, .ps-course__code mark {
+  background: rgba(212,175,55,.32); color: inherit; border-radius: 1px; padding: 0 .05em;
+}
+
+/* ── Course cards (accordion) ── */
+.ps-grid { display: flex; flex-direction: column; gap: 0; }
+
+.ps-course {
+  border-top: 1px solid rgba(35,39,64,.14);
+  transition: opacity .3s ease;
+}
+.ps-course:last-child { border-bottom: 1px solid rgba(35,39,64,.14); }
+.ps-course.hidden { display: none; }
+
+.ps-course__toggle {
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto auto 1fr auto auto;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 6px;
+  background: none; border: none; cursor: pointer;
+  text-align: left; color: inherit;
+  transition: background .15s;
+  border-radius: 3px;
+}
+.ps-course__toggle:hover { background: rgba(35,39,64,.03); }
+.ps-course__toggle:hover .ps-course__name { color: var(--maroon); }
+.ps-course.is-open > .ps-course__toggle { background: rgba(35,39,64,.03); }
+
+.ps-course__badges { display: flex; gap: 6px; flex-shrink: 0; }
+.ps-badge {
+  font-size: .62rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase;
+  color: var(--paper); background: var(--maroon); border-radius: 2px; padding: .3em .7em;
+}
+.ps-badge--fil { background: var(--navy); }
+.ps-badge--etikk { background: var(--maroon); }
+.ps-badge--felles { background: var(--gold-ink); }
+.ps-badge--master { background: #3d2b6e; }
+
+.ps-course__code {
+  font-family: var(--body); font-size: .72rem; letter-spacing: .12em; font-weight: 600;
+  color: var(--accent-ink); text-transform: uppercase; white-space: nowrap; flex-shrink: 0;
+}
+.ps-course__name {
+  font-family: var(--display); font-size: 1.06rem; font-weight: 600;
+  color: var(--navy); line-height: 1.2; transition: color .18s;
+}
+.ps-semester {
+  font-size: .7rem; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--ink-soft); white-space: nowrap;
+}
+.ps-course__arrow {
+  color: var(--ink-soft); transition: transform .25s ease;
+  font-size: .9rem; line-height: 1; flex-shrink: 0;
+}
+.ps-course.is-open .ps-course__arrow { transform: rotate(180deg); }
+
+.ps-course__body {
+  max-height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  transition: max-height .38s ease, visibility 0s linear .38s;
+}
+.ps-course.is-open .ps-course__body {
+  max-height: 1400px;
+  visibility: visible;
+  transition: max-height .38s ease, visibility 0s;
+}
+
+.ps-course__body-inner {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 40px;
+  align-items: start;
+  padding: 4px 6px 28px;
+}
+.ps-course__desc {
+  font-size: .93rem; color: var(--ink-soft); line-height: 1.6; margin-bottom: .6em;
+}
+
+/* ── Book list ── */
+.ps-books { list-style: none; display: flex; flex-direction: column; gap: 0; }
+.ps-books__lbl {
+  font-size: .68rem; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+  color: var(--accent-ink); margin-bottom: 14px; display: block;
+}
+.ps-book {
+  display: grid;
+  grid-template-columns: 2em 1fr;
+  gap: .5em 1em;
+  align-items: baseline;
+  padding: 14px 0;
+  border-top: 1px solid rgba(35,39,64,.1);
+}
+.ps-book:first-of-type { border-top: 0; padding-top: 0; }
+.ps-book__num {
+  font-family: var(--display); font-style: italic; font-size: 1.1rem;
+  color: var(--gold-ink); text-align: right; padding-top: .1em;
+}
+.ps-book__title {
+  font-family: var(--display); font-size: 1.18rem; font-weight: 600;
+  color: var(--navy); line-height: 1.2; font-style: italic;
+}
+.ps-book__author {
+  display: block; font-size: .88rem; color: var(--ink-soft); margin-top: .22em;
+}
+.ps-book__detail {
+  display: block; font-size: .78rem; color: var(--ink-soft); opacity: .75;
+  letter-spacing: .03em; margin-top: .15em;
+}
+.ps-book--placeholder .ps-book__title { opacity: .45; font-style: normal; }
+.ps-book--placeholder .ps-book__author { opacity: .35; }
+
+/* ── Empty / contribute state ── */
+.ps-empty {
+  display: grid; gap: .3em;
+  border: 1px dashed rgba(35,39,64,.3);
+  border-radius: 4px;
+  padding: 18px 20px;
+  background: rgba(35,39,64,.025);
+  max-width: 46ch;
+}
+.ps-empty b {
+  font-family: var(--body); font-weight: 600; font-size: .78rem;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--accent-ink);
+}
+.ps-empty span { font-size: .92rem; color: var(--ink-soft); line-height: 1.55; }
+.ps-empty a { color: var(--maroon); text-decoration: underline; text-underline-offset: 2px; }
+.ps-empty a:hover { color: var(--gold-ink); }
+
+.ps-note {
+  display: inline-flex; align-items: center; gap: .6em; margin-top: 18px;
+  font-size: .8rem; color: var(--ink-soft); font-style: italic; opacity: .8;
+}
+.ps-note::before { content: "⚠"; font-style: normal; }
+
+.ps-ntnu-link {
+  display: inline-flex; align-items: center; gap: .35em;
+  font-size: .76rem; font-weight: 600; letter-spacing: .06em;
+  color: var(--accent-ink); text-decoration: none;
+  margin-top: .7em; border-bottom: 1px solid currentColor;
+  opacity: .65; transition: opacity .2s;
+}
+.ps-ntnu-link:hover { opacity: 1; }
+
+.ps-section-divider {
+  padding: 52px 0 18px;
+  display: flex; align-items: center; gap: 18px;
+}
+.ps-section-divider h2 {
+  font-size: 1rem; font-weight: 700; letter-spacing: .24em; text-transform: uppercase;
+  color: var(--accent-ink); white-space: nowrap;
+}
+.ps-section-divider::after {
+  content: ""; flex: 1; height: 1px; background: var(--accent-ink); opacity: .35;
+}
+
+/* ── Kjøp & bytte teaser ── */
+.marked-teaser {
+  background: var(--navy); color: var(--paper);
+  border-radius: 6px; padding: 54px 52px;
+  display: grid; grid-template-columns: 1fr auto;
+  gap: 32px; align-items: center;
+  position: relative; overflow: hidden; margin-top: 80px;
+}
+.marked-teaser::before {
+  content: "⇄"; position: absolute; right: 52px; top: 50%; transform: translateY(-50%);
+  font-size: 14rem; color: rgba(212,175,55,.06); pointer-events: none; line-height: 1;
+}
+.marked-teaser__tag {
+  display: inline-flex; align-items: center; gap: .6em;
+  font-size: .7rem; font-weight: 700; letter-spacing: .28em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 1em;
+}
+.marked-teaser__tag::before { content: ""; width: 24px; height: 1px; background: var(--gold); }
+.marked-teaser h2 { color: var(--paper); font-size: clamp(1.8rem, 3vw, 2.6rem); margin-bottom: .45em; }
+.marked-teaser p { color: rgba(244,236,217,.78); font-size: 1.04rem; max-width: 48ch; line-height: 1.6; }
+.marked-teaser__cta { flex-shrink: 0; }
+
+/* ── Responsive ── */
+@media (max-width: 860px) {
+  .ps-course__body-inner { grid-template-columns: 1fr; gap: 18px; }
+  .ps-course__toggle { grid-template-columns: auto 1fr auto auto; gap: 10px; }
+  .ps-course__code { display: none; }
+  .marked-teaser { grid-template-columns: 1fr; }
+  .marked-teaser::before { display: none; }
+}
+@media (max-width: 600px) {
+  .ps-tabs { width: 100%; }
+  .ps-tab { flex: 1; text-align: center; font-size: .8rem; padding: .65em .7em; }
+  .ps-course__toggle { padding: 12px 4px; gap: 8px; }
+  .ps-search { width: 100%; min-width: 0; }
+}
+</style>
+</head>
+<body data-mode="paper">
+
+<!-- ============ NAV ============ -->
+<header class="nav" id="nav">
+  <a class="nav__brand" href="index.html">
+    <img src="assets/apeiron-logo.png" alt="Apeiron segl" />
+    <span>
+      <span class="nm">APEIRON</span>
+      <span class="sub">Filosofi &amp; Etikk · NTNU</span>
+    </span>
+  </a>
+  <nav class="nav__links">
+    <a href="index.html#om">Om oss</a>
+    <div class="nav__dropdown">
+      <button class="nav__drop-trigger nav__drop-trigger--active" type="button">Pensum <span class="nav__caret">▾</span></button>
+      <div class="nav__drop-menu">
+        <a href="index.html#studiet">Studiene</a>
+        <a href="pensum.html" class="is-active">Pensum</a>
+      </div>
+    </div>
+    <div class="nav__dropdown">
+      <button class="nav__drop-trigger" type="button">Arrangementer <span class="nav__caret">▾</span></button>
+      <div class="nav__drop-menu">
+        <a href="index.html#arrangementer">Arrangementer</a>
+        <a href="index.html#aporetisk">Aporetisk Aften</a>
+        <a href="index.html#fadderuke">Fadderuke</a>
+      </div>
+    </div>
+    <div class="nav__dropdown">
+      <button class="nav__drop-trigger" type="button">Styret <span class="nav__caret">▾</span></button>
+      <div class="nav__drop-menu">
+        <a href="index.html#styret">Styret</a>
+        <a href="index.html#sak">S.A.K</a>
+      </div>
+    </div>
+    <a href="merch.html">Merch</a>
+    <a href="index.html#kontakt">Kontakt</a>
+    <a class="btn btn--gold nav__cta" href="index.html#bli-medlem">Bli medlem <span class="arr">→</span></a>
+  </nav>
+  <button class="nav__search-btn" type="button" aria-label="Søk på nettstedet">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+    <span class="nav__search-hint">⌘K</span>
+  </button>
+  <button class="nav__burger" id="burger" aria-label="Meny">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<div class="drawer" id="drawer">
+  <button class="drawer__search-row nav__search-btn" type="button" aria-label="Søk på nettstedet">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+    Søk på nettstedet
+  </button>
+  <a href="index.html#om">Om oss</a>
+  <a href="index.html#studiet">Studiene</a>
+  <a href="pensum.html">Pensum</a>
+  <a href="index.html#arrangementer">Arrangementer</a>
+  <a href="index.html#styret">Styret</a>
+  <a href="index.html#sak">S.A.K</a>
+  <a href="merch.html">Merch</a>
+  <a href="index.html#kontakt">Kontakt</a>
+  <a href="index.html#bli-medlem">Bli medlem</a>
+</div>
+
+<!-- ============ SUBPAGE HEADER ============ -->
+<section class="subhero">
+  <img class="subhero__seal" src="assets/apeiron-logo.png" alt="" aria-hidden="true" />
+  <div class="subhero__inner">
+    <a class="subhero__back" href="index.html#studiet">Tilbake til studiet</a>
+    <span class="eyebrow hero__eyebrow">Studieressurser · NTNU</span>
+    <h1>Pensum</h1>
+    <p class="subhero__lede">Her finner du pensumlister for alle emner på filosofi og etikk. Listen oppdateres av styret hvert semester — meld fra om noe mangler eller er utdatert.</p>
+    <ul class="subhero__meta">
+      <li><b>15</b> emner</li>
+      <li>Filosofi · Etikk · Master</li>
+      <li>Sist oppdatert <b>V2026</b></li>
+    </ul>
+  </div>
+</section>
+
+<!-- frieze -->
+<div class="frieze" aria-hidden="true">
+  <div class="frieze__track">
+    <span>ΑΠΕΙΡΟΝ <i>✦</i> det uendelige <i>✦</i> ΦΙΛΟΣΟΦΙΑ <i>✦</i> visdomskjærlighet <i>✦</i> ΗΘΙΚΗ <i>✦</i> det gode liv <i>✦</i> ΛΟΓΟΣ <i>✦</i> fornuft &amp; tale <i>✦</i> </span>
+    <span>ΑΠΕΙΡΟΝ <i>✦</i> det uendelige <i>✦</i> ΦΙΛΟΣΟΦΙΑ <i>✦</i> visdomskjærlighet <i>✦</i> ΗΘΙΚΗ <i>✦</i> det gode liv <i>✦</i> ΛΟΓΟΣ <i>✦</i> fornuft &amp; tale <i>✦</i> </span>
+  </div>
+</div>
+
+<!-- ============ PENSUM-INNHOLD ============ -->
+<section class="section studier" id="pensum">
+  <div class="wrap">
+
+    <div class="ps-toolbar reveal">
+      <div class="ps-tabs" role="tablist" aria-label="Filtrer etter studieretning">
+        <button class="ps-tab is-active" data-filter="alle" type="button">Alle emner</button>
+        <button class="ps-tab" data-filter="felles" type="button">Felles</button>
+        <button class="ps-tab" data-filter="filosofi" type="button">Filosofi</button>
+        <button class="ps-tab" data-filter="etikk" type="button">Etikk</button>
+        <button class="ps-tab" data-filter="master" type="button">Master</button>
+      </div>
+      <div class="ps-search" id="psSearch">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.5" y2="16.5"></line></svg>
+        <input type="search" id="psSearchInput" placeholder="Søk emne, kode eller bok…" aria-label="Søk i pensum" autocomplete="off" />
+        <button class="ps-search__clear" id="psSearchClear" type="button" aria-label="Tøm søk">×</button>
+      </div>
+    </div>
+    <div class="ps-subbar reveal">
+      <span class="ps-count" id="psCount"></span>
+      <button class="ps-expand-all" id="psExpandAll" type="button">Utvid alle</button>
+    </div>
+
+    <div class="ps-grid" id="psGrid">
+
+      <!-- ─── Felles for begge retninger ─── -->
+      <div class="ps-section-divider reveal" data-section="felles">
+        <h2>Felles for begge retninger</h2>
+      </div>
+
+      <article class="ps-course reveal" data-level="felles">
+        <button class="ps-course__toggle" type="button" aria-expanded="false">
+          <div class="ps-course__badges"><span class="ps-badge ps-badge--felles">Felles</span></div>
+          <span class="ps-course__code">FI1001</span>
+          <span class="ps-course__name">Filosofiens og etikkens historie</span>
+          <span class="ps-semester">1. sem. · 15 sp</span>
+          <span class="ps-course__arrow" aria-hidden="true">▾</span>
+        </button>
+        <div class="ps-course__body">
+          <div class="ps-course__body-inner">
+            <div>
+              <p class="ps-course__desc">Virkelighet, kunnskap, etikk — filosofiens grunnspørsmål fra antikken til i dag. Felles for begge studieretninger.</p>
+              <a class="ps-ntnu-link" href="https://www.ntnu.no/studier/emner/FI1001" target="_blank" rel="noopener">Se emne på ntnu.no →</a>
+            </div>
+            <div>
+              <span class="ps-books__lbl">Pensumliste</span>
+              <ul class="ps-books">
+                <li class="ps-book">
+                  <span class="ps-book__num">1</span>
+                  <div class="ps-book__info">
+                    <span class="ps-book__title">Staten (Politeia)</span>
+                    <span class="ps-book__author">Platon</span>
+                    <span class="ps-book__detail">Utvalgte bøker · norsk oversettelse</span>
+                  </div>
+                </li>
+                <li class="ps-book">
+                  <span class="ps-book__num">2</span>
+                  <div class="ps-book__info">
+                    <span class="ps-book__title">Meditasjoner over filosofiens grunnlag</span>
+                    <span class="ps-book__author">Descartes, R.</span>
+                    <span class="ps-book__detail">Meditasjoner 1–6</span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="ps-course reveal d1" data-level="felles">
+        <button class="ps-course__toggle" type="button" aria-expanded="false">
+          <div class="ps-course__badges"><span class="ps-badge ps-badge--felles">Felles</span></div>
+          <span class="ps-course__code">FI1002</span>
+          <span class="ps-course__name">Etikk og politisk filosofi</span>
+          <span class="ps-semester">2. sem. · 7,5 sp</span>
+          <span class="ps-course__arrow" aria-hidden="true">▾</span>
+        </button>
+        <div class="ps-course__body">
+          <div class="ps-course__body-inner">
+            <div>
+              <p class="ps-course__desc">Klassiske og samtidige teorier om moral og politikk. Felles for begge studieretninger.</p>
+              <a class="ps-ntnu-link" href="https://www.ntnu.no/studier/emner/FI1002" target="_blank" rel="noopener">Se emne på ntnu.no →</a>
+            </div>
+            <div>
+              <span class="ps-books__lbl">Pensumliste</span>
+              <ul class="ps-books">
+                <li class="ps-book">
+                  <span class="ps-book__num">1</span>
+                  <div class="ps-book__info">
+                    <span class="ps-book__title">A Theory of Justice (utdrag)</span>
+                    <span class="ps-book__author">Rawls, J.</span>
+                    <span class="ps-book__detail">Del I–II · engelsk</span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="ps-course reveal" data-level="felles">
+        <button class="ps-course__toggle" type="button" aria-expanded="false">
+          <div class="ps-course__badges"><span class="ps-badge ps-badge--felles">Felles</span></div>
+          <span class="ps-course__code">FI1003</span>
+          <span class="ps-course__name">Kunnskaps- og vitenskapsteori</span>
+          <span class="ps-semester">2. sem. · 7,5 sp</span>
+          <span class="ps-course__arrow" aria-hidden="true">▾</span>
+        </button>
+        <div class="ps-course__body">
+          <div class="ps-course__body-inner">
+            <div>
+              <p class="ps-course__desc">Hva er kunnskap, og hva skiller vitenskap fra andre former for innsikt? Felles for begge studieretninger.</p>
+              <a class="ps-ntnu-link" href="https://www.ntnu.no/studier/emner/FI1003" target="_blank" rel="noopener">Se emne på ntnu.no →</a>
+            </div>
+            <div>
+              <span class="ps-books__lbl">Pensumliste</span>
+              <ul class="ps-books">
+                <li class="ps-book">
+                  <span class="ps-book__num">1</span>
+                  <div class="ps-book__info">
+                    <span class="ps-book__title">Vitenskapsteori for nybegynnere</span>
+                    <span class="ps-book__author">Gilje, N. &amp; Grimen, H.</span>
+                    <span class="ps-book__detail">Universitetsforlaget · utvalgte kap.</span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="ps-course reveal d1" data-level="felles">
+        <button class="ps-course__toggle" type="button" aria-expanded="false">
+          <div class="ps-course__badges"><span class="ps-badge ps-badge--felles">Felles</span></div>
+          <span class="ps-course__code">FI2002</span>
+          <span class="ps-course__name">Bacheloroppgave</span>
+          <span class="ps-semester">5./6. sem. · 15 sp</span>
+          <span class="ps-course__arrow" aria-hidden="true">▾</span>
+        </button>
+        <div class="ps-course__body">
+          <div class="ps-course__body-inner">
+            <div>
+              <p class="ps-course__desc">Selvstendig skriftlig arbeid som avslutter bachelorstudiet. Felles emne for begge retninger.</p>
+              <a class="ps-ntnu-link" href="https://www.ntnu.no/studier/emner/FI2002/2025" target="_blank" rel="noopener">Se emne på ntnu.no →</a>
+            </div>
+            <div>
+              <span class="ps-books__lbl">Pensumliste</span>
+              <div class="ps-empty">
+                <b>Eget pensum per student</b>
+                <span>Bacheloroppgaven har individuelt pensum etter valgt tema — satt opp i samråd med veileder.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- ─── Filosofi ─── -->
+      <div class="ps-section-divider reveal" data-section="filosofi">
+        <h2>Filosofi</h2>
+      </div>
+
+      <article class="ps-course reveal" data-level="filosofi">
+        <button class="ps-course__toggle" type="button" aria-expanded="false">
+          <div class="ps-course__badges"><span class="ps-badge ps-badge--fil">Filosofi</span></div>
+          <span class="ps-course__code">EXPH0100</span>
+          <span class="ps-course__name">Examen philosophicum for humaniora</span>
+          <span class="ps-semester">1. sem. · 7,5 sp</span>
+          <span class="ps-course__arrow" aria-hidden="true">▾</span>
+        </button>
+        <div class="ps-course__body">
+          <div class="ps-course__body-inner">
+            <div>
+              <p class="ps-course__desc">Obligatorisk innføringsemne for studenter ved humaniora og estetiske fag.</p>
+              <p class="ps-note">Sjekk med faglærer — pensum varierer noe mellom gruppene</p>
+              <a class="ps-ntnu-link" href="https://www.ntnu.no/studier/emner/EXPH0100" target="_blank" rel="noopener">Se emne på ntnu.no →</a>
+            </div>
+            <div>
+              <span class="ps-books__lbl">Pensumliste</span>
+              <ul class="ps-books">
+                <li class="ps-book">
+                  <span class="ps-book__num">1</span>
+                  <div class="ps-book__info">
+                    <span class="ps-book__title">Filosofihistorie</span>
+                    <span class="ps-book__author">Skirbekk, G. &amp; Gilje, N.</span>
+                    <span class="ps-book__detail">Universitetsforlaget · utvalgte kap.</span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="ps-course reveal d1" data-level="filosofi">
+        <button class="ps-course__toggle" type="button" aria-expanded="false">
+          <div class="ps-course__badges"><span class="ps-badge ps-badge--fil">Filosofi</span></div>
+          <span class="ps-course__code">FI1101</span>
+          <span class="ps-course__name">Samtidens filosofi — en introduksjon</span>
+          <span class="ps-semester">1. sem. · 7,5 sp</span>
+          <span class="ps-course__arrow" aria-hidden="true">▾</span>
+        </button>
+        <div class="ps-course__body">
+          <div class="ps-course__body-inner">
+            <div>
+              <p class="ps-course__desc">1900- og 2000-tallets viktigste retninger: fenomenologi, eksistensialisme, analytisk filosofi og kritisk teori.</p>
+              <a class="ps-ntnu-link" href="https://www.ntnu.no/studier/emner/FI1101" target="_blank" rel="noopener">Se emne på ntnu.no →</a>
+            </div>
+            <div>
+              <span class="ps-books__lbl">Pensumliste</span>
+              <ul class="ps-books">
+                <li class="ps-book">
+                  <span class="ps-book__num">1</span>
+                  <div class="ps-book__info">
+                    <span class="ps-book__title">Being and Time (utdrag)</span>
+                    <span class="ps-book__author">Heidegger, M.</span>
+                    <span class="ps-book__detail">Utvalgte seksjoner · engelsk</span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="ps-course reveal" data-level="filosofi">
+        <button class="ps-course__toggle" type="button" aria-expanded="false">
+          <div class="ps-course__badges"><span class="ps-badge ps-badge--fil">Filosofi</span></div>
+          <span class="ps-course__code">FI1004</span>
+          <span class="ps-course__name">Metafysikk og bevissthetsfilosofi</span>
+          <span class="ps-semester">2. sem. · 7,5 sp</span>
+          <span class="ps-course__arrow" aria-hidden="true">▾</span>
+        </button>
+        <div class="ps-course__body">
+          <div class="ps-course__body-inner">
+            <div>
+              <p class="ps-course__desc">Grunnleggende spørsmål om virkelighet, eksistens og bevissthet.</p>
+              <a class="ps-ntnu-link" href="https://www.ntnu.no/studier/emner/FI1004" target="_blank" rel="noopener">Se emne på ntnu.no →</a>
+            </div>
+            <div>
+              <span class="ps-books__lbl">Pensumliste</span>
+              <div class="ps-empty">
+                <b>Pensumliste kommer</b>
+                <span>Ikke registrert ennå. Sitter du på lista? <a href="index.html#kontakt">Send oss et tips</a> — så legger vi den ut.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="ps-course reveal d1" data-level="filosofi">
+        <button class="ps-course__toggle" type="button" aria-expanded="false">
+          <div class="ps-course__badges"><span class="ps-badge ps-badge--fil">Filosofi</span></div>
+          <span class="ps-course__code">FI1005</span>
+          <span class="ps-course__name">Logikk</span>
+          <span class="ps-semester">2. sem. · 7,5 sp</span>
+          <span class="ps-course__arrow" aria-hidden="true">▾</span>
+        </button>
+        <div class="ps-course__body">
+          <div class="ps-course__body-inner">
+            <div>
+              <p class="ps-course__desc">Innføring i formell logikk og argumentasjonsteori. Grunnlag for presis filosofisk tenkning.</p>
+              <a class="ps-ntnu-link" href="https://www.ntnu.no/studier/emner/FI1005" target="_blank" rel="noopener">Se emne på ntnu.no →</a>
+            </div>
+            <div>
+              <span class="ps-books__lbl">Pensumliste</span>
+              <div class="ps-empty">
+                <b>Pensumliste kommer</b>
+                <span>Ikke registrert ennå. Sitter du på lista? <a href="index.html#kontakt">Send oss et tips</a> — så legger vi den ut.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="ps-course reveal" data-level="filosofi">
+        <button class="ps-course__toggle" type="button" aria-expanded="false">
+          <div class="ps-course__badges"><span class="ps-badge ps-badge--fil">Filosofi</span></div>
+          <span class="ps-course__code">FI2111</span>
+          <span class="ps-course__name">Fordypning 1</span>
+          <span class="ps-semester">3. sem. · 15 sp</span>
+          <span class="ps-course__arrow" aria-hidden="true">▾</span>
+        </button>
+        <div class="ps-course__body">
+          <div class="ps-course__body-inner">
+            <div>
+              <p class="ps-course__desc">Fordypning i valgt tema innen filosofi. Alternativt FI2211 Sosial- og rettsfilosofi.</p>
+              <a class="ps-ntnu-link" href="https://www.ntnu.no/studier/emner/FI2111" target="_blank" rel="noopener">Se emne på ntnu.no →</a>
+            </div>
+            <div>
+              <span class="ps-books__lbl">Pensumliste</span>
+              <div class="ps-empty">
+                <b>Varierer med semester</b>
+                <span>Pensum settes per tilbud — se emnesiden på ntnu.no for aktuelt semester.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- ─── Etikk ─── -->
+      <div class="ps-section-divider reveal" data-section="etikk">
+        <h2>Etikk</h2>
+      </div>
+
+      <article class="ps-course reveal" data-level="etikk">
+        <button class="ps-course__toggle" type="button" aria-expanded="false">
+          <div class="ps-course__badges"><span class="ps-badge ps-badge--etikk">Etikk</span></div>
+          <span class="ps-course__code">EXPH0200</span>
+          <span class="ps-course__name">Examen philosophicum for samfunnsvitenskap</span>
+          <span class="ps-semester">1. sem. · 7,5 sp</span>
+          <span class="ps-course__arrow" aria-hidden="true">▾</span>
+        </button>
+        <div class="ps-course__body">
+          <div class="ps-course__body-inner">
+            <div>
+              <p class="ps-course__desc">Obligatorisk innføringsemne for studenter ved samfunnsvitenskap.</p>
+              <p class="ps-note">Sjekk med faglærer — pensum varierer noe mellom gruppene</p>
+              <a class="ps-ntnu-link" href="https://www.ntnu.no/studier/emner/EXPH0200" target="_blank" rel="noopener">Se emne på ntnu.no →</a>
+            </div>
+            <div>
+              <span class="ps-books__lbl">Pensumliste</span>
+              <div class="ps-empty">
+                <b>Pensumliste kommer</b>
+                <span>Ikke registrert ennå. Sitter du på lista? <a href="index.html#kontakt">Send oss et tips</a> — så legger vi den ut.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="ps-course reveal d1" data-level="etikk">
+        <button class="ps-course__toggle" type="button" aria-expanded="false">
+          <div class="ps-course__badges"><span class="ps-badge ps-badge--etikk">Etikk</span></div>
+          <span class="ps-course__code">FI1210</span>
+          <span class="ps-course__name">Innføring i etikk og metaetikk</span>
+          <span class="ps-semester">1. sem. · 7,5 sp</span>
+          <span class="ps-course__arrow" aria-hidden="true">▾</span>
+        </button>
+        <div class="ps-course__body">
+          <div class="ps-course__body-inner">
+            <div>
+              <p class="ps-course__desc">De klassiske etiske teoriene og metaetikkens grunnspørsmål: dydsetikk, pliktetikk og konsekvensetikk.</p>
+              <a class="ps-ntnu-link" href="https://www.ntnu.no/studier/emner/FI1210" target="_blank" rel="noopener">Se emne på ntnu.no →</a>
+            </div>
+            <div>
+              <span class="ps-books__lbl">Pensumliste</span>
+              <ul class="ps-books">
+                <li class="ps-book">
+                  <span class="ps-book__num">1</span>
+                  <div class="ps-book__info">
+                    <span class="ps-book__title">Den nikomakiske etikk (utdrag)</span>
+                    <span class="ps-book__author">Aristoteles</span>
+                    <span class="ps-book__detail">Bok I, II &amp; X · norsk oversettelse</span>
+                  </div>
+                </li>
+                <li class="ps-book">
+                  <span class="ps-book__num">2</span>
+                  <div class="ps-book__info">
+                    <span class="ps-book__title">Utilitarisme</span>
+                    <span class="ps-book__author">Mill, J.S.</span>
+                    <span class="ps-book__detail">Komplett · norsk oversettelse</span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="ps-course reveal" data-level="etikk">
+        <button class="ps-course__toggle" type="button" aria-expanded="false">
+          <div class="ps-course__badges"><span class="ps-badge ps-badge--etikk">Etikk</span></div>
+          <span class="ps-course__code">FI1211</span>
+          <span class="ps-course__name">Etikkprosjekt og metode</span>
+          <span class="ps-semester">2. sem. · 15 sp</span>
+          <span class="ps-course__arrow" aria-hidden="true">▾</span>
+        </button>
+        <div class="ps-course__body">
+          <div class="ps-course__body-inner">
+            <div>
+              <p class="ps-course__desc">Prosjektbasert fordypning i etisk analyse og metodikk.</p>
+              <a class="ps-ntnu-link" href="https://www.ntnu.no/studier/emner/FI1211" target="_blank" rel="noopener">Se emne på ntnu.no →</a>
+            </div>
+            <div>
+              <span class="ps-books__lbl">Pensumliste</span>
+              <div class="ps-empty">
+                <b>Pensumliste kommer</b>
+                <span>Ikke registrert ennå. Sitter du på lista? <a href="index.html#kontakt">Send oss et tips</a> — så legger vi den ut.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="ps-course reveal d1" data-level="etikk">
+        <button class="ps-course__toggle" type="button" aria-expanded="false">
+          <div class="ps-course__badges"><span class="ps-badge ps-badge--etikk">Etikk</span></div>
+          <span class="ps-course__code">FI2211</span>
+          <span class="ps-course__name">Sosial- og rettsfilosofi</span>
+          <span class="ps-semester">5. sem. · 15 sp</span>
+          <span class="ps-course__arrow" aria-hidden="true">▾</span>
+        </button>
+        <div class="ps-course__body">
+          <div class="ps-course__body-inner">
+            <div>
+              <p class="ps-course__desc">Rettferdighet, makt og rettslige strukturer. Filosofiske perspektiver på samfunnet og dets institusjoner.</p>
+              <a class="ps-ntnu-link" href="https://www.ntnu.no/studier/emner/FI2211" target="_blank" rel="noopener">Se emne på ntnu.no →</a>
+            </div>
+            <div>
+              <span class="ps-books__lbl">Pensumliste</span>
+              <div class="ps-empty">
+                <b>Pensumliste kommer</b>
+                <span>Ikke registrert ennå. Sitter du på lista? <a href="index.html#kontakt">Send oss et tips</a> — så legger vi den ut.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- ─── Master ─── -->
+      <div class="ps-section-divider reveal" data-section="master">
+        <h2>Master</h2>
+      </div>
+
+      <article class="ps-course reveal" data-level="master">
+        <button class="ps-course__toggle" type="button" aria-expanded="false">
+          <div class="ps-course__badges"><span class="ps-badge ps-badge--master">Master</span></div>
+          <span class="ps-course__code">FILOS/ETIKK 3xxx</span>
+          <span class="ps-course__name">Fordypningsemner</span>
+          <span class="ps-semester">1.–3. sem.</span>
+          <span class="ps-course__arrow" aria-hidden="true">▾</span>
+        </button>
+        <div class="ps-course__body">
+          <div class="ps-course__body-inner">
+            <div>
+              <p class="ps-course__desc">Pensum varierer etter valgt fordypning og semesterets tilbud.</p>
+              <a class="ps-ntnu-link" href="https://www.ntnu.no/studier/ressurser/emner" target="_blank" rel="noopener">Finn emner på ntnu.no →</a>
+            </div>
+            <div>
+              <span class="ps-books__lbl">Pensumliste</span>
+              <div class="ps-empty">
+                <b>Avhenger av valgt fordypning</b>
+                <span>Pensum varierer med emnetilbudet hvert semester — se de aktuelle emnesidene på <a href="https://www.ntnu.no" target="_blank" rel="noopener">ntnu.no</a>, eller spør styret.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="ps-course reveal d1" data-level="master">
+        <button class="ps-course__toggle" type="button" aria-expanded="false">
+          <div class="ps-course__badges"><span class="ps-badge ps-badge--master">Master</span></div>
+          <span class="ps-course__code">FILOS/ETIKK 8001</span>
+          <span class="ps-course__name">Vitenskapsteori og metode</span>
+          <span class="ps-semester">Alle sem.</span>
+          <span class="ps-course__arrow" aria-hidden="true">▾</span>
+        </button>
+        <div class="ps-course__body">
+          <div class="ps-course__body-inner">
+            <div>
+              <p class="ps-course__desc">Obligatorisk masterseminar. Vitenskapsteori for humanistiske fag.</p>
+              <a class="ps-ntnu-link" href="https://www.ntnu.no/studier/ressurser/emner" target="_blank" rel="noopener">Finn emner på ntnu.no →</a>
+            </div>
+            <div>
+              <span class="ps-books__lbl">Pensumliste</span>
+              <div class="ps-empty">
+                <b>Pensumliste kommer</b>
+                <span>Ikke registrert ennå. Sitter du på lista? <a href="index.html#kontakt">Send oss et tips</a> — så legger vi den ut.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+    </div><!-- /ps-grid -->
+
+    <div class="ps-noresults" id="psNoresults" aria-live="polite">
+      <div class="ps-noresults__glyph">∅</div>
+      <p>Ingen emner eller bøker matcher søket ditt.</p>
+      <button type="button" id="psNoresultsReset">Nullstill søk</button>
+    </div>
+
+    <!-- ── Kjøp & bytte teaser ── -->
+    <div class="marked-teaser reveal">
+      <div class="marked-teaser__left">
+        <div class="marked-teaser__tag">Kommer snart</div>
+        <h2>Pensum-markedet</h2>
+        <p>Vil du selge eller gi bort pensum til neste kull, eller kjøpe brukte bøker til en rimelig pris? Vi jobber med et marked for kjøp og bytte av pensum.</p>
+      </div>
+      <div class="marked-teaser__cta">
+        <a class="btn btn--ghost-light" href="marked.html">Se hva som kommer <span class="arr">→</span></a>
+      </div>
+    </div>
+
+    <p class="studier__note reveal" style="margin-top:52px;">Pensumlister er ikke offisielle — sjekk alltid emnesidene på Canvas for oppdatert og bindende informasjon. Feil eller mangler? Send oss en mail.</p>
+
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="wrap">
+    <img src="assets/apeiron-logo.png" alt="Apeiron segl" />
+    <div class="footer__name">APEIRON</div>
+    <div class="footer__tag">filosofi &amp; etikk · NTNU Trondheim</div>
+    <div class="footer__links">
+      <a href="index.html#om">Om oss</a>
+      <a href="index.html#studiet">Studiet</a>
+      <a href="pensum.html">Pensum</a>
+      <a href="index.html#arrangementer">Arrangementer</a>
+      <a href="index.html#styret">Styret</a>
+      <a href="index.html#sak">S.A.K</a>
+      <a href="merch.html">Merch</a>
+      <a href="marked.html">Kjøp &amp; bytte</a>
+      <a href="index.html#bli-medlem">Bli medlem</a>
+      <a href="index.html#kontakt">Kontakt</a>
+    </div>
+    <div class="footer__fine">© 2026 Apeiron Linjeforening</div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  // Sticky nav
+  var nav = document.getElementById('nav');
+  function onScroll() {
+    nav.classList.toggle('is-stuck', window.scrollY > 40);
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // Mobile drawer
+  var burger = document.getElementById('burger');
+  var drawer = document.getElementById('drawer');
+  function closeDrawer() { drawer.classList.remove('is-open'); document.body.style.overflow = ''; }
+  if (burger) burger.addEventListener('click', function () {
+    var open = drawer.classList.toggle('is-open');
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+  if (drawer) {
+    drawer.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', closeDrawer); });
+    var dSearchBtn = drawer.querySelector('.drawer__search-row');
+    if (dSearchBtn) dSearchBtn.addEventListener('click', closeDrawer);
+  }
+
+  // Scroll reveal
+  var reveals = Array.prototype.slice.call(document.querySelectorAll('.reveal'));
+  if (!('IntersectionObserver' in window)) {
+    reveals.forEach(function (el) { el.classList.add('in'); });
+  } else {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.1, rootMargin: '0px 0px -6% 0px' });
+    reveals.forEach(function (el) { io.observe(el); });
+  }
+
+  // ── Pensum controller: tabs + search + accordion + expand-all ──
+  var tabs = [].slice.call(document.querySelectorAll('.ps-tab'));
+  var courses = [].slice.call(document.querySelectorAll('.ps-course'));
+  var dividers = [].slice.call(document.querySelectorAll('.ps-section-divider'));
+  var countEl = document.getElementById('psCount');
+  var noResults = document.getElementById('psNoresults');
+  var searchWrap = document.getElementById('psSearch');
+  var searchInput = document.getElementById('psSearchInput');
+  var searchClear = document.getElementById('psSearchClear');
+  var expandAllBtn = document.getElementById('psExpandAll');
+  var noResultsReset = document.getElementById('psNoresultsReset');
+  var activeFilter = 'alle';
+
+  // Cache highlightable nodes (original text) + a searchable blob per course
+  var hlNodes = [];
+  courses.forEach(function (c) {
+    c.querySelectorAll('.ps-course__code, .ps-course__name, .ps-book__title, .ps-book__author').forEach(function (n) {
+      n.dataset.orig = n.textContent;
+      hlNodes.push(n);
+    });
+    c.dataset.search = (c.textContent || '').toLowerCase().replace(/\s+/g, ' ');
+  });
+
+  function esc(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+  function applyHighlight(q) {
+    hlNodes.forEach(function (n) {
+      var orig = n.dataset.orig;
+      if (q && orig.toLowerCase().indexOf(q) !== -1) {
+        n.innerHTML = orig.replace(new RegExp('(' + esc(q) + ')', 'ig'), '<mark>$1</mark>');
+      } else if (n.firstElementChild) {
+        n.textContent = orig;
+      }
+    });
+  }
+
+  function setOpen(c, open) {
+    c.classList.toggle('is-open', open);
+    var t = c.querySelector('.ps-course__toggle');
+    if (t) t.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+
+  function syncExpandLabel() {
+    var visible = courses.filter(function (c) { return !c.classList.contains('hidden'); });
+    var allOpen = visible.length > 0 && visible.every(function (c) { return c.classList.contains('is-open'); });
+    expandAllBtn.classList.toggle('is-all-open', allOpen);
+    expandAllBtn.textContent = allOpen ? 'Lukk alle' : 'Utvid alle';
+  }
+
+  function apply() {
+    var q = searchInput.value.trim().toLowerCase();
+    searchWrap.classList.toggle('has-value', q.length > 0);
+    var shown = 0;
+    courses.forEach(function (c) {
+      var levelOk = activeFilter === 'alle' || c.dataset.level === activeFilter;
+      var match = levelOk && (!q || c.dataset.search.indexOf(q) !== -1);
+      c.classList.toggle('hidden', !match);
+      if (match) {
+        shown++;
+        if (q) setOpen(c, true); // auto-expand so the matched line is visible
+      }
+    });
+    dividers.forEach(function (d) {
+      var any = courses.some(function (c) {
+        return c.dataset.level === d.dataset.section && !c.classList.contains('hidden');
+      });
+      d.classList.toggle('hidden', !any);
+    });
+    applyHighlight(q);
+    noResults.classList.toggle('is-shown', shown === 0);
+    if (shown === 0) {
+      countEl.textContent = 'Ingen treff';
+    } else if (q) {
+      countEl.innerHTML = '<mark>' + shown + '</mark> treff';
+    } else {
+      countEl.textContent = shown + ' emne' + (shown === 1 ? '' : 'r') + ' vises';
+    }
+    syncExpandLabel();
+  }
+
+  function collapseAll() { courses.forEach(function (c) { setOpen(c, false); }); }
+
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      tabs.forEach(function (t) { t.classList.remove('is-active'); });
+      this.classList.add('is-active');
+      activeFilter = this.dataset.filter;
+      apply();
+    });
+  });
+
+  var searchTimer;
+  searchInput.addEventListener('input', function () {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(apply, 110);
+  });
+  searchInput.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') { searchInput.value = ''; collapseAll(); apply(); }
+  });
+  searchClear.addEventListener('click', function () {
+    searchInput.value = ''; collapseAll(); apply(); searchInput.focus();
+  });
+  noResultsReset.addEventListener('click', function () {
+    searchInput.value = '';
+    activeFilter = 'alle';
+    tabs.forEach(function (t) { t.classList.toggle('is-active', t.dataset.filter === 'alle'); });
+    collapseAll(); apply();
+  });
+
+  expandAllBtn.addEventListener('click', function () {
+    var visible = courses.filter(function (c) { return !c.classList.contains('hidden'); });
+    var allOpen = visible.length > 0 && visible.every(function (c) { return c.classList.contains('is-open'); });
+    visible.forEach(function (c) { setOpen(c, !allOpen); });
+    syncExpandLabel();
+  });
+
+  // Individual accordion toggles
+  courses.forEach(function (article) {
+    var toggle = article.querySelector('.ps-course__toggle');
+    if (!toggle) return;
+    toggle.addEventListener('click', function () {
+      setOpen(article, !article.classList.contains('is-open'));
+      syncExpandLabel();
+    });
+  });
+
+  apply();
+})();
+</script>
+<script src="site-search.js"></script>
+</body>
+</html>
