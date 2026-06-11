@@ -213,16 +213,17 @@ Hvis repoet ikke er koblet til Netlify, eller om man ønsker å bytte Netlify br
 4. Trykk «Deploy» — fra nå av skjer alt automatisk
 ---
 ## To do
-- [ ] - Snakke med IFR/NTNU om API for automatisk oppdatering av Emner for studiene
-- [ ] - Legge til informasjon og bilder om Lesesalen
-- [x] - Bildefremvisning av sosiale ting - Sjekke om dette kan gjøres med API eller automatisk med en enkel mappe i Github. Det er lettere for fremtidige styrer å laste opp bilder til en mappe.
+- [ ] Snakke med IFR/NTNU om API for automatisk oppdatering av Emner for studiene
+- [x] Legge til informasjon og bilder om Lesesalen
+- [x] Bildefremvisning av sosiale ting - Sjekke om dette kan gjøres med API eller automatisk med en enkel mappe i Github. Det er lettere for fremtidige styrer å laste opp bilder til en mappe.
 - [ ] Stressteste Galleriet
-- [ ] - Legge til forklaring av vervene i styrene: Leder, nestleder, økonomiansvarlig, sosialansvarlig, PR-Ansvarlig, Faddersjef, Fagansvarlig, Potet, (PTV, ITV), S.A.K, H.I.V.
-- [x] - Å trykke på "Arrangement", "Studiene" eller "Styret" burde ta deg rett til siden, og ikke tvinge brukeren til å velge "Arrangement", "Studiene" eller "Styret" i menyen som dukker opp.
+- [ ] Legge til forklaring av vervene i styrene: Leder, nestleder, økonomiansvarlig, sosialansvarlig, PR-Ansvarlig, Faddersjef, Fagansvarlig, Potet, (PTV, ITV), S.A.K, H.I.V.
+- [x] Å trykke på "Arrangement", "Studiene" eller "Styret" burde ta deg rett til siden, og ikke tvinge brukeren til å velge "Arrangement", "Studiene" eller "Styret" i menyen som dukker opp.
 - [x] Søkefeltet i egne sider (Pensum og Merch) må endres.
 - [ ] Telefon: Menyen er for stor/lang.
 - [ ] Telefon: Søkefeltet er identisk med desktop.
-- [ ] Fikse bedre sikkerhet for API nøkkelen
+- [ ] Fikse bedre sikkerhet for API nøkkelen.
+- [ ] Når man er på "Bli medlem" blir fremdeles "Lesealen" markert i menyen.
 
 ---
 

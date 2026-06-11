@@ -15,7 +15,33 @@
       "Bash(grep -E '\\\\.\\(html|js|css\\)$')",
       "Bash(command -v ffmpeg)",
       "Bash(python3 -c \"import PIL; print\\('PIL:', PIL.__version__\\)\")",
-      "Bash(node -e ' *)"
+      "Bash(node -e ' *)",
+      "Bash(sed -n '/^<style>/,/^<\\\\/style>/p' /home/ibbi/Documents/GitHub/ApeironLF/galleri.html)",
+      "Skill(run)",
+      "Skill(run:*)",
+      "Bash(python3 -m http.server 8765)",
+      "Bash(echo \"PID=$!\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8765/)",
+      "Bash(find /usr /opt /home/ibbi -name \"chromium*\" -o -name \"google-chrome*\" 2>/dev/null | grep -v \".desktop\\\\|.png\\\\|.svg\\\\|locale\" | head -10; echo \"done\")",
+      "Read(//usr/**)",
+      "Bash(/home/ibbi/.cache/ms-playwright/chromium-1181/chrome-linux/chrome --headless --no-sandbox --disable-gpu --screenshot=/tmp/nav-index.png --window-size=1400,300 http://localhost:8765/index.html)",
+      "Bash(echo \"index done: $?\")",
+      "Bash(/home/ibbi/.cache/ms-playwright/chromium-1181/chrome-linux/chrome --headless --no-sandbox --disable-gpu --screenshot=/tmp/nav-pensum.png --window-size=1400,300 http://localhost:8765/pensum.html)",
+      "Bash(echo \"pensum done: $?\")",
+      "Bash(/home/ibbi/.cache/ms-playwright/chromium-1181/chrome-linux/chrome --headless --no-sandbox --disable-gpu --virtual-time-budget=2000 --screenshot=/tmp/nav-merch.png --window-size=1400,300 http://localhost:8765/merch.html)",
+      "Bash(echo \"merch done: $?\")",
+      "Bash(pip install *)",
+      "Bash(python3 -m playwright install chromium)",
+      "Bash(which brave-browser *)",
+      "Read(//opt/**)",
+      "Bash(sed 's/index.html//g; s/href=\"#[a-z]*\"/href=\"#\"/g')",
+      "Bash(sed -n '/<nav class=\"nav__links\">/,/<\\\\/nav>/p' pensum.html)",
+      "Bash(sed 's/index.html//g; s/#[a-z-]*\"/#\"/g')",
+      "Bash(sed -n '/<header class=\"nav\"/,/<\\\\/header>/p' pensum.html)",
+      "Bash(git checkout *)"
+    ],
+    "additionalDirectories": [
+      "/home/ibbi/Documents/GitHub/ApeironLF"
     ]
   }
 }

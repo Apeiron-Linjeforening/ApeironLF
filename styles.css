@@ -155,6 +155,7 @@ h1,h2,h3{ font-family:var(--display); font-weight:600; line-height:1.04; letter-
 .nav__links a{
   font-size:.92rem; font-weight:500; padding:.5em .8em; border-radius:2px;
   color:var(--paper); opacity:.85; transition:opacity .2s, color .2s;
+  white-space:nowrap;
 }
 .nav__links a:hover{ opacity:1; color:var(--gold); }
 .nav__links a.is-active{ opacity:1; color:var(--gold); }
@@ -249,6 +250,19 @@ h1,h2,h3{ font-family:var(--display); font-weight:600; line-height:1.04; letter-
 .about__card h3{ color:var(--gold); font-size:1.7rem; margin-bottom:.4em; }
 .about__card p{ color:rgba(244,236,217,.82); font-size:1.02rem; }
 .about__hourglass{ width:46px; margin-bottom:18px; }
+
+/* Teaser linking to the Fellesskap & samarbeid section */
+.about__teaser{
+  margin-top:22px; padding:30px 32px; border-radius:4px;
+  background:var(--paper-2); border:1px solid rgba(35,39,64,.16);
+  border-left:3px solid var(--gold);
+}
+.about__teaser .eyebrow{ display:block; margin-bottom:.5em; }
+.about__teaser h4{
+  font-family:var(--display); font-size:1.45rem; color:var(--maroon);
+  margin-bottom:.45em; line-height:1.15;
+}
+.about__teaser p{ color:rgba(35,39,64,.78); font-size:1rem; margin-bottom:1.3em; }
 
 /* Stats band */
 .stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:0; border:1px solid rgba(35,39,64,.18); border-radius:4px; overflow:hidden; margin-top:64px; background:var(--paper-2); }
@@ -659,7 +673,7 @@ body[data-mode="marine"] .lesesal__features strong{ color:var(--paper); }
 .lesesal__img-main{ border-radius:5px; overflow:hidden; width:100%; height:320px; background:var(--paper-2); }
 .lesesal__img-main image-slot{ width:100%; height:100%; display:block; }
 .lesesal__marquee-wrap{ overflow:hidden; border-radius:5px; }
-.lesesal__marquee-track{ display:flex; gap:10px; width:max-content; animation:lesesal-marquee 18s linear infinite; }
+.lesesal__marquee-track{ display:flex; gap:10px; width:max-content; animation:lesesal-marquee 35s linear infinite; }
 .lesesal__marquee-wrap:hover .lesesal__marquee-track{ animation-play-state:paused; }
 .lesesal__marquee-track image-slot{ flex:none; display:block; width:200px; height:140px; border-radius:5px; background:var(--paper-2); }
 @keyframes lesesal-marquee{ 0%{ transform:translateX(0); } 100%{ transform:translateX(-50%); } }
@@ -919,11 +933,12 @@ body[data-mode="marine"] .cal-popup__opt:hover{ background:rgba(212,175,55,.1); 
 /* ── Nav dropdowns ── */
 .nav__dropdown{ position:relative; }
 .nav__drop-trigger{
-  display:inline-flex; align-items:center; gap:.3em;
+  display:inline-flex; align-items:center; justify-content:center; gap:.3em;
   font-family:var(--body); font-size:.92rem; font-weight:500;
   padding:.5em .8em; border-radius:2px;
   color:var(--paper); opacity:.85; background:none; border:0; cursor:pointer;
   transition:opacity .2s, color .2s; position:relative;
+  white-space:nowrap;
 }
 .nav__drop-trigger:hover,
 .nav__dropdown:hover .nav__drop-trigger,

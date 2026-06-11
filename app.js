@@ -22,18 +22,20 @@
     return { link: a, section: document.getElementById(id) };
   }).filter(function (m) { return m.section; });
 
+  var allSections = Array.prototype.slice.call(document.querySelectorAll('section[id]'));
+
   function onSpy() {
-    var pos = window.scrollY + 140; // account for sticky nav height
-    var current = null;
-    spyMap.forEach(function (m) {
-      if (m.section.offsetTop <= pos) current = m;
+    var pos = window.scrollY + window.innerHeight / 2; // section at viewport center wins
+    var activeId = null;
+    allSections.forEach(function (el) {
+      if (el.offsetTop <= pos) activeId = el.id;
     });
     // near the very bottom, force-activate the last section
     if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 4) {
-      current = spyMap[spyMap.length - 1];
+      activeId = allSections[allSections.length - 1].id;
     }
     spyMap.forEach(function (m) {
-      m.link.classList.toggle('is-active', m === current);
+      m.link.classList.toggle('is-active', m.section.id === activeId);
     });
   }
   if (spyMap.length) {
@@ -84,7 +86,7 @@
 
   if (hasDropSections) {
     var updateDropTriggers = function () {
-      var pos = window.scrollY + 140;
+      var pos = window.scrollY + window.innerHeight / 2;
 
       // Find the last section (including non-nav ones) whose top is above the fold
       var globalSection = null;

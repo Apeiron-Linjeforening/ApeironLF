@@ -357,7 +357,7 @@
   <nav class="nav__links">
     <a href="index.html#om">Om oss</a>
     <div class="nav__dropdown">
-      <a class="nav__drop-trigger nav__drop-trigger--active" href="index.html#studiet">Pensum <span class="nav__caret">▾</span></a>
+      <a class="nav__drop-trigger nav__drop-trigger--active" href="index.html#studiet">Studiene <span class="nav__caret">▾</span></a>
       <div class="nav__drop-menu">
         <a href="index.html#studiet">Studiene</a>
         <a href="pensum.html" class="is-active">Pensum</a>
@@ -378,6 +378,7 @@
         <a href="index.html#sak">S.A.K</a>
       </div>
     </div>
+    <a href="index.html#lesesalen">Lesesalen</a>
     <a href="galleri.html">Galleri</a>
     <a href="merch.html">Merch</a>
     <a href="index.html#kontakt">Kontakt</a>
@@ -401,10 +402,14 @@
   <a href="index.html#studiet">Studiene</a>
   <a href="pensum.html">Pensum</a>
   <a href="index.html#arrangementer">Arrangementer</a>
+  <a href="index.html#aporetisk">Aporetisk Aften</a>
+  <a href="index.html#fadderuke">Fadderuke</a>
   <a href="index.html#styret">Styret</a>
   <a href="index.html#sak">S.A.K</a>
+  <a href="index.html#lesesalen">Lesesalen</a>
   <a href="galleri.html">Galleri</a>
   <a href="merch.html">Merch</a>
+  <a href="marked.html">Kjøp &amp; bytte</a>
   <a href="index.html#kontakt">Kontakt</a>
   <a href="index.html#bli-medlem">Bli medlem</a>
 </div>
@@ -959,7 +964,7 @@
   // Sticky nav
   var nav = document.getElementById('nav');
   function onScroll() {
-    nav.classList.toggle('is-stuck', window.scrollY > 40);
+    nav.classList.add('is-stuck');
   }
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();

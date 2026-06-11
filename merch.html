@@ -238,6 +238,7 @@
         <a href="index.html#sak">S.A.K</a>
       </div>
     </div>
+    <a href="index.html#lesesalen">Lesesalen</a>
     <a href="galleri.html">Galleri</a>
     <a href="merch.html" class="is-active">Merch</a>
     <a href="index.html#kontakt">Kontakt</a>
@@ -261,10 +262,14 @@
   <a href="index.html#studiet">Studiene</a>
   <a href="pensum.html">Pensum</a>
   <a href="index.html#arrangementer">Arrangementer</a>
+  <a href="index.html#aporetisk">Aporetisk Aften</a>
+  <a href="index.html#fadderuke">Fadderuke</a>
   <a href="index.html#styret">Styret</a>
   <a href="index.html#sak">S.A.K</a>
+  <a href="index.html#lesesalen">Lesesalen</a>
   <a href="galleri.html">Galleri</a>
-  <a href="merch.html">Merch</a>
+  <a href="merch.html" class="is-active">Merch</a>
+  <a href="marked.html">Kjøp &amp; bytte</a>
   <a href="index.html#kontakt">Kontakt</a>
   <a href="index.html#bli-medlem">Bli medlem</a>
 </div>
@@ -364,7 +369,7 @@
 <script>
 (function () {
   var nav = document.getElementById('nav');
-  function onScroll() { nav.classList.toggle('is-stuck', window.scrollY > 40); }
+  function onScroll() { nav.classList.add('is-stuck'); }
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
