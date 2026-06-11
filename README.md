@@ -1,4 +1,4 @@
-# Apeiron Linjeforening — nettside
+# Apeiron Linjeforenings Nettside
 
 Nettsiden for Apeiron, linjeforeningen for filosofi og etikk ved NTNU.
 Statisk nettside (HTML/CSS/JS). Ingen byggesteg, ingen avhengigheter å installere.
@@ -16,11 +16,11 @@ Nettsiden er koblet opp slik:
 Du redigerer en fil  →  pusher til GitHub  →  Cloudflare Pages oppdaterer siden automatisk
 ```
 
-Du trenger altså **ikke** å gjøre noe på Cloudflare manuelt — det skjer av seg selv når du lagrer endringer til GitHub-repoet. Vanligvis tar det under ett minutt fra du pusher til siden er live.
+Du trenger altså **ikke** å gjøre noe på Cloudflare manuelt. Det skjer av seg selv når du lagrer endringer til GitHub-repoet. Vanligvis tar det under ett minutt fra du pusher til siden er live.
 
 ### Endre en fil og publisere (steg for steg)
 
-**Alternativ A — direkte på GitHub.com (enklest, ingen installasjon):**
+**Alternativ A: direkte på GitHub.com (enklest, ingen installasjon):**
 
 1. Gå til repoet på [github.com](https://github.com)
 2. Klikk på filen du vil endre (f.eks. `index.html`)
@@ -29,7 +29,7 @@ Du trenger altså **ikke** å gjøre noe på Cloudflare manuelt — det skjer av
 5. Rull ned og trykk **«Commit changes»**
 6. Ferdig! Cloudflare Pages plukker opp endringen og oppdaterer siden automatisk
 
-**Alternativ B — lokalt på PC (for større endringer):**
+**Alternativ B: lokalt på PC (for større endringer):**
 
 ```bash
 # Last ned siste versjon
