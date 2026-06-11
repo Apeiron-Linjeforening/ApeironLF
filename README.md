@@ -3,6 +3,8 @@
 Nettsiden for Apeiron, linjeforeningen for filosofi og etikk ved NTNU.
 Statisk nettside (HTML/CSS/JS) — ingen byggesteg, ingen avhengigheter å installere.
 
+# OBS!: Nettsiden er under oppbygging. Det som står på siden burde tas kun som plassholdere!
+
 ---
 
 ## Slik fungerer publisering (Netlify + GitHub)
