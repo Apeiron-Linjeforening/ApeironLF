@@ -58,6 +58,14 @@
     { t: 'Tote-bag', d: 'Naturbeige canvas-bag med trykt segl og ΦΙΛΟΣΟΦΙΑ · 200,– (180,– for medlemmer)', u: 'merch.html#butikk', g: 'Merch' },
     { t: 'Filosofkrus', d: 'Hvit keramikk med Γνῶθι σεαυτόν (kjenn deg selv) og seglet. 350 ml · 180,– (160,– for medlemmer)', u: 'merch.html#butikk', g: 'Merch' },
     { t: 'Pensum-markedet', d: 'Kjøp og bytte av brukt pensum — kommer snart.', u: 'marked.html', g: 'Merch' },
+    /* Begrep */
+    { t: 'Begrep', d: 'Studentdrevet filosofisk tidsskrift ved NTNU. Utgaver, podkast, film og mer.', u: 'begrep.html', g: 'Begrep' },
+    { t: 'Begrep Podcast', d: 'Samtaler med forfatterne bak artiklene i Begrep tidsskrift. Sesong 1.', u: 'begrep.html#podkast', g: 'Begrep' },
+    { t: 'Begrepsliggjort', d: 'Filosofiske samtaler med gjester. Sesong 2 av Begrep Podcast.', u: 'begrep.html#podkast', g: 'Begrep' },
+    { t: 'Hilbert Hotell', d: 'Filosofisk advent-fortelling i 24 episoder. Desember 2025.', u: 'begrep.html#julekalender', g: 'Begrep' },
+    { t: 'Bidra i Begrep', d: 'Skriv for tidsskriftet eller bli med i redaksjonen.', u: 'begrep.html#bidra', g: 'Begrep' },
+    /* Om vervene */
+    { t: 'Om vervene — Styret', d: 'Beskrivelse av alle styreverv i Apeiron: Leder, Nestleder, Økonomiansvarlig, Sosialansvarlig, PR-ansvarlig, Faddersjef, Fagansvarlig, Potet, PTV, ITV, S.A.K, H.I.V.', u: 'styret.html', g: 'Styret' },
   ];
 
   /* ── SVG-ikoner per gruppe ── */
@@ -66,8 +74,9 @@
     Styret:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>',
     Pensum:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>',
     Merch:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>',
+    Begrep:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h10M4 18h7"/></svg>',
   };
-  var GROUP_ORDER = ['Startside', 'Styret', 'Pensum', 'Merch'];
+  var GROUP_ORDER = ['Startside', 'Styret', 'Pensum', 'Merch', 'Begrep'];
 
   /* ── Hjelpere ── */
   function reEsc(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }

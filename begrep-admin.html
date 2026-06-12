@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Begrep Admin — Apeiron</title>
+<link rel="icon" href="assets/apeiron-logo.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy: #232740; --gold: #d4af37; --gold-ink: #a07820;
+  --maroon: #76110f; --paper: #f4ecd9; --ink: #1a1d2e;
+  --ink-soft: rgba(26,29,46,.6); --border: rgba(35,39,64,.15);
+  --display: 'Cormorant Garamond', Georgia, serif;
+  --body: 'Spectral', Georgia, serif;
+}
+body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-height: 100vh; }
+
+/* ── Gate ── */
+#gate { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 40px; }
+#gate img { width: 72px; opacity: .85; }
+#gate h1 { font-family: var(--display); font-size: 2rem; color: var(--navy); }
+#gate p { color: var(--ink-soft); font-size: .88rem; }
+.gate-row { display: flex; gap: 8px; }
+#pw-input { padding: 9px 14px; border: 1.5px solid var(--border); border-radius: 4px; font-family: var(--body); font-size: .95rem; background: white; width: 200px; }
+#pw-input:focus { outline: none; border-color: var(--navy); }
+.btn-login { padding: 9px 18px; background: var(--navy); color: var(--paper); border: none; border-radius: 4px; font-family: var(--body); font-size: .95rem; cursor: pointer; }
+.btn-login:hover { background: #1a1d2e; }
+#pw-err { color: var(--maroon); font-size: .82rem; min-height: 1.1em; }
+
+/* ── Admin shell ── */
+#admin { display: none; }
+#admin.on { display: block; }
+.a-header {
+  background: var(--navy); color: var(--paper); padding: 14px 24px;
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 16px rgba(0,0,0,.22);
+}
+.a-header img { width: 32px; opacity: .85; }
+.a-header h1 { font-family: var(--display); font-size: 1.3rem; letter-spacing: .04em; margin-right: auto; }
+.a-header a { color: rgba(244,236,217,.65); font-size: .78rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; text-decoration: none; }
+.a-header a:hover { color: var(--paper); }
+.btn-export { padding: 7px 16px; background: var(--gold); color: var(--navy); border: none; border-radius: 4px; font-family: var(--body); font-size: .82rem; font-weight: 700; cursor: pointer; transition: filter .15s; }
+.btn-export:hover { filter: brightness(1.08); }
+
+.a-main { max-width: 880px; margin: 0 auto; padding: 28px 20px 80px; }
+
+/* ── Instructions ── */
+.tip { background: white; border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: 4px; padding: 16px 20px; margin-bottom: 24px; font-size: .88rem; }
+.tip strong { color: var(--navy); font-size: .95rem; display: block; margin-bottom: 8px; }
+.tip ol { padding-left: 18px; }
+.tip li { margin: 5px 0; color: var(--ink-soft); line-height: 1.55; }
+.tip li b { color: var(--gold-ink); }
+.tip-note { margin-top: 10px; padding: 7px 11px; background: rgba(212,175,55,.08); border-radius: 3px; color: var(--gold-ink); font-size: .81rem; }
+.tip-reset { float: right; font-size: .76rem; color: var(--ink-soft); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; border: none; background: none; padding: 0; }
+.tip-reset:hover { color: var(--maroon); }
+
+/* ── Meta panel ── */
+.meta-panel { background: white; border: 1px solid var(--border); border-radius: 6px; padding: 16px 18px; margin-bottom: 28px; display: flex; gap: 18px; flex-wrap: wrap; }
+.meta-panel .fg { flex: 0 0 200px; }
+
+/* ── Section ── */
+.sec { margin-bottom: 34px; }
+.sec-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.sec-head h2 { font-family: var(--display); font-size: 1.5rem; color: var(--navy); margin-right: auto; }
+.sec-head .count { font-size: .78rem; color: var(--ink-soft); }
+.btn-add { padding: 7px 14px; background: rgba(212,175,55,.18); color: var(--gold-ink); border: 1px solid rgba(212,175,55,.5); border-radius: 4px; font-family: var(--body); font-size: .82rem; font-weight: 700; cursor: pointer; transition: background .15s; }
+.btn-add:hover { background: rgba(212,175,55,.3); }
+
+.list { display: flex; flex-direction: column; gap: 14px; }
+
+/* ── Card ── */
+.card { background: white; border: 1px solid var(--border); border-radius: 6px; transition: box-shadow .2s; }
+.card:hover { box-shadow: 0 4px 18px rgba(35,39,64,.09); }
+.card-head { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(35,39,64,.03); border-bottom: 1px solid rgba(35,39,64,.07); }
+.card-title { font-family: var(--display); font-size: 1.05rem; color: var(--navy); flex: 1; font-weight: 600; }
+.order-btns { display: flex; gap: 3px; }
+.btn-ord { width: 26px; height: 26px; border: 1px solid var(--border); border-radius: 3px; background: white; cursor: pointer; font-size: .7rem; color: var(--ink-soft); display: flex; align-items: center; justify-content: center; transition: background .1s; }
+.btn-ord:hover { background: rgba(35,39,64,.06); color: var(--navy); }
+.btn-del { padding: 4px 10px; border: 1px solid rgba(118,17,15,.25); border-radius: 3px; background: transparent; color: var(--maroon); font-size: .76rem; font-family: var(--body); cursor: pointer; transition: background .1s; }
+.btn-del:hover { background: rgba(118,17,15,.06); }
+
+.card-body { display: grid; grid-template-columns: 140px 1fr; }
+.card-body.no-img { grid-template-columns: 1fr; }
+
+/* Image zone */
+.img-zone { width: 140px; background: var(--navy); position: relative; cursor: pointer; overflow: hidden; border-right: 1px solid rgba(35,39,64,.09); aspect-ratio: 3/4; }
+.img-zone.poster { aspect-ratio: 16/10; width: 140px; }
+.img-zone::before { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(60% 60% at 50% 40%, rgba(212,175,55,.14), transparent 70%); }
+.img-zone .img-preview { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 2; display: none; }
+.img-zone .img-ph { position: absolute; inset: 0; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; pointer-events: none; }
+.img-zone .img-ph img { width: 30px; opacity: .18; }
+.img-zone .img-ph span { font-size: .64rem; color: rgba(244,236,217,.35); text-align: center; padding: 0 8px; line-height: 1.4; }
+.img-zone .img-overlay { position: absolute; inset: 0; z-index: 3; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,.42); color: white; font-size: .72rem; text-align: center; opacity: 0; transition: opacity .15s; pointer-events: none; }
+.img-zone:hover .img-overlay { opacity: 1; }
+.img-zone[data-over] .img-overlay { opacity: 1; background: rgba(212,175,55,.25); color: var(--gold); }
+.btn-clr-img { position: absolute; top: 5px; right: 5px; z-index: 4; width: 20px; height: 20px; border-radius: 50%; background: rgba(0,0,0,.55); color: white; border: none; cursor: pointer; font-size: .72rem; display: none; align-items: center; justify-content: center; }
+.img-zone:hover .btn-clr-img { display: flex; }
+
+/* Fields */
+.fields { padding: 16px 18px; display: flex; flex-direction: column; gap: 11px; }
+.frow { display: flex; gap: 10px; flex-wrap: wrap; }
+.fg { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 120px; }
+.fg label { font-size: .63rem; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; color: var(--ink-soft); }
+.fg input, .fg textarea, .fg select { font-family: var(--body); font-size: .88rem; color: var(--ink); border: 1px solid var(--border); border-radius: 3px; padding: 6px 9px; background: white; transition: border-color .12s; resize: none; width: 100%; }
+.fg input:focus, .fg textarea:focus, .fg select:focus { outline: none; border-color: var(--navy); }
+.fg textarea { min-height: 64px; line-height: 1.5; }
+.fg.narrow { flex: 0 0 110px; min-width: 90px; }
+.fg-check { flex-direction: row; align-items: center; gap: 7px; }
+.fg-check input { width: auto; }
+.fg-check label { text-transform: none; letter-spacing: .02em; font-size: .82rem; font-weight: 600; color: var(--ink); }
+
+/* Save toast */
+.toast { position: fixed; bottom: 22px; right: 22px; background: var(--navy); color: var(--paper); padding: 8px 16px; border-radius: 4px; font-size: .8rem; opacity: 0; transition: opacity .25s; pointer-events: none; z-index: 200; }
+.toast.show { opacity: 1; }
+
+@media (max-width: 580px) {
+  .card-body { grid-template-columns: 1fr; }
+  .img-zone, .img-zone.poster { width: 100%; aspect-ratio: 16/10; border-right: none; border-bottom: 1px solid rgba(35,39,64,.09); }
+  .a-header h1 { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── GATE ── -->
+<div id="gate">
+  <img src="assets/apeiron-logo.png" alt="Apeiron">
+  <h1>Begrep Admin</h1>
+  <p>Logg inn for å redigere utgaver, podkast og film</p>
+  <div class="gate-row">
+    <input type="password" id="pw-input" placeholder="Passord" autocomplete="off">
+    <button class="btn-login" id="pw-btn" type="button">Logg inn</button>
+  </div>
+  <p id="pw-err"></p>
+</div>
+
+<!-- ── ADMIN ── -->
+<div id="admin">
+  <header class="a-header">
+    <img src="assets/apeiron-logo.png" alt="">
+    <h1>Begrep Admin</h1>
+    <a href="begrep.html">← Se Begrep-siden</a>
+    <button class="btn-export" id="export-btn" type="button">↓ Last ned begrep-content.js</button>
+  </header>
+
+  <main class="a-main">
+    <div class="tip">
+      <button class="tip-reset" id="reset-btn" type="button">Tilbakestill til siste publiserte versjon</button>
+      <strong>Slik oppdaterer du Begrep-siden</strong>
+      <ol>
+        <li>Rediger innholdet nedenfor — klikk på et felt for å redigere det</li>
+        <li>Last opp omslag/plakat ved å <b>klikke på bildefeltet</b> eller dra et bilde inn</li>
+        <li>Klikk <b>Last ned begrep-content.js</b> — lagre filen fra nedlastingsmappen</li>
+        <li>Erstatt <code>begrep-content.js</code> i GitHub-repositoriet og push/commit</li>
+        <li>Cloudflare oppdaterer nettsiden automatisk innen et minutt</li>
+      </ol>
+      <div class="tip-note">💾 Endringer lagres automatisk i nettleseren din. Tallene på siden (utgaver, sesonger) teller seg selv ut fra listene under.</div>
+    </div>
+
+    <!-- META -->
+    <div class="meta-panel">
+      <div class="fg narrow"><label>Grunnlagt (år)</label><input type="number" id="meta-founded" min="1900" step="1"></div>
+      <div class="fg narrow"><label>Julekalender-episoder</label><input type="number" id="meta-jul" min="0" step="1"></div>
+    </div>
+
+    <!-- UTGAVER -->
+    <div class="sec">
+      <div class="sec-head">
+        <h2>Utgaver</h2>
+        <span class="count" id="count-issues"></span>
+        <button class="btn-add" type="button" data-add="issues">+ Ny utgave</button>
+      </div>
+      <div class="list" id="list-issues"></div>
+    </div>
+
+    <!-- PODKAST -->
+    <div class="sec">
+      <div class="sec-head">
+        <h2>Podkast</h2>
+        <span class="count" id="count-podcasts"></span>
+        <button class="btn-add" type="button" data-add="podcasts">+ Ny podkast/sesong</button>
+      </div>
+      <div class="list" id="list-podcasts"></div>
+    </div>
+
+    <!-- FILM -->
+    <div class="sec">
+      <div class="sec-head">
+        <h2>Film</h2>
+        <span class="count" id="count-films"></span>
+        <button class="btn-add" type="button" data-add="films">+ Ny film</button>
+      </div>
+      <div class="list" id="list-films"></div>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast">Lagret i nettleseren</div>
+<input type="file" id="file-input" accept="image/png,image/jpeg,image/webp,image/avif" hidden>
+
+<script src="begrep-content.js"></script>
+<script>
+(function () {
+  /* ─── CONFIG ─── */
+  const PASSWORD = 'apeiron2026';
+  const LS_KEY   = 'apeiron-begrep-v1';
+  const LS_AUTH  = 'apeiron-admin-auth';
+
+  /* ─── AUTH ─── */
+  const gate = document.getElementById('gate');
+  const adminEl = document.getElementById('admin');
+  const pwInput = document.getElementById('pw-input');
+  const pwErr = document.getElementById('pw-err');
+
+  function login(pw) {
+    if (pw === PASSWORD) {
+      sessionStorage.setItem(LS_AUTH, '1');
+      gate.style.display = 'none'; adminEl.classList.add('on'); init();
+    } else {
+      pwErr.textContent = 'Feil passord — prøv igjen'; pwInput.value = ''; pwInput.focus();
+    }
+  }
+  if (sessionStorage.getItem(LS_AUTH) === '1') {
+    gate.style.display = 'none'; adminEl.classList.add('on'); init();
+  } else {
+    document.getElementById('pw-btn').addEventListener('click', function () { login(pwInput.value); });
+    pwInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') login(pwInput.value); });
+  }
+
+  /* ─── DATA ─── */
+  let data = { meta: {}, issues: [], podcasts: [], films: [] };
+
+  function fresh() {
+    const c = window.BEGREP_CONTENT || {};
+    return {
+      meta: Object.assign({ founded: 2019, julekalenderEpisodes: 24 }, c.meta || {}),
+      issues: (c.issues || []).map(function (x) { return Object.assign({}, x); }),
+      podcasts: (c.podcasts || []).map(function (x) { return Object.assign({}, x); }),
+      films: (c.films || []).map(function (x) { return Object.assign({}, x); })
+    };
+  }
+  function loadData() {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) { try { data = JSON.parse(raw); return; } catch (_) {} }
+    data = fresh();
+  }
+  function saveData() { localStorage.setItem(LS_KEY, JSON.stringify(data)); showToast('Lagret i nettleseren'); }
+  let saveTimer = null;
+  function lazySave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveData, 350); }
+
+  const toastEl = document.getElementById('toast');
+  let toastTimer = null;
+  function showToast(msg) {
+    toastEl.textContent = msg; toastEl.classList.add('show');
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { toastEl.classList.remove('show'); }, 2200);
+  }
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function uid(pfx) { return pfx + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
+
+  /* ─── SCHEMAS ─── */
+  // Hvert felt: { f, label, type, opts?, ph?, narrow? }
+  const SCHEMAS = {
+    issues: {
+      img: 'img',
+      titleField: 'title',
+      fields: [
+        { f: 'year',  label: 'Periode', type: 'text', ph: 'f.eks. Vår 2022', narrow: true },
+        { f: 'title', label: 'Årgang', type: 'text', ph: 'f.eks. 5. Årgang' },
+        { f: 'roman', label: 'Plassholder', type: 'text', ph: 'f.eks. V', narrow: true }
+      ]
+    },
+    podcasts: {
+      titleField: 'title',
+      fields: [
+        { f: 'tag',   label: 'Merkelapp', type: 'text', ph: 'f.eks. Sesong 1', narrow: true },
+        { f: 'title', label: 'Tittel', type: 'text', ph: 'Navn på podkasten' },
+        { f: 'desc',  label: 'Beskrivelse', type: 'textarea', ph: 'Kort beskrivelse...' },
+        { f: 'link',  label: 'Spotify-lenke', type: 'text', ph: 'https://...' },
+        { f: 'accent', label: 'Fargeaksent', type: 'select', opts: [['gold','Gull'],['rust','Rust'],['green','Grønn']] },
+        { f: 'countsAsSeason', label: 'Teller som podkast-sesong', type: 'check' }
+      ]
+    },
+    films: {
+      img: 'poster',
+      titleField: 'title',
+      fields: [
+        { f: 'title', label: 'Tittel', type: 'text', ph: 'Filmtittel' },
+        { f: 'kind',  label: 'Type', type: 'text', ph: 'f.eks. Kortfilm', narrow: true },
+        { f: 'year',  label: 'År', type: 'text', ph: 'f.eks. 2024', narrow: true },
+        { f: 'status', label: 'Status', type: 'select', opts: [['released','Sluppet'],['production','Under produksjon']] },
+        { f: 'youtube', label: 'YouTube video-ID', type: 'text', ph: 'f.eks. dQw4w9WgXcQ (valgfritt)' },
+        { f: 'desc',  label: 'Beskrivelse', type: 'textarea', ph: 'Kort beskrivelse...' }
+      ]
+    }
+  };
+
+  /* ─── IMAGE ─── */
+  let imgTarget = null; // { list, id }
+  const fileInput = document.getElementById('file-input');
+  fileInput.addEventListener('change', function () {
+    const f = fileInput.files && fileInput.files[0];
+    if (f && imgTarget) processImage(f, imgTarget);
+    fileInput.value = '';
+  });
+  function openPicker(list, id) { imgTarget = { list: list, id: id }; fileInput.click(); }
+
+  function processImage(file, tgt) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const img = new Image();
+      img.onload = function () {
+        const MAX = 900;
+        let w = img.width, h = img.height;
+        if (Math.max(w, h) > MAX) { const s = MAX / Math.max(w, h); w = Math.round(w * s); h = Math.round(h * s); }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        const url = canvas.toDataURL('image/webp', 0.82);
+        const field = SCHEMAS[tgt.list].img;
+        setField(tgt.list, tgt.id, field, url);
+        const zone = document.querySelector('[data-id="' + tgt.id + '"] .img-zone');
+        if (zone) refreshImgZone(zone, url);
+        lazySave();
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function refreshImgZone(zone, url) {
+    let preview = zone.querySelector('.img-preview');
+    const ph = zone.querySelector('.img-ph');
+    const clrBtn = zone.querySelector('.btn-clr-img');
+    const overlay = zone.querySelector('.img-overlay');
+    if (url) {
+      if (!preview) { preview = document.createElement('img'); preview.className = 'img-preview'; preview.alt = ''; zone.appendChild(preview); }
+      preview.style.display = 'block'; preview.src = url;
+      ph.style.display = 'none'; clrBtn.style.display = 'flex'; overlay.textContent = '↺ Bytt bilde';
+    } else {
+      if (preview) { preview.style.display = 'none'; preview.src = ''; }
+      ph.style.display = 'flex'; clrBtn.style.display = 'none'; overlay.textContent = '📷 Last opp';
+    }
+  }
+
+  /* ─── FIELD UPDATE ─── */
+  function setField(list, id, field, val) {
+    const item = data[list].find(function (x) { return x.id === id; });
+    if (!item) return;
+    item[field] = val;
+    if (field === SCHEMAS[list].titleField) {
+      const titleEl = document.querySelector('[data-id="' + id + '"] .card-title');
+      if (titleEl) titleEl.textContent = val || '(uten navn)';
+    }
+    updateCounts();
+    lazySave();
+  }
+
+  /* ─── RENDER ─── */
+  function makeCard(list, item, idx) {
+    const schema = SCHEMAS[list];
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.setAttribute('data-id', item.id);
+    card.setAttribute('data-list', list);
+
+    let fieldsHtml = '';
+    schema.fields.forEach(function (fd) {
+      let input;
+      if (fd.type === 'textarea') {
+        input = '<textarea data-f="' + fd.f + '" placeholder="' + esc(fd.ph || '') + '">' + esc(item[fd.f] || '') + '</textarea>';
+      } else if (fd.type === 'select') {
+        input = '<select data-f="' + fd.f + '">' + fd.opts.map(function (o) {
+          return '<option value="' + o[0] + '"' + (item[fd.f] === o[0] ? ' selected' : '') + '>' + esc(o[1]) + '</option>';
+        }).join('') + '</select>';
+      } else if (fd.type === 'check') {
+        const checked = item[fd.f] !== false;
+        fieldsHtml += '<div class="fg fg-check"><input type="checkbox" id="chk-' + item.id + '-' + fd.f + '" data-f="' + fd.f + '"'
+          + (checked ? ' checked' : '') + '><label for="chk-' + item.id + '-' + fd.f + '">' + esc(fd.label) + '</label></div>';
+        return;
+      } else {
+        input = '<input type="' + (fd.type === 'number' ? 'number' : 'text') + '" data-f="' + fd.f + '" value="' + esc(item[fd.f] || '') + '" placeholder="' + esc(fd.ph || '') + '">';
+      }
+      fieldsHtml += '<div class="fg' + (fd.narrow ? ' narrow' : '') + '"><label>' + esc(fd.label) + '</label>' + input + '</div>';
+    });
+
+    const titleVal = item[schema.titleField] || '(uten navn)';
+    const hasImg = !!schema.img;
+    const zoneCls = list === 'films' ? 'img-zone poster' : 'img-zone';
+
+    card.innerHTML =
+      '<div class="card-head">'
+        + '<span class="card-title">' + esc(titleVal) + '</span>'
+        + '<div class="order-btns"><button class="btn-ord btn-up" type="button" title="Opp">↑</button><button class="btn-ord btn-dn" type="button" title="Ned">↓</button></div>'
+        + '<button class="btn-del" type="button">Slett</button>'
+      + '</div>'
+      + '<div class="card-body' + (hasImg ? '' : ' no-img') + '">'
+        + (hasImg
+          ? '<div class="' + zoneCls + '"><div class="img-ph"><img src="assets/apeiron-logo.png" alt=""><span>Klikk eller dra inn bilde</span></div><div class="img-overlay">📷 Last opp</div><button class="btn-clr-img" type="button" title="Fjern">✕</button></div>'
+          : '')
+        + '<div class="fields">' + fieldsHtml + '</div>'
+      + '</div>';
+
+    // Image
+    if (hasImg) {
+      const zone = card.querySelector('.img-zone');
+      const cur = item[schema.img];
+      if (cur) refreshImgZone(zone, cur);
+      zone.addEventListener('click', function () { openPicker(list, item.id); });
+      zone.addEventListener('dragenter', function (e) { e.preventDefault(); zone.setAttribute('data-over', ''); });
+      zone.addEventListener('dragover', function (e) { e.preventDefault(); });
+      zone.addEventListener('dragleave', function () { zone.removeAttribute('data-over'); });
+      zone.addEventListener('drop', function (e) {
+        e.preventDefault(); zone.removeAttribute('data-over');
+        const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+        if (f) processImage(f, { list: list, id: item.id });
+      });
+      card.querySelector('.btn-clr-img').addEventListener('click', function (e) {
+        e.stopPropagation(); setField(list, item.id, schema.img, null); refreshImgZone(zone, null);
+      });
+    }
+
+    // Fields
+    card.querySelectorAll('[data-f]').forEach(function (el) {
+      const field = el.getAttribute('data-f');
+      const evt = (el.tagName === 'SELECT' || el.type === 'checkbox') ? 'change' : 'input';
+      el.addEventListener(evt, function () {
+        let v;
+        if (el.type === 'checkbox') v = el.checked;
+        else if (el.type === 'number') v = el.value === '' ? null : Number(el.value);
+        else v = el.value;
+        setField(list, item.id, field, v);
+      });
+    });
+
+    card.querySelector('.btn-up').addEventListener('click', function () { move(list, item.id, -1); });
+    card.querySelector('.btn-dn').addEventListener('click', function () { move(list, item.id, 1); });
+    card.querySelector('.btn-del').addEventListener('click', function () {
+      if (confirm('Slett «' + (item[schema.titleField] || 'dette') + '»?')) del(list, item.id);
+    });
+
+    return card;
+  }
+
+  function renderList(list) {
+    const el = document.getElementById('list-' + list);
+    el.innerHTML = '';
+    data[list].forEach(function (item, i) { el.appendChild(makeCard(list, item, i)); });
+    updateCounts();
+  }
+  function renderAll() {
+    ['issues', 'podcasts', 'films'].forEach(renderList);
+    document.getElementById('meta-founded').value = data.meta.founded != null ? data.meta.founded : '';
+    document.getElementById('meta-jul').value = data.meta.julekalenderEpisodes != null ? data.meta.julekalenderEpisodes : '';
+  }
+
+  function updateCounts() {
+    document.getElementById('count-issues').textContent = data.issues.length + ' utgaver';
+    const seasons = data.podcasts.filter(function (p) { return p.countsAsSeason !== false; }).length;
+    document.getElementById('count-podcasts').textContent = data.podcasts.length + ' totalt · ' + seasons + ' sesonger';
+    document.getElementById('count-films').textContent = data.films.length + ' filmer';
+  }
+
+  /* ─── ACTIONS ─── */
+  const DEFAULTS = {
+    issues: function () { return { id: uid('i'), year: '', title: '', roman: '', img: null }; },
+    podcasts: function () { return { id: uid('p'), tag: '', title: '', desc: '', link: 'https://creators.spotify.com/pod/profile/begrep-podcast/', accent: 'gold', countsAsSeason: true }; },
+    films: function () { return { id: uid('f'), title: '', kind: 'Kortfilm', year: '', status: 'production', youtube: '', poster: null, desc: '' }; }
+  };
+  function add(list) {
+    data[list].push(DEFAULTS[list]());
+    renderList(list); lazySave();
+    setTimeout(function () {
+      const last = document.querySelector('#list-' + list + ' .card:last-child');
+      if (last) last.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 60);
+  }
+  function del(list, id) { data[list] = data[list].filter(function (x) { return x.id !== id; }); renderList(list); lazySave(); }
+  function move(list, id, dir) {
+    const arr = data[list];
+    const i = arr.findIndex(function (x) { return x.id === id; });
+    if (i < 0) return; const j = i + dir; if (j < 0 || j >= arr.length) return;
+    const t = arr[i]; arr[i] = arr[j]; arr[j] = t; renderList(list); lazySave();
+  }
+
+  /* ─── META ─── */
+  document.getElementById('meta-founded').addEventListener('input', function () {
+    data.meta.founded = this.value === '' ? null : Number(this.value); lazySave();
+  });
+  document.getElementById('meta-jul').addEventListener('input', function () {
+    data.meta.julekalenderEpisodes = this.value === '' ? null : Number(this.value); lazySave();
+  });
+
+  /* ─── EXPORT ─── */
+  function exportFile() {
+    const content =
+      '/* Innhold for Begrep-siden (begrep.html).\n'
+      + '   Sist oppdatert: ' + new Date().toLocaleDateString('no-NO') + '\n'
+      + '   Rediger direkte her, eller åpne begrep-admin.html for visuell redigering.\n'
+      + '\n'
+      + '   img/poster: "assets/begrep/filnavn.png", base64-bilde fra admin, eller null.\n'
+      + '   Tall i statistikk-stripen telles automatisk fra listene. */\n\n'
+      + 'window.BEGREP_CONTENT = ' + JSON.stringify(data, null, 2) + ';\n';
+    const blob = new Blob([content], { type: 'text/javascript;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'begrep-content.js';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+    showToast('Fil lastet ned — erstatt i GitHub og push!');
+  }
+
+  /* ─── RESET ─── */
+  document.getElementById('reset-btn').addEventListener('click', function () {
+    if (!confirm('Dette sletter alle ueksporterte endringer og laster inn siste publiserte versjon. Fortsette?')) return;
+    localStorage.removeItem(LS_KEY); data = fresh(); renderAll(); showToast('Tilbakestilt til publisert versjon');
+  });
+
+  /* ─── WIRE ─── */
+  document.querySelectorAll('[data-add]').forEach(function (b) {
+    b.addEventListener('click', function () { add(b.getAttribute('data-add')); });
+  });
+  document.getElementById('export-btn').addEventListener('click', exportFile);
+
+  function init() { loadData(); renderAll(); }
+})();
+</script>
+</body>
+</html>

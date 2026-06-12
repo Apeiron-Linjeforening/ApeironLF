@@ -172,10 +172,10 @@ h1,h2,h3{ font-family:var(--display); font-weight:600; line-height:1.04; letter-
 /* mobile drawer */
 .drawer{
   position:fixed; inset:0; z-index:999;
-  background:var(--navy); 
-  display:flex; flex-direction:column; justify-content:center; align-items:center; gap:6px;
+  background:var(--navy);
+  display:flex; flex-direction:column; justify-content:flex-start; align-items:center; gap:6px;
   transform:translateY(-100%); transition:transform .42s cubic-bezier(.7,0,.2,1);
-  overflow:hidden;
+  overflow-y:auto; padding:100px 0 40px;
 }
 .drawer.is-open{ transform:translateY(0); }
 .drawer a{ font-family:var(--display); font-size:2rem; color:var(--paper); padding:.2em; }
@@ -912,6 +912,23 @@ body[data-mode="marine"] .cal-popup__opt:hover{ background:rgba(212,175,55,.1); 
   .sov__esc kbd { display: none; }
   .sov__esc::after { content: "×"; font-size: 1.2rem; line-height: 1; }
   .sov__foot { display: none; }
+  /* Søk som bottom sheet på mobil */
+  .sov { padding: 0; align-items: flex-end; }
+  .sov__panel {
+    width: 100%; border-radius: 16px 16px 0 0;
+    border-left: 0; border-right: 0; border-bottom: 0;
+    max-height: 80vh; display: flex; flex-direction: column;
+  }
+  .sov.is-open .sov__panel { transform: translateY(0); }
+  .sov__body { flex: 1; overflow-y: auto; }
+  .sov__input { font-size: 1rem; }
+  /* Mobilmeny: mindre font på smale skjermer */
+  .drawer a { font-size: 1.5rem; padding: .18em; }
+  .drawer__search-row { font-size: 1.4rem; padding: .7em 1.1em; }
+}
+@media (max-height:680px) {
+  .drawer { padding: 80px 0 24px; gap: 2px; }
+  .drawer a { font-size: 1.3rem; padding: .14em; }
 }
 
 /* ---------- Reveal on scroll ---------- */

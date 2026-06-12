@@ -151,6 +151,27 @@ Hvert produkt er et objekt i `window.MERCH_PRODUCTS`-arrayen:
 2. **Bilde fra repoet** — legg bildefilen i `assets/merch/` og sett `img: "assets/merch/filnavn.jpg"`
 3. **Innebygd bilde via admin** — last opp i `merch-admin.html`, eksporter JS-filen; bildet er da lagret direkte i `merch-products.js` (ingen ekstern fil nødvendig)
 
+### 📰 Begrep
+Innholdet på Begrep-siden styres via `begrep-content.js` — **ikke** direkte i `begrep.html`.
+
+#### Enklest: bruk admin-panelet (`begrep-admin.html`)
+
+Åpne `begrep-admin.html` i nettleseren (lokalt eller på nettsiden ved å legge til `/begrep-admin.html` i adressefeltet).
+Du logger inn med passordet — spør styret.
+
+I admin-panelet kan du:
+- Legge til, endre og slette utgaver, podkast-sesonger, filmer og julekalender-innslag
+- Dra inn bilder på kortene (lagres som innebygd base64)
+- Oppdatere statistikk (grunnlagtår, antall julekalenderepisoder)
+- Trykk **«Eksporter begrep-content.js»** — last ned filen og erstatt `begrep-content.js` i repoet
+
+#### Manuelt: rediger `begrep-content.js` direkte
+
+Filen inneholder `window.BEGREP_CONTENT` med følgende seksjoner: `meta`, `issues`, `podcasts`, `films`, `christmas`.
+Bilder kan være `null` (viser plassholder), `"assets/begrep/filnavn.png"` (fra repoet) eller base64 fra admin-panelet.
+
+---
+
 ### 📷 Galleri
 **Ingen kodeendring nødvendig.**
 Galleriet henter bilder automatisk fra en delt Google Drive-mappe via Google Drive API.
@@ -210,6 +231,8 @@ Finn riktig seksjon ved hjelp av kommentarene: `<!-- ============ OM OSS =======
 
 | Fil                               | Hva det er                                                         |
 | -----------------------------------| --------------------------------------------------------------------|
+| Fil                               | Hva det er                                                         |
+| -----------------------------------| --------------------------------------------------------------------|
 | `index.html`                      | Forsiden (hoveddelen av nettsiden)                                 |
 | `pensum.html`                     | Pensum-oversikt                                                    |
 | `merch.html`                      | Merch-side (produkter hentes fra `merch-products.js`)              |
@@ -217,6 +240,10 @@ Finn riktig seksjon ved hjelp av kommentarene: `<!-- ============ OM OSS =======
 | `merch-products.js`               | Produktdata for merch (redigeres via admin-panel)                  |
 | `galleri.html`                    | Bildegalleri (henter automatisk fra Google Drive)                  |
 | `marked.html`                     | Kjøp & bytte (pensum-marked)                                       |
+| `begrep.html`                     | Side for Begrep-tidsskriftet (utgaver, podkast, film, julekalender)|
+| `begrep-admin.html`               | 'Passordbeskyttet' admin-panel for å redigere Begrep-innhold       |
+| `begrep-content.js`               | Innholdsdata for Begrep-siden (redigeres via admin-panel)          |
+| `styret.html`                     | Beskrivelse av alle styreverv i Apeiron                            |
 | `styles.css`                      | All styling                                                        |
 | `app.js`                          | Meny, scroll-animasjoner og generell funksjonalitet                |
 | `apeiron-events.js`               | Henter arrangementer fra Google Kalender                           |
@@ -224,8 +251,8 @@ Finn riktig seksjon ved hjelp av kommentarene: `<!-- ============ OM OSS =======
 | `aporetisk-cal.js`                | Kalender for Aporetisk Aften                                       |
 | `site-search.js`                  | Søkefunksjon                                                       |
 | `image-slot.js`                   | Gjenbrukbar bildekomponent (`<image-slot>`), bl.a. for styrebilder |
-| `tweaks.jsx` / `tweaks-panel.jsx` | Internt design-/utviklingsverktøy — ikke en del av selve nettsiden |
 | `assets/merch/`                   | Bilder for merch-produkter (alternativ til base64)                 |
+| `assets/begrep/`                  | Bilder for Begrep-utgaver og -innhold                              |
 | `assets/`                         | Logo og andre bilder                                               |
 | `_headers`                        | Cloudflare Pages — HTTP-sikkerhetsheadere                          |
 
@@ -247,18 +274,16 @@ Kritisk:
 - [ ] Få eget domene → Spør NTNU - Venter på svar 12.06.26
 
 Medium:
-- [ ] Stressteste Galleriet
 - [ ] Telefon: Menyen er for stor/lang.
 - [ ] Telefon: Søkefeltet er identisk med desktop.
-- [ ] Legge til egen Begrep side.
 - [ ] Side eller plassering for "Oppnåelser" (Premier vi har fått, som sølv i håndball og "best oppmøte" fra Dionysos)
 
 Hadde vært kult:
 - [ ] Snakke med IFR/NTNU om API for automatisk oppdatering av emner for studiene.
-- [x] Kunne trykke på alle bilder for å se større versjon.
+- [ ] Måte å vise nyheter/informasjon på.
+- [ ] Bygge KKI for Apeiron.
 
 Lav:
-- [ ] Legge til forklaring av vervene i styret: Leder, nestleder, økonomiansvarlig, sosialansvarlig, PR-ansvarlig, Faddersjef, Fagansvarlig, Potet, (PTV, ITV), S.A.K, H.I.V. -> Dette krever en egen side for Styret.
 
 Fulfført:
 - [x] Å trykke på "Arrangement", "Studiene" eller "Styret" burde ta deg rett til siden, og ikke tvinge brukeren til å velge "Arrangement", "Studiene" eller "Styret" i menyen som dukker opp.
@@ -267,6 +292,11 @@ Fulfført:
 - [x] Bildefremvisning av sosiale ting - Sjekke om dette kan gjøres med API eller automatisk med en enkel mappe i Github. Det er lettere for fremtidige styrer å laste opp bilder til en mappe.
 - [x] Når man er på "Bli medlem" blir fremdeles "Lesealen" markert i menyen.
 - [x] Migrere til en mer fast løsning: Cloudflare
+- [x] Kunne trykke på alle bilder for å se større versjon.
+- [x] Stressteste Galleriet
+- [x] Legge til egen Begrep side med admin-panel
+- [x] Legge til forklaring av vervene i styret (styret.html)
+- [x] Legge til faktiske bilder av styremedlemmene på forsiden og styret.html.
 
 ---
 

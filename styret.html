@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Om vervene — Apeiron · NTNU</title>
+<meta name="description" content="Styret i Apeiron 2025/26 og beskrivelse av alle styreverv: Leder, Nestleder, Økonomiansvarlig, Sosialansvarlig, PR-ansvarlig, Faddersjef, Fagansvarlig og mer." />
+<meta property="og:title" content="Om vervene — Apeiron · NTNU" />
+<meta property="og:description" content="Møt styret i Apeiron og lær om hva hvert verv innebærer." />
+<meta property="og:image" content="assets/apeiron-logo.png" />
+<meta property="og:type" content="website" />
+<meta name="theme-color" content="#232740" />
+<link rel="icon" href="assets/apeiron-logo.png" type="image/png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<style>
+/* ── Subpage header ── */
+.subhero {
+  background:
+    radial-gradient(100% 80% at 90% 0%, rgba(212,175,55,.12), transparent 55%),
+    radial-gradient(70% 60% at 5% 100%, rgba(118,17,15,.28), transparent 60%),
+    var(--navy);
+  color: var(--paper);
+  padding: 148px 0 72px;
+  position: relative;
+  overflow: hidden;
+}
+.subhero__seal {
+  position: absolute; right: -4%; top: 50%; transform: translateY(-50%);
+  width: min(44vw, 540px); opacity: .09; pointer-events: none;
+  filter: drop-shadow(0 0 1px rgba(212,175,55,.4));
+}
+.subhero__inner { position: relative; max-width: var(--maxw); margin: 0 auto; padding: 0 28px; }
+.subhero h1 {
+  color: var(--paper);
+  font-size: clamp(3rem, 8vw, 6.5rem);
+  line-height: .95; letter-spacing: .01em; margin: .22em 0 .35em;
+}
+.subhero__lede { font-size: 1.18rem; color: rgba(244,236,217,.8); max-width: 52ch; line-height: 1.65; }
+.subhero__back {
+  display: flex; width: fit-content; align-items: center; gap: .5em;
+  font-size: .82rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+  color: rgba(244,236,217,.55); margin-bottom: .6em;
+  transition: color .2s;
+}
+.subhero__back:hover { color: var(--gold); }
+.subhero__back::before { content: "←"; font-style: normal; }
+
+/* ── Role grid ── */
+.role-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 22px;
+  margin-top: 2.5em;
+}
+.role-card {
+  background: var(--paper-2, #f7f3ec);
+  border: 1px solid rgba(35,39,64,.14);
+  border-left: 4px solid var(--gold);
+  border-radius: 4px;
+  padding: 28px 26px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.role-card--maroon { border-left-color: var(--maroon); }
+.role-card--navy   { border-left-color: var(--navy); }
+
+.role-card__eyebrow {
+  font-family: var(--body); font-size: .65rem; font-weight: 700;
+  letter-spacing: .28em; text-transform: uppercase;
+  color: var(--accent-ink, var(--navy));
+  opacity: .6;
+}
+.role-card h3 {
+  font-family: var(--display); font-size: 1.45rem; font-weight: 600;
+  color: var(--navy); line-height: 1.1; margin: 0;
+}
+.role-card p {
+  font-size: .95rem; color: var(--ink-soft, #4a4d6a);
+  line-height: 1.65; margin: 0;
+}
+.role-card__resp {
+  list-style: none; margin: 6px 0 0; padding: 0;
+  display: flex; flex-direction: column; gap: 5px;
+}
+.role-card__resp li {
+  position: relative; padding-left: 16px;
+  font-size: .9rem; color: var(--navy);
+  line-height: 1.5;
+}
+.role-card__resp li::before {
+  content: "—"; position: absolute; left: 0;
+  color: var(--maroon); font-weight: 700;
+}
+
+@media (max-width: 600px) {
+  .role-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body data-mode="paper">
+
+<!-- ============ NAV ============ -->
+<header class="nav" id="nav">
+  <a class="nav__brand" href="index.html">
+    <img src="assets/apeiron-logo.png" alt="Apeiron segl" />
+    <span>
+      <span class="nm">APEIRON</span>
+      <span class="sub">Filosofi &amp; Etikk · NTNU</span>
+    </span>
+  </a>
+  <nav class="nav__links">
+    <a href="index.html#om">Om oss</a>
+    <div class="nav__dropdown">
+      <a class="nav__drop-trigger" href="index.html#studiet">Studiene <span class="nav__caret">▾</span></a>
+      <div class="nav__drop-menu">
+        <a href="index.html#studiet">Studiene</a>
+        <a href="pensum.html">Pensum</a>
+      </div>
+    </div>
+    <div class="nav__dropdown">
+      <a class="nav__drop-trigger" href="index.html#arrangementer">Arrangementer <span class="nav__caret">▾</span></a>
+      <div class="nav__drop-menu">
+        <a href="index.html#arrangementer">Arrangementer</a>
+        <a href="index.html#aporetisk">Aporetisk Aften</a>
+        <a href="index.html#fadderuke">Fadderuke</a>
+      </div>
+    </div>
+    <div class="nav__dropdown">
+      <a class="nav__drop-trigger nav__drop-trigger--active" href="index.html#styret">Styret <span class="nav__caret">▾</span></a>
+      <div class="nav__drop-menu">
+        <a href="index.html#styret">Styret</a>
+        <a href="styret.html" class="is-active">Om vervene</a>
+        <a href="index.html#sak">S.A.K</a>
+      </div>
+    </div>
+    <a href="index.html#lesesalen">Lesesalen</a>
+    <a href="galleri.html">Galleri</a>
+    <a href="begrep.html">Begrep</a>
+    <a href="merch.html">Merch</a>
+    <a href="index.html#kontakt">Kontakt</a>
+    <a class="btn btn--gold nav__cta" href="index.html#bli-medlem">Bli medlem <span class="arr">→</span></a>
+  </nav>
+  <button class="nav__search-btn" type="button" aria-label="Søk på nettstedet">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+    <span class="nav__search-hint">Søk</span>
+  </button>
+  <button class="nav__burger" id="burger" aria-label="Meny">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<div class="drawer" id="drawer">
+  <button class="drawer__search-row nav__search-btn" type="button" aria-label="Søk på nettstedet">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+    Søk på nettstedet
+  </button>
+  <a href="index.html#om">Om oss</a>
+  <a href="index.html#studiet">Studiene</a>
+  <a href="pensum.html">Pensum</a>
+  <a href="index.html#arrangementer">Arrangementer</a>
+  <a href="index.html#aporetisk">Aporetisk Aften</a>
+  <a href="index.html#fadderuke">Fadderuke</a>
+  <a href="index.html#styret">Styret</a>
+  <a href="index.html#sak">S.A.K</a>
+  <a href="styret.html" class="is-active">Om vervene</a>
+  <a href="index.html#lesesalen">Lesesalen</a>
+  <a href="galleri.html">Galleri</a>
+  <a href="begrep.html">Begrep</a>
+  <a href="merch.html">Merch</a>
+  <a href="marked.html">Kjøp &amp; bytte</a>
+  <a href="index.html#kontakt">Kontakt</a>
+  <a href="index.html#bli-medlem">Bli medlem</a>
+</div>
+
+<!-- ============ SUBPAGE HEADER ============ -->
+<section class="subhero">
+  <img class="subhero__seal" src="assets/apeiron-logo.png" alt="" aria-hidden="true" />
+  <div class="subhero__inner">
+    <a class="subhero__back" href="index.html#styret">Tilbake til Styret</a>
+    <h1>Om vervene</h1>
+    <p class="subhero__lede">
+      Styret i Apeiron består av frivillige studenter som holder linjeforeningen i gang.
+      Her finner du en oversikt over hvert verv og hva det innebærer.
+    </p>
+  </div>
+</section>
+
+<!-- ============ STYREMEDLEMMER ============ -->
+<section class="section" id="styremedlemmer">
+  <div class="wrap">
+    <div class="center" style="margin-bottom:54px">
+      <span class="eyebrow eyebrow--center">Hvem er vi</span>
+      <h2 class="h-section">Styret 2025/26</h2>
+      <p class="lede">Den gjengen som holder hjulene i gang og kaffekjelen varm.</p>
+    </div>
+
+    <div class="board__grid">
+      <div class="member reveal">
+        <div class="member__ph"><span class="member__initials">SL</span><image-slot id="s1" shape="circle" placeholder="Foto" src="assets/Styremedlemmer/Stian.jpg"></image-slot></div>
+        <div class="member__role">Leder</div>
+        <h3>Stian Lauritzen</h3>
+      </div>
+      <div class="member reveal d1">
+        <div class="member__ph"><span class="member__initials">DC</span><image-slot id="s2" shape="circle" placeholder="Foto" src="assets/Styremedlemmer/Dennis.jpg"></image-slot></div>
+        <div class="member__role">Nestleder</div>
+        <h3>Dennis Cleophas</h3>
+      </div>
+      <div class="member reveal d2">
+        <div class="member__ph"><span class="member__initials">DN</span><image-slot id="s3" shape="circle" placeholder="Foto" src="assets/Styremedlemmer/Dagny.jpg"></image-slot></div>
+        <div class="member__role">Økonomiansvarlig</div>
+        <h3>Dagny Flakne</h3>
+      </div>
+      <div class="member reveal d3">
+        <div class="member__ph"><span class="member__initials">INE</span><image-slot id="s4" shape="circle" placeholder="Foto" src="assets/Styremedlemmer/Iver.jpg"></image-slot></div>
+        <div class="member__role">SOSIALANSVARLIG</div>
+        <h3>Iver N. Edvardsen</h3>
+      </div>
+      <div class="member reveal">
+        <div class="member__ph"><span class="member__initials">NB</span><image-slot id="s5" shape="circle" placeholder="Foto" src="assets/Styremedlemmer/Natalie.jpg"></image-slot></div>
+        <div class="member__role">PR-ansvarlig</div>
+        <h3>Natalie Bellingmo</h3>
+      </div>
+      <div class="member reveal d1">
+        <div class="member__ph"><span class="member__initials">AF</span><image-slot id="s6" shape="circle" placeholder="Foto" src="assets/Styremedlemmer/AnnaF.jpg"></image-slot></div>
+        <div class="member__role">FADDERSJEF</div>
+        <h3>Anna Fagerli</h3>
+      </div>
+      <div class="member reveal d2">
+        <div class="member__ph"><span class="member__initials">RMS</span><image-slot id="s7" shape="circle" placeholder="Foto" src="assets/Styremedlemmer/Robin.jpg"></image-slot></div>
+        <div class="member__role">Fagansvarlig</div>
+        <h3>Robin M. Søraker</h3>
+      </div>
+      <div class="member reveal d3">
+        <div class="member__ph"><span class="member__initials">MRS</span><image-slot id="s8" shape="circle" placeholder="Foto" src="assets/Styremedlemmer/Martin.png"></image-slot></div>
+        <div class="member__role">POTET og Programtillitsvalg (PTV)</div>
+        <h3>Martin R. Skauge</h3>
+      </div>
+      <div class="member reveal d3">
+        <div class="member__ph"><span class="member__initials">HPR</span><image-slot id="s9" shape="circle" placeholder="Foto" src="assets/Styremedlemmer/Helene.jpg"></image-slot></div>
+        <div class="member__role">POTET</div>
+        <h3>Helene P. Ruud</h3>
+      </div>
+      <div class="member reveal d3">
+        <div class="member__ph"><span class="member__initials">KBH</span><image-slot id="s10" shape="circle" placeholder="Foto" src="assets/Styremedlemmer/Karoline.jpg"></image-slot></div>
+        <div class="member__role">POTET</div>
+        <h3>Karoline B. Holthe</h3>
+      </div>
+      <div class="member reveal d3">
+        <div class="member__ph"><span class="member__initials">FCFR</span><image-slot id="s11" shape="circle" placeholder="Foto" src="assets/Styremedlemmer/Fredrik2.jpg"></image-slot></div>
+        <div class="member__role">A.S.A.P S.A.K</div>
+        <h3>Fredrik C.F. Rosenfors</h3>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ OM VERVENE ============ -->
+<section class="section" style="background:var(--paper-2, #f7f3ec);" id="vervene">
+  <div class="wrap">
+    <div class="center" style="margin-bottom:54px">
+      <span class="eyebrow eyebrow--center">Rollene</span>
+      <h2 class="h-section">Hva gjør vi?</h2>
+      <p class="lede">
+        Hvert verv har et klart ansvar og bidrar til at Apeiron fungerer som
+        fellesskap og organisasjon. Beskrivelsene under er placeholders —
+        styret fyller inn riktig innhold.
+      </p>
+    </div>
+
+    <div class="role-grid">
+
+      <div class="role-card reveal">
+        <div class="role-card__eyebrow">Verv</div>
+        <h3>Leder</h3>
+        <p>[Placeholder — overordnet ansvar for linjeforeningen, representerer Apeiron utad og leder styremøter.]</p>
+        <ul class="role-card__resp">
+          <li>Leder styremøter og sørger for at vedtak følges opp</li>
+          <li>Representerer Apeiron overfor NTNU, IFR og andre aktører</li>
+          <li>[Legg til ansvar her]</li>
+        </ul>
+      </div>
+
+      <div class="role-card reveal d1">
+        <div class="role-card__eyebrow">Verv</div>
+        <h3>Nestleder</h3>
+        <p>[Placeholder — støtter leder, overtar ved fravær og koordinerer internt arbeid.]</p>
+        <ul class="role-card__resp">
+          <li>Overtar lederrollen ved fravær</li>
+          <li>[Legg til ansvar her]</li>
+        </ul>
+      </div>
+
+      <div class="role-card role-card--maroon reveal d2">
+        <div class="role-card__eyebrow">Verv</div>
+        <h3>Økonomiansvarlig</h3>
+        <p>[Placeholder — ansvar for budsjett, regnskap og økonomiforvaltning i Apeiron.]</p>
+        <ul class="role-card__resp">
+          <li>Fører regnskap og holder oversikt over budsjett</li>
+          <li>Håndterer innbetalinger og Vipps-konto</li>
+          <li>[Legg til ansvar her]</li>
+        </ul>
+      </div>
+
+      <div class="role-card role-card--maroon reveal d3">
+        <div class="role-card__eyebrow">Verv</div>
+        <h3>Sosialansvarlig</h3>
+        <p>[Placeholder — planlegger og gjennomfører sosiale arrangementer og bidrar til godt miljø.]</p>
+        <ul class="role-card__resp">
+          <li>Planlegger sosiale arrangement gjennom semesteret</li>
+          <li>Samarbeider med S.A.K om arrangementer</li>
+          <li>[Legg til ansvar her]</li>
+        </ul>
+      </div>
+
+      <div class="role-card reveal">
+        <div class="role-card__eyebrow">Verv</div>
+        <h3>PR-ansvarlig</h3>
+        <p>[Placeholder — ansvar for kommunikasjon og synlighet utad, inkludert sosiale medier og profilering.]</p>
+        <ul class="role-card__resp">
+          <li>Driver Apeirons sosiale medier (Instagram, Facebook osv.)</li>
+          <li>Lager plakater, innhold og informasjonsmateriell</li>
+          <li>[Legg til ansvar her]</li>
+        </ul>
+      </div>
+
+      <div class="role-card reveal d1">
+        <div class="role-card__eyebrow">Verv</div>
+        <h3>Faddersjef</h3>
+        <p>[Placeholder — koordinerer fadderukene for nye studenter og sikrer et godt studiemottak.]</p>
+        <ul class="role-card__resp">
+          <li>Planlegger og koordinerer fadderukeprogrammet</li>
+          <li>Rekrutterer og organiserer faddere</li>
+          <li>[Legg til ansvar her]</li>
+        </ul>
+      </div>
+
+      <div class="role-card role-card--navy reveal d2">
+        <div class="role-card__eyebrow">Verv</div>
+        <h3>Fagansvarlig</h3>
+        <p>[Placeholder — ansvar for faglige arrangementer som fagkvelder, symposion og lesesirkler.]</p>
+        <ul class="role-card__resp">
+          <li>Planlegger faglige arrangement</li>
+          <li>Koordinerer Aporetisk Aften og lignende</li>
+          <li>[Legg til ansvar her]</li>
+        </ul>
+      </div>
+
+      <div class="role-card reveal d3">
+        <div class="role-card__eyebrow">Verv</div>
+        <h3>Potet</h3>
+        <p>[Placeholder — fleksibelt verv som støtter resten av styret og tar tak der det trengs.]</p>
+        <ul class="role-card__resp">
+          <li>Bistår andre styremedlemmer ved behov</li>
+          <li>[Legg til ansvar her]</li>
+        </ul>
+      </div>
+
+      <div class="role-card role-card--navy reveal">
+        <div class="role-card__eyebrow">Verv</div>
+        <h3>PTV — Programtillitsvalgt</h3>
+        <p>[Placeholder — representerer studentene i programrådet og er bindeledd mellom studenter og institutt.]</p>
+        <ul class="role-card__resp">
+          <li>Deltar i programrådsmøter</li>
+          <li>Formidler tilbakemeldinger fra studenter til instituttet</li>
+          <li>[Legg til ansvar her]</li>
+        </ul>
+      </div>
+
+      <div class="role-card role-card--navy reveal d1">
+        <div class="role-card__eyebrow">Verv</div>
+        <h3>ITV — Institutt-tillitsvalgt</h3>
+        <p>[Placeholder — representerer studentene i instituttets styrende organer.]</p>
+        <ul class="role-card__resp">
+          <li>[Legg til ansvar her]</li>
+        </ul>
+      </div>
+
+      <div class="role-card role-card--maroon reveal d2">
+        <div class="role-card__eyebrow">Verv</div>
+        <h3>S.A.K — Sosiale Arrangement Komité</h3>
+        <p>[Placeholder — åpen komité som arrangerer lavterskel sosiale aktiviteter for alle studenter.]</p>
+        <ul class="role-card__resp">
+          <li>Organiserer spontane og lavterskel arrangementer</li>
+          <li>Åpen for alle studenter — ikke bare styremedlemmer</li>
+          <li>[Legg til ansvar her]</li>
+        </ul>
+      </div>
+
+      <div class="role-card reveal d3">
+        <div class="role-card__eyebrow">Verv</div>
+        <h3>H.I.V</h3>
+        <p>[Placeholder — legg til beskrivelse av vervets ansvarsområder og rolle i foreningen.]</p>
+        <ul class="role-card__resp">
+          <li>[Legg til ansvar her]</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="wrap">
+    <img src="assets/apeiron-logo.png" alt="Apeiron segl" />
+    <div class="footer__name">APEIRON</div>
+    <div class="footer__tag">filosofi &amp; etikk · NTNU Trondheim</div>
+    <div class="footer__links">
+      <a href="index.html#om">Om oss</a>
+      <a href="index.html#studiet">Studiet</a>
+      <a href="pensum.html">Pensum</a>
+      <a href="begrep.html">Begrep</a>
+      <a href="index.html#arrangementer">Arrangementer</a>
+      <a href="index.html#styret">Styret</a>
+      <a href="styret.html">Om vervene</a>
+      <a href="index.html#sak">S.A.K</a>
+      <a href="galleri.html">Galleri</a>
+      <a href="merch.html">Merch</a>
+      <a href="marked.html">Kjøp &amp; bytte</a>
+      <a href="index.html#bli-medlem">Bli medlem</a>
+      <a href="index.html#kontakt">Kontakt</a>
+    </div>
+    <div class="footer__fine">© 2026 Apeiron Linjeforening</div>
+  </div>
+</footer>
+
+<script src="image-slot.js"></script>
+<script>
+(function () {
+  var nav = document.getElementById('nav');
+  function onScroll() { nav.classList.add('is-stuck'); }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  var burger = document.getElementById('burger');
+  var drawer = document.getElementById('drawer');
+  function closeDrawer() { drawer.classList.remove('is-open'); document.body.style.overflow = ''; }
+  if (burger) burger.addEventListener('click', function () {
+    var open = drawer.classList.toggle('is-open');
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+  if (drawer) {
+    drawer.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', closeDrawer); });
+    var dSearchBtn = drawer.querySelector('.drawer__search-row');
+    if (dSearchBtn) dSearchBtn.addEventListener('click', closeDrawer);
+  }
+
+  // Scroll reveal
+  var reveals = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(function (el) { io.observe(el); });
+  } else {
+    reveals.forEach(function (el) { el.classList.add('in'); });
+  }
+})();
+</script>
+<script src="site-search.js"></script>
+</body>
+</html>
