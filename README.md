@@ -244,16 +244,18 @@ Hvis repoet ikke er koblet til Cloudflare Pages, eller om man ønsker å bytte C
 
 Kritisk:
 - [ ] Fikse bedre sikkerhet for API-nøkkelen.
+- [ ] Få eget domene → Spør NTNU - Venter på svar 12.06.26
 
 Medium:
 - [ ] Stressteste Galleriet
 - [ ] Telefon: Menyen er for stor/lang.
 - [ ] Telefon: Søkefeltet er identisk med desktop.
 - [ ] Legge til egen Begrep side.
+- [ ] Side eller plassering for "Oppnåelser" (Premier vi har fått, som sølv i håndball og "best oppmøte" fra Dionysos)
 
 Hadde vært kult:
-- [ ] Snakke med IFR/NTNU om API for automatisk oppdatering av emner for studiene
-- [ ] Få eget domene → Spør NTNU
+- [ ] Snakke med IFR/NTNU om API for automatisk oppdatering av emner for studiene.
+- [x] Kunne trykke på alle bilder for å se større versjon.
 
 Lav:
 - [ ] Legge til forklaring av vervene i styret: Leder, nestleder, økonomiansvarlig, sosialansvarlig, PR-ansvarlig, Faddersjef, Fagansvarlig, Potet, (PTV, ITV), S.A.K, H.I.V. -> Dette krever en egen side for Styret.

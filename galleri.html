@@ -135,6 +135,26 @@
 }
 @keyframes gl-shimmer { to { background-position: -200% 0; } }
 
+/* ── Empty year placeholder ── */
+.gl-empty {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 72px 0 56px; gap: 24px; text-align: center;
+}
+.gl-empty__logo {
+  width: 120px; height: 120px;
+  object-fit: contain;
+  opacity: .18;
+  filter: grayscale(1);
+}
+.gl-empty__heading {
+  font-family: var(--display); font-style: italic; font-weight: 600;
+  font-size: 1.55rem; color: var(--navy); line-height: 1.2;
+}
+.gl-empty__sub {
+  font-size: .95rem; color: var(--ink-soft); max-width: 38ch; line-height: 1.65;
+  margin-top: -10px;
+}
+
 /* ── Config notice ── */
 .gl-setup {
   border: 1px dashed rgba(35,39,64,.28);
@@ -215,7 +235,7 @@
 .gl-marquee-track {
   display: flex;
   width: max-content;
-  animation: gl-marquee 52s linear infinite;
+  animation: gl-marquee 72s linear infinite;
 }
 .gl-marquee-wrap:hover .gl-marquee-track { animation-play-state: paused; }
 .gl-marquee-img {
@@ -427,12 +447,14 @@
 (function () {
   // ─────────────────────────────────────────────
   //  KONFIGURASJON
-  //  Mappestruktur i Drive (legg event-mapper direkte i rot-mappen):
+  //  Mappestruktur i Drive:
   //    ALT SOM LASTES OPP HER/
-  //      Halloweenfest 2025/   ← bilder her
-  //      Halloweenfest 2024/
-  //      Sommerfest 2025/
-  //  Årstallet i mappenavnet brukes til å lage år-faner automatisk.
+  //      2024/2025/            ← skoleår-mappe
+  //        Halloweenfest/      ← arrangement-mappe med bilder
+  //        Sommerfest/
+  //      2025/2026/
+  //        Halloweenfest/
+  //  Skoleår-mapper brukes som fane-titler automatisk.
   // ─────────────────────────────────────────────
   var CONFIG = {
     API_KEY:        'AIzaSyDpJWruxDIh5tZ5yacb6uURhGlm6IbalBs',
@@ -487,11 +509,6 @@
     return 'https://drive.google.com/thumbnail?id=' + id + '&sz=w1600';
   }
 
-  function extractYear(name) {
-    var m = name.match(/\b(20\d{2})\b/);
-    return m ? m[1] : 'Annet';
-  }
-
   // ── Render skeletons ─────────────────────────
   function showSkeletons(n) {
     var cards = '';
@@ -523,10 +540,10 @@
 
     if (events.length === 0) {
       content.innerHTML = [
-        '<div class="gl-status">',
-        '  <span class="gl-status__icon">📷</span>',
-        '  <b>Ingen bilder ennå</b>',
-        '  Legg til mapper med "' + state.activeYear + '" i navnet i Drive-mappen.',
+        '<div class="gl-empty">',
+        '  <img class="gl-empty__logo" src="assets/apeiron-logo.png" alt="Apeiron segl" />',
+        '  <p class="gl-empty__heading">Her kommer bilder fra ' + state.activeYear + '-kullet</p>',
+        '  <p class="gl-empty__sub">Bildene lastes opp etterhvert som det skjer ting.</p>',
         '</div>',
       ].join('');
       return;
@@ -576,50 +593,64 @@
     content.appendChild(grid);
   }
 
-  // ── Load all event folders from root ─────────
+  // ── Load all event folders (two-level: skoleår → arrangement) ───
   function loadAllFolders() {
     var q = "'" + CONFIG.ROOT_FOLDER_ID + "' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false";
-    var url = driveUrl({ q: q, fields: 'files(id,name)', orderBy: 'name desc', pageSize: '100' });
+    var url = driveUrl({ q: q, fields: 'files(id,name)', orderBy: 'name desc', pageSize: '50' });
     showSkeletons(6);
     fetchJson(url, function (err, data) {
       if (err || !data.files) { showError(err); return; }
-      var folders = data.files;
+      var yearFolders = data.files;
 
-      if (folders.length === 0) {
+      if (yearFolders.length === 0) {
         tabBar.style.display = 'none';
-        content.innerHTML = '<div class="gl-status"><span class="gl-status__icon">📁</span><b>Ingen mapper funnet</b>Legg til event-mapper i Drive-mappen for å komme i gang.</div>';
+        content.innerHTML = '<div class="gl-status"><span class="gl-status__icon">📁</span><b>Ingen mapper funnet</b>Legg til skoleår-mapper (f.eks. «2025/2026») i Drive-mappen for å komme i gang.</div>';
         return;
       }
 
-      // Extract years and build unique sorted list
-      var yearSet = {};
-      folders.forEach(function (f) { yearSet[extractYear(f.name)] = true; });
-      state.years = Object.keys(yearSet).sort(function (a, b) { return b.localeCompare(a); });
+      yearFolders.sort(function (a, b) { return b.name.localeCompare(a.name); });
+      state.years = yearFolders.map(function (f) { return f.name; });
       state.activeYear = state.years[0];
-      state.allFolders = folders.map(function (f) {
-        return { id: f.id, name: f.name, year: extractYear(f.name), coverId: null, count: null, previewIds: [] };
-      });
+      state.allFolders = [];
 
       renderTabs();
-      renderEvents();
 
-      // Fetch preview images + count for each folder, re-render as they arrive
-      var done = 0;
-      folders.forEach(function (folder, i) {
-        var imgQ = "'" + folder.id + "' in parents and mimeType contains 'image/' and trashed=false";
-        var imgUrl = driveUrl({ q: imgQ, fields: 'files(id)', orderBy: 'name', pageSize: '50' });
-        fetchJson(imgUrl, function (err2, imgData) {
-          if (!err2 && imgData.files && imgData.files.length > 0) {
-            state.allFolders[i].coverId = imgData.files[0].id;
-            state.allFolders[i].count = imgData.files.length;
-            // Store up to 5 images for the marquee
-            state.allFolders[i].previewIds = imgData.files.slice(0, 5).map(function (f) { return f.id; });
+      // Fetch event subfolders for each year folder
+      var pendingYears = yearFolders.length;
+      yearFolders.forEach(function (yearFolder) {
+        var q2 = "'" + yearFolder.id + "' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false";
+        var url2 = driveUrl({ q: q2, fields: 'files(id,name)', orderBy: 'name desc', pageSize: '100' });
+        fetchJson(url2, function (err2, data2) {
+          if (!err2 && data2.files) {
+            data2.files.forEach(function (f) {
+              state.allFolders.push({ id: f.id, name: f.name, year: yearFolder.name, coverId: null, count: null, previewIds: [] });
+            });
           }
-          done++;
-          if (done === folders.length) {
-            renderEvents();
-            renderMarquee();
-          }
+          pendingYears--;
+          if (pendingYears > 0) return;
+
+          renderEvents();
+
+          // Fetch cover image + count for each event folder
+          var total = state.allFolders.length;
+          if (total === 0) return;
+          var done = 0;
+          state.allFolders.forEach(function (ev, i) {
+            var imgQ = "'" + ev.id + "' in parents and mimeType contains 'image/' and trashed=false";
+            var imgUrl = driveUrl({ q: imgQ, fields: 'files(id)', orderBy: 'name', pageSize: '50' });
+            fetchJson(imgUrl, function (err3, imgData) {
+              if (!err3 && imgData.files && imgData.files.length > 0) {
+                state.allFolders[i].coverId = imgData.files[0].id;
+                state.allFolders[i].count = imgData.files.length;
+                state.allFolders[i].previewIds = imgData.files.slice(0, 5).map(function (f) { return f.id; });
+              }
+              done++;
+              if (done === total) {
+                renderEvents();
+                renderMarquee();
+              }
+            });
+          });
         });
       });
     });
@@ -738,13 +769,22 @@
     var base = allIds.slice();
     while (base.length < minPerCopy) { base = base.concat(allIds); }
 
-    var html = '';
+    track.innerHTML = '';
+    var syntheticImages = base.map(function (fid) { return { id: fid, name: '' }; });
     [base, base].forEach(function (set) {
-      set.forEach(function (id) {
-        html += '<img class="gl-marquee-img" src="' + thumbUrl(id) + '" alt="" loading="lazy">';
+      set.forEach(function (id, i) {
+        var img = document.createElement('img');
+        img.className = 'gl-marquee-img';
+        img.src = thumbUrl(id);
+        img.alt = '';
+        img.style.cursor = 'pointer';
+        img.addEventListener('click', function () {
+          state.lightbox = { images: syntheticImages, idx: i, eventName: 'Galleri' };
+          showLightbox(i);
+        });
+        track.appendChild(img);
       });
     });
-    track.innerHTML = html;
     marqueeEl.style.display = '';
   }
 

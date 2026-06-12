@@ -604,7 +604,44 @@ samtale &amp; vin
               if (!await probe(src)) break;
               found.push(src);
             }
+
+            // Lightbox setup — DOM is fully parsed by now (awaits above yielded)
+            const allSrcs = ['assets/lesesalen/lesesal1.jpg'].concat(found);
+            const lb = document.getElementById('lsLb');
+            const lbImg = document.getElementById('lsLbImg');
+            const lbInfo = document.getElementById('lsLbInfo');
+            let lbIdx = 0;
+
+            function showLb(idx) {
+              lbIdx = ((idx % allSrcs.length) + allSrcs.length) % allSrcs.length;
+              lbImg.src = allSrcs[lbIdx];
+              lbInfo.textContent = (lbIdx + 1) + ' / ' + allSrcs.length;
+              lb.classList.add('is-open');
+              document.body.style.overflow = 'hidden';
+            }
+            function closeLb() {
+              lb.classList.remove('is-open');
+              document.body.style.overflow = '';
+              lbImg.src = '';
+            }
+
+            document.getElementById('lsLbClose').addEventListener('click', closeLb);
+            document.getElementById('lsLbPrev').addEventListener('click', () => showLb(lbIdx - 1));
+            document.getElementById('lsLbNext').addEventListener('click', () => showLb(lbIdx + 1));
+            lb.addEventListener('click', e => { if (e.target === lb) closeLb(); });
+            document.addEventListener('keydown', e => {
+              if (!lb.classList.contains('is-open')) return;
+              if (e.key === 'ArrowLeft') showLb(lbIdx - 1);
+              if (e.key === 'ArrowRight') showLb(lbIdx + 1);
+              if (e.key === 'Escape') closeLb();
+            });
+
+            // Make main image clickable
+            const mainSlot = document.getElementById('ls1');
+            if (mainSlot) mainSlot.addEventListener('click', () => showLb(0));
+
             if (!found.length) return;
+
             const make = (src, i, suffix) => {
               const el = document.createElement('image-slot');
               el.id = `ls${i}${suffix}`;
@@ -613,8 +650,16 @@ samtale &amp; vin
               el.setAttribute('src', src);
               return el;
             };
-            found.forEach((src, idx) => track.appendChild(make(src, idx + 2, '')));
-            found.forEach((src, idx) => track.appendChild(make(src, idx + 2, 'b')));
+            found.forEach((src, idx) => {
+              const el = make(src, idx + 2, '');
+              el.addEventListener('click', () => showLb(idx + 1));
+              track.appendChild(el);
+            });
+            found.forEach((src, idx) => {
+              const el = make(src, idx + 2, 'b');
+              el.addEventListener('click', () => showLb(idx + 1));
+              track.appendChild(el);
+            });
           })();
         </script>
       </div>
@@ -747,6 +792,17 @@ samtale &amp; vin
     <div class="footer__fine">© 2026 Apeiron Linjeforening</div>
   </div>
 </footer>
+
+<!-- ============ LESESALEN LIGHTBOX ============ -->
+<div class="ls-lb" id="lsLb" role="dialog" aria-modal="true" aria-label="Lesesalen bilder">
+  <button class="ls-lb__close" id="lsLbClose" aria-label="Lukk">&times;</button>
+  <div class="ls-lb__img-wrap">
+    <img class="ls-lb__img" id="lsLbImg" src="" alt="Lesesalen" />
+  </div>
+  <button class="ls-lb__btn ls-lb__prev" id="lsLbPrev" aria-label="Forrige bilde">&#8592;</button>
+  <button class="ls-lb__btn ls-lb__next" id="lsLbNext" aria-label="Neste bilde">&#8594;</button>
+  <div class="ls-lb__info" id="lsLbInfo"></div>
+</div>
 
 <script src="image-slot.js"></script>
 <script src="app.js"></script>
