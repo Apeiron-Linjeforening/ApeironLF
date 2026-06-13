@@ -281,6 +281,8 @@ Kritisk:
 - [ ] Fikse domene - Se "Domene" nedenfor.
 - [ ] Sjekke på nytt hvordan alt oppfører seg på mobil.
 - [ ] Om man dobbeltrykker TAB på styret, vil bildene flytte seg oppover i ringen og vise en blå bakgrunn. 
+- [ ] Å trykke på "Styret" i menyen tar deg til index og ikke selve styret. Den burde ta deg til "Om vervene".
+- [ ] "Om vervene" burde skrives om til "Apeiron styret"
 
 Medium:
 - [ ] Be HF studentrådet om å oppdatere sidene deres og gi oss mer informasjon om hva de faktisk gjør. 
@@ -289,6 +291,8 @@ Medium:
 - [ ] Be HF studentrådet om å fikse "Bli kjent med oss" og "Kontakt oss" lenkene deres.
 - [ ] Mens HF fikser greiene sine: Se om vi kan fikse NTNU's litt lite intuitive "Si fra!" side og gjøre det mer tydelig på vår side.
 - [ ] Fjern fade på siden av rullebåndet på Hero. Det ble forstyrrende for øyet.
+- [ ] Legge til side for Utmerkelser for personer som har stått ut i studentmiljøet eller det frivillige under IFR.
+- [ ] Noe av teksten på Begrep er vanskelig å lese.
 
 Lav:
 - [ ] Side eller plassering for "Oppnåelser" (Premier vi har fått, som sølv i håndball og "best oppmøte" fra Dionysos)
@@ -298,6 +302,7 @@ Lav:
 - [ ] Fylle ut SAK / utvide den.
 - [ ] Sette opp et arkiv.
 - [ ] Det er 5 lyse pixler på hero. Disse burde fjerne: to nede, en under "etterpå" til høyre, en over "linjeforening siden" og en over den store apeironlogoen.
+- [ ] Sammenlign med Online.ntnu.no.
 
 Hadde vært kult:
 - [ ] Snakke med IFR/NTNU om API for automatisk oppdatering av emner for studiene.
