@@ -71,6 +71,14 @@ window.STYRET_CONTENT = {
         {
           "label": "HIV",
           "color": ""
+        },
+        {
+          "label": "Unionen",
+          "color": "blue"
+        },
+        {
+          "label": "Nettside",
+          "color": "plum"
         }
       ]
     },
@@ -259,6 +267,15 @@ window.STYRET_CONTENT = {
         "Designet den nye Apeiron-pinnen",
         "Arbeider med merch — gensere, kopper og muligens bøker",
         "Forvalter Apeirons visuelle identitet"
+      ]
+    },
+    {
+      "id": "rmqc29l8bvm7",
+      "name": "Unionsrepresentant",
+      "accent": "blue",
+      "desc": "Apeiron er med i Unionen — samarbeidet mellom linjeforeningene for klassiske fag på Dragvoll.\nLinjeforeningens unionsrepresentant har ansvaret for å møte med Unionen og være bindeleddet mellom Apeiron og de deltagende linjeforeningene.",
+      "resp": [
+        "Forbedre samarbeid mellom linjeforeningene"
       ]
     }
   ]

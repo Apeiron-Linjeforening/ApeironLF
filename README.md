@@ -297,6 +297,7 @@ Lav:
 - [ ] Fikse bedre sikkerhet for API-nøkkelen.
 - [ ] Fylle ut SAK / utvide den.
 - [ ] Sette opp et arkiv.
+- [ ] Det er 5 lyse pixler på hero. Disse burde fjerne: to nede, en under "etterpå" til høyre, en over "linjeforening siden" og en over den store apeironlogoen.
 
 Hadde vært kult:
 - [ ] Snakke med IFR/NTNU om API for automatisk oppdatering av emner for studiene.
