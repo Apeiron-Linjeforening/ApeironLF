@@ -2,6 +2,7 @@
 <html lang="no">
 <head>
 <meta charset="UTF-8" />
+<script src="theme.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Apeiron styret — Apeiron · NTNU</title>
 <meta name="description" content="Styret i Apeiron 2025/26 og beskrivelse av alle styreverv: Leder, Nestleder, Økonomiansvarlig, Sosialansvarlig, PR-ansvarlig, Faddersjef, Fagansvarlig og mer." />
@@ -62,25 +63,29 @@
   margin-top: 2.5em;
 }
 .role-card {
-  background: var(--paper-2, #f7f3ec);
-  border: 1px solid rgba(35,39,64,.14);
-  border-left: 4px solid var(--gold);
+  background: var(--card, #f7f3ec);
+  border: 1px solid var(--line);
+  /* Stripefarge: --c-l/--c-d settes inline (dynamiske kort) eller via
+     .role-card--X under (statiske kort). Standard = gull. */
+  border-left: 4px solid var(--c-l, var(--gold));
   border-radius: 4px;
   padding: 28px 26px;
   display: flex; flex-direction: column; gap: 10px;
   transition: transform .22s ease, box-shadow .25s ease, border-color .25s ease;
 }
+html[data-mode="marine"] .role-card { border-left-color: var(--c-d, var(--gold)); }
 .role-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 22px 44px -28px rgba(35,39,64,.5);
 }
-.role-card--maroon { border-left-color: var(--maroon); }
-.role-card--navy   { border-left-color: var(--navy); }
-.role-card--green  { border-left-color: #3a6b4a; }
-.role-card--teal   { border-left-color: #2c6b6b; }
-.role-card--blue   { border-left-color: #2f4ea0; }
-.role-card--plum   { border-left-color: #6a4570; }
-.role-card--rust   { border-left-color: #9c531f; }
+/* Statiske modifikatorer: setter samme variabler som paletten (lys/mørk). */
+.role-card--maroon { --c-l:#76110f; --c-d:#e0a8a0; }
+.role-card--navy   { --c-l:#2b315a; --c-d:#9fb4ff; }
+.role-card--green  { --c-l:#3a6b4a; --c-d:#7fc69a; }
+.role-card--teal   { --c-l:#2c6b6b; --c-d:#6fc3c3; }
+.role-card--blue   { --c-l:#2f4ea0; --c-d:#8fa8ee; }
+.role-card--plum   { --c-l:#6a4570; --c-d:#c79fce; }
+.role-card--rust   { --c-l:#9c531f; --c-d:#e0a06a; }
 
 .role-card__eyebrow {
   font-family: var(--body); font-size: .65rem; font-weight: 700;
@@ -90,7 +95,7 @@
 }
 .role-card h3 {
   font-family: var(--display); font-size: 1.45rem; font-weight: 600;
-  color: var(--navy); line-height: 1.1; margin: 0;
+  color: var(--ink); line-height: 1.1; margin: 0;
 }
 .role-card p {
   font-size: .95rem; color: var(--ink-soft, #4a4d6a);
@@ -102,15 +107,15 @@
 }
 .role-card__resp li {
   position: relative; padding-left: 16px;
-  font-size: .9rem; color: var(--navy);
+  font-size: .9rem; color: var(--ink);
   line-height: 1.5;
 }
 .role-card__resp li::before {
   content: "—"; position: absolute; left: 0;
-  color: var(--maroon); font-weight: 700;
+  color: var(--warm); font-weight: 700;
 }
 .role-card__contact {
-  font-size: .9rem; color: var(--navy);
+  font-size: .9rem; color: var(--ink);
   margin-top: 4px;
 }
 
@@ -387,6 +392,7 @@
 </footer>
 
 <script src="image-slot.js"></script>
+<script src="palette.js"></script>
 <script src="styret-content.js"></script>
 <script>
 /* ── Render styret + verv fra styret-content.js ── */
@@ -411,10 +417,9 @@
   var boardEl = document.getElementById('styret-board');
   if (boardEl && Array.isArray(C.members)) {
     boardEl.innerHTML = C.members.map(function (m, i) {
-      var TAGCOLORS = ['maroon', 'gold', 'navy', 'green', 'teal', 'blue', 'plum', 'rust'];
+      var sv = window.paletteStyleVars || function () { return ''; };
       var tags = (m.tags || []).filter(function (t) { return t && t.label; }).map(function (t) {
-        var cls = TAGCOLORS.indexOf(t.color) !== -1 ? ' member__tag--' + t.color : '';
-        return '<span class="member__tag' + cls + '">' + esc(t.label) + '</span>';
+        return '<span class="member__tag" style="' + sv(t.color) + '">' + esc(t.label) + '</span>';
       }).join('');
       return '<div class="member reveal ' + STAGGER[i % 4] + '">'
         + '<div class="member__ph"><span class="member__initials">' + esc(m.initials) + '</span>'
@@ -430,12 +435,13 @@
   var rolesEl = document.getElementById('styret-roles');
   if (rolesEl && Array.isArray(C.roles)) {
     rolesEl.innerHTML = C.roles.map(function (r, i) {
-      var ACCENTS = ['maroon', 'navy', 'green', 'teal', 'blue', 'plum', 'rust'];
-      var cls = ACCENTS.indexOf(r.accent) !== -1 ? ' role-card--' + r.accent : '';
+      var sv = window.paletteStyleVars || function () { return ''; };
+      // Tom accent => ingen variabler, CSS-fallback gir lys gull (standard).
+      var accentStyle = r.accent ? sv(r.accent) : '';
       var resp = (r.resp || []).filter(function (x) { return x; }).map(function (x) {
         return '<li>' + esc(x) + '</li>';
       }).join('');
-      return '<div class="role-card' + cls + ' reveal ' + STAGGER[i % 4] + '">'
+      return '<div class="role-card reveal ' + STAGGER[i % 4] + '" style="' + accentStyle + '">'
         + '<div class="role-card__eyebrow">' + esc(r.eyebrow || 'Verv') + '</div>'
         + '<h3>' + esc(r.name) + '</h3>'
         + '<p>' + esc(r.desc) + '</p>'

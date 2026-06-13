@@ -2,6 +2,7 @@
 <html lang="no">
 <head>
 <meta charset="UTF-8" />
+<script src="theme.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Hjelp & ressurser — Apeiron · NTNU</title>
 <meta name="description" content="Ressurser for filosofi- og etikkstudenter ved NTNU: Si fra!, studentdemokrati, psykisk og fysisk helse, og akutt hjelp med viktige nødnumre i Trondheim." />
@@ -62,30 +63,25 @@
   margin-top: 2.5em;
 }
 .role-card {
-  background: var(--paper-2, #f7f3ec);
-  border: 1px solid rgba(35,39,64,.14);
-  border-left: 4px solid var(--gold);
+  background: var(--card, #f7f3ec);
+  border: 1px solid var(--line);
+  /* Stripefarge: --c-l/--c-d settes inline fra palette.js. Standard = gull. */
+  border-left: 4px solid var(--c-l, var(--gold));
   border-radius: 4px;
   padding: 28px 26px;
   display: flex; flex-direction: column; gap: 10px;
   transition: transform .22s ease, box-shadow .25s ease, border-color .25s ease;
 }
+html[data-mode="marine"] .role-card { border-left-color: var(--c-d, var(--gold)); }
 .role-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 22px 44px -28px rgba(35,39,64,.5);
 }
-.role-card--maroon { border-left-color: var(--maroon); }
-.role-card--navy   { border-left-color: var(--navy); }
-.role-card--green  { border-left-color: #3a6b4a; }
-.role-card--teal   { border-left-color: #2c6b6b; }
-.role-card--blue   { border-left-color: #2f4ea0; }
-.role-card--plum   { border-left-color: #6a4570; }
-.role-card--rust   { border-left-color: #9c531f; }
 .role-card__note {
   font-size: .88rem; color: var(--ink-soft, #4a4d6a); margin-top: 6px; line-height: 1.55;
 }
 .role-card__note--warn {
-  font-size: .9rem; color: var(--maroon); font-weight: 600; margin: 2px 0 4px;
+  font-size: .9rem; color: var(--warm); font-weight: 600; margin: 2px 0 4px;
 }
 
 .role-card__eyebrow {
@@ -96,7 +92,7 @@
 }
 .role-card h3 {
   font-family: var(--display); font-size: 1.45rem; font-weight: 600;
-  color: var(--navy); line-height: 1.1; margin: 0;
+  color: var(--ink); line-height: 1.1; margin: 0;
 }
 .role-card p {
   font-size: .95rem; color: var(--ink-soft, #4a4d6a);
@@ -108,15 +104,15 @@
 }
 .role-card__resp li {
   position: relative; padding-left: 16px;
-  font-size: .9rem; color: var(--navy);
+  font-size: .9rem; color: var(--ink);
   line-height: 1.5;
 }
 .role-card__resp li::before {
   content: "—"; position: absolute; left: 0;
-  color: var(--maroon); font-weight: 700;
+  color: var(--warm); font-weight: 700;
 }
 .role-card__contact {
-  font-size: .9rem; color: var(--navy);
+  font-size: .9rem; color: var(--ink);
   margin-top: 4px;
 }
 .role-card__url {
@@ -132,12 +128,12 @@
   margin-top: 2em;
 }
 .sifra-item {
-  background: var(--paper-2, #f7f3ec);
-  border: 1px solid rgba(35,39,64,.12);
+  background: var(--card, #f7f3ec);
+  border: 1px solid var(--line);
   border-radius: 4px;
   padding: 18px 20px;
   font-size: .92rem;
-  color: var(--navy);
+  color: var(--ink);
   line-height: 1.5;
 }
 .sifra-item__icon {
@@ -159,7 +155,7 @@
   border: 1px solid rgba(212,175,55,.3);
   border-radius: 5px;
   padding: 14px 16px;
-  color: var(--paper);
+  color: var(--on-dark);
   transition: transform .2s ease, background .2s ease, border-color .2s ease;
 }
 .help-nav__card:hover {
@@ -199,7 +195,7 @@
 }
 .akutt-card {
   display: flex; flex-direction: column; gap: 8px;
-  background: var(--paper-2, #f7f3ec);
+  background: var(--card, #f7f3ec);
   border: 1px solid rgba(118,17,15,.18);
   border-left: 5px solid var(--maroon);
   border-radius: 4px;
@@ -218,17 +214,17 @@
 .akutt-card__num {
   font-family: var(--display);
   font-size: 2.1rem; font-weight: 700;
-  color: var(--maroon); line-height: 1;
+  color: var(--warm); line-height: 1;
   text-decoration: none;
   display: inline-flex; align-items: baseline; gap: .3em;
 }
 .akutt-card__num:hover { text-decoration: underline; }
 .akutt-card__name {
   font-size: 1.02rem; font-weight: 700; letter-spacing: .01em;
-  color: var(--navy);
+  color: var(--ink);
 }
 .akutt-card__when {
-  font-size: .95rem; line-height: 1.6; color: var(--navy);
+  font-size: .95rem; line-height: 1.6; color: var(--ink);
   margin: 0;
 }
 
@@ -239,6 +235,9 @@
 /* ── Komprimert seksjonsspacing for denne siden ── */
 .section       { padding: 72px 0; }
 .section--tight{ padding: 52px 0; }
+
+/* ── Marine-modus: kort-justeringer ── */
+html[data-mode="marine"] .akutt-card--life { background: #2e1c20; border-color: rgba(224,133,125,.4); }
 </style>
 </head>
 <body data-mode="paper">
@@ -365,7 +364,7 @@
 
     <div class="center" style="margin-top:28px" id="sifra-cta-wrap"></div>
 
-    <h3 id="sifra-helpers-heading" style="font-family:var(--display);font-size:1.6rem;font-weight:600;color:var(--navy);text-align:center;margin:52px 0 8px;"></h3>
+    <h3 id="sifra-helpers-heading" style="font-family:var(--display);font-size:1.6rem;font-weight:600;color:var(--ink);text-align:center;margin:52px 0 8px;"></h3>
     <p id="sifra-helpers-lede" style="text-align:center;color:var(--ink-soft,#4a4d6a);font-size:.97rem;max-width:54ch;margin:0 auto 28px;"></p>
 
     <!-- Auto-fylt fra hjelp-content.js -->
@@ -458,12 +457,13 @@
 </footer>
 
 <script src="image-slot.js"></script>
+<script src="palette.js"></script>
 <script src="hjelp-content.js"></script>
 <script>
 /* ── Render Hjelp-siden fra hjelp-content.js ── */
 (function () {
   var C = window.HJELP_CONTENT || {};
-  var ACCENTS = ['maroon', 'navy', 'green', 'teal', 'blue', 'plum', 'rust'];
+  var sv = window.paletteStyleVars || function () { return ''; };
   var STAGGER = ['', 'd1', 'd2', 'd3'];
 
   function esc(s) {
@@ -485,12 +485,13 @@
       + esc(label) + ' <span class="arr">→</span></a>';
   }
   function roleCard(c, i) {
-    var cls = ACCENTS.indexOf(c.accent) !== -1 ? ' role-card--' + c.accent : '';
+    // Tom accent => ingen variabler, CSS-fallback gir lys gull (standard).
+    var accentStyle = c.accent ? sv(c.accent) : '';
     var resp = (c.resp || []).filter(function (x) { return x; })
       .map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('');
     var contacts = (c.contacts || []).filter(function (x) { return x; })
       .map(function (x) { return '<p class="role-card__contact">' + x + '</p>'; }).join('');
-    return '<div class="role-card' + cls + ' reveal ' + STAGGER[i % 4] + '">'
+    return '<div class="role-card reveal ' + STAGGER[i % 4] + '" style="' + accentStyle + '">'
       + (c.eyebrow ? '<div class="role-card__eyebrow">' + esc(c.eyebrow) + '</div>' : '')
       + '<h3>' + esc(c.name) + '</h3>'
       + paragraphs(c.desc)

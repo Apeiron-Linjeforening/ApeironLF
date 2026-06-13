@@ -172,6 +172,10 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
 
 /* Fields */
 .fields { padding: 16px 18px; display: flex; flex-direction: column; gap: 11px; }
+.appearance { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; align-items: start; }
+.app-col { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.app-lbl { font-size: .6rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-soft); }
+@media (max-width: 620px) { .appearance { grid-template-columns: 1fr; } }
 .frow { display: flex; gap: 10px; }
 .fg { display: flex; flex-direction: column; gap: 3px; flex: 1; }
 .fg label {
@@ -261,6 +265,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
 <div class="toast" id="toast">Lagret i nettleseren</div>
 <input type="file" id="file-input" accept="image/png,image/jpeg,image/webp,image/avif" hidden>
 
+<script src="palette.js"></script>
 <script src="merch-products.js"></script>
 <script>
 (function () {
@@ -466,6 +471,14 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
               + '<input type="text" data-f="badge" value="' + esc(p.badge || '') + '" placeholder="f.eks. Nyhet"></div>'
           + '</div>'
           + '<div class="fg"><label>Badge-type</label><div class="badge-opts">' + radios + '</div></div>'
+          + '<div class="fg"><label>Bestill-knapp tekst</label>'
+            + '<input type="text" data-f="btnLabel" value="' + esc(p.btnLabel || '') + '" placeholder="Bestill (f.eks. «Utsolgt»)"></div>'
+          + '<div class="fg"><label>Utseende — farger & kant</label>'
+            + '<div class="appearance">'
+              + '<div class="app-col"><span class="app-lbl">Badge</span><div data-badge-host></div></div>'
+              + '<div class="app-col"><span class="app-lbl">Kortkant</span><div data-edge-host></div></div>'
+              + '<div class="app-col"><span class="app-lbl">Knapp</span><div data-btn-host></div></div>'
+            + '</div></div>'
           + '<button class="adv-toggle" type="button">▸ Bestillingslenke (avansert)</button>'
           + '<div class="adv-fields">'
             + '<div class="fg"><label>E-post emne</label>'
@@ -529,6 +542,25 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
       advBtn.textContent = (open ? '▾' : '▸') + ' Bestillingslenke (avansert)';
     });
 
+    // Fargekontroller (palette.js): badge, kortkant (m/ animerte glød), knapp
+    const mkColor = window.createColorControl;
+    const bHost = card.querySelector('[data-badge-host]');
+    if (bHost && mkColor) bHost.appendChild(mkColor({
+      value: p.badgeColor, emptyLabel: 'Følg badge-type',
+      onChange: function (v) { p.badgeColor = v || null; lazySave(); }
+    }));
+    const eHost = card.querySelector('[data-edge-host]');
+    if (eHost && mkColor) eHost.appendChild(mkColor({
+      value: p.edge, emptyLabel: 'Ingen kant',
+      animatedPresets: window.APEIRON_ANIMATED,
+      onChange: function (v) { p.edge = v || null; lazySave(); }
+    }));
+    const btHost = card.querySelector('[data-btn-host]');
+    if (btHost && mkColor) btHost.appendChild(mkColor({
+      value: p.btnColor, emptyLabel: 'Standard (vinrød)',
+      onChange: function (v) { p.btnColor = v || null; lazySave(); }
+    }));
+
     return card;
   }
 
@@ -570,6 +602,12 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
       + '   Rediger direkte her, eller åpne merch-admin.html for visuell redigering.\n'
       + '\n'
       + '   badgeType: "bestseller" | "new" | "limited" | null\n'
+      + '   btnLabel : tekst på Bestill-knappen (tom = "Bestill", f.eks. "Utsolgt")\n'
+      + '   Farger (alle valgfrie) — palettnavn, { light, dark }, eller rå hex:\n'
+      + '     badgeColor : fri badge-farge (overstyrer typefargen)\n'
+      + '     btnColor   : fri knappefarge\n'
+      + '     edge       : farget kant rundt kortet, ELLER { anim: "aurora-bold" }\n'
+      + '                  for animert glød (se APEIRON_ANIMATED i palette.js)\n'
       + '   img: null (viser segl-watermark), base64-bilde fra admin,\n'
       + '        eller "assets/merch/filnavn.jpg" for bilder i repoet */\n\n'
       + 'window.MERCH_PRODUCTS = ' + JSON.stringify(products, null, 2) + ';\n';

@@ -2,6 +2,7 @@
 <html lang="no">
 <head>
 <meta charset="UTF-8" />
+<script src="theme.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Galleri — Apeiron · NTNU</title>
 <meta name="description" content="Bilder fra Apeirons arrangementer — fester, fagkvelder, fadderuker og turer gjennom årene. Linjeforeningen for filosofi og etikk ved NTNU." />
@@ -50,18 +51,18 @@
 
 /* ── Year tab bar ── */
 .gl-tabs {
-  display: flex; gap: 0; border: 1px solid rgba(35,39,64,.26);
+  display: flex; gap: 0; border: 1px solid var(--line-2);
   border-radius: 3px; overflow: hidden; flex-wrap: wrap;
 }
 .gl-tab {
   font-family: var(--body); font-size: .88rem; font-weight: 600; letter-spacing: .04em;
   padding: .68em 1.4em; background: transparent; color: var(--ink-soft);
-  border: 0; border-right: 1px solid rgba(35,39,64,.18); cursor: pointer;
+  border: 0; border-right: 1px solid var(--line); cursor: pointer;
   transition: background .2s, color .2s;
 }
 .gl-tab:last-child { border-right: 0; }
-.gl-tab:hover { color: var(--navy); }
-.gl-tab.is-active { background: var(--navy); color: var(--paper); }
+.gl-tab:hover { color: var(--ink); }
+.gl-tab.is-active { background: var(--ink); color: var(--paper); }
 
 /* ── Event grid ── */
 .gl-grid {
@@ -98,7 +99,7 @@
     var(--navy);
   display: flex; align-items: center; justify-content: center;
 }
-.gl-card__placeholder svg { width: 48px; height: 48px; opacity: .22; color: var(--paper); }
+.gl-card__placeholder svg { width: 48px; height: 48px; opacity: .22; color: var(--on-dark); }
 .gl-card__overlay {
   position: absolute; bottom: 0; left: 0; right: 0;
   background: linear-gradient(to top, rgba(10,12,24,.82) 0%, transparent 100%);
@@ -106,7 +107,7 @@
 }
 .gl-card__name {
   font-family: var(--display); font-style: italic; font-weight: 600;
-  font-size: 1.15rem; color: var(--paper); line-height: 1.2;
+  font-size: 1.15rem; color: var(--on-dark); line-height: 1.2;
   display: block;
 }
 .gl-card__count {
@@ -129,7 +130,7 @@
 }
 .gl-skeleton__card {
   aspect-ratio: 4/3; border-radius: 4px;
-  background: linear-gradient(90deg, rgba(35,39,64,.08) 25%, rgba(35,39,64,.14) 50%, rgba(35,39,64,.08) 75%);
+  background: linear-gradient(90deg, var(--fill-soft) 25%, var(--line) 50%, var(--fill-soft) 75%);
   background-size: 200% 100%;
   animation: gl-shimmer 1.4s infinite;
 }
@@ -148,7 +149,7 @@
 }
 .gl-empty__heading {
   font-family: var(--display); font-style: italic; font-weight: 600;
-  font-size: 1.55rem; color: var(--navy); line-height: 1.2;
+  font-size: 1.55rem; color: var(--ink); line-height: 1.2;
 }
 .gl-empty__sub {
   font-size: .95rem; color: var(--ink-soft); max-width: 38ch; line-height: 1.65;
@@ -157,9 +158,9 @@
 
 /* ── Config notice ── */
 .gl-setup {
-  border: 1px dashed rgba(35,39,64,.28);
+  border: 1px dashed var(--line-2);
   border-radius: 6px; padding: 36px 40px;
-  background: rgba(35,39,64,.025);
+  background: var(--fill-soft);
   max-width: 60ch; margin: 40px auto;
   text-align: center;
 }
@@ -167,11 +168,11 @@
   font-size: .7rem; font-weight: 700; letter-spacing: .28em; text-transform: uppercase;
   color: var(--accent-ink); margin-bottom: .8em; display: block;
 }
-.gl-setup h3 { font-size: 1.4rem; margin-bottom: .5em; color: var(--navy); }
+.gl-setup h3 { font-size: 1.4rem; margin-bottom: .5em; color: var(--ink); }
 .gl-setup p { font-size: .95rem; color: var(--ink-soft); line-height: 1.65; }
 .gl-setup code {
   font-family: monospace; font-size: .88em;
-  background: rgba(35,39,64,.08); padding: .1em .4em; border-radius: 3px;
+  background: var(--fill-soft); padding: .1em .4em; border-radius: 3px;
   color: var(--accent-ink);
 }
 
@@ -199,7 +200,7 @@
   position: fixed; top: 50%; transform: translateY(-50%);
   width: 52px; height: 52px; border-radius: 50%;
   background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18);
-  color: var(--paper); cursor: pointer; font-size: 1.4rem; line-height: 1;
+  color: var(--on-dark); cursor: pointer; font-size: 1.4rem; line-height: 1;
   display: flex; align-items: center; justify-content: center;
   transition: background .18s;
   backdrop-filter: blur(4px);
@@ -211,7 +212,7 @@
   position: fixed; top: 20px; right: 22px;
   width: 44px; height: 44px; border-radius: 50%;
   background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18);
-  color: var(--paper); cursor: pointer; font-size: 1.3rem; line-height: 1;
+  color: var(--on-dark); cursor: pointer; font-size: 1.3rem; line-height: 1;
   display: flex; align-items: center; justify-content: center;
   transition: background .18s;
   backdrop-filter: blur(4px);
@@ -230,7 +231,7 @@
   overflow: hidden;
   background: var(--paper);
   padding: 16px 0;
-  border-bottom: 1px solid rgba(35,39,64,.09);
+  border-bottom: 1px solid var(--line);
 }
 .gl-marquee-track {
   display: flex;
@@ -312,7 +313,7 @@
 .gl-event-back::before { content: "←"; }
 .gl-event-title {
   font-family: var(--display); font-style: italic;
-  font-size: 1.45rem; color: var(--navy);
+  font-size: 1.45rem; color: var(--ink);
 }
 .gl-event-count {
   font-size: .8rem; color: var(--ink-soft); letter-spacing: .04em; margin-left: auto;

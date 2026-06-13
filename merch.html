@@ -2,6 +2,7 @@
 <html lang="no">
 <head>
 <meta charset="UTF-8" />
+<script src="theme.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Merch — Apeiron · NTNU</title>
 <meta name="description" content="Apeiron-merch i begrenset opplag — pins, gensere og mer med linjeforeningens segl. Bestill via e-post og hent på lesesalen på Dragvoll." />
@@ -57,8 +58,8 @@
 }
 
 .product {
-  background: var(--paper);
-  border: 1px solid rgba(35,39,64,.16);
+  background: var(--card);
+  border: 1px solid var(--line);
   border-radius: 4px;
   overflow: hidden;
   display: flex; flex-direction: column;
@@ -88,10 +89,13 @@
 .product__badge {
   position: absolute; top: 14px; left: 14px; z-index: 2;
   font-size: .64rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
-  background: var(--maroon); color: var(--paper);
+  background: var(--maroon); color: var(--on-dark);
   border-radius: 2px; padding: .36em .8em;
 }
-.product__badge--new { background: var(--gold); color: var(--navy); }
+/* Badge-typer — distinkte hurtigfarger (fri badge-farge overstyrer disse) */
+.product__badge--bestseller { background: var(--gold);   color: var(--navy); }
+.product__badge--new        { background: #3a6b4a;       color: #fff; }
+.product__badge--limited    { background: #9c531f;       color: #fff; }
 
 /* Segl watermark on product images */
 .product__watermark {
@@ -112,7 +116,7 @@
   font-size: .68rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase;
   color: var(--accent-ink);
 }
-.product h3 { font-size: 1.55rem; color: var(--navy); line-height: 1.1; }
+.product h3 { font-size: 1.55rem; color: var(--ink); line-height: 1.1; }
 .product__desc { font-size: .96rem; color: var(--ink-soft); line-height: 1.55; flex: 1; }
 
 .product__footer {
@@ -120,7 +124,7 @@
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
 }
 .product__price {
-  font-family: var(--display); font-size: 2rem; color: var(--maroon); line-height: 1;
+  font-family: var(--display); font-size: 2rem; color: var(--warm); line-height: 1;
 }
 .product__price small {
   font-family: var(--body); font-size: .78rem; color: var(--ink-soft);
@@ -132,7 +136,7 @@
 
 /* ── How to order ── */
 .order-band {
-  background: var(--navy); color: var(--paper);
+  background: var(--navy); color: var(--on-dark);
   border-radius: 6px; padding: 52px 50px;
   display: grid; grid-template-columns: 1.2fr 1fr;
   gap: 52px; align-items: start;
@@ -143,7 +147,7 @@
   border: 1px solid rgba(212,175,55,.28); border-radius: 4px; pointer-events: none;
 }
 .order-band .eyebrow { color: var(--gold); }
-.order-band h2 { color: var(--paper); font-size: 2.4rem; margin: .3em 0 .6em; }
+.order-band h2 { color: var(--on-dark); font-size: 2.4rem; margin: .3em 0 .6em; }
 .order-band p { color: rgba(244,236,217,.8); font-size: 1.04rem; line-height: 1.65; }
 .order-band p + p { margin-top: .9em; }
 
@@ -163,15 +167,15 @@
   padding: 20px 0;
 }
 .order-step__body { padding: 18px 20px; }
-.order-step h4 { font-size: 1.05rem; color: var(--paper); margin-bottom: .25em; }
+.order-step h4 { font-size: 1.05rem; color: var(--on-dark); margin-bottom: .25em; }
 .order-step p { font-size: .88rem; color: rgba(244,236,217,.7); line-height: 1.5; }
 .order-step strong { color: var(--gold); font-weight: 600; }
 
 /* ── Upcoming / custom orders ── */
 .custom-band {
   margin-top: 32px;
-  background: var(--paper-2);
-  border: 1px solid rgba(35,39,64,.16);
+  background: var(--card);
+  border: 1px solid var(--line);
   border-top: 3px solid var(--gold);
   border-radius: 4px;
   padding: 38px 42px;
@@ -189,6 +193,53 @@
   height: 100%;
   object-fit: cover;
   z-index: 2;
+}
+
+/* ── Admin-fargevalg (palette.js) ──
+   Produktkort arver lys/mørk via globale tokens. Feltene under setter --c-l/--c-d
+   inline; CSS plukker mørk-variant via html[data-mode="marine"]. */
+
+/* Badge med fri farge (overstyrer den semantiske typefargen) */
+.product__badge--custom { background: var(--c-l); color: #fff; }
+html[data-mode="marine"] .product__badge--custom { background: var(--c-d); }
+
+/* «Bestill»-knapp med fri farge */
+.product__btn { --bg: var(--c-l, var(--maroon)); --fg: #fff; border-color: var(--c-l, var(--maroon)); }
+html[data-mode="marine"] .product__btn { --bg: var(--c-d, var(--maroon)); border-color: var(--c-d, var(--maroon)); }
+
+/* ── Lysende kant rundt HELE kortet (.pglow-wrapper) ──
+   Wrapperen får et blurret ::before bak kortet. Kortet beholder overflow:hidden og
+   ugjennomsiktig fyll, så bare den utstikkende ringen lyser — aldri fyllet. */
+.pglow { position: relative; display: flex; border-radius: 6px; }
+.pglow > .product { flex: 1; position: relative; z-index: 1; }
+.pglow::before {
+  content: ""; position: absolute; inset: -4px; border-radius: inherit; z-index: 0;
+  filter: blur(var(--gb, 10px));
+  opacity: var(--go, .75);
+  background-size: 200% 200%;
+}
+/* Egen farge: rolig pust i valgt farge (lys/mørk) + matchende kant på kortet */
+.pglow-solid::before { background-image: linear-gradient(0deg, var(--c-l), var(--c-l)); animation: pglow-pulse 3.2s ease-in-out infinite; }
+html[data-mode="marine"] .pglow-solid::before { background-image: linear-gradient(0deg, var(--c-d), var(--c-d)); }
+.pglow-solid > .product { border-color: var(--c-l); }
+html[data-mode="marine"] .pglow-solid > .product { border-color: var(--c-d); }
+@keyframes pglow-pulse { 0%, 100% { opacity: calc(var(--go, .75) * .55); } 50% { opacity: var(--go, .75); } }
+
+/* Animerte presets: pannende fler-farget gradient. --gs fart, --go opasitet, --gb blur.
+   Gradient ender på startfargen => sømløs løkke. */
+.pglow-anim::before { animation: pglow-move var(--gs, 5s) linear infinite; }
+@keyframes pglow-move { from { background-position: 0% 50%; } to { background-position: 200% 50%; } }
+.pglow-aurora-soft::before  { background-image: linear-gradient(90deg,#d4af37,#48dbfb,#c79fce,#d4af37); --gs:8s;   --go:.6;  --gb:13px; }
+.pglow-aurora-bold::before  { background-image: linear-gradient(90deg,#d4af37,#48dbfb,#c79fce,#d4af37); --gs:3s;   --go:.95; --gb:8px; }
+.pglow-ember-soft::before   { background-image: linear-gradient(90deg,#76110f,#d4af37,#e0a06a,#76110f); --gs:8s;   --go:.6;  --gb:13px; }
+.pglow-ember-bold::before   { background-image: linear-gradient(90deg,#76110f,#d4af37,#e0a06a,#76110f); --gs:3s;   --go:.95; --gb:8px; }
+.pglow-neon-soft::before    { background-image: linear-gradient(90deg,#2f4ea0,#48dbfb,#8fa8ee,#2f4ea0); --gs:7s;   --go:.62; --gb:12px; }
+.pglow-neon-bold::before    { background-image: linear-gradient(90deg,#2f4ea0,#48dbfb,#8fa8ee,#2f4ea0); --gs:2.5s; --go:1;   --gb:7px; }
+.pglow-rainbow-soft::before { background-image: linear-gradient(90deg,#ff6b6b,#feca57,#1dd1a1,#48dbfb,#ff9ff3,#ff6b6b); --gs:8s; --go:.6; --gb:13px; }
+.pglow-rainbow-bold::before { background-image: linear-gradient(90deg,#ff6b6b,#feca57,#1dd1a1,#48dbfb,#ff9ff3,#ff6b6b); --gs:3s; --go:1; --gb:7px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .pglow::before { animation: none !important; opacity: calc(var(--go, .75) * .6); }
 }
 
 /* ── Responsive ── */
@@ -428,6 +479,7 @@
   }
 })();
 </script>
+<script src="palette.js"></script>
 <script src="merch-products.js"></script>
 <script>
 (function () {
@@ -441,13 +493,26 @@
     var data = window.MERCH_PRODUCTS;
     if (!grid || !data) return;
 
+    var sv = window.paletteStyleVars || function () { return ''; };
+    var animOf = window.paletteAnim || function () { return null; };
+
     var html = '';
     data.forEach(function (p, i) {
       var delay = ['', ' d1', ' d2'][i % 3];
-      var badgeCls = p.badgeType === 'new' ? ' product__badge--new' : '';
+
+      // Badge: fri farge overstyrer typefarge
+      var badgeStyle = p.badgeColor ? ' style="' + sv(p.badgeColor) + '"' : '';
+      var badgeCls = p.badgeColor ? ' product__badge--custom'
+                   : (p.badgeType ? ' product__badge--' + p.badgeType : '');
       var badge = p.badge
-        ? '<span class="product__badge' + badgeCls + '">' + esc(p.badge) + '</span>'
+        ? '<span class="product__badge' + badgeCls + '"' + badgeStyle + '>' + esc(p.badge) + '</span>'
         : '';
+
+      // Kortkant: lysende kant rundt HELE kortet (egen farge eller animert preset).
+      // Realiseres via et wrapper-element (.pglow) så gløden ikke klippes av kortets
+      // overflow:hidden og ikke lyser gjennom fyllet.
+      var edgeAnim = animOf(p.edge);
+
       var photo = p.img
         ? '<img class="product__photo" src="' + esc(p.img) + '" alt="' + esc(p.name) + '">'
         : '';
@@ -458,7 +523,7 @@
         + encodeURIComponent(p.emailSubject || 'Bestilling: ' + p.name)
         + (p.emailBody ? '&body=' + encodeURIComponent(p.emailBody) : '');
 
-      html +=
+      var article =
         '<article class="product reveal' + delay + '" id="prod-' + esc(p.id) + '">'
         + '<div class="product__img">'
         + badge
@@ -471,8 +536,17 @@
         + '<p class="product__desc">' + esc(p.desc) + '</p>'
         + '<div class="product__footer">'
         + '<div class="product__price product__price--member">' + priceLine + '</div>'
-        + '<a class="btn btn--maroon" href="' + esc(emailHref) + '">Bestill</a>'
+        + '<a class="' + (p.btnColor ? 'btn product__btn' : 'btn btn--maroon') + '" href="' + esc(emailHref) + '"'
+          + (p.btnColor ? ' style="' + sv(p.btnColor) + '"' : '') + '>' + esc(p.btnLabel || 'Bestill') + '</a>'
         + '</div></div></article>';
+
+      if (p.edge) {
+        var glowCls = 'pglow ' + (edgeAnim ? 'pglow-anim pglow-' + edgeAnim : 'pglow-solid');
+        var glowStyle = edgeAnim ? '' : ' style="' + sv(p.edge) + '"';
+        html += '<div class="' + glowCls + '"' + glowStyle + '>' + article + '</div>';
+      } else {
+        html += article;
+      }
     });
 
     grid.innerHTML = html;

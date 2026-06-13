@@ -204,6 +204,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
 <div class="toast" id="toast">Lagret i nettleseren</div>
 <input type="file" id="file-input" accept="image/png,image/jpeg,image/webp,image/avif" hidden>
 
+<script src="palette.js"></script>
 <script src="begrep-content.js"></script>
 <script>
 (function () {
@@ -285,7 +286,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
         { f: 'title', label: 'Tittel', type: 'text', ph: 'Navn på podkasten' },
         { f: 'desc',  label: 'Beskrivelse', type: 'textarea', ph: 'Kort beskrivelse...' },
         { f: 'link',  label: 'Spotify-lenke', type: 'text', ph: 'https://...' },
-        { f: 'accent', label: 'Fargeaksent', type: 'select', opts: [['gold','Gull'],['rust','Rust'],['green','Grønn']] },
+        { f: 'accent', label: 'Fargeaksent', type: 'select', opts: (window.APEIRON_PALETTE_NAMES || [['gold','Gull'],['rust','Rust'],['green','Grønn']]) },
         { f: 'countsAsSeason', label: 'Teller som podkast-sesong', type: 'check' }
       ]
     },

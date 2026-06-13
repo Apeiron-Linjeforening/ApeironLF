@@ -2,6 +2,7 @@
 <html lang="no">
 <head>
 <meta charset="UTF-8" />
+<script src="theme.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Pensum — Apeiron · NTNU</title>
 <meta name="description" content="Pensumlister for alle emner på filosofi og etikk ved NTNU — bøker, emnekoder og studiepoeng samlet på ett sted. Fra Apeiron linjeforening." />
@@ -66,18 +67,18 @@
 
 /* ── Tab filter bar ── */
 .ps-tabs {
-  display: flex; gap: 0; border: 1px solid rgba(35,39,64,.26);
+  display: flex; gap: 0; border: 1px solid var(--line-2);
   border-radius: 3px; overflow: hidden; flex-wrap: wrap;
 }
 .ps-tab {
   font-family: var(--body); font-size: .88rem; font-weight: 600; letter-spacing: .04em;
   padding: .68em 1.3em; background: transparent; color: var(--ink-soft);
-  border: 0; border-right: 1px solid rgba(35,39,64,.18); cursor: pointer;
+  border: 0; border-right: 1px solid var(--line); cursor: pointer;
   transition: background .2s, color .2s;
 }
 .ps-tab:last-child { border-right: 0; }
-.ps-tab:hover { color: var(--navy); }
-.ps-tab.is-active { background: var(--navy); color: var(--paper); }
+.ps-tab:hover { color: var(--ink); }
+.ps-tab.is-active { background: var(--ink); color: var(--paper); }
 .ps-toolbar {
   display: flex; align-items: center; justify-content: space-between;
   gap: 16px; flex-wrap: wrap; margin-bottom: 14px;
@@ -86,7 +87,7 @@
 /* ── Search ── */
 .ps-search {
   display: inline-flex; align-items: center; gap: .55em;
-  background: var(--paper); border: 1px solid rgba(35,39,64,.26);
+  background: var(--paper); border: 1px solid var(--line-2);
   border-radius: 3px; padding: 0 .7em; min-width: 280px;
   transition: border-color .2s, box-shadow .2s;
 }
@@ -107,18 +108,18 @@
   pointer-events: none; transition: opacity .15s, color .15s;
 }
 .ps-search.has-value .ps-search__clear { opacity: .7; pointer-events: auto; }
-.ps-search__clear:hover { color: var(--maroon); opacity: 1; }
+.ps-search__clear:hover { color: var(--warm); opacity: 1; }
 
 /* ── Sub-bar: count + expand all ── */
 .ps-subbar {
   display: flex; align-items: center; justify-content: space-between;
   gap: 14px; flex-wrap: wrap; margin-bottom: 30px;
-  padding-bottom: 14px; border-bottom: 1px solid rgba(35,39,64,.14);
+  padding-bottom: 14px; border-bottom: 1px solid var(--line);
 }
 .ps-count {
   font-size: .84rem; font-style: italic; color: var(--ink-soft);
 }
-.ps-count mark { background: none; color: var(--maroon); font-style: normal; font-weight: 600; }
+.ps-count mark { background: none; color: var(--warm); font-style: normal; font-weight: 600; }
 .ps-expand-all {
   font-family: var(--body); font-size: .76rem; font-weight: 600;
   letter-spacing: .12em; text-transform: uppercase;
@@ -126,7 +127,7 @@
   display: inline-flex; align-items: center; gap: .5em; padding: .2em 0;
   border-bottom: 1px solid transparent; transition: border-color .2s, color .2s;
 }
-.ps-expand-all:hover { color: var(--maroon); border-bottom-color: currentColor; }
+.ps-expand-all:hover { color: var(--warm); border-bottom-color: currentColor; }
 .ps-expand-all::after { content: "▾"; font-size: .8em; transition: transform .25s; }
 .ps-expand-all.is-all-open::after { transform: rotate(180deg); }
 
@@ -142,7 +143,7 @@
 .ps-noresults p { color: var(--ink-soft); font-size: 1.02rem; }
 .ps-noresults button {
   margin-top: 1em; font-family: var(--body); font-size: .9rem; font-weight: 600;
-  color: var(--maroon); background: none; border: 0; cursor: pointer;
+  color: var(--warm); background: none; border: 0; cursor: pointer;
   border-bottom: 1px solid currentColor; padding: 0 0 1px;
 }
 
@@ -155,10 +156,10 @@
 .ps-grid { display: flex; flex-direction: column; gap: 0; }
 
 .ps-course {
-  border-top: 1px solid rgba(35,39,64,.14);
+  border-top: 1px solid var(--line);
   transition: opacity .3s ease;
 }
-.ps-course:last-child { border-bottom: 1px solid rgba(35,39,64,.14); }
+.ps-course:last-child { border-bottom: 1px solid var(--line); }
 .ps-course.hidden { display: none; }
 
 .ps-course__toggle {
@@ -173,14 +174,14 @@
   transition: background .15s;
   border-radius: 3px;
 }
-.ps-course__toggle:hover { background: rgba(35,39,64,.03); }
-.ps-course__toggle:hover .ps-course__name { color: var(--maroon); }
-.ps-course.is-open > .ps-course__toggle { background: rgba(35,39,64,.03); }
+.ps-course__toggle:hover { background: var(--fill-soft); }
+.ps-course__toggle:hover .ps-course__name { color: var(--warm); }
+.ps-course.is-open > .ps-course__toggle { background: var(--fill-soft); }
 
 .ps-course__badges { display: flex; gap: 6px; flex-shrink: 0; }
 .ps-badge {
   font-size: .62rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase;
-  color: var(--paper); background: var(--maroon); border-radius: 2px; padding: .3em .7em;
+  color: var(--on-dark); background: var(--maroon); border-radius: 2px; padding: .3em .7em;
 }
 .ps-badge--fil { background: var(--navy); }
 .ps-badge--etikk { background: var(--maroon); }
@@ -193,7 +194,7 @@
 }
 .ps-course__name {
   font-family: var(--display); font-size: 1.06rem; font-weight: 600;
-  color: var(--navy); line-height: 1.2; transition: color .18s;
+  color: var(--ink); line-height: 1.2; transition: color .18s;
 }
 .ps-semester {
   font-size: .7rem; letter-spacing: .08em; text-transform: uppercase;
@@ -240,7 +241,7 @@
   gap: .5em 1em;
   align-items: baseline;
   padding: 14px 0;
-  border-top: 1px solid rgba(35,39,64,.1);
+  border-top: 1px solid var(--line);
 }
 .ps-book:first-of-type { border-top: 0; padding-top: 0; }
 .ps-book__num {
@@ -249,7 +250,7 @@
 }
 .ps-book__title {
   font-family: var(--display); font-size: 1.18rem; font-weight: 600;
-  color: var(--navy); line-height: 1.2; font-style: italic;
+  color: var(--ink); line-height: 1.2; font-style: italic;
 }
 .ps-book__author {
   display: block; font-size: .88rem; color: var(--ink-soft); margin-top: .22em;
@@ -264,10 +265,10 @@
 /* ── Empty / contribute state ── */
 .ps-empty {
   display: grid; gap: .3em;
-  border: 1px dashed rgba(35,39,64,.3);
+  border: 1px dashed var(--line-2);
   border-radius: 4px;
   padding: 18px 20px;
-  background: rgba(35,39,64,.025);
+  background: var(--fill-soft);
   max-width: 46ch;
 }
 .ps-empty b {
@@ -275,7 +276,7 @@
   letter-spacing: .14em; text-transform: uppercase; color: var(--accent-ink);
 }
 .ps-empty span { font-size: .92rem; color: var(--ink-soft); line-height: 1.55; }
-.ps-empty a { color: var(--maroon); text-decoration: underline; text-underline-offset: 2px; }
+.ps-empty a { color: var(--warm); text-decoration: underline; text-underline-offset: 2px; }
 .ps-empty a:hover { color: var(--gold-ink); }
 
 .ps-note {

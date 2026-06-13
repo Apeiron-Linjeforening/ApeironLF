@@ -817,6 +817,7 @@
   </div>
 </footer>
 
+<script src="palette.js"></script>
 <script src="begrep-content.js"></script>
 <script>
 (function () {
@@ -913,9 +914,10 @@
   var podsEl = document.getElementById('bg-pods');
   if (podsEl) {
     podsEl.innerHTML = pods.map(function (p, i) {
-      var accent = p.accent === 'rust' ? ' bg-pod-card--rust'
-                 : p.accent === 'green' ? ' bg-pod-card--green' : '';
-      return '<div class="bg-pod-card' + accent + ' reveal' + (i ? ' d' + Math.min(i, 4) : '') + '">'
+      // Begrep er en fast mørk side: bruk palettens mørk-variant som kantfarge.
+      var rc = (window.resolveColor || function () { return { dark: '#d4af37' }; })(p.accent || 'gold');
+      var accentStyle = ' style="border-top-color:' + rc.dark + '"';
+      return '<div class="bg-pod-card reveal' + (i ? ' d' + Math.min(i, 4) : '') + '"' + accentStyle + '>'
         + '<span class="bg-pod-card__tag">' + esc(p.tag || '') + '</span>'
         + '<h3>' + esc(p.title || '') + '</h3>'
         + '<p>' + esc(p.desc || '') + '</p>'

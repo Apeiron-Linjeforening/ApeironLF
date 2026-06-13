@@ -2,9 +2,10 @@
 
 Nettsiden for Apeiron, linjeforeningen for filosofi og etikk ved NTNU.
 Statisk nettside (HTML/CSS/JS). Ingen byggesteg, ingen avhengigheter å installere.
+**Vibrasjonskoding har aldri vært så effektivt!**
 
 # OBS!: 
-## Nettsiden er under oppbygging. Det som står på siden burde tas kun som plassholdere.
+**Nettsiden er under oppbygging. Det som står på siden burde tas kun som plassholdere.**
 
 ---
 
@@ -302,6 +303,7 @@ Finn riktig seksjon ved hjelp av kommentarene: `<!-- ============ OM OSS =======
 | `styret-content.js`      | Innholdsdata for styret-siden (redigeres via admin-panel)                           |
 | `styles.css`             | All styling                                                                         |
 | `app.js`                 | Meny, scroll-animasjoner og generell funksjonalitet                                 |
+| `theme.js`               | Lys/mørk-modus: setter `data-mode` på `<html>` før første paint og binder toggle   |
 | `apeiron-events.js`      | Henter arrangementer fra Google Kalender                                            |
 | `apeiron-fadder.js`      | Henter fadderuke-program fra Google Kalender                                        |
 | `aporetisk-cal.js`       | Kalender for Aporetisk Aften                                                        |
@@ -329,12 +331,19 @@ Hvis repoet ikke er koblet til Cloudflare Pages, eller om man ønsker å bytte C
 Kritisk:
 - [ ] Fikse domene - Se "Domene" nedenfor.
 - [ ] Kvadrupelsjekk at informasjon under Hjelp er helt riktig!! Sjekk numre og eposter!
-- [ ] Endre medlemskapsprisen.
+- [ ] Endre medlemskapsprisen: to priser: ett-års (100kr) og studietid (150kr).
 - [ ] Fikse admin-bug: Om man logger inn på en admin side, og ikke lukker nettsiden helt etterpå, vil man ikke kunne se en annen admin side.
 - [ ] Endre "Hjelp" i menyen med noe annet som uttrykker mer direkte hva siden er om.
 - [ ] Merch: "Bestill" knappen burde gjøre noe annet enn å åpne eposten i en nettside. -> Google forms?
-- [ ] Fikse mørk modus - Nå er det kun en shitty mørk modus på index. 
+- [x] ~~Fikse mørk modus - Nå er det kun en shitty mørk modus på index. Meny/NAV må passes på her.~~
 - [ ] Fikse menyen / NAV slik at den fungerer bedre på smalere skjermer og mobil.
+- [ ] Legge til et informasjonsfelt for Fadderukene hvor man kan fylle inn generell info.
+- [ ] Sjekke at "Legg til fadderukeprogrammet i din kalender" fungerer: iCal og Google Kalender.
+- [ ] Aporetisk Aften kalender: Ta beskrivelsen fra kalenderen og gjøre det om til et "Om Aftenen".
+- [ ] Legge til '?' i admin som forklarer hva hvert felt og mulighet gjør.
+- [ ] Passe på at alle admin-filene er konsistente.
+- [ ] Merch: "Begrenset" badge funker ikke, "Nyhet" badge funker kun om det står "Nyhet" i badge tekst feltet. Gjør admin feltene om til ett felt: velg en av presetene eller skriv egen. Ingen begge.
+- [ ] Merch: Legge til animert farge/lys på badge.
 
 Medium:
 - [ ] Be HF studentrådet om å oppdatere sidene deres og gi oss mer informasjon om hva de faktisk gjør. 
@@ -356,12 +365,15 @@ Lav:
 - [ ] Sette opp et arkiv.
 - [ ] Sammenlign med https://www.mfplacebo.no/
 - [ ] Gjøre om admin filene til å gi nærest full kontroll over oppsett over sidene.
+- [ ] Menyen: Dropdown menyene skal endre seg for å vise hvor du er (Styret fungerer ikke).
 
 Hadde vært kult:
 - [ ] Snakke med IFR/NTNU om API for automatisk oppdatering av emner for studiene.
 - [ ] Bygge KKI for Apeiron.
 - [ ] Burde det være en direkte måte for TVene ved IFR å legge ved oppdateringer på nettsiden vår?
 - [ ] Kunne trykke på emne under hvert studie og bli tatt til emnet i pensumlistene - kan bli et problem for admin filene.
+- [ ] Egen knapp på Begrep siden (ikke automatisk Mørk modus) som gir et spesielt tema.
+- [ ] Automatisk tema endring av sidene: Jul, 17. mai, påske, halloween, fadderukene, frigjøringsdagen, HMS bursdag (legge dette til i en admin fil, muligens... HMS er gammel) + mulighet til å skru de av, endre bilder, farger osv.
 
 Forslag:
 - [ ] Mer velkommen / koselig forside? Bilder av tidligere arrangement å index. Siden føles kanskje litt kald/som om den prøver å selge noe. -> Bilder fra galleri på forsiden eller på "om oss"?
@@ -369,8 +381,10 @@ Forslag:
 Må gjøres før vi slapper av med å bygge nettsiden:
 - [ ] Sjekke at alle admin sider fungerer.
 - [ ] Kvadrupelsjekk at informasjon under Hjelp er helt riktig!! Sjekk numre og eposter!
-- [ ] Sjekke på nytt hvordan alt oppfører seg på mobil.
+- [ ] Sjekke på nytt hvordan alt oppfører seg på mobil og smalere skjermer.
 - [ ] Fjern WIP banneret.
+- [ ] Rydde opp i Readme.
+- [ ] Lage en ordentlig How-To.
 
 Domene:
 - [ ] Få bedre domene
@@ -400,137 +414,6 @@ Merk: Cloudflare Registrar støtter ikke .no-domener. For .org er Cloudflare bil
 - Forsøkt omdirigering med `.htaccess` (`RedirectMatch (.*) https://apeironlf.pages.dev/`) — fungerte ikke.
 - Tilgang: For tilgang via sftp, skriv `sftp://dittbrukernavn@login.stud.ntnu.no/home/groups/apeiron` i filutforskeren (Linux). Per nå er det kun sosialansvarlig Iver (25/26) som har tilgang.
 - Avventer svar fra NTNU om muligheten for videre hjelp.
-
----
-
-## Siste endringer
-
-**11.06.26 — Første opplastning av nettsiden**
-- Første versjon av hele nettstedet lastet opp: forsiden (`index.html`) med hero, Om oss, Studiene, Arrangementer, Aporetisk Aften, Fadderuke, Styret, Lesesalen, Bli medlem, Kontakt og footer.
-- Alle undersider: `pensum.html`, `merch.html`, `marked.html`.
-- Alle kjerne-JS-filer: `apeiron-events.js` (Google Kalender-integrasjon), `apeiron-fadder.js`, `aporetisk-cal.js`, `app.js`, `image-slot.js`, `site-search.js`.
-- Komplett `styles.css` med hele det visuelle systemet (navy/gull/vinrød/pergament, serif-typografi).
-- JSX/React-prototype forkastet til fordel for ren statisk HTML/CSS/JS.
-
-**11.06.26 — Styrebilder og merch-system**
-- Portrettbilder lastet opp for alle styremedlemmer (`assets/Styremedlemmer/`): Anna, Dagny, Dennis, Fredrik, Helene, Iver, Karoline, Martin, Natalie, Robin, Stian.
-- Styremedlemmer lagt inn på forsiden med bilder, initialer og roller.
-- Nytt merch-system: `merch-admin.html` (passordbeskyttet admin-panel) og `merch-products.js` (datafil). Merch-siden omskrevet til å lese fra datafilen — ingen kodeendring nødvendig for å legge til/endre produkter.
-- Søk (`site-search.js`) fikset og rullet ut til Merch og Pensum.
-
-**11.06.26 — Galleri og Lesesalen**
-- Nytt bildegalleri (`galleri.html`) med Google Drive-integrasjon: mapper i Drive = event-kort i galleriet, automatisk henting via API, år-faner og lysbildefremviser.
-- Lesesalen-seksjonen lagt til forsiden med tekst, ikonliste og bildestripe (de første lesesal-bildene `lesesal1–6.jpg`).
-- Forbedringer i `styles.css` for galleri og lesesal-layout.
-- `marked.html`, `merch.html` og `pensum.html` fikk navigasjons- og søkeforbedringer.
-
-**12.06.26 — Lesesalen-lysbildefremviser og Cloudflare**
-- Lesesal-bildene utvidet til 18 bilder (`lesesal7–18.jpg`), med oppdaterte høyere kvalitetsversjoner av de første.
-- Lysbildefremviser (lightbox) lagt til lesesal-seksjonen på forsiden — klikk på bilde for å bla gjennom alle.
-- Galleriet redesignet med forbedret layout og navigasjon.
-- Migrert fra Netlify til **Cloudflare Pages** (`netlify.toml` fjernet, `_headers` lagt til for HTTP-sikkerhetsheadere). Automatisk deploy fra GitHub gjelder fortsatt.
-
-**12.06.26 — Begrep-siden, styret-siden og diverse**
-- Ny side for Begrep-tidsskriftet (`begrep.html`): eget mørkt visuelt uttrykk (svart/gull/rust), seksjoner for utgaver, podkast, film (Grev van Orton) og julekalender (Hilberts Hotell), statistikk-stripe og lenker til sosiale medier.
-- Nytt passordbeskyttet admin-panel (`begrep-admin.html`) + datafil (`begrep-content.js`) for å redigere alt innhold på Begrep-siden uten å røre kode — fungerer likt som merch-admin.
-- Lagt til bilder for Begrep-utgaver (`assets/begrep/`).
-- Ny side for styret og vervbeskrivelser (`styret.html`) med tilhørende admin-panel (`styret-admin.html`) og datafil (`styret-content.js`).
-- Begrep, Galleri, Merch, Marked og Pensum fikk søkestøtte (`site-search.js`).
-- Fjernet ubrukte prototypefiler (`tweaks-panel.jsx`, `tweaks.jsx`).
-- Fjernet for store bildefiler fra merch-assets.
-
-**13.06.26 — Domene-oversikt i README**
-- README oppdatert med strukturert oversikt over domene-alternativer: tilgjengelighet, priser og registrarer (Loopia, Domeneshop, Cloudflare Registrar).
-- Dokumentert status for NTNU-subdomenet (`apeiron.org.ntnu.no`) og SFTP-tilgang.
-
-**13.06.26 — Menyrestrukturering, bugfikser og kalender-tomtilstander**
-- Desktop-navigasjon omstrukturert: 9 toppnivå-elementer med ryddige dropdowns — Om oss▾ (Om oss / Lesesalen / Samarbeid), Studiene▾, Arrangementer▾ (Arrangementer / Aporetisk Aften / Fadderuke), Styret▾ (Styret / Om vervene / Tillitsvalgte / S.A.K), Begrep, Galleri, Merch▾ (Merch / Kjøp & bytte), Kontakt, Bli medlem.
-- Mobilmeny omgjort: søke-ikon vises nå direkte i topplinja (var skjult), skuffeменyen er komprimert med gruppeetiketter (FORENINGEN / STUDIENE / ARRANGEMENTER / STYRET / MER) i gullfarge. Hele menyen får plass på korte skjermer (≤700px høyde) uten scrolling.
-- Bugfikser: S.A.K-lenker pekte feil (`index.html#sak` → `styret.html#sak`) i alle 5 undersider og søkeindeksen; fadder-footer-knapp pekte på feil anker; kontaktlenke pekte på Netlify i stedet for Cloudflare Pages; «Hilberts Hotell» rettet til «Hilbert Hotell»; «Bli Medlem»-siden viste feilaktig «Lesesalen» som aktiv menylenke.
-- Interne vitser fjernet: Dennis/Iver-FAQ-spørsmål slettet, frisen byttet fra «jeg kan ikke lese» til «det gode liv».
-- Kalender-tomtilstander: alle tre Google Kalender-integrasjonene (`apeiron-events.js`, `apeiron-fadder.js`, `aporetisk-cal.js`) skiller nå mellom API-feil (viser genererte plassholderdatoer for utviklere) og API-suksess uten hendelser (viser brukervennlig «dato kommer»-melding).
-- Søkeindeks utvidet: Lesesalen, Galleri og Fellesskap & samarbeid lagt til som søkbare sider.
-
-**13.06.26 — Begrep-hero lesbarhet, "Apeiron styret" og menylenke**
-- Begrep-siden (`begrep.html`): eyebrow og undertekst i hero byttet fra mørk brungrå (`#7a7060`) til `rgba(240,236,224,.6)` — merkbart bedre lesbarhet mot den mørke bakgrunnen.
-- "Om vervene" omdøpt til "Apeiron styret" i alle nav-dropdowns, mobilmenyer, footere, CTA-knapp på forsiden og `<h1>`/`<title>`/`og:title` i `styret.html`.
-- "Styret"-triggeren i toppmenyen peker nå direkte på `styret.html` i stedet for `index.html#styret` — i alle 7 HTML-filer.
-
-**13.06.26 — Hjelp-side, kontaktinfo og footer-oppdatering**
-- Ny side `hjelp.html`: tre seksjoner med Si fra! (NTNUs varslingssystem med 6 kategorier forklart), faglig hjelp (PTV/ITV/FTV med synlige e-postadresser), og psykisk helse (SIT Helse og Rask psykisk helsehjelp med innhold hentet direkte fra sidene).
-- "Hjelp" lagt til i navigasjon (desktop og mobilmeny) og footer på alle 7 sider.
-- `begrep.html`: `begreptidsskrift@gmail.com` vist som lesbar tekst i kontaktseksjonen.
-- `styret.html`: FTV- (`ftv@hf.ntnu.no`) og ITV-e-posten (`hf-ifr@studentrad.ntnu.no`) skilt ut som tydelige kontaktlinjer under hvert TVene-kort.
-- Alle footere synkronisert: alle sider har nå samme komplette lenkesett (Begrep, Apeiron styret, Tillitsvalgte, Hjelp m.m. var manglende på flere sider).
-
-**13.06.26 — Visuell finpuss på forsiden og styret-siden**
-- Forsiden (`index.html` / `styles.css`): myk fokusring for tastatur, stat-tall som teller seg opp når de kommer i syne, jevnere hover på kort (Om oss, studieretninger, samarbeid), finere lenke-detaljer, mykere marquees med fade-kanter, og litt mer dybde i hero-bakgrunnen. Alt respekterer «reduser bevegelse».
-- Lyse pixler (støyartefakter) fjernet fra alle hero-bakgrunner: 5 artefakter på forsiden (to nede, én under «etterpå», én over «linjeforening siden», én over Apeiron-logoen) og tilsvarende på øvrige sider.
-- Styret-siden (`styret.html`): hover-løft på vervkort og styremedlem-portretter, og samme diskré stjernedryss i topp-banneret som på forsiden.
-- README oppdatert: styret-seksjonen beskriver nå admin-panelet (`styret-admin.html` + `styret-content.js`).
-
-**13.06.26 — Hjelp-siden: full utvidelse og omstrukturering**
-- Hjelp-siden utvidet fra 3 til 5 seksjoner: lagt til **Fysisk helse** (`#fysisk`) og **Akutt hjelp** (`#akutt`).
-- Hurtignav-kort rett under tittelen i subhero: ett klikkbart kort per seksjon (Si fra, Faglig hjelp, Psykisk helse, Fysisk helse, Akutt hjelp). Akutt-kortet fremhevet i maroon.
-- **Si fra-seksjonen** kraftig utvidet: kategori-flisene har nå direktelenker til avviksskjema (`ntnu.extend.no`), e-vaktmester (Lydia) og ekstern varslingkanal (`trustcom.pwc.no/ntnu`). Fire nye støttekort lagt til: Studentombudet (med tlf., e-post og drop-in-tid), Personvernombudet (studentvennlig forklaring uten fagsjargong), Studieveiledning ved IFR (`studieveiledning-ifr@hf.ntnu.no` for filosofi- og etikkstudenter) og Forbrukerrådet (med konkrete studenteksempler).
-- **Psykisk helse-seksjonen** utvidet med to nye kort: Studentpresten og Studenthumanisten — begge gratis, konfidensielle og åpne for alle uansett tro.
-- **Fysisk helse-seksjonen** lagt til: SIT tannhelse og seksuell helse (med merknad om at SIT ikke har eget fastlegetilbud), Helsestasjon for ungdom (Trondheim kommune) og Helsenorge/fastlege.
-- **Akutt hjelp-seksjonen** lagt til: nødnumre 113, 112, 110, 116117, 116123, Kirkens SOS (22 40 00 40) og 116111 — alle som klikkbare `tel:`-lenker med forklaring på når man ringer hvert enkelt. Livstruende numre visuelt skilt fra samtaletjenestene.
-- Rask psykisk helsehjelp-kortet fikk fremhevet merknad: «Trondheim kommune ber studenter sjekke SIT sine tilbud først.» (hentet direkte fra kommunens side).
-- SIT Fysisk helse-kortet rettet: fjernet feil påstand om legekontor (SIT har ikke eget fastlegetilbud), korrigert til tannhelse, seksuell helse og treningsveiledning.
-- Seksjonsspacing komprimert: `.section` padding redusert fra 104px til 72px (kun på denne siden).
-- Alle URL-tekster under knapper fjernet — de gjentok bare lenke-adressen og så ut som en bug.
-- Akutt-kortene fikk hover-animasjon (løft + skygge + mørkere venstrekant), og navn-etikettene ble gjort større og mørkere (fra grået-ut 0,7rem til full navy 1rem).
-
-**13.06.26 — Menyopprydding Styret og footer-synkronisering**
-- Fjernet redundant «Styret»-lenke (→ `index.html#styret`) fra alle nav-dropdowns og skuffemenyer på samtlige 8 sider — den gikk til samme sted som dropdown-triggeren.
-- «Apeiron styret» er nå første element i Styret-dropdownen; ny lenke «Verv» (→ `styret.html#vervene`) lagt til sist i alle dropdowns og skuffemenyer.
-- Fjernet «Styret 2025/26»-seksjonen fra forsiden (`index.html`) — innholdet finnes på `styret.html`.
-- Alle footere synkronisert: brutt «Styret»-lenke (→ `index.html#styret`) fjernet, «Verv» lagt til på alle 8 sider. `hjelp.html` manglet S.A.K — lagt til.
-- «Tilbake til Styret»-lenken øverst på `styret.html` pekte på den nå fjernede seksjonen — endret til «Tilbake» (→ `index.html`).
-
-**13.06.26 — Hjelp-admin og hjelp-content.js**
-- Hjelp-siden omgjort til samme mønster som styret/begrep/merch: alt innhold er nå i `hjelp-content.js`, og `hjelp.html` rendres dynamisk fra den.
-- Nytt passordbeskyttet admin-panel `hjelp-admin.html`: redigering av alle seksjoner (Si fra, Faglig hjelp, Psykisk helse, Fysisk helse, Akutt hjelp), hurtignav-kortene, nødnumre og alle ressurskort. Støtter HTML i kontaktlinjer og Si fra-tekst.
-- Fil-tabell og seksjonsforklaring i README oppdatert med de nye filene.
-
-**13.06.26 — README-opprydding og galleri-dokumentasjon**
-- Fjernet duplikat «Hjelp & ressurser»-seksjon i README (gammel versjon som fortsatt beskrev hjelp.html som hardkodet).
-- Galleri-seksjonen i README fullstendig omskrevet: forklarer nå riktig tre-nivå-struktur (hovedmappe → skoleår → arrangement → bilder), at forsidebildet styres av filnavn-alfabetisk rekkefølge, at løse bilder i skoleår-mapper hoppes over, og at fane-sortering er automatisk baklengs.
-
-**13.06.26 — Arrangementetikett i galleri-marqueen**
-- Hvert bilde i den scrollende bilderemsen øverst på `galleri.html` viser nå et lite overlegg nederst med navnet på arrangementet bildet er fra.
-- Implementert ved å bytte fra enkel ID-array til `{id, name}`-objekter i `renderMarquee()` — mappenavnet følger bildet gjennom shuffle og duplisering.
-- Lightboxen som åpnes ved klikk i marqueen viser nå riktig arrangementnavn i infolinjen (var tidligere alltid «Galleri»).
-- Nye mapper i Drive plukkes automatisk opp — ingen kodeendring nødvendig.
-
-**13.06.26 — Begrep: bestillingslenke via admin**
-- `orderFormUrl` lagt til i `meta`-objektet i `begrep-content.js` — URL-en til bestillingsskjemaet (Google Forms) kan nå redigeres i `begrep-admin.html` og eksporteres med resten av innholdet.
-- Nytt felt «Bestillingslenke» i meta-panelet i admin; feltet lastes, lagres og eksporteres automatisk.
-- `begrep.html`: «Bestill tidsskrift»-knappen har fått id `bg-order-btn` og henter `href` dynamisk fra `meta.orderFormUrl` — ingen hardkodet URL i HTML-en lenger.
-
-**13.06.26 — Begrep: «Bestill tidsskrift»-knapp**
-- «Utgavene»-seksjonen på `begrep.html` har fått en tydelig «Bestill tidsskrift»-knapp (gull) som åpner bestillingsskjema via Google Forms i ny fane.
-- Notisboksen under utgave-gridet er gjort om til en flex-rad: teksten «Ønsker du et eksemplar?» til venstre, og knappen + «Ta kontakt med redaksjonen →» til høyre. Stabler seg pent på mobil.
-
-**13.06.26 — Sikkerhet, mørkt tema, påmelding og feilrapportering**
-- API-nøkkel for Google Kalender og Google Drive fjernet fra kildekoden. Alle tre kalender-filene (`apeiron-events.js`, `aporetisk-cal.js`, `apeiron-fadder.js`) og galleriet (`galleri.html`) leser nå nøkkelen fra `window.GOOGLE_API_KEY`. På Cloudflare Pages settes nøkkelen som miljøvariabel (`Google_API_Key`) og injiseres automatisk av bygg-kommandoen til `api-config.js`. Lokalt: opprett `api-config.js` manuelt med nøkkelen (filen er gitignorert).
-- Lys/mørk modus: toggle-knapp (måne/sol-ikon) lagt til i navigasjonen på alle 8 sider. Brukerens valg lagres i `localStorage`. Ved første besøk respekteres systempreferansen (`prefers-color-scheme`). Det mørke temaet («marine») fantes allerede i CSS — knappen gjør det tilgjengelig for brukerne.
-- Arrangementspåmelding: om styret legger en Google Forms-lenke i beskrivelsesfeltet på en kalender-hendelse, vises nå en «Meld deg på»-knapp automatisk på arrangementet. Ingen kodeendring nødvendig fremover.
-- Feilrapportering: diskret «Rapporter en feil på nettsiden»-lenke lagt til i footeren på alle 8 sider. Åpner e-postklient med `apeironlinjeforening@gmail.com` og forhåndsutfylt emnefelt.
-
-**13.06.26 — Begrep-siden: kontakt og bidra slått sammen**
-- «Meld interesse»-knappen peker nå til `#kontakt`-seksjonen istedenfor Google Forms.
-- «Vil du bidra?»- og «Kontakt»-seksjonene slått sammen til én seksjon med rød Begrep-bakgrunn (`--bg-rust`). Skillet mellom seksjonene er fjernet.
-- E-postadressen er gjort større og mer fremtredende i den sammenslåtte seksjonen.
-- `begrep-content.js`: `meta.email` lagt til — e-postadressen kan nå redigeres direkte i `begrep-admin.html` og eksporteres med resten av innholdet.
-- `begrep-admin.html`: nytt e-postfelt i meta-panelet.
-
-**13.06.26 — Kalender-feilstater: API-feil vs. tom kalender**
-- Alle tre kalender-integrasjonene skiller nå tydelig mellom API-nøkkel ugyldig/ikke satt (innrammet ⚠-melding med lenke til README og kontaktsiden) og tilkoblet kalender uten hendelser (vennlig «kommer snart»-melding).
-- Arrangementer: alle tre visninger (Liste, Rutenett, Oversikt) dekket. Filterknapper skjules ved API-feil. Bug-aktig statusbanner fjernet. Rutenett-meldingen sentrert over alle kolonner.
-- Aporetisk Aften: «Når»-feltet viser «—» ved API-feil og «Dato kommer» ved tom kalender. Genererte torsdagsdatoer vises ikke lenger ved API-feil.
-- Fadderukene: skjelett-plassholderen erstattet med feilmelding ved API-feil.
 
 ---
 

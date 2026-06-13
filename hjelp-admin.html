@@ -310,6 +310,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
 
 <div class="toast" id="toast">Lagret i nettleseren</div>
 
+<script src="palette.js"></script>
 <script src="hjelp-content.js"></script>
 <script>
 (function () {
@@ -317,11 +318,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
   const PASSWORD = 'apeiron2026';
   const LS_KEY   = 'apeiron-hjelp-v1';
   const LS_AUTH  = 'apeiron-admin-auth';
-  const ACCENTS  = [
-    ['', 'Gull (standard)'], ['navy', 'Marineblå'], ['maroon', 'Rødbrun'],
-    ['green', 'Skoggrønn'], ['teal', 'Petrol'], ['blue', 'Blå'], ['plum', 'Plomme'], ['rust', 'Rust']
-  ];
-  const ACCENT_HEX = { '': '#d4af37', navy: '#232740', maroon: '#76110f', green: '#3a6b4a', teal: '#2c6b6b', blue: '#2f4ea0', plum: '#6a4570', rust: '#9c531f' };
+  /* Farger håndteres nå av palette.js (createColorControl + resolveColor). */
   const CARD_SECTIONS = ['sifra', 'studier', 'helse', 'fysisk'];
 
   /* ─── AUTH ─── */
@@ -425,7 +422,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
         + '<div class="frow">'
           + '<div class="fg"><label>Navn på kort</label><input type="text" data-f="name" value="' + esc(c.name) + '" placeholder="f.eks. Studentombudet"></div>'
           + '<div class="fg narrow"><label>Eyebrow</label><input type="text" data-f="eyebrow" value="' + esc(c.eyebrow) + '" placeholder="liten etikett"></div>'
-          + '<div class="fg narrow"><label>Fargestripe</label><div class="stripe-wrap"><span class="stripe-prev" style="background:' + ACCENT_HEX[c.accent || ''] + '"></span><select data-f="accent">' + ACCENTS.map(function (a) { return '<option value="' + a[0] + '"' + ((c.accent || '') === a[0] ? ' selected' : '') + '>' + a[1] + '</option>'; }).join('') + '</select></div></div>'
+          + '<div class="fg narrow"><label>Fargestripe</label><div data-accent-host></div></div>'
         + '</div>'
         + '<div class="fg"><label>Beskrivelse</label><textarea data-f="desc" placeholder="Brødtekst. Blank linje gir nytt avsnitt.">' + esc(c.desc) + '</textarea></div>'
         + '<div class="fg"><label>Uthevet merknad (rødbrun, vises før punktene)</label><input type="text" data-f="noteTop" value="' + esc(c.noteTop) + '" placeholder="valgfri — HTML lov"></div>'
@@ -444,10 +441,18 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
       el.addEventListener(evt, function () {
         c[field] = el.value;
         if (field === 'name') card.querySelector('.card-title').textContent = el.value || '(uten navn)';
-        if (field === 'accent') { const sw = card.querySelector('.stripe-prev'); if (sw) sw.style.background = ACCENT_HEX[el.value] || ACCENT_HEX['']; }
         lazySave();
       });
     });
+
+    // Fargestripe: tom accent => lys gull (standard) via CSS-fallback
+    const accentHost = card.querySelector('[data-accent-host]');
+    if (accentHost) accentHost.appendChild(window.createColorControl({
+      value: c.accent || '',
+      emptyLabel: 'Gull (standard)',
+      onChange: function (v) { c.accent = v; lazySave(); }
+    }));
+
     renderSubList(card.querySelector('[data-resp]'), c.resp, 'Punkter (strekpunkter)', '+ punkt', 'Et punkt...');
     renderSubList(card.querySelector('[data-contacts]'), c.contacts, 'Kontaktlinjer (HTML lov)', '+ kontaktlinje', 'f.eks. E-post: <strong>...</strong>');
 
