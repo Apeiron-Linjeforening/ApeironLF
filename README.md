@@ -305,21 +305,22 @@ Domene:
 
 **Status per 13.06.26:**
 
-| Domene             | Status      | Pris       | Registrar            |
-| --------------------| -------------| ------------| ----------------------|
-| apeiron.no         | **Tatt**    | —          | —                    |
-| apeiron.org        | **Tatt**    | —          | —                    |
-| apeironntnu.no     | **Ledig** ✅ | 149 kr/år  | Loopia               |
-| apeironntnu.org    | **Ledig** ✅ | 169 kr/år  | Loopia               |
-| apeironntnu.org    | **Ledig** ✅ | 275 kr/år  | Domeneshop           |
-| apeironntnu.org    | **Ledig** ✅ | $11.20 /år | Cloudflare Registrar |
-| apeironntnu.com    | **Ledig** ✅ | $10.46 /år | Cloudflare Registrar |
-| apeironntnu.net    | **Ledig** ✅ | $11.86 /år | Cloudflare Registrar |
-| apeironntnu.online | **Ledig** ✅ | 9 kr /år   | Loopia               |
-| apeironlf.org      | **Ledig** ✅ | $11.20 /år | Cloudflare Registrar |
-| apeironlf.com      | **Ledig** ✅ | $10.46 /år | Cloudflare Registrar |
+| Domene                 | Status      | Pris       | Registrar            |
+| ------------------------| -------------| ------------| ----------------------|
+| apeiron.no             | **Tatt**    | —          | —                    |
+| apeiron.org            | **Tatt**    | —          | —                    |
+| apeironntnu.no         | **Ledig** ✅ | 149 kr/år  | Loopia               |
+| apeironntnu.org        | **Ledig** ✅ | 169 kr/år  | Loopia               |
+| apeironntnu.org        | **Ledig** ✅ | 275 kr/år  | Domeneshop           |
+| apeironntnu.org        | **Ledig** ✅ | $11.20 /år | Cloudflare Registrar |
+| apeironntnu.com        | **Ledig** ✅ | $10.46 /år | Cloudflare Registrar |
+| apeironntnu.net        | **Ledig** ✅ | $11.86 /år | Cloudflare Registrar |
+| apeironntnu.online     | **Ledig** ✅ | 9 kr /år   | Loopia               |
+| apeironlf.org          | **Ledig** ✅ | $11.20 /år | Cloudflare Registrar |
+| apeironlf.com          | **Ledig** ✅ | $10.46 /år | Cloudflare Registrar |
+| apeironlf.no           | **Ledig** ✅ | 99 kr /år  | Domeneshop           |
+| apeironlf.no + .online | **Ledig** ✅ | 99 kr /år  | Domeneshop           |
 
-**Anbefaling:** `apeironntnu.no` via Loopia (149 kr/år) — tydeligst for studenter, norsk endelse. Pek DNS til Cloudflare etter kjøp.
 Merk: Cloudflare Registrar støtter ikke .no-domener. For .org er Cloudflare billigst.
 
 **NTNU-alternativ (`apeiron.org.ntnu.no`):**
