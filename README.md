@@ -278,10 +278,9 @@ Hvis repoet ikke er koblet til Cloudflare Pages, eller om man ønsker å bytte C
 ## To do
 
 Kritisk:
-- [ ] Fikse bedre sikkerhet for API-nøkkelen.
-- [ ] Fylle ut verv under "Hva gjør vi".
 - [ ] Fikse domene - Se "Domene" nedenfor.
 - [ ] Sjekke på nytt hvordan alt oppfører seg på mobil.
+- [ ] Om man dobbeltrykker TAB på styret, vil bildene flytte seg oppover i ringen og vise en blå bakgrunn. 
 
 Medium:
 - [ ] Be HF studentrådet om å oppdatere sidene deres og gi oss mer informasjon om hva de faktisk gjør. 
@@ -295,11 +294,17 @@ Lav:
 - [ ] Side eller plassering for "Oppnåelser" (Premier vi har fått, som sølv i håndball og "best oppmøte" fra Dionysos)
 - [ ] Burde det være en direkte måte for TVene ved IFR å legge ved oppdateringer på nettsiden vår?
 - [ ] Kunne trykke på emne under hvert studie og bli tatt til emnet i pensumlistene - kan bli et problem for admin filene.
+- [ ] Fikse bedre sikkerhet for API-nøkkelen.
+- [ ] Fylle ut SAK / utvide den.
+- [ ] Sette opp et arkiv.
 
 Hadde vært kult:
 - [ ] Snakke med IFR/NTNU om API for automatisk oppdatering av emner for studiene.
 - [ ] Måte å vise nyheter/informasjon på.
 - [ ] Bygge KKI for Apeiron.
+
+Forslag:
+- [ ] Mer velkommen / koselig forside? Bilder av tidligere arrangement å index. Siden føles kanskje litt kald/som om den prøver å selge noe.
 
 Domene:
 - [x] Spurt NTNU — venter på svar (sendt 12.06.26)
@@ -349,6 +354,7 @@ Fulfført:
 - [x] Legge til egen TV seksjon.
 - [x] Lage egen side for Styret som handler om verv og lignende.
 - [x] Sjekke alle sidene, spesielt menyen, for hvordan de oppfører seg på mobil.
+- [x] Fylle ut verv under "Hva gjør vi".
 
 ---
 
