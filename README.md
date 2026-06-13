@@ -342,6 +342,7 @@ Kritisk:
 - [ ] Aporetisk Aften kalender: Ta beskrivelsen fra kalenderen og gjøre det om til et "Om Aftenen".
 - [ ] Legge til '?' i admin som forklarer hva hvert felt og mulighet gjør.
 - [ ] Passe på at alle admin-filene er konsistente.
+- [ ] Måte for Apeiron å legge inn viktig informasjon som er tydelig på index.
 
 Medium:
 - [ ] Be HF studentrådet om å oppdatere sidene deres og gi oss mer informasjon om hva de faktisk gjør. 
@@ -369,6 +370,7 @@ Lav:
 - [ ] Sammenlign med https://www.mfplacebo.no/
 - [ ] Gjøre om admin filene til å gi nærest full kontroll over oppsett over sidene.
 - [ ] Menyen: Dropdown menyene skal endre seg for å vise hvor du er (Styret fungerer ikke).
+- [ ] Legge til Apeiron sin Github i footer.
 
 Hadde vært kult:
 - [ ] Snakke med IFR/NTNU om API for automatisk oppdatering av emner for studiene.
