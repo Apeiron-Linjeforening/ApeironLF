@@ -342,8 +342,6 @@ Kritisk:
 - [ ] Aporetisk Aften kalender: Ta beskrivelsen fra kalenderen og gjøre det om til et "Om Aftenen".
 - [ ] Legge til '?' i admin som forklarer hva hvert felt og mulighet gjør.
 - [ ] Passe på at alle admin-filene er konsistente.
-- [ ] Merch: "Begrenset" badge funker ikke, "Nyhet" badge funker kun om det står "Nyhet" i badge tekst feltet. Gjør admin feltene om til ett felt: velg en av presetene eller skriv egen. Ingen begge.
-- [ ] Merch: Legge til animert farge/lys på badge.
 
 Medium:
 - [ ] Be HF studentrådet om å oppdatere sidene deres og gi oss mer informasjon om hva de faktisk gjør. 
@@ -358,6 +356,11 @@ Medium:
 - [ ] Legg til Logikk Panikk.
 - [ ] Finne en bedre måte å vise arrangement og plakater på -> Måte å vise nyheter/informasjon på.
 - [ ] Se om vi kan få menyen til å være en og samme entitet over alle sidene -> for å slippe å oppdatere hver en meny for hver side.
+- [ ] Merch: "Begrenset" badge funker ikke, "Nyhet" badge funker kun om det står "Nyhet" i badge tekst feltet. Gjør admin feltene om til ett felt: velg en av presetene eller skriv egen. Ingen begge.
+- [ ] Merch: Legge til animert farge/lys på badge.
+- [ ] Merch admin: Når pris ikke er satt burde prisfeltet fjernes, likt som med medlemspris.
+- [ ] Merch admin: animasjonsfarger/glød burde ha fastsatte forskjellige farger for lys og mørk modus + alternativ om å velge for lys og mørk modus individuelt. 
+
 
 Lav:
 - [ ] Side eller plassering for "Oppnåelser" (Premier vi har fått, som sølv i håndball og "best oppmøte" fra Dionysos)
