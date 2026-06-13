@@ -67,7 +67,8 @@
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function (data) {
         var items = (data.items || []).map(parseEvent).filter(isAporetisk);
-        if (!items.length) { useSample(); return; }
+        // Kalenderen er nådd, men tom → vis «dato kommer» (ikke genererte plassholderdatoer).
+        if (!items.length) { state.events = []; state.live = true; render(); return; }
         state.events = items;
         state.live   = true;
         render();
@@ -100,13 +101,15 @@
     var now = new Date(); now.setHours(0, 0, 0, 0);
     var upc = upcoming(now);
     var nxt = upc[0] || null;
+    // Live kalender uten kommende Aporetisk-datoer.
+    var liveEmpty = state.live && !upc.length;
 
     // Fyll inn Når og Hvor i apo__meta
     var whenEl  = document.getElementById('apoWhen');
     var whereEl = document.getElementById('apoWhere');
     if (whenEl) {
       var valSpan = whenEl.querySelector('span');
-      if (valSpan) valSpan.textContent = nxt ? fmtDate(nxt.start, nxt.allDay) : '—';
+      if (valSpan) valSpan.textContent = nxt ? fmtDate(nxt.start, nxt.allDay) : (liveEmpty ? 'Dato kommer' : '—');
     }
     if (whereEl) {
       var placeSpan = whereEl.querySelector('span');
@@ -116,6 +119,12 @@
     // Render toggle + liste i apoCalRoot
     var root = document.getElementById('apoCalRoot');
     if (!root) return;
+
+    // Ingen kommende datoer fra kalenderen → kort beskjed, ingen «vis alle»-knapp.
+    if (liveEmpty) {
+      root.innerHTML = '<p class="apo-cal__empty">Neste Aporetisk Aften annonseres snart — følg med på Instagram.</p>';
+      return;
+    }
 
     var h = '<button type="button" class="apo-cal__toggle">'
           + (state.expanded ? 'Skjul alle datoer\u00a0\u2191' : 'Vis alle datoer\u00a0\u2193')

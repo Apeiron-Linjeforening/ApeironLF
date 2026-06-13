@@ -182,7 +182,14 @@
     </span>
   </a>
   <nav class="nav__links">
-    <a href="index.html#om">Om oss</a>
+    <div class="nav__dropdown">
+      <a class="nav__drop-trigger" href="index.html#om">Om oss <span class="nav__caret">▾</span></a>
+      <div class="nav__drop-menu">
+        <a href="index.html#om">Om oss</a>
+        <a href="index.html#lesesalen">Lesesalen</a>
+        <a href="index.html#samarbeid">Samarbeid</a>
+      </div>
+    </div>
     <div class="nav__dropdown">
       <a class="nav__drop-trigger" href="index.html#studiet">Studiene <span class="nav__caret">▾</span></a>
       <div class="nav__drop-menu">
@@ -203,13 +210,19 @@
       <div class="nav__drop-menu">
         <a href="index.html#styret">Styret</a>
         <a href="styret.html">Om vervene</a>
-        <a href="index.html#sak">S.A.K</a>
+        <a href="styret.html#tillitsvalgte">Tillitsvalgte</a>
+        <a href="styret.html#sak">S.A.K</a>
       </div>
     </div>
-    <a href="index.html#lesesalen">Lesesalen</a>
-    <a href="galleri.html">Galleri</a>
-    <a href="begrep.html">Begrep</a>
-    <a href="merch.html">Merch</a>
+    <a href="begrep.html" class="nav__top">Begrep</a>
+    <a href="galleri.html" class="nav__top">Galleri</a>
+    <div class="nav__dropdown">
+      <a class="nav__drop-trigger nav__drop-trigger--active" href="merch.html">Merch <span class="nav__caret">▾</span></a>
+      <div class="nav__drop-menu">
+        <a href="merch.html">Merch</a>
+        <a href="marked.html" class="is-active">Kjøp &amp; bytte</a>
+      </div>
+    </div>
     <a href="index.html#kontakt">Kontakt</a>
     <a class="btn btn--gold nav__cta" href="index.html#bli-medlem">Bli medlem <span class="arr">→</span></a>
   </nav>
@@ -223,22 +236,25 @@
 </header>
 
 <div class="drawer" id="drawer">
-  <button class="drawer__search-row nav__search-btn" type="button" aria-label="Søk på nettstedet">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
-    Søk på nettstedet
-  </button>
+  <span class="drawer__lbl">Foreningen</span>
   <a href="index.html#om">Om oss</a>
+  <a href="index.html#lesesalen">Lesesalen</a>
+  <a href="index.html#samarbeid">Samarbeid</a>
+  <span class="drawer__lbl">Studiene</span>
   <a href="index.html#studiet">Studiene</a>
   <a href="pensum.html">Pensum</a>
+  <span class="drawer__lbl">Arrangementer</span>
   <a href="index.html#arrangementer">Arrangementer</a>
   <a href="index.html#aporetisk">Aporetisk Aften</a>
   <a href="index.html#fadderuke">Fadderuke</a>
+  <span class="drawer__lbl">Styret</span>
   <a href="index.html#styret">Styret</a>
-  <a href="index.html#sak">S.A.K</a>
   <a href="styret.html">Om vervene</a>
-  <a href="index.html#lesesalen">Lesesalen</a>
-  <a href="galleri.html">Galleri</a>
+  <a href="styret.html#tillitsvalgte">Tillitsvalgte</a>
+  <a href="styret.html#sak">S.A.K</a>
+  <span class="drawer__lbl">Mer</span>
   <a href="begrep.html">Begrep</a>
+  <a href="galleri.html">Galleri</a>
   <a href="merch.html">Merch</a>
   <a href="marked.html" class="is-active">Kjøp &amp; bytte</a>
   <a href="index.html#kontakt">Kontakt</a>
@@ -331,7 +347,7 @@
       <a href="pensum.html">Pensum</a>
       <a href="index.html#arrangementer">Arrangementer</a>
       <a href="index.html#styret">Styret</a>
-      <a href="index.html#sak">S.A.K</a>
+      <a href="styret.html#sak">S.A.K</a>
       <a href="merch.html">Merch</a>
       <a href="marked.html">Kjøp &amp; bytte</a>
       <a href="index.html#bli-medlem">Bli medlem</a>

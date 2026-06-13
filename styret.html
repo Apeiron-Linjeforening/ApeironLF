@@ -29,10 +29,22 @@
 }
 .subhero__seal {
   position: absolute; right: -4%; top: 50%; transform: translateY(-50%);
-  width: min(44vw, 540px); opacity: .09; pointer-events: none;
+  width: min(44vw, 540px); opacity: .09; pointer-events: none; z-index: 1;
   filter: drop-shadow(0 0 1px rgba(212,175,55,.4));
 }
-.subhero__inner { position: relative; max-width: var(--maxw); margin: 0 auto; padding: 0 28px; }
+/* diskré stjernedryss for å matche forsidens hero */
+.subhero::after {
+  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    radial-gradient(1.4px 1.4px at 18% 24%, rgba(244,236,217,.5), transparent),
+    radial-gradient(1.2px 1.2px at 74% 18%, rgba(212,175,55,.55), transparent),
+    radial-gradient(1px 1px at 44% 70%, rgba(244,236,217,.4), transparent),
+    radial-gradient(1.3px 1.3px at 88% 56%, rgba(212,175,55,.45), transparent),
+    radial-gradient(1px 1px at 60% 86%, rgba(244,236,217,.35), transparent),
+    radial-gradient(70% 50% at 50% -10%, rgba(212,175,55,.07), transparent 70%);
+  opacity: .7;
+}
+.subhero__inner { position: relative; z-index: 2; max-width: var(--maxw); margin: 0 auto; padding: 0 28px; }
 .subhero h1 {
   color: var(--paper);
   font-size: clamp(3rem, 8vw, 6.5rem);
@@ -62,9 +74,19 @@
   border-radius: 4px;
   padding: 28px 26px;
   display: flex; flex-direction: column; gap: 10px;
+  transition: transform .22s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.role-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 22px 44px -28px rgba(35,39,64,.5);
 }
 .role-card--maroon { border-left-color: var(--maroon); }
 .role-card--navy   { border-left-color: var(--navy); }
+.role-card--green  { border-left-color: #3a6b4a; }
+.role-card--teal   { border-left-color: #2c6b6b; }
+.role-card--blue   { border-left-color: #2f4ea0; }
+.role-card--plum   { border-left-color: #6a4570; }
+.role-card--rust   { border-left-color: #9c531f; }
 
 .role-card__eyebrow {
   font-family: var(--body); font-size: .65rem; font-weight: 700;
@@ -111,7 +133,14 @@
     </span>
   </a>
   <nav class="nav__links">
-    <a href="index.html#om">Om oss</a>
+    <div class="nav__dropdown">
+      <a class="nav__drop-trigger" href="index.html#om">Om oss <span class="nav__caret">▾</span></a>
+      <div class="nav__drop-menu">
+        <a href="index.html#om">Om oss</a>
+        <a href="index.html#lesesalen">Lesesalen</a>
+        <a href="index.html#samarbeid">Samarbeid</a>
+      </div>
+    </div>
     <div class="nav__dropdown">
       <a class="nav__drop-trigger" href="index.html#studiet">Studiene <span class="nav__caret">▾</span></a>
       <div class="nav__drop-menu">
@@ -132,13 +161,19 @@
       <div class="nav__drop-menu">
         <a href="index.html#styret">Styret</a>
         <a href="styret.html" class="is-active">Om vervene</a>
-        <a href="index.html#sak">S.A.K</a>
+        <a href="#tillitsvalgte">Tillitsvalgte</a>
+        <a href="#sak">S.A.K</a>
       </div>
     </div>
-    <a href="index.html#lesesalen">Lesesalen</a>
-    <a href="galleri.html">Galleri</a>
-    <a href="begrep.html">Begrep</a>
-    <a href="merch.html">Merch</a>
+    <a href="begrep.html" class="nav__top">Begrep</a>
+    <a href="galleri.html" class="nav__top">Galleri</a>
+    <div class="nav__dropdown">
+      <a class="nav__drop-trigger" href="merch.html">Merch <span class="nav__caret">▾</span></a>
+      <div class="nav__drop-menu">
+        <a href="merch.html">Merch</a>
+        <a href="marked.html">Kjøp &amp; bytte</a>
+      </div>
+    </div>
     <a href="index.html#kontakt">Kontakt</a>
     <a class="btn btn--gold nav__cta" href="index.html#bli-medlem">Bli medlem <span class="arr">→</span></a>
   </nav>
@@ -152,22 +187,25 @@
 </header>
 
 <div class="drawer" id="drawer">
-  <button class="drawer__search-row nav__search-btn" type="button" aria-label="Søk på nettstedet">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
-    Søk på nettstedet
-  </button>
+  <span class="drawer__lbl">Foreningen</span>
   <a href="index.html#om">Om oss</a>
+  <a href="index.html#lesesalen">Lesesalen</a>
+  <a href="index.html#samarbeid">Samarbeid</a>
+  <span class="drawer__lbl">Studiene</span>
   <a href="index.html#studiet">Studiene</a>
   <a href="pensum.html">Pensum</a>
+  <span class="drawer__lbl">Arrangementer</span>
   <a href="index.html#arrangementer">Arrangementer</a>
   <a href="index.html#aporetisk">Aporetisk Aften</a>
   <a href="index.html#fadderuke">Fadderuke</a>
+  <span class="drawer__lbl">Styret</span>
   <a href="index.html#styret">Styret</a>
-  <a href="index.html#sak">S.A.K</a>
   <a href="styret.html" class="is-active">Om vervene</a>
-  <a href="index.html#lesesalen">Lesesalen</a>
-  <a href="galleri.html">Galleri</a>
+  <a href="#tillitsvalgte">Tillitsvalgte</a>
+  <a href="#sak">S.A.K</a>
+  <span class="drawer__lbl">Mer</span>
   <a href="begrep.html">Begrep</a>
+  <a href="galleri.html">Galleri</a>
   <a href="merch.html">Merch</a>
   <a href="marked.html">Kjøp &amp; bytte</a>
   <a href="index.html#kontakt">Kontakt</a>
@@ -191,68 +229,13 @@
 <section class="section" id="styremedlemmer">
   <div class="wrap">
     <div class="center" style="margin-bottom:54px">
-      <span class="eyebrow eyebrow--center">Hvem er vi</span>
-      <h2 class="h-section">Styret 2025/26</h2>
-      <p class="lede">Den gjengen som holder hjulene i gang og kaffekjelen varm.</p>
+      <span class="eyebrow eyebrow--center" id="board-eyebrow">Hvem er vi</span>
+      <h2 class="h-section" id="board-heading">Styret 2025/26</h2>
+      <p class="lede" id="board-lede">Den gjengen som holder hjulene i gang og kaffekjelen varm.</p>
     </div>
 
-    <div class="board__grid">
-      <div class="member reveal">
-        <div class="member__ph"><span class="member__initials">SL</span><image-slot id="s1" shape="circle" placeholder="Foto" src="assets/Styremedlemmer/Stian.jpg"></image-slot></div>
-        <div class="member__role">Leder</div>
-        <h3>Stian Lauritzen</h3>
-      </div>
-      <div class="member reveal d1">
-        <div class="member__ph"><span class="member__initials">DC</span><image-slot id="s2" shape="circle" placeholder="Foto" src="assets/Styremedlemmer/Dennis.jpg"></image-slot></div>
-        <div class="member__role">Nestleder</div>
-        <h3>Dennis Cleophas</h3>
-      </div>
-      <div class="member reveal d2">
-        <div class="member__ph"><span class="member__initials">DN</span><image-slot id="s3" shape="circle" placeholder="Foto" src="assets/Styremedlemmer/Dagny.jpg"></image-slot></div>
-        <div class="member__role">Økonomiansvarlig</div>
-        <h3>Dagny Flakne</h3>
-      </div>
-      <div class="member reveal d3">
-        <div class="member__ph"><span class="member__initials">INE</span><image-slot id="s4" shape="circle" placeholder="Foto" src="assets/Styremedlemmer/Iver.jpg"></image-slot></div>
-        <div class="member__role">SOSIALANSVARLIG</div>
-        <h3>Iver N. Edvardsen</h3>
-      </div>
-      <div class="member reveal">
-        <div class="member__ph"><span class="member__initials">NB</span><image-slot id="s5" shape="circle" placeholder="Foto" src="assets/Styremedlemmer/Natalie.jpg"></image-slot></div>
-        <div class="member__role">PR-ansvarlig</div>
-        <h3>Natalie Bellingmo</h3>
-      </div>
-      <div class="member reveal d1">
-        <div class="member__ph"><span class="member__initials">AF</span><image-slot id="s6" shape="circle" placeholder="Foto" src="assets/Styremedlemmer/AnnaF.jpg"></image-slot></div>
-        <div class="member__role">FADDERSJEF</div>
-        <h3>Anna Fagerli</h3>
-      </div>
-      <div class="member reveal d2">
-        <div class="member__ph"><span class="member__initials">RMS</span><image-slot id="s7" shape="circle" placeholder="Foto" src="assets/Styremedlemmer/Robin.jpg"></image-slot></div>
-        <div class="member__role">Fagansvarlig</div>
-        <h3>Robin M. Søraker</h3>
-      </div>
-      <div class="member reveal d3">
-        <div class="member__ph"><span class="member__initials">MRS</span><image-slot id="s8" shape="circle" placeholder="Foto" src="assets/Styremedlemmer/Martin.png"></image-slot></div>
-        <div class="member__role">POTET og Programtillitsvalg (PTV)</div>
-        <h3>Martin R. Skauge</h3>
-      </div>
-      <div class="member reveal d3">
-        <div class="member__ph"><span class="member__initials">HPR</span><image-slot id="s9" shape="circle" placeholder="Foto" src="assets/Styremedlemmer/Helene.jpg"></image-slot></div>
-        <div class="member__role">POTET</div>
-        <h3>Helene P. Ruud</h3>
-      </div>
-      <div class="member reveal d3">
-        <div class="member__ph"><span class="member__initials">KBH</span><image-slot id="s10" shape="circle" placeholder="Foto" src="assets/Styremedlemmer/Karoline.jpg"></image-slot></div>
-        <div class="member__role">POTET</div>
-        <h3>Karoline B. Holthe</h3>
-      </div>
-      <div class="member reveal d3">
-        <div class="member__ph"><span class="member__initials">FCFR</span><image-slot id="s11" shape="circle" placeholder="Foto" src="assets/Styremedlemmer/Fredrik2.jpg"></image-slot></div>
-        <div class="member__role">A.S.A.P S.A.K</div>
-        <h3>Fredrik C.F. Rosenfors</h3>
-      </div>
-    </div>
+    <!-- Auto-fylt fra styret-content.js -->
+    <div class="board__grid" id="styret-board"></div>
   </div>
 </section>
 
@@ -260,143 +243,111 @@
 <section class="section" style="background:var(--paper-2, #f7f3ec);" id="vervene">
   <div class="wrap">
     <div class="center" style="margin-bottom:54px">
-      <span class="eyebrow eyebrow--center">Rollene</span>
-      <h2 class="h-section">Hva gjør vi?</h2>
-      <p class="lede">
+      <span class="eyebrow eyebrow--center" id="verv-eyebrow">Rollene</span>
+      <h2 class="h-section" id="verv-heading">Hva gjør vi?</h2>
+      <p class="lede" id="verv-lede">
         Hvert verv har et klart ansvar og bidrar til at Apeiron fungerer som
-        fellesskap og organisasjon. Beskrivelsene under er placeholders —
-        styret fyller inn riktig innhold.
+        fellesskap og organisasjon.
+      </p>
+    </div>
+
+    <!-- Auto-fylt fra styret-content.js -->
+    <div class="role-grid" id="styret-roles"></div>
+  </div>
+</section>
+
+<!-- ============ S.A.K ============ -->
+<section class="section committees" id="sak" data-screen-label="S.A.K">
+  <div class="wrap">
+    <div class="sak__grid">
+      <div class="reveal sak__story">
+        <span class="eyebrow">Bli med &amp; bidra</span>
+        <h2 class="h-section">S.A.K</h2>
+        <p class="sak__full">Sosiale Arrangement Komité — eller <em style="font-style:italic">A.S.A.P S.A.K</em> for venner</p>
+        <p class="sak__lede">S.A.K er styrets hjelpemiddel for å gi studenter på filosofi og etikk en lavterskel måte å ta aktiv del i planlegging og gjennomføring av det sosiale på. Vil du engasjere deg uten å sitte i styret, er dette den enkleste veien inn.</p>
+        <p class="sak__asap">Viser du engasjement for studiemiljøet, blir du en ekte <b>ASAP</b> — en av <em style="font-style:italic">Apeirons Superdupre Ansvarlige Personer</em>. Du trenger ikke sitte i selve komitéen for å være det.</p>
+        <p class="sak__founders">Grunnlagt i mars 2026 av <b>Fredrik C. Rosenfors</b> og <b>Iver N. Edvardsen</b> for å bygge bro mellom studieretningene filosofi og etikk — og holde et ellers beryktet godt studiemiljø samlet.</p>
+        <a class="btn btn--gold" href="index.html#kontakt">Bli med i S.A.K <span class="arr">→</span></a>
+      </div>
+      <div class="sak__card reveal d1">
+        <div class="sak__krav-head">
+          <h3>Krav til S.A.K</h3>
+          <small>Innført 03.03.26</small>
+        </div>
+        <ul class="sak__krav">
+          <li><span class="par">§1.1</span><span class="txt">Prøv å ha det gøy.</span></li>
+          <li><span class="par">§1.2</span><span class="txt">Prøv å være sosial.</span></li>
+          <li class="is-open"><span class="par">§2</span><span class="txt"></span></li>
+          <li class="is-open"><span class="par">§3</span><span class="txt"></span></li>
+        </ul>
+        <p class="sak__krav-note">De to siste paragrafene står med vilje tomme — for å minne oss på at framtiden er åpen, og at både S.A.K og sosialansvarlig må være det samme: villige til forandring.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TILLITSVALGTE ============ -->
+<section class="section" id="tillitsvalgte">
+  <div class="wrap">
+    <div class="center" style="margin-bottom:54px">
+      <span class="eyebrow eyebrow--center">Studentdemokrati</span>
+      <h2 class="h-section">Tillitsvalgte</h2>
+      <p class="lede">
+        Tillitsvalgte er studentenes stemme inn i NTNUs styrende organer — på program-, institutt- og fakultetsnivå.
+        De sitter i møter, løfter saker og sørger for at studiehverdagen din blir hørt der beslutningene tas.
+        Har du noe du vil ta opp, er de første du bør kontakte.
       </p>
     </div>
 
     <div class="role-grid">
 
-      <div class="role-card reveal">
-        <div class="role-card__eyebrow">Verv</div>
-        <h3>Leder</h3>
-        <p>[Placeholder — overordnet ansvar for linjeforeningen, representerer Apeiron utad og leder styremøter.]</p>
-        <ul class="role-card__resp">
-          <li>Leder styremøter og sørger for at vedtak følges opp</li>
-          <li>Representerer Apeiron overfor NTNU, IFR og andre aktører</li>
-          <li>[Legg til ansvar her]</li>
-        </ul>
-      </div>
-
-      <div class="role-card reveal d1">
-        <div class="role-card__eyebrow">Verv</div>
-        <h3>Nestleder</h3>
-        <p>[Placeholder — støtter leder, overtar ved fravær og koordinerer internt arbeid.]</p>
-        <ul class="role-card__resp">
-          <li>Overtar lederrollen ved fravær</li>
-          <li>[Legg til ansvar her]</li>
-        </ul>
-      </div>
-
-      <div class="role-card role-card--maroon reveal d2">
-        <div class="role-card__eyebrow">Verv</div>
-        <h3>Økonomiansvarlig</h3>
-        <p>[Placeholder — ansvar for budsjett, regnskap og økonomiforvaltning i Apeiron.]</p>
-        <ul class="role-card__resp">
-          <li>Fører regnskap og holder oversikt over budsjett</li>
-          <li>Håndterer innbetalinger og Vipps-konto</li>
-          <li>[Legg til ansvar her]</li>
-        </ul>
-      </div>
-
-      <div class="role-card role-card--maroon reveal d3">
-        <div class="role-card__eyebrow">Verv</div>
-        <h3>Sosialansvarlig</h3>
-        <p>[Placeholder — planlegger og gjennomfører sosiale arrangementer og bidrar til godt miljø.]</p>
-        <ul class="role-card__resp">
-          <li>Planlegger sosiale arrangement gjennom semesteret</li>
-          <li>Samarbeider med S.A.K om arrangementer</li>
-          <li>[Legg til ansvar her]</li>
-        </ul>
-      </div>
-
-      <div class="role-card reveal">
-        <div class="role-card__eyebrow">Verv</div>
-        <h3>PR-ansvarlig</h3>
-        <p>[Placeholder — ansvar for kommunikasjon og synlighet utad, inkludert sosiale medier og profilering.]</p>
-        <ul class="role-card__resp">
-          <li>Driver Apeirons sosiale medier (Instagram, Facebook osv.)</li>
-          <li>Lager plakater, innhold og informasjonsmateriell</li>
-          <li>[Legg til ansvar her]</li>
-        </ul>
-      </div>
-
-      <div class="role-card reveal d1">
-        <div class="role-card__eyebrow">Verv</div>
-        <h3>Faddersjef</h3>
-        <p>[Placeholder — koordinerer fadderukene for nye studenter og sikrer et godt studiemottak.]</p>
-        <ul class="role-card__resp">
-          <li>Planlegger og koordinerer fadderukeprogrammet</li>
-          <li>Rekrutterer og organiserer faddere</li>
-          <li>[Legg til ansvar her]</li>
-        </ul>
-      </div>
-
-      <div class="role-card role-card--navy reveal d2">
-        <div class="role-card__eyebrow">Verv</div>
-        <h3>Fagansvarlig</h3>
-        <p>[Placeholder — ansvar for faglige arrangementer som fagkvelder, symposion og lesesirkler.]</p>
-        <ul class="role-card__resp">
-          <li>Planlegger faglige arrangement</li>
-          <li>Koordinerer Aporetisk Aften og lignende</li>
-          <li>[Legg til ansvar her]</li>
-        </ul>
-      </div>
-
-      <div class="role-card reveal d3">
-        <div class="role-card__eyebrow">Verv</div>
-        <h3>Potet</h3>
-        <p>[Placeholder — fleksibelt verv som støtter resten av styret og tar tak der det trengs.]</p>
-        <ul class="role-card__resp">
-          <li>Bistår andre styremedlemmer ved behov</li>
-          <li>[Legg til ansvar her]</li>
-        </ul>
-      </div>
-
       <div class="role-card role-card--navy reveal">
-        <div class="role-card__eyebrow">Verv</div>
+        <div class="role-card__eyebrow">Programnivå</div>
         <h3>PTV — Programtillitsvalgt</h3>
-        <p>[Placeholder — representerer studentene i programrådet og er bindeledd mellom studenter og institutt.]</p>
+        <p>PTV representerer studentene på program­nivå ved filosofi og etikk. De sitter i programrådsmøter og er bindeleddet mellom studenter og programledelsen — ta kontakt om du har innspill til undervisning, pensum eller eksamensformer.</p>
         <ul class="role-card__resp">
           <li>Deltar i programrådsmøter</li>
-          <li>Formidler tilbakemeldinger fra studenter til instituttet</li>
-          <li>[Legg til ansvar her]</li>
+          <li>Formidler studentenes innspill til programledelsen</li>
+          <li>Kan kontaktes om spørsmål og bekymringer knyttet til studieprogrammet</li>
+          <li>Samarbeider med ITV og HF studentråd</li>
         </ul>
       </div>
 
       <div class="role-card role-card--navy reveal d1">
-        <div class="role-card__eyebrow">Verv</div>
+        <div class="role-card__eyebrow">Instituttnivå · IFR</div>
         <h3>ITV — Institutt-tillitsvalgt</h3>
-        <p>[Placeholder — representerer studentene i instituttets styrende organer.]</p>
+        <p>ITV representerer alle studenter ved Institutt for filosofi og religionsvitenskap (IFR). De sitter i instituttets styrende organer, deltar i ansettelsesprosesser og tar opp saker som angår hele instituttet. Kontakt: <a href="mailto:hf-ifr@studentrad.ntnu.no" style="color:inherit">hf-ifr@studentrad.ntnu.no</a></p>
         <ul class="role-card__resp">
-          <li>[Legg til ansvar her]</li>
+          <li>Sitter i instituttstyret ved IFR</li>
+          <li>Deltar i ansettelsesprosesser for vitenskapelige stillinger</li>
+          <li>Representerer studentene i strategiske saker for instituttet</li>
+          <li>Deltar i HF studentråd og bringer informasjon tilbake til studentmiljøet</li>
         </ul>
       </div>
 
       <div class="role-card role-card--maroon reveal d2">
-        <div class="role-card__eyebrow">Verv</div>
-        <h3>S.A.K — Sosiale Arrangement Komité</h3>
-        <p>[Placeholder — åpen komité som arrangerer lavterskel sosiale aktiviteter for alle studenter.]</p>
+        <div class="role-card__eyebrow">Fakultetsnivå · HF</div>
+        <h3>FTV — Fakultetstillitsvalgt</h3>
+        <p>FTV representerer alle studentene ved Det humanistiske fakultet (HF) og jobber med saker som angår hele fakultetet. De sitter i fakultetsstyret og ulike komiteer, og er studentenes øverste talspersoner overfor HF-ledelsen. Kontakt: <a href="mailto:ftv@hf.ntnu.no" style="color:inherit">ftv@hf.ntnu.no</a></p>
         <ul class="role-card__resp">
-          <li>Organiserer spontane og lavterskel arrangementer</li>
-          <li>Åpen for alle studenter — ikke bare styremedlemmer</li>
-          <li>[Legg til ansvar her]</li>
+          <li>Sitter i fakultetsstyret ved HF</li>
+          <li>Jobber med læringsmiljø, internasjonalisering og kommunikasjon på fakultetsnivå</li>
+          <li>Representerer alle HF-studenter — inkludert filosofi og etikk — i saker av stor rekkevidde</li>
+          <li>Leder og koordinerer arbeidet i HF studentråd</li>
         </ul>
       </div>
 
-      <div class="role-card reveal d3">
-        <div class="role-card__eyebrow">Verv</div>
-        <h3>H.I.V</h3>
-        <p>[Placeholder — legg til beskrivelse av vervets ansvarsområder og rolle i foreningen.]</p>
-        <ul class="role-card__resp">
-          <li>[Legg til ansvar her]</li>
-        </ul>
-      </div>
+    </div>
 
+    <div class="center" style="margin-top:48px">
+      <p style="font-size:.92rem;color:var(--ink-soft,#4a4d6a);max-width:55ch;margin:0 auto 1.4em">
+        Tillitsvalgte er valgt av og for studentene. Har du noe du vil si fra om — enten det gjelder undervisning,
+        lokaler, pensum eller studiemiljø — er de rette å ta kontakt med.
+      </p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
+        <a class="btn btn--ghost" href="https://www.hf-studentrad.no/tillitsvalgte" target="_blank" rel="noopener">Se alle tillitsvalgte ved HF <span class="arr">→</span></a>
+        <a class="btn btn--ghost" href="https://i.ntnu.no/sifra" target="_blank" rel="noopener">Si fra til NTNU <span class="arr">→</span></a>
+      </div>
     </div>
   </div>
 </section>
@@ -415,7 +366,8 @@
       <a href="index.html#arrangementer">Arrangementer</a>
       <a href="index.html#styret">Styret</a>
       <a href="styret.html">Om vervene</a>
-      <a href="index.html#sak">S.A.K</a>
+      <a href="#sak">S.A.K</a>
+      <a href="styret.html#tillitsvalgte">Tillitsvalgte</a>
       <a href="galleri.html">Galleri</a>
       <a href="merch.html">Merch</a>
       <a href="marked.html">Kjøp &amp; bytte</a>
@@ -427,6 +379,64 @@
 </footer>
 
 <script src="image-slot.js"></script>
+<script src="styret-content.js"></script>
+<script>
+/* ── Render styret + verv fra styret-content.js ── */
+(function () {
+  var C = window.STYRET_CONTENT || {};
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function setText(id, val) {
+    var el = document.getElementById(id);
+    if (el && val != null && val !== '') el.textContent = val;
+  }
+  var STAGGER = ['', 'd1', 'd2', 'd3'];
+
+  // Overskrifter
+  if (C.board) { setText('board-eyebrow', C.board.eyebrow); setText('board-heading', C.board.heading); setText('board-lede', C.board.lede); }
+  if (C.verv)  { setText('verv-eyebrow', C.verv.eyebrow);  setText('verv-heading', C.verv.heading);  setText('verv-lede', C.verv.lede); }
+
+  // Styremedlemmer
+  var boardEl = document.getElementById('styret-board');
+  if (boardEl && Array.isArray(C.members)) {
+    boardEl.innerHTML = C.members.map(function (m, i) {
+      var TAGCOLORS = ['maroon', 'gold', 'navy', 'green', 'teal', 'blue', 'plum', 'rust'];
+      var tags = (m.tags || []).filter(function (t) { return t && t.label; }).map(function (t) {
+        var cls = TAGCOLORS.indexOf(t.color) !== -1 ? ' member__tag--' + t.color : '';
+        return '<span class="member__tag' + cls + '">' + esc(t.label) + '</span>';
+      }).join('');
+      return '<div class="member reveal ' + STAGGER[i % 4] + '">'
+        + '<div class="member__ph"><span class="member__initials">' + esc(m.initials) + '</span>'
+        + '<image-slot shape="circle" placeholder="Foto" src="' + esc(m.img || '') + '"></image-slot></div>'
+        + '<div class="member__role">' + esc(m.role) + '</div>'
+        + '<h3>' + esc(m.name) + '</h3>'
+        + (tags ? '<div class="member__tags">' + tags + '</div>' : '')
+        + '</div>';
+    }).join('');
+  }
+
+  // Roller (Hva gjør vi)
+  var rolesEl = document.getElementById('styret-roles');
+  if (rolesEl && Array.isArray(C.roles)) {
+    rolesEl.innerHTML = C.roles.map(function (r, i) {
+      var ACCENTS = ['maroon', 'navy', 'green', 'teal', 'blue', 'plum', 'rust'];
+      var cls = ACCENTS.indexOf(r.accent) !== -1 ? ' role-card--' + r.accent : '';
+      var resp = (r.resp || []).filter(function (x) { return x; }).map(function (x) {
+        return '<li>' + esc(x) + '</li>';
+      }).join('');
+      return '<div class="role-card' + cls + ' reveal ' + STAGGER[i % 4] + '">'
+        + '<div class="role-card__eyebrow">' + esc(r.eyebrow || 'Verv') + '</div>'
+        + '<h3>' + esc(r.name) + '</h3>'
+        + '<p>' + esc(r.desc) + '</p>'
+        + (resp ? '<ul class="role-card__resp">' + resp + '</ul>' : '')
+        + '</div>';
+    }).join('');
+  }
+})();
+</script>
 <script>
 (function () {
   var nav = document.getElementById('nav');

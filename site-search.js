@@ -20,7 +20,10 @@
     { t: 'Aporetisk Aften', d: 'Én kveld i måneden rundt ett filosofisk spørsmål — uten pensum og uten fasit. Åpent for alle.', u: 'index.html#aporetisk', g: 'Startside' },
     { t: 'Fadderuke', d: 'Studiestartens beste uker — bli kjent med faget, byen og medstudentene.', u: 'index.html#fadderuke', g: 'Startside' },
     { t: 'Styret 2025/26', d: 'Leder, nestleder, økonomi, sosialansvarlig, faddersjef, fagansvarlig og mer.', u: 'index.html#styret', g: 'Startside' },
-    { t: 'S.A.K', d: 'Sosiale Arrangement Komité — lavterskel engasjement for alle studenter.', u: 'index.html#sak', g: 'Startside' },
+    { t: 'S.A.K', d: 'Sosiale Arrangement Komité — lavterskel engasjement for alle studenter.', u: 'styret.html#sak', g: 'Styret' },
+    { t: 'Lesesalen', d: 'Filosofi- og etikkstudentenes eget tilfluktssted på Dragvoll — bibliotek, gratis kaffe for medlemmer og god plass.', u: 'index.html#lesesalen', g: 'Startside' },
+    { t: 'Galleri', d: 'Bilder fra fester, fagkvelder og fadderuker — automatisk hentet fra Google Drive.', u: 'galleri.html', g: 'Galleri' },
+    { t: 'Fellesskap & samarbeid', d: 'Unionen, søsterforeningen Dionysos og studenttidsskriftet Begrep.', u: 'index.html#samarbeid', g: 'Startside' },
     { t: 'Bli medlem', d: 'Meld deg inn i Apeiron og få fullt utbytte av alt vi tilbyr.', u: 'index.html#bli-medlem', g: 'Startside' },
     { t: 'Kontakt', d: 'Ta kontakt med styret på e-post eller sosiale medier. apeironlinjeforening@gmail.com', u: 'index.html#kontakt', g: 'Startside' },
     /* Styret */
@@ -75,8 +78,9 @@
     Pensum:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>',
     Merch:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>',
     Begrep:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h10M4 18h7"/></svg>',
+    Galleri:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>',
   };
-  var GROUP_ORDER = ['Startside', 'Styret', 'Pensum', 'Merch', 'Begrep'];
+  var GROUP_ORDER = ['Startside', 'Styret', 'Pensum', 'Merch', 'Begrep', 'Galleri'];
 
   /* ── Hjelpere ── */
   function reEsc(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }

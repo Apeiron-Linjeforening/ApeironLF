@@ -94,7 +94,8 @@
       .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
       .then(function (data) {
         var items = (data.items || []).map(parseEvent).filter(function (e) { return e.title; });
-        if (!items.length) { useSample(); return; }
+        // Kalenderen er nådd, men tom → vis «dato kommer»-tomtilstand (ikke plassholdere).
+        if (!items.length) { state.events = []; state.live = true; build(); return; }
         state.events = items; state.live = true; build();
       })
       .catch(function () { useSample(); });
@@ -157,6 +158,9 @@
   }
 
   function emptyMsg() {
+    if (state.live && !state.events.length) {
+      return '<p class="ev-empty">Ingen kommende arrangementer akkurat nå — nye datoer legges ut fortløpende. Følg oss gjerne på Instagram i mellomtiden.</p>';
+    }
     return '<p class="ev-empty">Ingen arrangementer i denne kategorien akkurat nå.</p>';
   }
 

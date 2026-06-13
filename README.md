@@ -91,22 +91,29 @@ Samme prinsipp som arrangementer — legg inn postene i **fadderuke-kalenderen**
 Skriv type med kolon: `Grill: Bli-kjent-kveld`
 
 ### 👥 Styret
-Rediger direkte i `index.html`, i seksjonen merket `<!-- ============ STYRET ============ -->` (ca. linje 404).
+Styremedlemmene og vervbeskrivelsene styres via filen `styret-content.js` — **ikke** direkte i `styret.html` eller `index.html`. Begge sidene leser fra samme fil, så du oppdaterer alt ett sted.
 
-For hvert styremedlem finner du en blokk som ser slik ut:
-```html
-<div class="member reveal">
-  <div class="member__ph">
-    <span class="member__initials">SL</span>
-    <image-slot id="b1" shape="circle" placeholder="Foto"></image-slot>
-  </div>
-  <h3 class="member__name">Navn Navnesen</h3>
-  <p class="member__role">Leder</p>
-  <a class="member__mail" href="mailto:epost@example.com">epost@example.com</a>
-</div>
-```
+#### Enklest: bruk admin-panelet (`styret-admin.html`)
 
-- Bytt ut initialer, navn, rolle og e-postadresse
+Åpne `styret-admin.html` i nettleseren (lokalt eller på nettsiden ved å legge til `/styret-admin.html` i adressefeltet).
+Du logger inn med passordet — spør styret.
+
+I admin-panelet kan du:
+- Legge til, endre og slette styremedlemmer og verv («Hva gjør vi»)
+- Sette navn, rolle, initialer og tilleggsverv (chips) på hvert medlem
+- Dra inn et portrettbilde på medlemskortet (lagres som innebygd base64 — ingen ekstern fil nødvendig)
+- Endre rekkefølge
+- Trykk **«Eksporter styret-content.js»** — last ned filen og erstatt `styret-content.js` i repoet, så er siden oppdatert
+
+#### Manuelt: rediger `styret-content.js` direkte
+
+Filen inneholder `window.STYRET_CONTENT` med seksjonene `board` og `verv` (overskrifter), `members` (styremedlemmer) og `roles` (vervbeskrivelser).
+
+- `members[]`: `name`, `role`, `initials`, `img` og `tags` (tilleggsverv som chips, med `label` og `color`: `""` nøytral, `"maroon"` eller `"gold"`)
+- `roles[]`: `name`, `desc`, `resp` (liste med ansvarspunkter), `eyebrow` og `accent` (fargestripe)
+- Bilder kan være `null` (viser initialer), `"assets/Styremedlemmer/filnavn.jpg"` (fra repoet) eller base64 fra admin-panelet
+
+> Initialene vises i den runde avataren helt til et foto er lagt inn.
 
 ### 📚 Pensum
 Rediger `pensum.html`. Hver emneblokk er en `<div class="course-block">` med tittel, emnekode og pensumliste.
@@ -231,8 +238,6 @@ Finn riktig seksjon ved hjelp av kommentarene: `<!-- ============ OM OSS =======
 
 | Fil                               | Hva det er                                                         |
 | -----------------------------------| --------------------------------------------------------------------|
-| Fil                               | Hva det er                                                         |
-| -----------------------------------| --------------------------------------------------------------------|
 | `index.html`                      | Forsiden (hoveddelen av nettsiden)                                 |
 | `pensum.html`                     | Pensum-oversikt                                                    |
 | `merch.html`                      | Merch-side (produkter hentes fra `merch-products.js`)              |
@@ -243,7 +248,9 @@ Finn riktig seksjon ved hjelp av kommentarene: `<!-- ============ OM OSS =======
 | `begrep.html`                     | Side for Begrep-tidsskriftet (utgaver, podkast, film, julekalender)|
 | `begrep-admin.html`               | 'Passordbeskyttet' admin-panel for å redigere Begrep-innhold       |
 | `begrep-content.js`               | Innholdsdata for Begrep-siden (redigeres via admin-panel)          |
-| `styret.html`                     | Beskrivelse av alle styreverv i Apeiron                            |
+| `styret.html`                     | Styret og beskrivelse av alle styreverv (leser fra `styret-content.js`) |
+| `styret-admin.html`               | 'Passordbeskyttet' admin-panel for å redigere styret og verv      |
+| `styret-content.js`               | Innholdsdata for styret-siden (redigeres via admin-panel)         |
 | `styles.css`                      | All styling                                                        |
 | `app.js`                          | Meny, scroll-animasjoner og generell funksjonalitet                |
 | `apeiron-events.js`               | Henter arrangementer fra Google Kalender                           |
@@ -253,6 +260,7 @@ Finn riktig seksjon ved hjelp av kommentarene: `<!-- ============ OM OSS =======
 | `image-slot.js`                   | Gjenbrukbar bildekomponent (`<image-slot>`), bl.a. for styrebilder |
 | `assets/merch/`                   | Bilder for merch-produkter (alternativ til base64)                 |
 | `assets/begrep/`                  | Bilder for Begrep-utgaver og -innhold                              |
+| `assets/Styremedlemmer/`          | Portrettbilder av styremedlemmer (alternativ til base64)          |
 | `assets/`                         | Logo og andre bilder                                               |
 | `_headers`                        | Cloudflare Pages — HTTP-sikkerhetsheadere                          |
 
@@ -271,19 +279,55 @@ Hvis repoet ikke er koblet til Cloudflare Pages, eller om man ønsker å bytte C
 
 Kritisk:
 - [ ] Fikse bedre sikkerhet for API-nøkkelen.
-- [ ] Få eget domene → Spør NTNU - Venter på svar 12.06.26
+- [ ] Fylle ut verv under "Hva gjør vi".
+- [ ] Fikse domene - Se "Domene" nedenfor.
+- [ ] Sjekke på nytt hvordan alt oppfører seg på mobil.
 
 Medium:
-- [ ] Telefon: Menyen er for stor/lang.
-- [ ] Telefon: Søkefeltet er identisk med desktop.
+- [ ] Be HF studentrådet om å oppdatere sidene deres og gi oss mer informasjon om hva de faktisk gjør. 
+      - [ ] Hva gjør egentlig en PTV, ITV og FTV? 
+      - [ ] Hvordan får vi kontakt med våre egne TVer?
+- [ ] Be HF studentrådet om å fikse "Bli kjent med oss" og "Kontakt oss" lenkene deres.
+- [ ] Mens HF fikser greiene sine: Se om vi kan fikse NTNU's litt lite intuitive "Si fra!" side og gjøre det mer tydelig på vår side.
+
+Lav:
 - [ ] Side eller plassering for "Oppnåelser" (Premier vi har fått, som sølv i håndball og "best oppmøte" fra Dionysos)
+- [ ] Burde det være en direkte måte for TVene ved IFR å legge ved oppdateringer på nettsiden vår?
 
 Hadde vært kult:
 - [ ] Snakke med IFR/NTNU om API for automatisk oppdatering av emner for studiene.
 - [ ] Måte å vise nyheter/informasjon på.
 - [ ] Bygge KKI for Apeiron.
 
-Lav:
+Domene:
+- [x] Spurt NTNU — venter på svar (sendt 12.06.26)
+- [ ] Få bedre domene
+
+**Status per 13.06.26:**
+
+| Domene             | Status      | Pris       | Registrar            |
+| --------------------| -------------| ------------| ----------------------|
+| apeiron.no         | **Tatt**    | —          | —                    |
+| apeiron.org        | **Tatt**    | —          | —                    |
+| apeironntnu.no     | **Ledig** ✅ | 149 kr/år  | Loopia               |
+| apeironntnu.org    | **Ledig** ✅ | 169 kr/år  | Loopia               |
+| apeironntnu.org    | **Ledig** ✅ | 275 kr/år  | Domeneshop           |
+| apeironntnu.org    | **Ledig** ✅ | $11.20 /år | Cloudflare Registrar |
+| apeironntnu.com    | **Ledig** ✅ | $10.46 /år | Cloudflare Registrar |
+| apeironntnu.net    | **Ledig** ✅ | $11.86 /år | Cloudflare Registrar |
+| apeironntnu.online | **Ledig** ✅ | 9 kr /år   | Loopia               |
+| apeironlf.org      | **Ledig** ✅ | $11.20 /år | Cloudflare Registrar |
+| apeironlf.com      | **Ledig** ✅ | $10.46 /år | Cloudflare Registrar |
+
+**Anbefaling:** `apeironntnu.no` via Loopia (149 kr/år) — tydeligst for studenter, norsk endelse. Pek DNS til Cloudflare etter kjøp.
+Merk: Cloudflare Registrar støtter ikke .no-domener. For .org er Cloudflare billigst.
+
+**NTNU-alternativ (`apeiron.org.ntnu.no`):**
+- Adressen er gjenopplivet, men fungerer som en filserver (NTNU sitt mappesystem), ikke som et vanlig domene.
+- Forsøkt omdirigering med `.htaccess` (`RedirectMatch (.*) https://apeironlf.pages.dev/`) — fungerte ikke.
+- Tilgang: For tilgang via sftp, skriv `sftp://dittbrukernavn@login.stud.ntnu.no/home/groups/apeiron` i filutforskeren (Linux). Per nå er det kun sosialansvarlig Iver (25/26) som har tilgang.
+- Avventer svar fra NTNU om muligheten for videre hjelp.
+
 
 Fulfført:
 - [x] Å trykke på "Arrangement", "Studiene" eller "Styret" burde ta deg rett til siden, og ikke tvinge brukeren til å velge "Arrangement", "Studiene" eller "Styret" i menyen som dukker opp.
@@ -297,6 +341,58 @@ Fulfført:
 - [x] Legge til egen Begrep side med admin-panel
 - [x] Legge til forklaring av vervene i styret (styret.html)
 - [x] Legge til faktiske bilder av styremedlemmene på forsiden og styret.html.
+- [x] Telefon: Søkefeltet er identisk med desktop.
+- [x] Telefon: Menyen er for stor/lang.
+- [x] Legge til egen TV seksjon.
+- [x] Lage egen side for Styret som handler om verv og lignende.
+- [x] Sjekke alle sidene, spesielt menyen, for hvordan de oppfører seg på mobil.
+
+---
+
+## Siste endringer
+
+**11.06.26 — Første opplastning av nettsiden**
+- Første versjon av hele nettstedet lastet opp: forsiden (`index.html`) med hero, Om oss, Studiene, Arrangementer, Aporetisk Aften, Fadderuke, Styret, Lesesalen, Bli medlem, Kontakt og footer.
+- Alle undersider: `pensum.html`, `merch.html`, `marked.html`.
+- Alle kjerne-JS-filer: `apeiron-events.js` (Google Kalender-integrasjon), `apeiron-fadder.js`, `aporetisk-cal.js`, `app.js`, `image-slot.js`, `site-search.js`.
+- Komplett `styles.css` med hele det visuelle systemet (navy/gull/vinrød/pergament, serif-typografi).
+- JSX/React-prototype forkastet til fordel for ren statisk HTML/CSS/JS.
+
+**11.06.26 — Styrebilder og merch-system**
+- Portrettbilder lastet opp for alle styremedlemmer (`assets/Styremedlemmer/`): Anna, Dagny, Dennis, Fredrik, Helene, Iver, Karoline, Martin, Natalie, Robin, Stian.
+- Styremedlemmer lagt inn på forsiden med bilder, initialer og roller.
+- Nytt merch-system: `merch-admin.html` (passordbeskyttet admin-panel) og `merch-products.js` (datafil). Merch-siden omskrevet til å lese fra datafilen — ingen kodeendring nødvendig for å legge til/endre produkter.
+- Søk (`site-search.js`) fikset og rullet ut til Merch og Pensum.
+
+**11.06.26 — Galleri og Lesesalen**
+- Nytt bildegalleri (`galleri.html`) med Google Drive-integrasjon: mapper i Drive = event-kort i galleriet, automatisk henting via API, år-faner og lysbildefremviser.
+- Lesesalen-seksjonen lagt til forsiden med tekst, ikonliste og bildestripe (de første lesesal-bildene `lesesal1–6.jpg`).
+- Forbedringer i `styles.css` for galleri og lesesal-layout.
+- `marked.html`, `merch.html` og `pensum.html` fikk navigasjons- og søkeforbedringer.
+
+**12.06.26 — Lesesalen-lysbildefremviser og Cloudflare**
+- Lesesal-bildene utvidet til 18 bilder (`lesesal7–18.jpg`), med oppdaterte høyere kvalitetsversjoner av de første.
+- Lysbildefremviser (lightbox) lagt til lesesal-seksjonen på forsiden — klikk på bilde for å bla gjennom alle.
+- Galleriet redesignet med forbedret layout og navigasjon.
+- Migrert fra Netlify til **Cloudflare Pages** (`netlify.toml` fjernet, `_headers` lagt til for HTTP-sikkerhetsheadere). Automatisk deploy fra GitHub gjelder fortsatt.
+
+**12.06.26 — Begrep-siden, styret-siden og diverse**
+- Ny side for Begrep-tidsskriftet (`begrep.html`): eget mørkt visuelt uttrykk (svart/gull/rust), seksjoner for utgaver, podkast, film (Grev van Orton) og julekalender (Hilberts Hotell), statistikk-stripe og lenker til sosiale medier.
+- Nytt passordbeskyttet admin-panel (`begrep-admin.html`) + datafil (`begrep-content.js`) for å redigere alt innhold på Begrep-siden uten å røre kode — fungerer likt som merch-admin.
+- Lagt til bilder for Begrep-utgaver (`assets/begrep/`).
+- Ny side for styret og vervbeskrivelser (`styret.html`) med tilhørende admin-panel (`styret-admin.html`) og datafil (`styret-content.js`).
+- Begrep, Galleri, Merch, Marked og Pensum fikk søkestøtte (`site-search.js`).
+- Fjernet ubrukte prototypefiler (`tweaks-panel.jsx`, `tweaks.jsx`).
+- Fjernet for store bildefiler fra merch-assets.
+
+**13.06.26 — Domene-oversikt i README**
+- README oppdatert med strukturert oversikt over domene-alternativer: tilgjengelighet, priser og registrarer (Loopia, Domeneshop, Cloudflare Registrar).
+- Dokumentert status for NTNU-subdomenet (`apeiron.org.ntnu.no`) og SFTP-tilgang.
+
+**13.06.26 — Visuell finpuss på forsiden og styret-siden**
+- Forsiden (`index.html` / `styles.css`): myk fokusring for tastatur, stat-tall som teller seg opp når de kommer i syne, jevnere hover på kort (Om oss, studieretninger, samarbeid), finere lenke-detaljer, mykere marquees med fade-kanter, og litt mer dybde i hero-bakgrunnen. Alt respekterer «reduser bevegelse».
+- Styret-siden (`styret.html`): hover-løft på vervkort og styremedlem-portretter, og samme diskré stjernedryss i topp-banneret som på forsiden.
+- README oppdatert: styret-seksjonen beskriver nå admin-panelet (`styret-admin.html` + `styret-content.js`).
 
 ---
 

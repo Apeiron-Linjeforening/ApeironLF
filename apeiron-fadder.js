@@ -118,12 +118,28 @@
       .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
       .then(function (data) {
         var items = (data.items || []).map(parseEvent).filter(function (e) { return e.title; });
-        if (!items.length) { useSample(); return; }
+        // Kalenderen er nådd, men tom → vis «datoer kommer»-tomtilstand (ikke plassholdere).
+        if (!items.length) { renderEmpty(); return; }
         FADDER = groupIntoWeeks(items); IS_LIVE = true; render();
       })
       .catch(function () { useSample(); });
   }
   function useSample() { FADDER = PLACEHOLDER; IS_LIVE = false; render(); }
+
+  // Live kalender uten poster: rydd vekk plassholderne og vis en vennlig beskjed.
+  function renderEmpty() {
+    IS_LIVE = true;
+    var datesEl = document.getElementById('fadderDates');
+    if (datesEl) datesEl.textContent = 'Datoer kommer';
+    var noteEl = document.getElementById('fadderPlaceholder');
+    if (noteEl) noteEl.style.display = 'none';
+    var stage = document.querySelector('.fadder__stage');
+    if (stage) stage.innerHTML = '<p class="fd-empty">Fadderukeprogrammet legges ut her så snart datoene er klare. Følg oss på Instagram for oppdateringer.</p>';
+    var toggle = document.querySelector('.fadder__full-toggle');
+    if (toggle) toggle.style.display = 'none';
+    var fullView = document.getElementById('fadderFullView');
+    if (fullView) fullView.innerHTML = '';
+  }
 
   function parseEvent(raw) {
     var s = raw.start || {};

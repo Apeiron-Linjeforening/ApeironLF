@@ -195,4 +195,41 @@
     probe.observe(document.getElementById('nav'));
     setTimeout(function () { if (!ioAlive) revealAll(); }, 700);
   }
+
+  // Stat-tall: teller seg opp fra 0 når «Om oss»-båndet kommer i syne.
+  // Bevarer suffiks (f.eks. «+»); ikke-numeriske verdier (∞) står stille.
+  var statNums = Array.prototype.slice.call(document.querySelectorAll('.stat__num'));
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function countUp(el) {
+    var raw = el.textContent;
+    var m = raw.match(/\d+/);
+    if (!m) return;                       // ∞ o.l. — la stå
+    var target = parseInt(m[0], 10);
+    var suffix = raw.slice(m.index + m[0].length);
+    if (reduceMotion) { el.textContent = target + suffix; return; }
+    var dur = 1100, start = null;
+    function step(ts) {
+      if (start === null) start = ts;
+      var p = Math.min((ts - start) / dur, 1);
+      var eased = 1 - Math.pow(1 - p, 3);   // ease-out cubic
+      el.textContent = Math.round(target * eased) + suffix;
+      if (p < 1) requestAnimationFrame(step);
+      else el.textContent = target + suffix;
+    }
+    requestAnimationFrame(step);
+  }
+
+  if (statNums.length) {
+    if (!('IntersectionObserver' in window)) {
+      statNums.forEach(countUp);
+    } else {
+      var statIo = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { countUp(e.target); statIo.unobserve(e.target); }
+        });
+      }, { threshold: 0.5 });
+      statNums.forEach(function (el) { statIo.observe(el); });
+    }
+  }
 })();

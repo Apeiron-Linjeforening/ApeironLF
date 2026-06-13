@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Styret Admin — Apeiron</title>
+<link rel="icon" href="assets/apeiron-logo.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy: #232740; --gold: #d4af37; --gold-ink: #a07820;
+  --maroon: #76110f; --paper: #f4ecd9; --ink: #1a1d2e;
+  --ink-soft: rgba(26,29,46,.6); --border: rgba(35,39,64,.15);
+  --display: 'Cormorant Garamond', Georgia, serif;
+  --body: 'Spectral', Georgia, serif;
+}
+body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-height: 100vh; }
+
+/* ── Gate ── */
+#gate { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 40px; }
+#gate img { width: 72px; opacity: .85; }
+#gate h1 { font-family: var(--display); font-size: 2rem; color: var(--navy); }
+#gate p { color: var(--ink-soft); font-size: .88rem; }
+.gate-row { display: flex; gap: 8px; }
+#pw-input { padding: 9px 14px; border: 1.5px solid var(--border); border-radius: 4px; font-family: var(--body); font-size: .95rem; background: white; width: 200px; }
+#pw-input:focus { outline: none; border-color: var(--navy); }
+.btn-login { padding: 9px 18px; background: var(--navy); color: var(--paper); border: none; border-radius: 4px; font-family: var(--body); font-size: .95rem; cursor: pointer; }
+.btn-login:hover { background: #1a1d2e; }
+#pw-err { color: var(--maroon); font-size: .82rem; min-height: 1.1em; }
+
+/* ── Admin shell ── */
+#admin { display: none; }
+#admin.on { display: block; }
+.a-header {
+  background: var(--navy); color: var(--paper); padding: 14px 24px;
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 16px rgba(0,0,0,.22);
+}
+.a-header img { width: 32px; opacity: .85; }
+.a-header h1 { font-family: var(--display); font-size: 1.3rem; letter-spacing: .04em; margin-right: auto; }
+.a-header a { color: rgba(244,236,217,.65); font-size: .78rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; text-decoration: none; }
+.a-header a:hover { color: var(--paper); }
+.btn-export { padding: 7px 16px; background: var(--gold); color: var(--navy); border: none; border-radius: 4px; font-family: var(--body); font-size: .82rem; font-weight: 700; cursor: pointer; transition: filter .15s; }
+.btn-export:hover { filter: brightness(1.08); }
+
+.a-main { max-width: 880px; margin: 0 auto; padding: 28px 20px 80px; }
+
+/* ── Instructions ── */
+.tip { background: white; border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: 4px; padding: 16px 20px; margin-bottom: 24px; font-size: .88rem; }
+.tip strong { color: var(--navy); font-size: .95rem; display: block; margin-bottom: 8px; }
+.tip ol { padding-left: 18px; }
+.tip li { margin: 5px 0; color: var(--ink-soft); line-height: 1.55; }
+.tip li b { color: var(--gold-ink); }
+.tip-note { margin-top: 10px; padding: 7px 11px; background: rgba(212,175,55,.08); border-radius: 3px; color: var(--gold-ink); font-size: .81rem; }
+.tip-reset { float: right; font-size: .76rem; color: var(--ink-soft); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; border: none; background: none; padding: 0; }
+.tip-reset:hover { color: var(--maroon); }
+
+/* ── Meta panel ── */
+.meta-panel { background: white; border: 1px solid var(--border); border-radius: 6px; padding: 16px 18px; margin-bottom: 28px; }
+.meta-panel h3 { font-family: var(--display); font-size: 1.1rem; color: var(--navy); margin-bottom: 10px; }
+.meta-grid { display: flex; gap: 14px; flex-wrap: wrap; }
+.meta-grid + h3 { margin-top: 18px; }
+
+/* ── Section ── */
+.sec { margin-bottom: 34px; }
+.sec-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.sec-head h2 { font-family: var(--display); font-size: 1.5rem; color: var(--navy); margin-right: auto; }
+.sec-head .count { font-size: .78rem; color: var(--ink-soft); }
+.btn-add { padding: 7px 14px; background: rgba(212,175,55,.18); color: var(--gold-ink); border: 1px solid rgba(212,175,55,.5); border-radius: 4px; font-family: var(--body); font-size: .82rem; font-weight: 700; cursor: pointer; transition: background .15s; }
+.btn-add:hover { background: rgba(212,175,55,.3); }
+
+.list { display: flex; flex-direction: column; gap: 14px; }
+
+/* ── Card ── */
+.card { background: white; border: 1px solid var(--border); border-radius: 6px; transition: box-shadow .2s; }
+.card:hover { box-shadow: 0 4px 18px rgba(35,39,64,.09); }
+.card-head { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(35,39,64,.03); border-bottom: 1px solid rgba(35,39,64,.07); }
+.card-title { font-family: var(--display); font-size: 1.05rem; color: var(--navy); flex: 1; font-weight: 600; }
+.order-btns { display: flex; gap: 3px; }
+.btn-ord { width: 26px; height: 26px; border: 1px solid var(--border); border-radius: 3px; background: white; cursor: pointer; font-size: .7rem; color: var(--ink-soft); display: flex; align-items: center; justify-content: center; transition: background .1s; }
+.btn-ord:hover { background: rgba(35,39,64,.06); color: var(--navy); }
+.btn-del { padding: 4px 10px; border: 1px solid rgba(118,17,15,.25); border-radius: 3px; background: transparent; color: var(--maroon); font-size: .76rem; font-family: var(--body); cursor: pointer; transition: background .1s; }
+.btn-del:hover { background: rgba(118,17,15,.06); }
+
+.card-body { display: grid; grid-template-columns: 140px 1fr; }
+.card-body.no-img { grid-template-columns: 1fr; }
+
+/* Image zone */
+.img-zone { width: 140px; background: var(--navy); position: relative; cursor: pointer; overflow: hidden; border-right: 1px solid rgba(35,39,64,.09); aspect-ratio: 1/1; }
+.img-zone::before { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(60% 60% at 50% 40%, rgba(212,175,55,.14), transparent 70%); }
+.img-zone .img-preview { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 2; display: none; }
+.img-zone .img-ph { position: absolute; inset: 0; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; pointer-events: none; }
+.img-zone .img-ph img { width: 30px; opacity: .18; }
+.img-zone .img-ph span { font-size: .64rem; color: rgba(244,236,217,.35); text-align: center; padding: 0 8px; line-height: 1.4; }
+.img-zone .img-overlay { position: absolute; inset: 0; z-index: 3; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,.42); color: white; font-size: .72rem; text-align: center; opacity: 0; transition: opacity .15s; pointer-events: none; }
+.img-zone:hover .img-overlay { opacity: 1; }
+.img-zone[data-over] .img-overlay { opacity: 1; background: rgba(212,175,55,.25); color: var(--gold); }
+.btn-clr-img { position: absolute; top: 5px; right: 5px; z-index: 4; width: 20px; height: 20px; border-radius: 50%; background: rgba(0,0,0,.55); color: white; border: none; cursor: pointer; font-size: .72rem; display: none; align-items: center; justify-content: center; }
+.img-zone:hover .btn-clr-img { display: flex; }
+
+/* Fields */
+.fields { padding: 16px 18px; display: flex; flex-direction: column; gap: 11px; }
+.frow { display: flex; gap: 10px; flex-wrap: wrap; }
+.fg { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 120px; }
+.fg label { font-size: .63rem; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; color: var(--ink-soft); }
+.fg input, .fg textarea, .fg select { font-family: var(--body); font-size: .88rem; color: var(--ink); border: 1px solid var(--border); border-radius: 3px; padding: 6px 9px; background: white; transition: border-color .12s; resize: none; width: 100%; }
+.fg input:focus, .fg textarea:focus, .fg select:focus { outline: none; border-color: var(--navy); }
+.fg textarea { min-height: 64px; line-height: 1.5; }
+.fg.narrow { flex: 0 0 110px; min-width: 90px; }
+.stripe-wrap { display: flex; align-items: center; gap: 7px; }
+.stripe-wrap select { flex: 1; }
+.stripe-prev { flex: 0 0 auto; width: 6px; height: 28px; border-radius: 3px; box-shadow: inset 0 0 0 1px rgba(0,0,0,.12); }
+
+/* Sub-editors (chips / bullets) */
+.subed { display: flex; flex-direction: column; gap: 3px; }
+.subed > label { font-size: .63rem; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; color: var(--ink-soft); }
+.subed-rows { display: flex; flex-direction: column; gap: 7px; }
+.subed-row { display: flex; gap: 6px; align-items: center; }
+.subed-row input { flex: 1; font-family: var(--body); font-size: .86rem; border: 1px solid var(--border); border-radius: 3px; padding: 6px 9px; background: white; }
+.subed-row input:focus { outline: none; border-color: var(--navy); }
+.subed-row select { flex: 0 0 120px; font-family: var(--body); font-size: .82rem; border: 1px solid var(--border); border-radius: 3px; padding: 6px 7px; background: white; }
+.subed-row .btn-mini { width: 28px; height: 30px; flex: 0 0 auto; border: 1px solid var(--border); border-radius: 3px; background: white; cursor: pointer; font-size: .72rem; color: var(--ink-soft); display: flex; align-items: center; justify-content: center; }
+.subed-row .btn-mini:hover { background: rgba(35,39,64,.06); color: var(--navy); }
+.subed-row .btn-mini.x { color: var(--maroon); border-color: rgba(118,17,15,.25); }
+.subed-row .btn-mini.x:hover { background: rgba(118,17,15,.06); }
+.btn-subadd { align-self: flex-start; margin-top: 2px; padding: 5px 11px; background: rgba(35,39,64,.05); color: var(--navy); border: 1px dashed var(--border); border-radius: 4px; font-family: var(--body); font-size: .78rem; cursor: pointer; }
+.btn-subadd:hover { background: rgba(35,39,64,.1); }
+.chip-prev { display: inline-flex; align-items: center; font-size: .58rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; border-radius: 999px; padding: 3px 9px; border: 1px solid rgba(35,39,64,.16); background: rgba(35,39,64,.05); color: var(--navy); flex: 0 0 auto; }
+.chip-prev.maroon { color: var(--maroon); border-color: rgba(118,17,15,.28); background: rgba(118,17,15,.06); }
+.chip-prev.gold { color: var(--gold-ink); border-color: rgba(212,175,55,.4); background: rgba(212,175,55,.12); }
+.chip-prev.navy { color: #2b315a; border-color: rgba(35,39,64,.34); background: rgba(35,39,64,.09); }
+.chip-prev.green { color: #3a6b4a; border-color: rgba(58,107,74,.34); background: rgba(58,107,74,.10); }
+.chip-prev.teal { color: #2c6b6b; border-color: rgba(44,107,107,.34); background: rgba(44,107,107,.10); }
+.chip-prev.blue { color: #2f4ea0; border-color: rgba(47,78,160,.32); background: rgba(47,78,160,.09); }
+.chip-prev.plum { color: #6a4570; border-color: rgba(106,69,112,.34); background: rgba(106,69,112,.10); }
+.chip-prev.rust { color: #9c531f; border-color: rgba(156,83,31,.36); background: rgba(156,83,31,.10); }
+
+/* Save toast */
+.toast { position: fixed; bottom: 22px; right: 22px; background: var(--navy); color: var(--paper); padding: 8px 16px; border-radius: 4px; font-size: .8rem; opacity: 0; transition: opacity .25s; pointer-events: none; z-index: 200; }
+.toast.show { opacity: 1; }
+
+@media (max-width: 580px) {
+  .card-body { grid-template-columns: 1fr; }
+  .img-zone { width: 100%; aspect-ratio: 16/10; border-right: none; border-bottom: 1px solid rgba(35,39,64,.09); }
+  .a-header h1 { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── GATE ── -->
+<div id="gate">
+  <img src="assets/apeiron-logo.png" alt="Apeiron">
+  <h1>Styret Admin</h1>
+  <p>Logg inn for å redigere styret og vervene</p>
+  <div class="gate-row">
+    <input type="password" id="pw-input" placeholder="Passord" autocomplete="off">
+    <button class="btn-login" id="pw-btn" type="button">Logg inn</button>
+  </div>
+  <p id="pw-err"></p>
+</div>
+
+<!-- ── ADMIN ── -->
+<div id="admin">
+  <header class="a-header">
+    <img src="assets/apeiron-logo.png" alt="">
+    <h1>Styret Admin</h1>
+    <a href="styret.html">← Se Styret-siden</a>
+    <button class="btn-export" id="export-btn" type="button">↓ Last ned styret-content.js</button>
+  </header>
+
+  <main class="a-main">
+    <div class="tip">
+      <button class="tip-reset" id="reset-btn" type="button">Tilbakestill til siste publiserte versjon</button>
+      <strong>Slik oppdaterer du Styret-siden</strong>
+      <ol>
+        <li>Rediger innholdet nedenfor — klikk på et felt for å redigere det</li>
+        <li>Last opp portrett ved å <b>klikke på bildefeltet</b> eller dra et bilde inn</li>
+        <li>Legg til tilleggsverv (chips) på et medlem med <b>+ verv</b>, og punkter på en rolle med <b>+ punkt</b></li>
+        <li>Klikk <b>Last ned styret-content.js</b> — lagre filen fra nedlastingsmappen</li>
+        <li>Erstatt <code>styret-content.js</code> i GitHub-repositoriet og push/commit</li>
+        <li>Cloudflare oppdaterer nettsiden automatisk innen et minutt</li>
+      </ol>
+      <div class="tip-note">💾 Endringer lagres automatisk i nettleseren din. Hovedvervet (Rolle) vises stort; chips vises diskré under navnet.</div>
+    </div>
+
+    <!-- OVERSKRIFTER -->
+    <div class="meta-panel">
+      <h3>Overskrift — Styremedlemmer</h3>
+      <div class="meta-grid">
+        <div class="fg narrow"><label>Eyebrow</label><input type="text" id="meta-board-eyebrow"></div>
+        <div class="fg"><label>Overskrift</label><input type="text" id="meta-board-heading"></div>
+        <div class="fg"><label>Ingress</label><input type="text" id="meta-board-lede"></div>
+      </div>
+      <h3>Overskrift — Hva gjør vi (roller)</h3>
+      <div class="meta-grid">
+        <div class="fg narrow"><label>Eyebrow</label><input type="text" id="meta-verv-eyebrow"></div>
+        <div class="fg"><label>Overskrift</label><input type="text" id="meta-verv-heading"></div>
+        <div class="fg"><label>Ingress</label><input type="text" id="meta-verv-lede"></div>
+      </div>
+    </div>
+
+    <!-- STYREMEDLEMMER -->
+    <div class="sec">
+      <div class="sec-head">
+        <h2>Styremedlemmer</h2>
+        <span class="count" id="count-members"></span>
+        <button class="btn-add" type="button" data-add="members">+ Nytt medlem</button>
+      </div>
+      <div class="list" id="list-members"></div>
+    </div>
+
+    <!-- ROLLER -->
+    <div class="sec">
+      <div class="sec-head">
+        <h2>Roller — «Hva gjør vi»</h2>
+        <span class="count" id="count-roles"></span>
+        <button class="btn-add" type="button" data-add="roles">+ Ny rolle</button>
+      </div>
+      <div class="list" id="list-roles"></div>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast">Lagret i nettleseren</div>
+<input type="file" id="file-input" accept="image/png,image/jpeg,image/webp,image/avif" hidden>
+
+<script src="styret-content.js"></script>
+<script>
+(function () {
+  /* ─── CONFIG ─── */
+  const PASSWORD = 'apeiron2026';
+  const LS_KEY   = 'apeiron-styret-v1';
+  const LS_AUTH  = 'apeiron-admin-auth';
+  const COLORS   = [
+    ['', 'Nøytral'], ['maroon', 'Rødbrun'], ['gold', 'Gull'], ['navy', 'Marineblå'],
+    ['green', 'Skoggrønn'], ['teal', 'Petrol'], ['blue', 'Blå'], ['plum', 'Plomme'], ['rust', 'Rust']
+  ];
+  const ACCENTS  = [
+    ['', 'Gull (standard)'], ['maroon', 'Rødbrun'], ['navy', 'Marineblå'],
+    ['green', 'Skoggrønn'], ['teal', 'Petrol'], ['blue', 'Blå'], ['plum', 'Plomme'], ['rust', 'Rust']
+  ];
+  const ACCENT_HEX = { '': '#d4af37', maroon: '#76110f', navy: '#232740', green: '#3a6b4a', teal: '#2c6b6b', blue: '#2f4ea0', plum: '#6a4570', rust: '#9c531f' };
+
+  /* ─── AUTH ─── */
+  const gate = document.getElementById('gate');
+  const adminEl = document.getElementById('admin');
+  const pwInput = document.getElementById('pw-input');
+  const pwErr = document.getElementById('pw-err');
+
+  function login(pw) {
+    if (pw === PASSWORD) {
+      sessionStorage.setItem(LS_AUTH, '1');
+      gate.style.display = 'none'; adminEl.classList.add('on'); init();
+    } else {
+      pwErr.textContent = 'Feil passord — prøv igjen'; pwInput.value = ''; pwInput.focus();
+    }
+  }
+  if (sessionStorage.getItem(LS_AUTH) === '1') {
+    gate.style.display = 'none'; adminEl.classList.add('on'); init();
+  } else {
+    document.getElementById('pw-btn').addEventListener('click', function () { login(pwInput.value); });
+    pwInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') login(pwInput.value); });
+  }
+
+  /* ─── DATA ─── */
+  let data = { board: {}, verv: {}, members: [], roles: [] };
+
+  function fresh() {
+    const c = window.STYRET_CONTENT || {};
+    return {
+      board: Object.assign({ eyebrow: 'Hvem er vi', heading: 'Styret 2025/26', lede: '' }, c.board || {}),
+      verv:  Object.assign({ eyebrow: 'Rollene', heading: 'Hva gjør vi?', lede: '' }, c.verv || {}),
+      members: (c.members || []).map(function (x) {
+        return Object.assign({}, x, { tags: (x.tags || []).map(function (t) { return Object.assign({}, t); }) });
+      }),
+      roles: (c.roles || []).map(function (x) {
+        return Object.assign({}, x, { resp: (x.resp || []).slice() });
+      })
+    };
+  }
+  function loadData() {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) { try { data = JSON.parse(raw); normalize(); return; } catch (_) {} }
+    data = fresh();
+  }
+  function normalize() {
+    data.board = data.board || {}; data.verv = data.verv || {};
+    data.members = data.members || []; data.roles = data.roles || [];
+    data.members.forEach(function (m) { if (!Array.isArray(m.tags)) m.tags = []; });
+    data.roles.forEach(function (r) { if (!Array.isArray(r.resp)) r.resp = []; });
+  }
+  function saveData() { localStorage.setItem(LS_KEY, JSON.stringify(data)); showToast('Lagret i nettleseren'); }
+  let saveTimer = null;
+  function lazySave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveData, 350); }
+
+  const toastEl = document.getElementById('toast');
+  let toastTimer = null;
+  function showToast(msg) {
+    toastEl.textContent = msg; toastEl.classList.add('show');
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { toastEl.classList.remove('show'); }, 2200);
+  }
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function uid(pfx) { return pfx + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
+  function initialsFrom(name) {
+    return String(name || '').split(/\s+/).filter(Boolean).map(function (w) { return w[0]; }).join('').toUpperCase().slice(0, 4);
+  }
+
+  function find(list, id) { return data[list].find(function (x) { return x.id === id; }); }
+
+  /* ─── IMAGE ─── */
+  let imgTarget = null;
+  const fileInput = document.getElementById('file-input');
+  fileInput.addEventListener('change', function () {
+    const f = fileInput.files && fileInput.files[0];
+    if (f && imgTarget) processImage(f, imgTarget);
+    fileInput.value = '';
+  });
+  function openPicker(id) { imgTarget = { id: id }; fileInput.click(); }
+
+  function processImage(file, tgt) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const img = new Image();
+      img.onload = function () {
+        const MAX = 600;
+        let w = img.width, h = img.height;
+        if (Math.max(w, h) > MAX) { const s = MAX / Math.max(w, h); w = Math.round(w * s); h = Math.round(h * s); }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        const url = canvas.toDataURL('image/webp', 0.82);
+        const m = find('members', tgt.id);
+        if (m) { m.img = url; }
+        const zone = document.querySelector('[data-id="' + tgt.id + '"] .img-zone');
+        if (zone) refreshImgZone(zone, url);
+        lazySave();
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function refreshImgZone(zone, url) {
+    let preview = zone.querySelector('.img-preview');
+    const ph = zone.querySelector('.img-ph');
+    const clrBtn = zone.querySelector('.btn-clr-img');
+    const overlay = zone.querySelector('.img-overlay');
+    if (url) {
+      if (!preview) { preview = document.createElement('img'); preview.className = 'img-preview'; preview.alt = ''; zone.appendChild(preview); }
+      preview.style.display = 'block'; preview.src = url;
+      ph.style.display = 'none'; clrBtn.style.display = 'flex'; overlay.textContent = '↺ Bytt bilde';
+    } else {
+      if (preview) { preview.style.display = 'none'; preview.src = ''; }
+      ph.style.display = 'flex'; clrBtn.style.display = 'none'; overlay.textContent = '📷 Last opp';
+    }
+  }
+
+  /* ─── MEMBER CARD ─── */
+  function memberCard(m) {
+    const card = document.createElement('div');
+    card.className = 'card'; card.setAttribute('data-id', m.id);
+
+    card.innerHTML =
+      '<div class="card-head">'
+        + '<span class="card-title">' + esc(m.name || '(uten navn)') + '</span>'
+        + '<div class="order-btns"><button class="btn-ord btn-up" type="button" title="Opp">↑</button><button class="btn-ord btn-dn" type="button" title="Ned">↓</button></div>'
+        + '<button class="btn-del" type="button">Slett</button>'
+      + '</div>'
+      + '<div class="card-body">'
+        + '<div class="img-zone"><div class="img-ph"><img src="assets/apeiron-logo.png" alt=""><span>Klikk eller dra inn bilde</span></div><div class="img-overlay">📷 Last opp</div><button class="btn-clr-img" type="button" title="Fjern">✕</button></div>'
+        + '<div class="fields">'
+          + '<div class="frow">'
+            + '<div class="fg"><label>Navn</label><input type="text" data-f="name" value="' + esc(m.name) + '" placeholder="Fullt navn"></div>'
+            + '<div class="fg narrow"><label>Initialer</label><input type="text" data-f="initials" value="' + esc(m.initials) + '" placeholder="f.eks. SL"></div>'
+          + '</div>'
+          + '<div class="fg"><label>Hovedverv (Rolle)</label><input type="text" data-f="role" value="' + esc(m.role) + '" placeholder="f.eks. Leder"></div>'
+          + '<div class="subed" data-tags></div>'
+        + '</div>'
+      + '</div>';
+
+    // image
+    const zone = card.querySelector('.img-zone');
+    if (m.img) refreshImgZone(zone, m.img);
+    zone.addEventListener('click', function () { openPicker(m.id); });
+    zone.addEventListener('dragenter', function (e) { e.preventDefault(); zone.setAttribute('data-over', ''); });
+    zone.addEventListener('dragover', function (e) { e.preventDefault(); });
+    zone.addEventListener('dragleave', function () { zone.removeAttribute('data-over'); });
+    zone.addEventListener('drop', function (e) {
+      e.preventDefault(); zone.removeAttribute('data-over');
+      const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+      if (f) processImage(f, { id: m.id });
+    });
+    card.querySelector('.btn-clr-img').addEventListener('click', function (e) {
+      e.stopPropagation(); m.img = null; refreshImgZone(zone, null); lazySave();
+    });
+
+    // simple fields
+    card.querySelectorAll('[data-f]').forEach(function (el) {
+      const field = el.getAttribute('data-f');
+      el.addEventListener('input', function () {
+        m[field] = el.value;
+        if (field === 'name') {
+          card.querySelector('.card-title').textContent = el.value || '(uten navn)';
+          const initEl = card.querySelector('[data-f="initials"]');
+          if (initEl && !m.initials) { m.initials = initialsFrom(el.value); initEl.value = m.initials; }
+        }
+        lazySave();
+      });
+    });
+
+    // tags editor
+    renderTags(card.querySelector('[data-tags]'), m);
+
+    card.querySelector('.btn-up').addEventListener('click', function () { move('members', m.id, -1); });
+    card.querySelector('.btn-dn').addEventListener('click', function () { move('members', m.id, 1); });
+    card.querySelector('.btn-del').addEventListener('click', function () {
+      if (confirm('Slett «' + (m.name || 'dette medlemmet') + '»?')) del('members', m.id);
+    });
+    return card;
+  }
+
+  function renderTags(host, m) {
+    host.innerHTML = '<label>Tilleggsverv (chips)</label><div class="subed-rows"></div><button class="btn-subadd" type="button">+ verv</button>';
+    const rows = host.querySelector('.subed-rows');
+    m.tags.forEach(function (t, i) {
+      const row = document.createElement('div');
+      row.className = 'subed-row';
+      row.innerHTML =
+        '<input type="text" value="' + esc(t.label) + '" placeholder="f.eks. ASAP">'
+        + '<select>' + COLORS.map(function (c) { return '<option value="' + c[0] + '"' + (t.color === c[0] ? ' selected' : '') + '>' + c[1] + '</option>'; }).join('') + '</select>'
+        + '<span class="chip-prev ' + (t.color || '') + '">' + (esc(t.label) || 'chip') + '</span>'
+        + '<button class="btn-mini x" type="button" title="Fjern">✕</button>';
+      const input = row.querySelector('input');
+      const sel = row.querySelector('select');
+      const prev = row.querySelector('.chip-prev');
+      input.addEventListener('input', function () { t.label = input.value; prev.textContent = input.value || 'chip'; lazySave(); });
+      sel.addEventListener('change', function () { t.color = sel.value; prev.className = 'chip-prev ' + (sel.value || ''); lazySave(); });
+      row.querySelector('.btn-mini.x').addEventListener('click', function () { m.tags.splice(i, 1); renderTags(host, m); lazySave(); });
+      rows.appendChild(row);
+    });
+    host.querySelector('.btn-subadd').addEventListener('click', function () {
+      m.tags.push({ label: '', color: '' }); renderTags(host, m); lazySave();
+    });
+  }
+
+  /* ─── ROLE CARD ─── */
+  function roleCard(r) {
+    const card = document.createElement('div');
+    card.className = 'card'; card.setAttribute('data-id', r.id);
+
+    card.innerHTML =
+      '<div class="card-head">'
+        + '<span class="card-title">' + esc(r.name || '(uten navn)') + '</span>'
+        + '<div class="order-btns"><button class="btn-ord btn-up" type="button" title="Opp">↑</button><button class="btn-ord btn-dn" type="button" title="Ned">↓</button></div>'
+        + '<button class="btn-del" type="button">Slett</button>'
+      + '</div>'
+      + '<div class="card-body no-img">'
+        + '<div class="fields">'
+          + '<div class="frow">'
+            + '<div class="fg"><label>Navn på verv</label><input type="text" data-f="name" value="' + esc(r.name) + '" placeholder="f.eks. Leder"></div>'
+            + '<div class="fg"><label>Fargestripe</label><div class="stripe-wrap"><span class="stripe-prev" style="background:' + ACCENT_HEX[r.accent || ''] + '"></span><select data-f="accent">' + ACCENTS.map(function (a) { return '<option value="' + a[0] + '"' + ((r.accent || '') === a[0] ? ' selected' : '') + '>' + a[1] + '</option>'; }).join('') + '</select></div></div>'
+          + '</div>'
+          + '<div class="fg"><label>Beskrivelse</label><textarea data-f="desc" placeholder="Kort beskrivelse av vervet...">' + esc(r.desc) + '</textarea></div>'
+          + '<div class="subed" data-resp></div>'
+        + '</div>'
+      + '</div>';
+
+    card.querySelectorAll('[data-f]').forEach(function (el) {
+      const field = el.getAttribute('data-f');
+      const evt = el.tagName === 'SELECT' ? 'change' : 'input';
+      el.addEventListener(evt, function () {
+        r[field] = el.value;
+        if (field === 'name') card.querySelector('.card-title').textContent = el.value || '(uten navn)';
+        if (field === 'accent') { const sw = card.querySelector('.stripe-prev'); if (sw) sw.style.background = ACCENT_HEX[el.value] || ACCENT_HEX['']; }
+        lazySave();
+      });
+    });
+
+    renderResp(card.querySelector('[data-resp]'), r);
+
+    card.querySelector('.btn-up').addEventListener('click', function () { move('roles', r.id, -1); });
+    card.querySelector('.btn-dn').addEventListener('click', function () { move('roles', r.id, 1); });
+    card.querySelector('.btn-del').addEventListener('click', function () {
+      if (confirm('Slett «' + (r.name || 'denne rollen') + '»?')) del('roles', r.id);
+    });
+    return card;
+  }
+
+  function renderResp(host, r) {
+    host.innerHTML = '<label>Ansvar / punkter</label><div class="subed-rows"></div><button class="btn-subadd" type="button">+ punkt</button>';
+    const rows = host.querySelector('.subed-rows');
+    r.resp.forEach(function (txt, i) {
+      const row = document.createElement('div');
+      row.className = 'subed-row';
+      row.innerHTML =
+        '<input type="text" value="' + esc(txt) + '" placeholder="Et ansvarspunkt...">'
+        + '<button class="btn-mini up" type="button" title="Opp">↑</button>'
+        + '<button class="btn-mini dn" type="button" title="Ned">↓</button>'
+        + '<button class="btn-mini x" type="button" title="Fjern">✕</button>';
+      row.querySelector('input').addEventListener('input', function () { r.resp[i] = this.value; lazySave(); });
+      row.querySelector('.btn-mini.up').addEventListener('click', function () { if (i > 0) { const t = r.resp[i]; r.resp[i] = r.resp[i - 1]; r.resp[i - 1] = t; renderResp(host, r); lazySave(); } });
+      row.querySelector('.btn-mini.dn').addEventListener('click', function () { if (i < r.resp.length - 1) { const t = r.resp[i]; r.resp[i] = r.resp[i + 1]; r.resp[i + 1] = t; renderResp(host, r); lazySave(); } });
+      row.querySelector('.btn-mini.x').addEventListener('click', function () { r.resp.splice(i, 1); renderResp(host, r); lazySave(); });
+      rows.appendChild(row);
+    });
+    host.querySelector('.btn-subadd').addEventListener('click', function () { r.resp.push(''); renderResp(host, r); lazySave(); });
+  }
+
+  /* ─── RENDER LISTS ─── */
+  function renderList(list) {
+    const el = document.getElementById('list-' + list);
+    el.innerHTML = '';
+    const maker = list === 'members' ? memberCard : roleCard;
+    data[list].forEach(function (item) { el.appendChild(maker(item)); });
+    updateCounts();
+  }
+  function renderMeta() {
+    document.getElementById('meta-board-eyebrow').value = data.board.eyebrow || '';
+    document.getElementById('meta-board-heading').value = data.board.heading || '';
+    document.getElementById('meta-board-lede').value = data.board.lede || '';
+    document.getElementById('meta-verv-eyebrow').value = data.verv.eyebrow || '';
+    document.getElementById('meta-verv-heading').value = data.verv.heading || '';
+    document.getElementById('meta-verv-lede').value = data.verv.lede || '';
+  }
+  function renderAll() { renderMeta(); renderList('members'); renderList('roles'); }
+
+  function updateCounts() {
+    document.getElementById('count-members').textContent = data.members.length + ' medlemmer';
+    document.getElementById('count-roles').textContent = data.roles.length + ' roller';
+  }
+
+  /* ─── ACTIONS ─── */
+  const DEFAULTS = {
+    members: function () { return { id: uid('m'), name: '', role: '', initials: '', img: null, tags: [] }; },
+    roles:   function () { return { id: uid('r'), name: '', accent: '', desc: '', resp: [] }; }
+  };
+  function add(list) {
+    data[list].push(DEFAULTS[list]());
+    renderList(list); lazySave();
+    setTimeout(function () {
+      const last = document.querySelector('#list-' + list + ' .card:last-child');
+      if (last) last.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 60);
+  }
+  function del(list, id) { data[list] = data[list].filter(function (x) { return x.id !== id; }); renderList(list); lazySave(); }
+  function move(list, id, dir) {
+    const arr = data[list];
+    const i = arr.findIndex(function (x) { return x.id === id; });
+    if (i < 0) return; const j = i + dir; if (j < 0 || j >= arr.length) return;
+    const t = arr[i]; arr[i] = arr[j]; arr[j] = t; renderList(list); lazySave();
+  }
+
+  /* ─── META INPUTS ─── */
+  function wireMeta(id, group, key) {
+    document.getElementById(id).addEventListener('input', function () { data[group][key] = this.value; lazySave(); });
+  }
+  wireMeta('meta-board-eyebrow', 'board', 'eyebrow');
+  wireMeta('meta-board-heading', 'board', 'heading');
+  wireMeta('meta-board-lede', 'board', 'lede');
+  wireMeta('meta-verv-eyebrow', 'verv', 'eyebrow');
+  wireMeta('meta-verv-heading', 'verv', 'heading');
+  wireMeta('meta-verv-lede', 'verv', 'lede');
+
+  /* ─── EXPORT ─── */
+  function exportFile() {
+    // rydd bort tomme chips/punkter
+    const out = JSON.parse(JSON.stringify(data));
+    out.members.forEach(function (m) { m.tags = (m.tags || []).filter(function (t) { return t && t.label && t.label.trim(); }); });
+    out.roles.forEach(function (r) { r.resp = (r.resp || []).filter(function (x) { return x && x.trim(); }); });
+
+    const content =
+      '/* Innhold for Styret-siden (styret.html).\n'
+      + '   Sist oppdatert: ' + new Date().toLocaleDateString('no-NO') + '\n'
+      + '   Rediger direkte her, eller åpne styret-admin.html for visuell redigering.\n'
+      + '\n'
+      + '   members[].img : "assets/Styremedlemmer/filnavn.jpg", base64-bilde fra admin, eller null.\n'
+      + '   members[].tags: tilleggsverv som chips. color: "" (nøytral), "maroon" eller "gold".\n'
+      + '   roles[].accent: fargestripe — "" (gull), "maroon" eller "navy".\n'
+      + '   roles[].resp : punktliste under beskrivelsen. */\n\n'
+      + 'window.STYRET_CONTENT = ' + JSON.stringify(out, null, 2) + ';\n';
+    const blob = new Blob([content], { type: 'text/javascript;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'styret-content.js';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+    showToast('Fil lastet ned — erstatt i GitHub og push!');
+  }
+
+  /* ─── RESET ─── */
+  document.getElementById('reset-btn').addEventListener('click', function () {
+    if (!confirm('Dette sletter alle ueksporterte endringer og laster inn siste publiserte versjon. Fortsette?')) return;
+    localStorage.removeItem(LS_KEY); data = fresh(); renderAll(); showToast('Tilbakestilt til publisert versjon');
+  });
+
+  /* ─── WIRE ─── */
+  document.querySelectorAll('[data-add]').forEach(function (b) {
+    b.addEventListener('click', function () { add(b.getAttribute('data-add')); });
+  });
+  document.getElementById('export-btn').addEventListener('click', exportFile);
+
+  function init() { loadData(); renderAll(); }
+})();
+</script>
+</body>
+</html>
