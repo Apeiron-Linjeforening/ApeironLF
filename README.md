@@ -316,7 +316,10 @@ Kritisk:
 - [ ] Fikse domene - Se "Domene" nedenfor.
 - [ ] Kvadrupelsjekk at informasjon under Hjelp er helt riktig!! Sjekk numre og eposter!
 - [ ] Begreps "Meld interesse" knapp tar deg til google forms for å bestille en utgave- ikke hvordan man melder interesse.
-- [ ] Begrep: Legge til en knapp/lenke til google forms,
+- [ ] Begrep: Legge til en knapp/lenke til google forms.
+- [ ] Endre medlemskapsprisen.
+- [ ] Fikse admin-bug: Om man logger inn på en admin side, og ikke lukker nettsiden helt etterpå, vil man ikke kunne se en annen admin side.
+- [ ] Endre "Hjelp" i menyen med noe annet som uttrykker mer direkte hva siden er om.
 
 Medium:
 - [ ] Be HF studentrådet om å oppdatere sidene deres og gi oss mer informasjon om hva de faktisk gjør. 
@@ -328,6 +331,8 @@ Medium:
 - [x] Lage egen Admin for hjelp (`hjelp-admin.html` + `hjelp-content.js`).
 - [ ] Lage egen Admin for index.
 - [ ] Oppdater readme's "Galleri" den tar litt feil på hvordan den fungerer.
+- [ ] Utdype "Legevakt" til å inkludere psykiske lidelser som kan være akutt. 
+- [ ] Siden føles litt kommersiell ut....
 
 Lav:
 - [ ] Side eller plassering for "Oppnåelser" (Premier vi har fått, som sølv i håndball og "best oppmøte" fra Dionysos)
@@ -350,6 +355,7 @@ Må gjøres før vi slapper av med å bygge nettsiden:
 - [ ] Sjekke at alle admin sider fungerer.
 - [ ] Kvadrupelsjekk at informasjon under Hjelp er helt riktig!! Sjekk numre og eposter!
 - [ ] Sjekke på nytt hvordan alt oppfører seg på mobil.
+- [ ] Fjern WIP banneret.
 
 Domene:
 - [ ] Få bedre domene
