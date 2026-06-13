@@ -320,6 +320,7 @@ Kritisk:
 - [ ] Endre medlemskapsprisen.
 - [ ] Fikse admin-bug: Om man logger inn på en admin side, og ikke lukker nettsiden helt etterpå, vil man ikke kunne se en annen admin side.
 - [ ] Endre "Hjelp" i menyen med noe annet som uttrykker mer direkte hva siden er om.
+- [ ] Merch: "Bestill" knappen burde gjøre noe annet enn å åpne eposten i en nettside. -> Google forms?
 
 Medium:
 - [ ] Be HF studentrådet om å oppdatere sidene deres og gi oss mer informasjon om hva de faktisk gjør. 
@@ -333,6 +334,8 @@ Medium:
 - [ ] Oppdater readme's "Galleri" den tar litt feil på hvordan den fungerer.
 - [ ] Utdype "Legevakt" til å inkludere psykiske lidelser som kan være akutt. 
 - [ ] Siden føles litt kommersiell ut....
+- [ ] Legg til Logikk Panikk.
+- [ ] Finne en bedre måte å vise arrangement og plakater på -> Måte å vise nyheter/informasjon på.
 
 Lav:
 - [ ] Side eller plassering for "Oppnåelser" (Premier vi har fått, som sølv i håndball og "best oppmøte" fra Dionysos)
@@ -341,15 +344,15 @@ Lav:
 - [ ] Fylle ut SAK / utvide den.
 - [ ] Sette opp et arkiv.
 - [ ] Sammenlign med Online.ntnu.no og https://www.mfplacebo.no/
+- [ ] Galleri: Legge til liten tekst ved hvert bilde i rullegardinen som sier hvilken mappe/arrangement bildet er fra.
 
 Hadde vært kult:
 - [ ] Snakke med IFR/NTNU om API for automatisk oppdatering av emner for studiene.
-- [ ] Måte å vise nyheter/informasjon på.
 - [ ] Bygge KKI for Apeiron.
 - [ ] Burde det være en direkte måte for TVene ved IFR å legge ved oppdateringer på nettsiden vår?
 
 Forslag:
-- [ ] Mer velkommen / koselig forside? Bilder av tidligere arrangement å index. Siden føles kanskje litt kald/som om den prøver å selge noe.
+- [ ] Mer velkommen / koselig forside? Bilder av tidligere arrangement å index. Siden føles kanskje litt kald/som om den prøver å selge noe. -> Bilder fra galleri på forsiden eller på "om oss"?
 
 Må gjøres før vi slapper av med å bygge nettsiden:
 - [ ] Sjekke at alle admin sider fungerer.
