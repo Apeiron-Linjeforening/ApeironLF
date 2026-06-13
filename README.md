@@ -289,6 +289,7 @@ Medium:
       - [ ] Hvordan får vi kontakt med våre egne TVer?
 - [ ] Be HF studentrådet om å fikse "Bli kjent med oss" og "Kontakt oss" lenkene deres.
 - [ ] Mens HF fikser greiene sine: Se om vi kan fikse NTNU's litt lite intuitive "Si fra!" side og gjøre det mer tydelig på vår side.
+- [ ] Fjern fade på siden av rullebåndet på Hero. Det ble forstyrrende for øyet.
 
 Lav:
 - [ ] Side eller plassering for "Oppnåelser" (Premier vi har fått, som sølv i håndball og "best oppmøte" fra Dionysos)
