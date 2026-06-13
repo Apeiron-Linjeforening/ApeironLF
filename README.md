@@ -333,6 +333,8 @@ Kritisk:
 - [ ] Fikse admin-bug: Om man logger inn på en admin side, og ikke lukker nettsiden helt etterpå, vil man ikke kunne se en annen admin side.
 - [ ] Endre "Hjelp" i menyen med noe annet som uttrykker mer direkte hva siden er om.
 - [ ] Merch: "Bestill" knappen burde gjøre noe annet enn å åpne eposten i en nettside. -> Google forms?
+- [ ] Fikse mørk modus - Nå er det kun en shitty mørk modus på index. 
+- [ ] Fikse menyen / NAV slik at den fungerer bedre på smalere skjermer og mobil.
 
 Medium:
 - [ ] Be HF studentrådet om å oppdatere sidene deres og gi oss mer informasjon om hva de faktisk gjør. 
@@ -523,6 +525,12 @@ Merk: Cloudflare Registrar støtter ikke .no-domener. For .org er Cloudflare bil
 - E-postadressen er gjort større og mer fremtredende i den sammenslåtte seksjonen.
 - `begrep-content.js`: `meta.email` lagt til — e-postadressen kan nå redigeres direkte i `begrep-admin.html` og eksporteres med resten av innholdet.
 - `begrep-admin.html`: nytt e-postfelt i meta-panelet.
+
+**13.06.26 — Kalender-feilstater: API-feil vs. tom kalender**
+- Alle tre kalender-integrasjonene skiller nå tydelig mellom API-nøkkel ugyldig/ikke satt (innrammet ⚠-melding med lenke til README og kontaktsiden) og tilkoblet kalender uten hendelser (vennlig «kommer snart»-melding).
+- Arrangementer: alle tre visninger (Liste, Rutenett, Oversikt) dekket. Filterknapper skjules ved API-feil. Bug-aktig statusbanner fjernet. Rutenett-meldingen sentrert over alle kolonner.
+- Aporetisk Aften: «Når»-feltet viser «—» ved API-feil og «Dato kommer» ved tom kalender. Genererte torsdagsdatoer vises ikke lenger ved API-feil.
+- Fadderukene: skjelett-plassholderen erstattet med feilmelding ved API-feil.
 
 ---
 

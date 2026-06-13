@@ -115,13 +115,11 @@
 
   // ---- Bygg UI -----------------------------------------------------------
   function build() {
+    // Statuslinja er bevisst tom: hver visning viser sin egen vennlige
+    // «kommer»-melding når kalenderen ikke er live, så et eget banner blir
+    // bare forvirrende (ser ut som en feil).
     var statusEl = document.getElementById('evStatus');
-    if (statusEl) {
-      statusEl.innerHTML = state.live
-        ? ''
-        : '<span class="ev-status__dot"></span> Plassholdere — når Google-kalenderen kobles til går liste og rutenett live automatisk.';
-      statusEl.style.display = state.live ? 'none' : '';
-    }
+    if (statusEl) { statusEl.innerHTML = ''; statusEl.style.display = 'none'; }
     buildFilters();
     render();
   }
@@ -129,6 +127,7 @@
   function buildFilters() {
     var wrap = document.getElementById('evFilters');
     if (!wrap) return;
+    if (!state.live) { wrap.innerHTML = ''; return; }
     var cats = ['Alle'];
     state.events.forEach(function (e) { if (cats.indexOf(e.cat) < 0) cats.push(e.cat); });
     wrap.innerHTML = '';
@@ -167,8 +166,13 @@
   }
 
   function emptyMsg() {
-    if (state.live && !state.events.length) {
-      return '<p class="ev-empty">Ingen kommende arrangementer akkurat nå — nye datoer legges ut fortløpende. Følg oss gjerne på Instagram i mellomtiden.</p>';
+    // Frakoblet (ingen kontakt med kalender-API) → tydelig systembeskjed.
+    if (!state.live) {
+      return '<p class="ev-empty is-offline">⚠ Google API-nøkkelen er ugyldig eller ikke satt opp. Se <a href="https://github.com/Apeiron-Linjeforening/ApeironLF#readme" target="_blank" rel="noopener">README på GitHub</a> for hva som må sjekkes, eller <a href="#kontakt">ta kontakt med Apeiron styret</a>.</p>';
+    }
+    // Tilkoblet, men ingen arrangementer i kalenderen → vennlig beskjed.
+    if (!state.events.length) {
+      return '<p class="ev-empty">Ingen kommende arrangementer akkurat nå. Nye datoer legges ut fortløpende, følg oss gjerne på Instagram i mellomtiden.</p>';
     }
     return '<p class="ev-empty">Ingen arrangementer i denne kategorien akkurat nå.</p>';
   }
@@ -193,7 +197,7 @@
 
   function renderList(el, data, total, limit) {
     if (!el) return;
-    if (!data.length) { el.innerHTML = emptyMsg(); return; }
+    if (!state.live || !data.length) { el.innerHTML = emptyMsg(); return; }
     el.innerHTML = data.map(function (e) {
       var d = e.start;
       var more = e.link
@@ -218,7 +222,7 @@
 
   function renderGrid(el, data, total, limit) {
     if (!el) return;
-    if (!data.length) { el.innerHTML = emptyMsg(); return; }
+    if (!state.live || !data.length) { el.innerHTML = emptyMsg(); return; }
     el.innerHTML = data.map(function (e) {
       var d = e.start;
       return '' +
@@ -249,6 +253,7 @@
 
   function renderCalendar(el, data) {
     if (!el) return;
+    if (!state.live) { el.innerHTML = emptyMsg(); return; }
     if (!state.calMonth) state.calMonth = startMonth();
     var year = state.calMonth.getFullYear(), month = state.calMonth.getMonth();
     var first = new Date(year, month, 1);

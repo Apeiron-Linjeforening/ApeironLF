@@ -109,20 +109,25 @@
     var whereEl = document.getElementById('apoWhere');
     if (whenEl) {
       var valSpan = whenEl.querySelector('span');
-      if (valSpan) valSpan.textContent = nxt ? fmtDate(nxt.start, nxt.allDay) : (liveEmpty ? 'Dato kommer' : '—');
+      if (valSpan) valSpan.textContent = !state.live ? '—' : ((liveEmpty || !nxt) ? 'Dato kommer' : fmtDate(nxt.start, nxt.allDay));
     }
     if (whereEl) {
       var placeSpan = whereEl.querySelector('span');
-      if (placeSpan) placeSpan.textContent = nxt && nxt.place ? nxt.place : '—';
+      if (placeSpan) placeSpan.textContent = (state.live && nxt && nxt.place) ? nxt.place : '—';
     }
 
     // Render toggle + liste i apoCalRoot
     var root = document.getElementById('apoCalRoot');
     if (!root) return;
 
-    // Ingen kommende datoer fra kalenderen → kort beskjed, ingen «vis alle»-knapp.
+    // Frakoblet (ingen kontakt med kalender-API) → tydelig systembeskjed.
+    if (!state.live) {
+      root.innerHTML = '<p class="apo-cal__empty is-offline">⚠ Google API-nøkkelen er ugyldig eller ikke satt opp. Se <a href="https://github.com/Apeiron-Linjeforening/ApeironLF#readme" target="_blank" rel="noopener">README på GitHub</a> for hva som må sjekkes, eller <a href="#kontakt">ta kontakt med Apeiron styret</a>.</p>';
+      return;
+    }
+    // Tilkoblet, men ingen kommende datoer → vennlig beskjed, ingen «vis alle»-knapp.
     if (liveEmpty) {
-      root.innerHTML = '<p class="apo-cal__empty">Neste Aporetisk Aften annonseres snart — følg med på Instagram.</p>';
+      root.innerHTML = '<p class="apo-cal__empty">Neste Aporetisk Aften annonseres snart. Følg med på Instagram.</p>';
       return;
     }
 

@@ -655,6 +655,12 @@ body[data-mode="marine"] .apo__aside{ border-color:rgba(244,236,217,.16); }
 }
 .apo-cal__ev-link:hover{ opacity:1; }
 .apo-cal__empty{ font-size:.82rem; color:var(--ink-soft); font-style:italic; margin:4px 0; }
+.apo-cal__empty.is-offline{
+  font-style:normal; color:var(--maroon);
+  background:rgba(118,17,15,.05); border:1px solid rgba(118,17,15,.25);
+  border-radius:6px; padding:8px 12px;
+}
+.apo-cal__empty.is-offline a{ color:inherit; text-decoration:underline; }
 
 /* Marine-modus */
 body[data-mode="marine"] .apo-cal{
@@ -1191,9 +1197,17 @@ body[data-mode="marine"] .nav.is-stuck{ background:rgba(10,12,24,.92); }
 .ev-signup .arr{ transition:transform .2s; }
 .ev-signup:hover .arr{ transform:translateX(3px); }
 .ev-empty{ text-align:center; font-style:italic; color:var(--ink-soft); padding:30px 0; }
+/* Frakoblet: tydelig systembeskjed (skiller seg fra vennlig «tom»-tilstand) */
+.ev-empty.is-offline{
+  font-style:normal; color:var(--maroon);
+  background:rgba(118,17,15,.05); border:1px solid rgba(118,17,15,.25);
+  border-radius:8px; padding:18px 22px; max-width:54ch; margin:0 auto;
+}
+.ev-empty.is-offline a{ color:inherit; text-decoration:underline; }
 
 /* Rutenett uten bilde (kalender-drevne kort) */
 .ev-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:26px; margin-top:26px; }
+.ev-grid .ev-empty{ grid-column:1/-1; }
 .evcard--plain{ background:var(--paper-2); }
 .evcard__head{
   position:relative; background:var(--navy); color:var(--paper);
@@ -1325,6 +1339,12 @@ body[data-mode="marine"] .nav.is-stuck{ background:rgba(10,12,24,.92); }
 .fd-item__meta{ font-size:.74rem; letter-spacing:.1em; text-transform:uppercase; color:rgba(244,236,217,.55); }
 .fd-rest{ font-style:italic; color:rgba(244,236,217,.55); padding:6px 2px; }
 .fd-empty{ text-align:center; font-style:italic; color:rgba(244,236,217,.7); padding:34px 16px; font-size:1.05rem; line-height:1.6; max-width:46ch; margin:0 auto; }
+.fd-empty.is-offline{
+  font-style:normal; color:var(--paper);
+  background:rgba(212,175,55,.06); border:1px solid rgba(212,175,55,.4);
+  border-radius:8px; padding:24px; max-width:50ch;
+}
+.fd-empty.is-offline a{ color:inherit; text-decoration:underline; }
 
 /* 1) dagsvelger */
 .fd-weeks{ display:inline-flex; border:1px solid rgba(212,175,55,.4); border-radius:3px; overflow:hidden; margin-bottom:18px; }

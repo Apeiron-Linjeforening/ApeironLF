@@ -124,17 +124,23 @@
       })
       .catch(function () { useSample(); });
   }
-  function useSample() { FADDER = PLACEHOLDER; IS_LIVE = false; render(); }
+  // Frakoblet (mangler ID/nøkkel eller fetch feilet): tydelig systembeskjed.
+  function useSample() { IS_LIVE = false; showComingSoon(true); }
 
   // Live kalender uten poster: rydd vekk plassholderne og vis en vennlig beskjed.
-  function renderEmpty() {
-    IS_LIVE = true;
+  function renderEmpty() { IS_LIVE = true; showComingSoon(false); }
+
+  // Tomtilstand uten skjelett-plassholdere. offline=true → frakoblet-varsel,
+  // offline=false → vennlig «datoer kommer»-beskjed.
+  function showComingSoon(offline) {
     var datesEl = document.getElementById('fadderDates');
-    if (datesEl) datesEl.textContent = 'Datoer kommer';
+    if (datesEl) datesEl.textContent = offline ? '—' : 'Datoer kommer';
     var noteEl = document.getElementById('fadderPlaceholder');
     if (noteEl) noteEl.style.display = 'none';
     var stage = document.querySelector('.fadder__stage');
-    if (stage) stage.innerHTML = '<p class="fd-empty">Fadderukeprogrammet legges ut her så snart datoene er klare. Følg oss på Instagram for oppdateringer.</p>';
+    if (stage) stage.innerHTML = offline
+      ? '<p class="fd-empty is-offline">⚠ Google API-nøkkelen er ugyldig eller ikke satt opp. Se <a href="https://github.com/Apeiron-Linjeforening/ApeironLF#readme" target="_blank" rel="noopener">README på GitHub</a> for hva som må sjekkes, eller <a href="#kontakt">ta kontakt med Apeiron styret</a>.</p>'
+      : '<p class="fd-empty">Fadderukeprogrammet legges ut her så snart datoene er klare. Følg oss på Instagram for oppdateringer.</p>';
     var toggle = document.querySelector('.fadder__full-toggle');
     if (toggle) toggle.style.display = 'none';
     var fullView = document.getElementById('fadderFullView');
