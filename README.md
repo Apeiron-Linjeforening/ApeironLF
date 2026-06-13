@@ -202,28 +202,52 @@ Ressurskort (`*.cards[]`) har feltene `eyebrow`, `accent` (fargestripe), `name`,
 ---
 
 ### 📷 Galleri
-**Ingen kodeendring nødvendig.**
-Galleriet henter bilder automatisk fra en delt Google Drive-mappe via Google Drive API.
+**Du trenger aldri å røre koden for å oppdatere galleriet.**
+Alt styres fra én delt Google Drive-mappe. Nettsiden leser den hver gang noen åpner galleri-siden, så endringer du gjør i Drive dukker opp på nettsiden av seg selv.
 
-**Slik fungerer mappestrukturen:**
+#### Hvordan mappene må ligge
+
+Det aller viktigste å forstå: mappene må ligge i **nøyaktig tre nivåer nedover**, som esker inni esker. Hopper du over et nivå eller legger ting feil sted, vises de ikke på nettsiden.
+
 ```
-📁 ALT SOM LASTES OPP HER BLIR LAGT UT PÅ NETTSIDEN/       ← rot-mappe (delt med «Alle med lenken»)
-  📁 Halloweenfest 2025/                                   ← én mappe = ett event-kort i galleriet
-  📁 Sommerfest 2025/
-  📁 Fadderukefest 2024/
+📁 ALT SOM LASTES OPP HER ...        ← NIVÅ 1: hovedmappen (legg aldri bilder rett her)
+   │
+   ├── 📁 2025/2026                  ← NIVÅ 2: ett skoleår. Blir en fane øverst i galleriet.
+   │      │
+   │      ├── 📁 Halloweenfest       ← NIVÅ 3: ett arrangement. Blir ett bildekort.
+   │      │      ├── 🖼️ bilde1.jpg    ← bildene selv ligger HER, helt innerst
+   │      │      ├── 🖼️ bilde2.jpg
+   │      │      └── 🖼️ bilde3.jpg
+   │      │
+   │      └── 📁 Sommerfest
+   │             └── 🖼️ ...
+   │
+   └── 📁 2024/2025
+          └── 📁 Fadderukefest
+                 └── 🖼️ ...
 ```
 
-- Årstallet i mappenavnet brukes til å lage år-faner automatisk
-- Første bilde i mappen vises som forsidebilde på event-kortet
-- Alle bilder i mappen vises i lysbildefremviser når man klikker på kortet
+Forklart i ord:
+1. **Hovedmappen** er den styret har delt. Inni den lager du ikke bilder direkte, bare skoleår-mapper.
+2. **Skoleår-mappene** (nivå 2) lager du inni hovedmappen. Navnet du gir mappen, f.eks. `2025/2026`, blir teksten på fanen øverst i galleriet. Bruk alltid samme navneform, så ser fanene like ut.
+3. **Arrangement-mappene** (nivå 3) lager du inni en skoleår-mappe. Navnet du gir mappen blir tittelen som vises på bildekortet. Kall den noe folk kjenner igjen, f.eks. `Fadderukefest` eller `Juleavslutning`.
+4. **Bildene** legger du helt innerst, rett inni arrangement-mappen.
 
-**For å legge til bilder:**
-1. Gå til rot-mappen i Google Drive (spør styret om tilgang)
-2. Opprett en ny mappe med navn og årstall, f.eks. `Vårfest 2077`
-3. Last opp bildene direkte i den nye mappen
-4. Ferdig — galleriet oppdaterer seg selv neste gang siden lastes
+#### Tre ting som er lett å gjøre feil
 
-> **NB:** Rot-mappen og alle event-mappene må være delt som «Alle med lenken kan se». Uten dette vil API-kallet feile og bildene vises ikke.
+- **Bilder må ligge inni en arrangement-mappe.** Legger du bilder løst rett i en skoleår-mappe (eller i hovedmappen), blir de hoppet over. De må ligge ett nivå lenger inn.
+- **Forsidebildet på kortet blir det bildet som kommer først alfabetisk** etter filnavn. Vil du bestemme hvilket bilde som vises utenpå kortet, gi det et filnavn som havner først, f.eks. `01.jpg` eller `aaa-forside.jpg`. Resten kan hete hva som helst.
+- **Nyeste skoleår vises først.** Fanene sorteres baklengs på navn, så `2025/2026` legger seg foran `2024/2025` helt av seg selv. Du trenger ikke gjøre noe for å styre rekkefølgen.
+
+#### Slik legger du til bilder fra et nytt arrangement (steg for steg)
+
+1. Åpne Google Drive og gå inn i den delte hovedmappen (spør styret om lenken hvis du ikke har den)
+2. Finn mappen for inneværende skoleår, f.eks. `2025/2026`. Finnes den ikke ennå, lag en ny mappe med akkurat det navnet.
+3. Gå **inn i** skoleår-mappen og lag en ny mappe der, med navnet på arrangementet, f.eks. `Vårfest`
+4. Gå **inn i** den nye arrangement-mappen og last opp bildene dit
+5. Ferdig. Neste gang noen åpner galleriet på nettsiden er bildene der.
+
+> **Viktig om deling:** Hovedmappen og alt som ligger inni den må være delt som «Alle med lenken kan se». Er en mappe satt til privat, klarer ikke nettsiden å hente bildene, og de vises ikke. Er du usikker, spør styret før du laster opp.
 
 ### 🪑 Lesesalen — bilder
 
@@ -249,16 +273,6 @@ Slett den aktuelle filen fra `assets/lesesalen/`. Pass på at det ikke oppstår 
 Gi det ønskede bildet navn `lesesal1.jpg` (overskriv eller slett det gamle).
 
 > **Støttede formater:** `.jpg` / `.jpeg`. Bruk rimelig komprimerte bilder (under 1–2 MB per fil) for at siden skal laste raskt.
-
-### 🆘 Hjelp & ressurser
-Innholdet på Hjelp-siden redigeres direkte i `hjelp.html`.
-Siden er delt i fem seksjoner:
-
-- **Si fra!** (`#sifra`): NTNUs varslingssystem med 6 kategorier og direktelenker til avviksskjema (ntnu.extend.no), e-vaktmester (Lydia) og ekstern varslingkanal (trustcom.pwc.no/ntnu). Inneholder også fire støttekort: Studentombudet (med kontaktinfo), Personvernombudet, Studieveiledning (e-post: `studieveiledning-ifr@hf.ntnu.no`) og Forbrukerrådet.
-- **Faglig hjelp** (`#studier`): PTV, ITV og FTV med e-postadresser. Oppdater her og i `styret.html#tillitsvalgte` ved endringer.
-- **Psykisk helse** (`#helse`): SIT Helse, Rask psykisk helsehjelp (Trondheim kommune), Studentpresten og Studenthumanisten. Oppdater ved endringer i tilbudene.
-- **Fysisk helse** (`#fysisk`): SIT tannhelse og seksuell helse, Helsestasjon for ungdom (Trondheim kommune) og Helsenorge/fastlege.
-- **Akutt hjelp** (`#akutt`): nødnumre (113, 112, 110, 116117, 116123, 22 40 00 40, 116111) med forklaring på når man ringer hvert enkelt. Verifiser numrene ved større oppdateringer.
 
 ### 📖 Om oss / øvrig tekst
 All annen tekst (om oss, studiene, FAQ, kontakt osv.) redigeres direkte i `index.html`.
@@ -315,8 +329,6 @@ Hvis repoet ikke er koblet til Cloudflare Pages, eller om man ønsker å bytte C
 Kritisk:
 - [ ] Fikse domene - Se "Domene" nedenfor.
 - [ ] Kvadrupelsjekk at informasjon under Hjelp er helt riktig!! Sjekk numre og eposter!
-- [ ] Begreps "Meld interesse" knapp tar deg til google forms for å bestille en utgave- ikke hvordan man melder interesse.
-- [ ] Begrep: Legge til en knapp/lenke til google forms.
 - [ ] Endre medlemskapsprisen.
 - [ ] Fikse admin-bug: Om man logger inn på en admin side, og ikke lukker nettsiden helt etterpå, vil man ikke kunne se en annen admin side.
 - [ ] Endre "Hjelp" i menyen med noe annet som uttrykker mer direkte hva siden er om.
@@ -329,27 +341,25 @@ Medium:
 - [ ] Be HF studentrådet om å fikse "Bli kjent med oss" og "Kontakt oss" lenkene deres. Jeg har nå funnet ut at de ikke er ødelagt, de legger bare til eposten deres på slutten av nettsiden... så https://www.hf-studentrad.no/ blir til https://www.hf-studentrad.no/ftv@hf.ntnu.no. Dette kan vi fikse for de.
 - [ ] Legge til side for Utmerkelser for personer som har stått ut i studentmiljøet eller det frivillige under IFR.
 - [ ] Legge til side for møtereferat -> Kan tas i egen wiki, muligens.
-- [x] Lage egen Admin for hjelp (`hjelp-admin.html` + `hjelp-content.js`).
 - [ ] Lage egen Admin for index.
-- [ ] Oppdater readme's "Galleri" den tar litt feil på hvordan den fungerer.
 - [ ] Utdype "Legevakt" til å inkludere psykiske lidelser som kan være akutt. 
 - [ ] Siden føles litt kommersiell ut....
 - [ ] Legg til Logikk Panikk.
 - [ ] Finne en bedre måte å vise arrangement og plakater på -> Måte å vise nyheter/informasjon på.
+- [ ] Se om vi kan få menyen til å være en og samme entitet over alle sidene -> for å slippe å oppdatere hver en meny for hver side.
 
 Lav:
 - [ ] Side eller plassering for "Oppnåelser" (Premier vi har fått, som sølv i håndball og "best oppmøte" fra Dionysos)
-- [ ] Kunne trykke på emne under hvert studie og bli tatt til emnet i pensumlistene - kan bli et problem for admin filene.
-- [ ] Fikse bedre sikkerhet for API-nøkkelen.
 - [ ] Fylle ut SAK / utvide den.
 - [ ] Sette opp et arkiv.
-- [ ] Sammenlign med Online.ntnu.no og https://www.mfplacebo.no/
-- [ ] Galleri: Legge til liten tekst ved hvert bilde i rullegardinen som sier hvilken mappe/arrangement bildet er fra.
+- [ ] Sammenlign med https://www.mfplacebo.no/
+- [ ] Gjøre om admin filene til å gi nærest full kontroll over oppsett over sidene.
 
 Hadde vært kult:
 - [ ] Snakke med IFR/NTNU om API for automatisk oppdatering av emner for studiene.
 - [ ] Bygge KKI for Apeiron.
 - [ ] Burde det være en direkte måte for TVene ved IFR å legge ved oppdateringer på nettsiden vår?
+- [ ] Kunne trykke på emne under hvert studie og bli tatt til emnet i pensumlistene - kan bli et problem for admin filene.
 
 Forslag:
 - [ ] Mer velkommen / koselig forside? Bilder av tidligere arrangement å index. Siden føles kanskje litt kald/som om den prøver å selge noe. -> Bilder fra galleri på forsiden eller på "om oss"?
@@ -476,6 +486,43 @@ Merk: Cloudflare Registrar støtter ikke .no-domener. For .org er Cloudflare bil
 - Fjernet «Styret 2025/26»-seksjonen fra forsiden (`index.html`) — innholdet finnes på `styret.html`.
 - Alle footere synkronisert: brutt «Styret»-lenke (→ `index.html#styret`) fjernet, «Verv» lagt til på alle 8 sider. `hjelp.html` manglet S.A.K — lagt til.
 - «Tilbake til Styret»-lenken øverst på `styret.html` pekte på den nå fjernede seksjonen — endret til «Tilbake» (→ `index.html`).
+
+**13.06.26 — Hjelp-admin og hjelp-content.js**
+- Hjelp-siden omgjort til samme mønster som styret/begrep/merch: alt innhold er nå i `hjelp-content.js`, og `hjelp.html` rendres dynamisk fra den.
+- Nytt passordbeskyttet admin-panel `hjelp-admin.html`: redigering av alle seksjoner (Si fra, Faglig hjelp, Psykisk helse, Fysisk helse, Akutt hjelp), hurtignav-kortene, nødnumre og alle ressurskort. Støtter HTML i kontaktlinjer og Si fra-tekst.
+- Fil-tabell og seksjonsforklaring i README oppdatert med de nye filene.
+
+**13.06.26 — README-opprydding og galleri-dokumentasjon**
+- Fjernet duplikat «Hjelp & ressurser»-seksjon i README (gammel versjon som fortsatt beskrev hjelp.html som hardkodet).
+- Galleri-seksjonen i README fullstendig omskrevet: forklarer nå riktig tre-nivå-struktur (hovedmappe → skoleår → arrangement → bilder), at forsidebildet styres av filnavn-alfabetisk rekkefølge, at løse bilder i skoleår-mapper hoppes over, og at fane-sortering er automatisk baklengs.
+
+**13.06.26 — Arrangementetikett i galleri-marqueen**
+- Hvert bilde i den scrollende bilderemsen øverst på `galleri.html` viser nå et lite overlegg nederst med navnet på arrangementet bildet er fra.
+- Implementert ved å bytte fra enkel ID-array til `{id, name}`-objekter i `renderMarquee()` — mappenavnet følger bildet gjennom shuffle og duplisering.
+- Lightboxen som åpnes ved klikk i marqueen viser nå riktig arrangementnavn i infolinjen (var tidligere alltid «Galleri»).
+- Nye mapper i Drive plukkes automatisk opp — ingen kodeendring nødvendig.
+
+**13.06.26 — Begrep: bestillingslenke via admin**
+- `orderFormUrl` lagt til i `meta`-objektet i `begrep-content.js` — URL-en til bestillingsskjemaet (Google Forms) kan nå redigeres i `begrep-admin.html` og eksporteres med resten av innholdet.
+- Nytt felt «Bestillingslenke» i meta-panelet i admin; feltet lastes, lagres og eksporteres automatisk.
+- `begrep.html`: «Bestill tidsskrift»-knappen har fått id `bg-order-btn` og henter `href` dynamisk fra `meta.orderFormUrl` — ingen hardkodet URL i HTML-en lenger.
+
+**13.06.26 — Begrep: «Bestill tidsskrift»-knapp**
+- «Utgavene»-seksjonen på `begrep.html` har fått en tydelig «Bestill tidsskrift»-knapp (gull) som åpner bestillingsskjema via Google Forms i ny fane.
+- Notisboksen under utgave-gridet er gjort om til en flex-rad: teksten «Ønsker du et eksemplar?» til venstre, og knappen + «Ta kontakt med redaksjonen →» til høyre. Stabler seg pent på mobil.
+
+**13.06.26 — Sikkerhet, mørkt tema, påmelding og feilrapportering**
+- API-nøkkel for Google Kalender og Google Drive fjernet fra kildekoden. Alle tre kalender-filene (`apeiron-events.js`, `aporetisk-cal.js`, `apeiron-fadder.js`) og galleriet (`galleri.html`) leser nå nøkkelen fra `window.GOOGLE_API_KEY`. På Cloudflare Pages settes nøkkelen som miljøvariabel (`Google_API_Key`) og injiseres automatisk av bygg-kommandoen til `api-config.js`. Lokalt: opprett `api-config.js` manuelt med nøkkelen (filen er gitignorert).
+- Lys/mørk modus: toggle-knapp (måne/sol-ikon) lagt til i navigasjonen på alle 8 sider. Brukerens valg lagres i `localStorage`. Ved første besøk respekteres systempreferansen (`prefers-color-scheme`). Det mørke temaet («marine») fantes allerede i CSS — knappen gjør det tilgjengelig for brukerne.
+- Arrangementspåmelding: om styret legger en Google Forms-lenke i beskrivelsesfeltet på en kalender-hendelse, vises nå en «Meld deg på»-knapp automatisk på arrangementet. Ingen kodeendring nødvendig fremover.
+- Feilrapportering: diskret «Rapporter en feil på nettsiden»-lenke lagt til i footeren på alle 8 sider. Åpner e-postklient med `apeironlinjeforening@gmail.com` og forhåndsutfylt emnefelt.
+
+**13.06.26 — Begrep-siden: kontakt og bidra slått sammen**
+- «Meld interesse»-knappen peker nå til `#kontakt`-seksjonen istedenfor Google Forms.
+- «Vil du bidra?»- og «Kontakt»-seksjonene slått sammen til én seksjon med rød Begrep-bakgrunn (`--bg-rust`). Skillet mellom seksjonene er fjernet.
+- E-postadressen er gjort større og mer fremtredende i den sammenslåtte seksjonen.
+- `begrep-content.js`: `meta.email` lagt til — e-postadressen kan nå redigeres direkte i `begrep-admin.html` og eksporteres med resten av innholdet.
+- `begrep-admin.html`: nytt e-postfelt i meta-panelet.
 
 ---
 

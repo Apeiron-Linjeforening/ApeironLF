@@ -818,6 +818,37 @@ body[data-mode="marine"] .cal-popup__opt:hover{ background:rgba(212,175,55,.1); 
 }
 .footer__links a:hover{ color:var(--gold); background-size:100% 1px; }
 .footer__fine{ font-size:.78rem; opacity:.6; letter-spacing:.04em; }
+.footer__report{ margin-top:14px; }
+.footer__report a{ font-size:.72rem; opacity:.35; letter-spacing:.03em; transition:opacity .2s; }
+.footer__report a:hover{ opacity:.75; }
+
+/* Mørkt tema ved systempreferanse (overrides av localStorage via app.js) */
+@media (prefers-color-scheme: dark) {
+  body:not([data-mode="paper"]) {
+    --paper:  #20233b;
+    --paper-2:#262a45;
+    --ink:    #f4ecd9;
+    --ink-soft:#b9bdd6;
+    --accent-ink: var(--gold);
+    --grain-op: 0.18;
+  }
+}
+
+/* Farge-toggle-knapp i nav */
+.nav__color-toggle {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px;
+  background: none; border: 1px solid rgba(212,175,55,.4); border-radius: 50%;
+  color: var(--paper); cursor: pointer; flex-shrink: 0;
+  transition: border-color .2s, background .2s;
+}
+.nav__color-toggle:hover { border-color: var(--gold); background: rgba(212,175,55,.12); }
+.nav__color-toggle svg { width: 16px; height: 16px; }
+.nav__color-toggle .icon-sun { display: none; }
+.nav__color-toggle .icon-moon { display: block; }
+[data-mode="marine"] .nav__color-toggle .icon-sun { display: block; }
+[data-mode="marine"] .nav__color-toggle .icon-moon { display: none; }
+@media (max-width:1080px) { .nav__color-toggle { margin-right: 2px; } }
 
 /* ============================================================
    NETTSTEDSØK — nav-knapp + overlay
@@ -1150,11 +1181,15 @@ body[data-mode="marine"] .nav.is-stuck{ background:rgba(10,12,24,.92); }
 .evrow__when{ font-size:.8rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft); }
 .evrow h3{ font-size:1.5rem; margin-bottom:.2em; }
 .evrow__main p{ color:var(--ink-soft); font-size:1rem; line-height:1.5; max-width:62ch; }
-.evrow__act{ display:flex; justify-content:flex-end; }
+.evrow__act{ display:flex; gap:16px; justify-content:flex-end; align-items:center; flex-wrap:wrap; }
 .ev-more{ font-weight:600; font-size:.95rem; color:var(--maroon); display:inline-flex; align-items:center; gap:.5em; white-space:nowrap; }
 .ev-more:hover{ color:var(--navy); }
 .ev-more .arr{ transition:transform .2s; }
 .ev-more:hover .arr{ transform:translateX(3px); }
+.ev-signup{ display:inline-flex; align-items:center; gap:.45em; font-weight:700; font-size:.88rem; letter-spacing:.03em; color:var(--paper); background:var(--maroon); padding:.45em 1em; border-radius:2px; white-space:nowrap; transition:background .2s; }
+.ev-signup:hover{ background:var(--maroon-2); }
+.ev-signup .arr{ transition:transform .2s; }
+.ev-signup:hover .arr{ transform:translateX(3px); }
 .ev-empty{ text-align:center; font-style:italic; color:var(--ink-soft); padding:30px 0; }
 
 /* Rutenett uten bilde (kalender-drevne kort) */

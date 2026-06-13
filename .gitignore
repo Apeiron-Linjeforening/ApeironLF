@@ -7,3 +7,6 @@
 
 # Claude Code
 .claude/
+
+# API-nøkkel for lokal testing (genereres automatisk av Cloudflare Pages i prod)
+api-config.js

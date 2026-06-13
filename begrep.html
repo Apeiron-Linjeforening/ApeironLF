@@ -180,15 +180,23 @@
   margin-top: .2em;
 }
 .bg-covers-note {
-  margin-top: 2em; padding: 20px 24px;
+  margin-top: 2.5em; padding: 24px 28px;
   border: 1px solid rgba(240,236,224,.1);
   border-left: 3px solid var(--bg-gold);
+  display: flex; flex-wrap: wrap; align-items: center;
+  justify-content: space-between; gap: 16px 28px;
+}
+.bg-covers-note__text {
+  margin: 0; max-width: 38ch;
   font-size: .9rem; color: rgba(240,236,224,.65);
   line-height: 1.6;
 }
-.bg-covers-note a {
+.bg-covers-note__actions {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px;
+}
+.bg-covers-note__link {
   color: var(--bg-gold); text-decoration: underline;
-  text-underline-offset: 3px;
+  text-underline-offset: 3px; font-size: .9rem; white-space: nowrap;
 }
 
 /* ── Podcast cards ── */
@@ -311,6 +319,11 @@
 .bg-cta p {
   font-size: 1.05rem; color: rgba(240,236,224,.8);
   line-height: 1.65; margin-bottom: 2em;
+}
+
+.bg-cta__email {
+  font-size: 1.15rem !important; color: rgba(240,236,224,.9) !important;
+  margin-bottom: 0 !important;
 }
 
 /* ── Kontakt / socials ── */
@@ -567,6 +580,10 @@
     <a href="index.html#kontakt">Kontakt</a>
     <a class="btn btn--gold nav__cta" href="index.html#bli-medlem">Bli medlem <span class="arr">→</span></a>
   </nav>
+  <button class="nav__color-toggle" id="colorToggle" type="button" aria-label="Bytt fargemodus">
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+  </button>
   <button class="nav__search-btn" type="button" aria-label="Søk på nettstedet">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
     <span class="nav__search-hint">Søk</span>
@@ -615,7 +632,7 @@
     </p>
     <div class="bg-hero__cta">
       <a class="btn btn--gold" href="#utgavene">Tidsskriftet <span class="arr">↓</span></a>
-      <a class="btn btn--ghost-light" href="#bidra">Bli med i Begrep <span class="arr">→</span></a>
+      <a class="btn btn--ghost-light" href="#kontakt">Bli med i Begrep <span class="arr">→</span></a>
     </div>
   </div>
 </section>
@@ -664,8 +681,13 @@
     </div>
 
     <div class="bg-covers-note">
-      Begrep utgis kun som fysisk hefte. Ønsker du et eksemplar?
-      <a href="#kontakt">Ta kontakt med redaksjonen →</a>
+      <p class="bg-covers-note__text">
+        Begrep utgis kun som fysisk hefte. Ønsker du et eksemplar?
+      </p>
+      <div class="bg-covers-note__actions">
+        <a class="btn btn--gold" id="bg-order-btn" href="https://docs.google.com/forms/d/e/1FAIpQLSdy2DZFLnCaIgY5JoRdOQFGVUGiRAZtr8Hyp2wieANCkNd8PQ/viewform" target="_blank" rel="noopener">Bestill tidsskrift</a>
+        <a class="bg-covers-note__link" href="#kontakt">Ta kontakt med redaksjonen →</a>
+      </div>
     </div>
   </div>
 </section>
@@ -735,8 +757,8 @@
   </div>
 </section>
 
-<!-- ============ BIDRA ============ -->
-<section class="bg-cta" id="bidra">
+<!-- ============ BIDRA + KONTAKT ============ -->
+<section class="bg-cta" id="kontakt">
   <div class="bg-bars-layer"></div>
   <div class="bg-cta__inner">
     <h2>Vil du bidra?</h2>
@@ -745,25 +767,7 @@
       Vi tar imot tekster fra alle som studerer filosofi og etikk ved NTNU —
       og fra andre som har noe på hjertet.
     </p>
-    <a class="btn btn--gold"
-       href="https://docs.google.com/forms/d/e/1FAIpQLSdy2DZFLnCaIgY5JoRdOQFGVUGiRAZtr8Hyp2wieANCkNd8PQ/viewform"
-       target="_blank" rel="noopener">
-      Meld interesse <span class="arr">→</span>
-    </a>
-  </div>
-</section>
-
-<!-- ============ KONTAKT ============ -->
-<section class="bg-section bg-section--card" id="kontakt">
-  <div class="bg-section__inner" style="text-align:center;">
-    <span class="bg-section__eyebrow">Kontakt</span>
-    <h2 class="bg-section__title">Finn oss her</h2>
-    <p style="font-size:1rem; color:rgba(240,236,224,.65); line-height:1.7; max-width:44ch; margin:0 auto 2em;">
-      Følg oss på sosiale medier, eller ta kontakt direkte.
-    </p>
-    <p style="font-size:.95rem; color:rgba(240,236,224,.85); margin:0 auto 2em;">
-      E-post: <strong>begreptidsskrift@gmail.com</strong>
-    </p>
+    <p class="bg-cta__email" id="bg-kontakt-email">E-post: <strong>begreptidsskrift@gmail.com</strong></p>
     <div class="bg-socials">
       <a class="bg-social-btn" href="https://www.instagram.com/begreptidsskrift/" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
@@ -809,6 +813,7 @@
       <a href="index.html#kontakt">Kontakt</a>
     </div>
     <div class="footer__fine">© 2026 Apeiron Linjeforening</div>
+    <div class="footer__report"><a href="mailto:apeironlinjeforening@gmail.com?subject=Feil%20p%C3%A5%20nettsiden">Rapporter en feil på nettsiden</a></div>
   </div>
 </footer>
 
@@ -836,6 +841,18 @@
         + '<div class="bg-cover-card__placeholder" style="display:none;">' + esc(ph) + '</div>';
     }
     return '<div class="bg-cover-card__placeholder" style="display:flex;">' + esc(ph) + '</div>';
+  }
+
+  // E-post fra begrep-content.js
+  var emailEl = document.getElementById('bg-kontakt-email');
+  if (emailEl && meta.email) {
+    emailEl.innerHTML = 'E-post: <strong>' + esc(meta.email) + '</strong>';
+  }
+
+  // Bestillingslenke fra begrep-content.js
+  var orderBtn = document.getElementById('bg-order-btn');
+  if (orderBtn && meta.orderFormUrl) {
+    orderBtn.href = meta.orderFormUrl;
   }
 
   // Stats (auto-tellende)

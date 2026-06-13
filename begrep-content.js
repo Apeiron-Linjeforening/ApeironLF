@@ -14,7 +14,9 @@
 window.BEGREP_CONTENT = {
   meta: {
     founded: 2019,
-    julekalenderEpisodes: 24
+    julekalenderEpisodes: 24,
+    email: 'begreptidsskrift@gmail.com',
+    orderFormUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSdy2DZFLnCaIgY5JoRdOQFGVUGiRAZtr8Hyp2wieANCkNd8PQ/viewform'
   },
 
   issues: [

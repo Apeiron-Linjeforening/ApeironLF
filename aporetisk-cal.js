@@ -6,7 +6,7 @@
 
   var CONFIG = {
     calendarId: 'c0fbad2d93f9d91900391591ebe9294012fea1f5a0cfa553a1150d9c768a0f17@group.calendar.google.com',
-    API_KEY:    'AIzaSyDpJWruxDIh5tZ5yacb6uURhGlm6IbalBs',
+    API_KEY:    window.GOOGLE_API_KEY || '',
     timeZone:   'Europe/Oslo'
   };
 

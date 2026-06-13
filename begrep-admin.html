@@ -165,6 +165,8 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
     <div class="meta-panel">
       <div class="fg narrow"><label>Grunnlagt (år)</label><input type="number" id="meta-founded" min="1900" step="1"></div>
       <div class="fg narrow"><label>Julekalender-episoder</label><input type="number" id="meta-jul" min="0" step="1"></div>
+      <div class="fg"><label>E-post (kontaktskjema)</label><input type="email" id="meta-email" placeholder="begreptidsskrift@gmail.com"></div>
+      <div class="fg" style="flex-basis:100%"><label>Bestillingslenke (Google Forms URL)</label><input type="url" id="meta-order-url" placeholder="https://docs.google.com/forms/..."></div>
     </div>
 
     <!-- UTGAVER -->
@@ -458,6 +460,8 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
     ['issues', 'podcasts', 'films'].forEach(renderList);
     document.getElementById('meta-founded').value = data.meta.founded != null ? data.meta.founded : '';
     document.getElementById('meta-jul').value = data.meta.julekalenderEpisodes != null ? data.meta.julekalenderEpisodes : '';
+    document.getElementById('meta-email').value = data.meta.email || '';
+    document.getElementById('meta-order-url').value = data.meta.orderFormUrl || '';
   }
 
   function updateCounts() {
@@ -495,6 +499,12 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
   });
   document.getElementById('meta-jul').addEventListener('input', function () {
     data.meta.julekalenderEpisodes = this.value === '' ? null : Number(this.value); lazySave();
+  });
+  document.getElementById('meta-email').addEventListener('input', function () {
+    data.meta.email = this.value.trim() || null; lazySave();
+  });
+  document.getElementById('meta-order-url').addEventListener('input', function () {
+    data.meta.orderFormUrl = this.value.trim() || null; lazySave();
   });
 
   /* ─── EXPORT ─── */

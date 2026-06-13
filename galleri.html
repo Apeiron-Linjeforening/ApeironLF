@@ -238,15 +238,36 @@
   animation: gl-marquee 72s linear infinite;
 }
 .gl-marquee-wrap:hover .gl-marquee-track { animation-play-state: paused; }
-.gl-marquee-img {
+.gl-marquee-item {
+  position: relative;
+  flex-shrink: 0;
+  margin-right: 10px; /* margin instead of gap so each copy has identical width */
   height: 150px;
-  width: auto;
   aspect-ratio: 4/3;
   border-radius: 5px;
+  overflow: hidden;
+}
+.gl-marquee-img {
+  height: 100%;
+  width: 100%;
   object-fit: cover;
-  flex-shrink: 0;
   display: block;
-  margin-right: 10px; /* margin instead of gap so each copy has identical width */
+}
+.gl-marquee-label {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: linear-gradient(to top, rgba(0,0,0,.62) 0%, transparent 100%);
+  color: rgba(255,255,255,.92);
+  font-size: .62rem;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 18px 6px 5px;
+  text-align: center;
+  pointer-events: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 @keyframes gl-marquee {
   0%   { transform: translateX(0); }
@@ -367,6 +388,10 @@
     <a href="index.html#kontakt">Kontakt</a>
     <a class="btn btn--gold nav__cta" href="index.html#bli-medlem">Bli medlem <span class="arr">→</span></a>
   </nav>
+  <button class="nav__color-toggle" id="colorToggle" type="button" aria-label="Bytt fargemodus">
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+  </button>
   <button class="nav__search-btn" type="button" aria-label="Søk på nettstedet">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
     <span class="nav__search-hint">Søk</span>
@@ -466,9 +491,11 @@
       <a href="index.html#kontakt">Kontakt</a>
     </div>
     <div class="footer__fine">© 2026 Apeiron Linjeforening</div>
+    <div class="footer__report"><a href="mailto:apeironlinjeforening@gmail.com?subject=Feil%20p%C3%A5%20nettsiden">Rapporter en feil på nettsiden</a></div>
   </div>
 </footer>
 
+<script src="api-config.js"></script>
 <script>
 (function () {
   // ─────────────────────────────────────────────
@@ -483,7 +510,7 @@
   //  Skoleår-mapper brukes som fane-titler automatisk.
   // ─────────────────────────────────────────────
   var CONFIG = {
-    API_KEY:        'AIzaSyDpJWruxDIh5tZ5yacb6uURhGlm6IbalBs',
+    API_KEY:        window.GOOGLE_API_KEY || '',
     ROOT_FOLDER_ID: '1EAhJQDIqptfYN8QhBsl49xS110JCpota',
   };
 
@@ -778,37 +805,47 @@
     var track     = document.getElementById('glMarqueeTrack');
     if (!marqueeEl || !track) return;
 
-    // Collect all preview image IDs from all folders
-    var allIds = [];
+    // Collect all preview images with their folder name
+    var allItems = [];
     state.allFolders.forEach(function (f) {
-      (f.previewIds || []).forEach(function (id) { allIds.push(id); });
+      (f.previewIds || []).forEach(function (id) { allItems.push({ id: id, name: f.name }); });
     });
-    if (allIds.length < 3) return;
+    if (allItems.length < 3) return;
 
     // Shuffle
-    allIds.sort(function () { return Math.random() - 0.5; });
+    allItems.sort(function () { return Math.random() - 0.5; });
 
     // Repeat set enough times so one copy is always wider than the viewport.
     // We build 2 identical copies; the animation scrolls exactly -50% so the
     // seam is invisible.  To be safe we ensure at least 12 images per copy.
     var minPerCopy = 12;
-    var base = allIds.slice();
-    while (base.length < minPerCopy) { base = base.concat(allIds); }
+    var base = allItems.slice();
+    while (base.length < minPerCopy) { base = base.concat(allItems); }
 
     track.innerHTML = '';
-    var syntheticImages = base.map(function (fid) { return { id: fid, name: '' }; });
+    var syntheticImages = base.map(function (item) { return { id: item.id, name: '' }; });
     [base, base].forEach(function (set) {
-      set.forEach(function (id, i) {
-        var img = document.createElement('img');
-        img.className = 'gl-marquee-img';
-        img.src = thumbUrl(id);
-        img.alt = '';
-        img.style.cursor = 'pointer';
-        img.addEventListener('click', function () {
-          state.lightbox = { images: syntheticImages, idx: i, eventName: 'Galleri' };
+      set.forEach(function (item, i) {
+        var cell = document.createElement('div');
+        cell.className = 'gl-marquee-item';
+        cell.addEventListener('click', function () {
+          state.lightbox = { images: syntheticImages, idx: i, eventName: item.name };
           showLightbox(i);
         });
-        track.appendChild(img);
+
+        var img = document.createElement('img');
+        img.className = 'gl-marquee-img';
+        img.src = thumbUrl(item.id);
+        img.alt = '';
+        img.style.cursor = 'pointer';
+        cell.appendChild(img);
+
+        var label = document.createElement('span');
+        label.className = 'gl-marquee-label';
+        label.textContent = item.name;
+        cell.appendChild(label);
+
+        track.appendChild(cell);
       });
     });
     marqueeEl.style.display = '';

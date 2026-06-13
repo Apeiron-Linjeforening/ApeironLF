@@ -30,7 +30,7 @@
     //    La stå tom inntil videre — da vises plassholdere.
     calendarId: '74a6de6d28a7a0ec383148bb2f67025d09712386e8b6add3d425fc0d9b5320f7@group.calendar.google.com',
     // Samme API-nøkkel som arrangementene (apeiron-events.js).
-    API_KEY: 'AIzaSyDpJWruxDIh5tZ5yacb6uURhGlm6IbalBs',
+    API_KEY: window.GOOGLE_API_KEY || '',
     timeZone: 'Europe/Oslo',
     maxResults: 60
   };

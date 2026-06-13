@@ -22,9 +22,7 @@
 (function () {
   var CONFIG = {
     calendarId: 'apeironlinjeforening@gmail.com',
-    // 👇 Lim inn Google API-nøkkel her (én gang) for å koble til kalenderen.
-    //    La stå tom inntil videre — da vises tydelige plassholdere.
-    API_KEY: 'AIzaSyDpJWruxDIh5tZ5yacb6uURhGlm6IbalBs',
+    API_KEY: window.GOOGLE_API_KEY || '',
     timeZone: 'Europe/Oslo',
     maxResults: 24
   };
@@ -56,10 +54,11 @@
     var cat = 'Arrangement', title = summary;
     var m = summary.match(/^([^:]{2,22}):\s*(.+)$/);
     if (m) { cat = m[1].trim(); title = m[2].trim(); }
+    var rawDesc = raw.description || '';
     return {
       cat: cat, title: title, start: start, allDay: allDay,
-      place: raw.location || '', desc: stripHtml(raw.description || ''),
-      link: raw.htmlLink || ''
+      place: raw.location || '', desc: stripHtml(rawDesc),
+      link: raw.htmlLink || '', signupUrl: extractSignupUrl(rawDesc)
     };
   }
   function sampleToEvent(e) {
@@ -71,6 +70,16 @@
   function stripHtml(s) {
     var d = document.createElement('div'); d.innerHTML = s;
     return (d.textContent || '').trim();
+  }
+  function extractSignupUrl(rawHtml) {
+    var d = document.createElement('div'); d.innerHTML = rawHtml;
+    var anchors = d.querySelectorAll('a[href]');
+    for (var i = 0; i < anchors.length; i++) {
+      var h = anchors[i].href || '';
+      if (h.indexOf('forms.gle') > -1 || h.indexOf('docs.google.com/forms') > -1) return h;
+    }
+    var m = rawHtml.match(/https?:\/\/(?:forms\.gle|docs\.google\.com\/forms\/[^\s"<>]+)/);
+    return m ? m[0] : '';
   }
   function pad(n) { return n < 10 ? '0' + n : '' + n; }
   function timeStr(d) { return pad(d.getHours()) + ':' + pad(d.getMinutes()); }
@@ -199,7 +208,9 @@
             '<h3>' + esc(e.title) + '</h3>' +
             (e.desc ? '<p>' + esc(e.desc) + '</p>' : '') +
           '</div>' +
-          '<div class="evrow__act">' + more + '</div>' +
+          '<div class="evrow__act">' + more +
+            (e.signupUrl ? '<a class="ev-signup" href="' + esc(e.signupUrl) + '" target="_blank" rel="noopener">Meld deg på <span class="arr">→</span></a>' : '') +
+          '</div>' +
         '</article>';
     }).join('') + toggleBtn(total, limit);
     bindToggleBtn(el);
@@ -220,6 +231,7 @@
             '<h3>' + esc(e.title) + '</h3>' +
             (e.desc ? '<p>' + esc(e.desc) + '</p>' : '') +
             '<div class="evcard__meta"><b>' + esc(whenStr(e)) + '</b>' + (e.place ? ' · ' + esc(e.place) : '') + '</div>' +
+            (e.signupUrl ? '<a class="ev-signup" href="' + esc(e.signupUrl) + '" target="_blank" rel="noopener">Meld deg på <span class="arr">→</span></a>' : '') +
           '</div>' +
         '</article>';
     }).join('') + toggleBtn(total, limit);

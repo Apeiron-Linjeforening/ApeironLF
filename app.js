@@ -1,5 +1,20 @@
 /* Apeiron — interaksjoner: nav, mobilmeny, FAQ, scroll-reveal */
 (function () {
+  // Lys/mørk modus
+  var saved = localStorage.getItem('colorMode');
+  var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  var isDark = saved ? saved === 'dark' : prefersDark;
+  document.body.dataset.mode = isDark ? 'marine' : 'paper';
+
+  var toggle = document.getElementById('colorToggle');
+  if (toggle) {
+    toggle.addEventListener('click', function () {
+      var nowDark = document.body.dataset.mode === 'marine';
+      document.body.dataset.mode = nowDark ? 'paper' : 'marine';
+      localStorage.setItem('colorMode', nowDark ? 'light' : 'dark');
+    });
+  }
+
   // Year
   var y = document.getElementById('year');
   if (y) y.textContent = new Date().getFullYear();
