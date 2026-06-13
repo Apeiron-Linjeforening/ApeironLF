@@ -211,12 +211,6 @@ h1,h2,h3{ font-family:var(--display); font-weight:600; line-height:1.04; letter-
 .hero::after{
   content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
   background-image:
-    radial-gradient(1.4px 1.4px at 18% 22%, rgba(244,236,217,.5), transparent),
-    radial-gradient(1.2px 1.2px at 72% 16%, rgba(212,175,55,.55), transparent),
-    radial-gradient(1px 1px at 42% 64%, rgba(244,236,217,.4), transparent),
-    radial-gradient(1.3px 1.3px at 88% 52%, rgba(212,175,55,.45), transparent),
-    radial-gradient(1px 1px at 62% 80%, rgba(244,236,217,.35), transparent),
-    radial-gradient(1.1px 1.1px at 28% 88%, rgba(212,175,55,.4), transparent),
     radial-gradient(70% 50% at 50% -8%, rgba(212,175,55,.08), transparent 70%);
   opacity:.7;
 }
@@ -254,8 +248,6 @@ h1,h2,h3{ font-family:var(--display); font-weight:600; line-height:1.04; letter-
   background:var(--maroon); color:var(--gold);
   border-top:2px solid var(--gold); border-bottom:2px solid var(--gold);
   overflow:hidden; white-space:nowrap;
-  -webkit-mask-image:linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
-          mask-image:linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
 }
 .frieze:hover .frieze__track{ animation-play-state:paused; }
 .frieze__track{ display:inline-flex; gap:48px; padding:14px 0; animation:marq 38s linear infinite; font-family:var(--display); font-size:1.3rem; letter-spacing:.04em; }

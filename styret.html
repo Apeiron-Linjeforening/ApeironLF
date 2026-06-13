@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Om vervene — Apeiron · NTNU</title>
+<title>Apeiron styret — Apeiron · NTNU</title>
 <meta name="description" content="Styret i Apeiron 2025/26 og beskrivelse av alle styreverv: Leder, Nestleder, Økonomiansvarlig, Sosialansvarlig, PR-ansvarlig, Faddersjef, Fagansvarlig og mer." />
-<meta property="og:title" content="Om vervene — Apeiron · NTNU" />
+<meta property="og:title" content="Apeiron styret — Apeiron · NTNU" />
 <meta property="og:description" content="Møt styret i Apeiron og lær om hva hvert verv innebærer." />
 <meta property="og:image" content="assets/apeiron-logo.png" />
 <meta property="og:type" content="website" />
@@ -32,15 +32,9 @@
   width: min(44vw, 540px); opacity: .09; pointer-events: none; z-index: 1;
   filter: drop-shadow(0 0 1px rgba(212,175,55,.4));
 }
-/* diskré stjernedryss for å matche forsidens hero */
 .subhero::after {
   content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
   background-image:
-    radial-gradient(1.4px 1.4px at 18% 24%, rgba(244,236,217,.5), transparent),
-    radial-gradient(1.2px 1.2px at 74% 18%, rgba(212,175,55,.55), transparent),
-    radial-gradient(1px 1px at 44% 70%, rgba(244,236,217,.4), transparent),
-    radial-gradient(1.3px 1.3px at 88% 56%, rgba(212,175,55,.45), transparent),
-    radial-gradient(1px 1px at 60% 86%, rgba(244,236,217,.35), transparent),
     radial-gradient(70% 50% at 50% -10%, rgba(212,175,55,.07), transparent 70%);
   opacity: .7;
 }
@@ -115,6 +109,10 @@
   content: "—"; position: absolute; left: 0;
   color: var(--maroon); font-weight: 700;
 }
+.role-card__contact {
+  font-size: .9rem; color: var(--navy);
+  margin-top: 4px;
+}
 
 @media (max-width: 600px) {
   .role-grid { grid-template-columns: 1fr; }
@@ -157,16 +155,17 @@
       </div>
     </div>
     <div class="nav__dropdown">
-      <a class="nav__drop-trigger nav__drop-trigger--active" href="index.html#styret">Styret <span class="nav__caret">▾</span></a>
+      <a class="nav__drop-trigger nav__drop-trigger--active" href="styret.html">Styret <span class="nav__caret">▾</span></a>
       <div class="nav__drop-menu">
-        <a href="index.html#styret">Styret</a>
-        <a href="styret.html" class="is-active">Om vervene</a>
+        <a href="styret.html" class="is-active">Apeiron styret</a>
         <a href="#tillitsvalgte">Tillitsvalgte</a>
         <a href="#sak">S.A.K</a>
+        <a href="#vervene">Verv</a>
       </div>
     </div>
     <a href="begrep.html" class="nav__top">Begrep</a>
     <a href="galleri.html" class="nav__top">Galleri</a>
+    <a href="hjelp.html" class="nav__top">Hjelp</a>
     <div class="nav__dropdown">
       <a class="nav__drop-trigger" href="merch.html">Merch <span class="nav__caret">▾</span></a>
       <div class="nav__drop-menu">
@@ -199,13 +198,14 @@
   <a href="index.html#aporetisk">Aporetisk Aften</a>
   <a href="index.html#fadderuke">Fadderuke</a>
   <span class="drawer__lbl">Styret</span>
-  <a href="index.html#styret">Styret</a>
-  <a href="styret.html" class="is-active">Om vervene</a>
+  <a href="styret.html" class="is-active">Apeiron styret</a>
   <a href="#tillitsvalgte">Tillitsvalgte</a>
   <a href="#sak">S.A.K</a>
+  <a href="#vervene">Verv</a>
   <span class="drawer__lbl">Mer</span>
   <a href="begrep.html">Begrep</a>
   <a href="galleri.html">Galleri</a>
+  <a href="hjelp.html">Hjelp</a>
   <a href="merch.html">Merch</a>
   <a href="marked.html">Kjøp &amp; bytte</a>
   <a href="index.html#kontakt">Kontakt</a>
@@ -216,8 +216,8 @@
 <section class="subhero">
   <img class="subhero__seal" src="assets/apeiron-logo.png" alt="" aria-hidden="true" />
   <div class="subhero__inner">
-    <a class="subhero__back" href="index.html#styret">Tilbake til Styret</a>
-    <h1>Om vervene</h1>
+    <a class="subhero__back" href="index.html">Tilbake</a>
+    <h1>Apeiron styret</h1>
     <p class="subhero__lede">
       Styret i Apeiron består av frivillige studenter som holder linjeforeningen i gang.
       Her finner du en oversikt over hvert verv og hva det innebærer.
@@ -316,7 +316,8 @@
       <div class="role-card role-card--navy reveal d1">
         <div class="role-card__eyebrow">Instituttnivå · IFR</div>
         <h3>ITV — Institutt-tillitsvalgt</h3>
-        <p>ITV representerer alle studenter ved Institutt for filosofi og religionsvitenskap (IFR). De sitter i instituttets styrende organer, deltar i ansettelsesprosesser og tar opp saker som angår hele instituttet. Kontakt: <a href="mailto:hf-ifr@studentrad.ntnu.no" style="color:inherit">hf-ifr@studentrad.ntnu.no</a></p>
+        <p>ITV representerer alle studenter ved Institutt for filosofi og religionsvitenskap (IFR). De sitter i instituttets styrende organer, deltar i ansettelsesprosesser og tar opp saker som angår hele instituttet.</p>
+        <p class="role-card__contact">Kontakt: <strong>hf-ifr@studentrad.ntnu.no</strong></p>
         <ul class="role-card__resp">
           <li>Sitter i instituttstyret ved IFR</li>
           <li>Deltar i ansettelsesprosesser for vitenskapelige stillinger</li>
@@ -328,7 +329,8 @@
       <div class="role-card role-card--maroon reveal d2">
         <div class="role-card__eyebrow">Fakultetsnivå · HF</div>
         <h3>FTV — Fakultetstillitsvalgt</h3>
-        <p>FTV representerer alle studentene ved Det humanistiske fakultet (HF) og jobber med saker som angår hele fakultetet. De sitter i fakultetsstyret og ulike komiteer, og er studentenes øverste talspersoner overfor HF-ledelsen. Kontakt: <a href="mailto:ftv@hf.ntnu.no" style="color:inherit">ftv@hf.ntnu.no</a></p>
+        <p>FTV representerer alle studentene ved Det humanistiske fakultet (HF) og jobber med saker som angår hele fakultetet. De sitter i fakultetsstyret og ulike komiteer, og er studentenes øverste talspersoner overfor HF-ledelsen.</p>
+        <p class="role-card__contact">Kontakt: <strong>ftv@hf.ntnu.no</strong></p>
         <ul class="role-card__resp">
           <li>Sitter i fakultetsstyret ved HF</li>
           <li>Jobber med læringsmiljø, internasjonalisering og kommunikasjon på fakultetsnivå</li>
@@ -364,11 +366,12 @@
       <a href="pensum.html">Pensum</a>
       <a href="begrep.html">Begrep</a>
       <a href="index.html#arrangementer">Arrangementer</a>
-      <a href="index.html#styret">Styret</a>
-      <a href="styret.html">Om vervene</a>
-      <a href="#sak">S.A.K</a>
+      <a href="styret.html">Apeiron styret</a>
       <a href="styret.html#tillitsvalgte">Tillitsvalgte</a>
+      <a href="#sak">S.A.K</a>
+      <a href="#vervene">Verv</a>
       <a href="galleri.html">Galleri</a>
+      <a href="hjelp.html">Hjelp</a>
       <a href="merch.html">Merch</a>
       <a href="marked.html">Kjøp &amp; bytte</a>
       <a href="index.html#bli-medlem">Bli medlem</a>

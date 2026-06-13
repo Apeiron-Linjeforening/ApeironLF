@@ -261,6 +261,7 @@
       this._ghost = root.querySelector('.ghost');
       this._err = null;
       this._input = root.querySelector('input');
+      this._ctlBtns = root.querySelectorAll('.ctl button');
       this._depth = 0;
       this._gen = 0;
       this._view = { s: 1, x: 0, y: 0 };
@@ -598,6 +599,11 @@
       const editable = !!(window.omelette && window.omelette.writeFile);
       this.toggleAttribute('data-editable', editable);
       this._sub.style.display = editable ? '' : 'none';
+      // The Replace/Remove buttons live in the shadow DOM, so they stay in the
+      // document tab order even though they're opacity:0 / pointer-events:none
+      // on the read-only published site. Tabbing onto them scrolls the page to
+      // a clipped, dead control. Pull them out of the tab order unless editable.
+      this._ctlBtns.forEach((b) => { b.tabIndex = editable ? 0 : -1; });
 
       // Content. The sidecar is also writable by the agent's write_file
       // tool, so its value isn't guaranteed canvas-originated — only accept

@@ -44,7 +44,7 @@ git push
 # Ferdig — Cloudflare Pages oppdaterer siden automatisk
 ```
 
-**Pro Tip: Claude Sonnet og Opus kan og bør brukes for å spare deg timer, om ikke dager av arbeid.** 
+**Pro Tip: Claude Sonnet og Opus kan og bør brukes for å spare deg timer, om ikke dager av arbeid om du skal gjøre store endringer. Ellers bruk admin metoden.** 
 
 ---
 
@@ -179,6 +179,28 @@ Bilder kan være `null` (viser plassholder), `"assets/begrep/filnavn.png"` (fra 
 
 ---
 
+### 🆘 Hjelp & ressurser
+Innholdet på Hjelp-siden styres via `hjelp-content.js` — **ikke** direkte i `hjelp.html`.
+
+#### Enklest: bruk admin-panelet (`hjelp-admin.html`)
+
+Åpne `hjelp-admin.html` i nettleseren (lokalt eller på nettsiden ved å legge til `/hjelp-admin.html` i adressefeltet).
+Du logger inn med passordet — spør styret.
+
+I admin-panelet kan du:
+- Redigere topptekst og hurtignav-kortene øverst på siden
+- Legge til, endre, omrokere og slette ressurskort i hver seksjon (Si fra, Faglig hjelp, Psykisk helse, Fysisk helse)
+- Redigere «Si fra»-kortene og nødnummer-kortene under Akutt hjelp
+- Legge til punkter og kontaktlinjer på hvert kort (kontaktlinjer og «Si fra»-tekst tillater HTML, f.eks. lenker og `<strong>`)
+- Trykk **«Last ned hjelp-content.js»** — last ned filen og erstatt `hjelp-content.js` i repoet
+
+#### Manuelt: rediger `hjelp-content.js` direkte
+
+Filen inneholder `window.HJELP_CONTENT` med seksjonene `hero`, `sifra`, `studier`, `helse`, `fysisk` og `akutt`.
+Ressurskort (`*.cards[]`) har feltene `eyebrow`, `accent` (fargestripe), `name`, `desc`, `resp[]` (punkter), `contacts[]`, `noteTop`, `note`, `btnLabel` og `btnHref`. Tom linje i `desc` gir nytt avsnitt.
+
+---
+
 ### 📷 Galleri
 **Ingen kodeendring nødvendig.**
 Galleriet henter bilder automatisk fra en delt Google Drive-mappe via Google Drive API.
@@ -228,6 +250,16 @@ Gi det ønskede bildet navn `lesesal1.jpg` (overskriv eller slett det gamle).
 
 > **Støttede formater:** `.jpg` / `.jpeg`. Bruk rimelig komprimerte bilder (under 1–2 MB per fil) for at siden skal laste raskt.
 
+### 🆘 Hjelp & ressurser
+Innholdet på Hjelp-siden redigeres direkte i `hjelp.html`.
+Siden er delt i fem seksjoner:
+
+- **Si fra!** (`#sifra`): NTNUs varslingssystem med 6 kategorier og direktelenker til avviksskjema (ntnu.extend.no), e-vaktmester (Lydia) og ekstern varslingkanal (trustcom.pwc.no/ntnu). Inneholder også fire støttekort: Studentombudet (med kontaktinfo), Personvernombudet, Studieveiledning (e-post: `studieveiledning-ifr@hf.ntnu.no`) og Forbrukerrådet.
+- **Faglig hjelp** (`#studier`): PTV, ITV og FTV med e-postadresser. Oppdater her og i `styret.html#tillitsvalgte` ved endringer.
+- **Psykisk helse** (`#helse`): SIT Helse, Rask psykisk helsehjelp (Trondheim kommune), Studentpresten og Studenthumanisten. Oppdater ved endringer i tilbudene.
+- **Fysisk helse** (`#fysisk`): SIT tannhelse og seksuell helse, Helsestasjon for ungdom (Trondheim kommune) og Helsenorge/fastlege.
+- **Akutt hjelp** (`#akutt`): nødnumre (113, 112, 110, 116117, 116123, 22 40 00 40, 116111) med forklaring på når man ringer hvert enkelt. Verifiser numrene ved større oppdateringer.
+
 ### 📖 Om oss / øvrig tekst
 All annen tekst (om oss, studiene, FAQ, kontakt osv.) redigeres direkte i `index.html`.
 Finn riktig seksjon ved hjelp av kommentarene: `<!-- ============ OM OSS ============ -->` osv.
@@ -236,33 +268,36 @@ Finn riktig seksjon ved hjelp av kommentarene: `<!-- ============ OM OSS =======
 
 ## Filstruktur
 
-| Fil                               | Hva det er                                                         |
-| -----------------------------------| --------------------------------------------------------------------|
-| `index.html`                      | Forsiden (hoveddelen av nettsiden)                                 |
-| `pensum.html`                     | Pensum-oversikt                                                    |
-| `merch.html`                      | Merch-side (produkter hentes fra `merch-products.js`)              |
-| `merch-admin.html`                | 'Passordbeskyttet' admin-panel for å redigere merch                |
-| `merch-products.js`               | Produktdata for merch (redigeres via admin-panel)                  |
-| `galleri.html`                    | Bildegalleri (henter automatisk fra Google Drive)                  |
-| `marked.html`                     | Kjøp & bytte (pensum-marked)                                       |
-| `begrep.html`                     | Side for Begrep-tidsskriftet (utgaver, podkast, film, julekalender)|
-| `begrep-admin.html`               | 'Passordbeskyttet' admin-panel for å redigere Begrep-innhold       |
-| `begrep-content.js`               | Innholdsdata for Begrep-siden (redigeres via admin-panel)          |
-| `styret.html`                     | Styret og beskrivelse av alle styreverv (leser fra `styret-content.js`) |
-| `styret-admin.html`               | 'Passordbeskyttet' admin-panel for å redigere styret og verv      |
-| `styret-content.js`               | Innholdsdata for styret-siden (redigeres via admin-panel)         |
-| `styles.css`                      | All styling                                                        |
-| `app.js`                          | Meny, scroll-animasjoner og generell funksjonalitet                |
-| `apeiron-events.js`               | Henter arrangementer fra Google Kalender                           |
-| `apeiron-fadder.js`               | Henter fadderuke-program fra Google Kalender                       |
-| `aporetisk-cal.js`                | Kalender for Aporetisk Aften                                       |
-| `site-search.js`                  | Søkefunksjon                                                       |
-| `image-slot.js`                   | Gjenbrukbar bildekomponent (`<image-slot>`), bl.a. for styrebilder |
-| `assets/merch/`                   | Bilder for merch-produkter (alternativ til base64)                 |
-| `assets/begrep/`                  | Bilder for Begrep-utgaver og -innhold                              |
-| `assets/Styremedlemmer/`          | Portrettbilder av styremedlemmer (alternativ til base64)          |
-| `assets/`                         | Logo og andre bilder                                               |
-| `_headers`                        | Cloudflare Pages — HTTP-sikkerhetsheadere                          |
+| Fil                      | Hva det er                                                                          |
+| --------------------------| -------------------------------------------------------------------------------------|
+| `index.html`             | Forsiden (hoveddelen av nettsiden)                                                  |
+| `pensum.html`            | Pensum-oversikt                                                                     |
+| `merch.html`             | Merch-side (produkter hentes fra `merch-products.js`)                               |
+| `merch-admin.html`       | 'Passordbeskyttet' admin-panel for å redigere merch                                 |
+| `merch-products.js`      | Produktdata for merch (redigeres via admin-panel)                                   |
+| `galleri.html`           | Bildegalleri (henter automatisk fra Google Drive)                                   |
+| `marked.html`            | Kjøp & bytte (pensum-marked)                                                        |
+| `begrep.html`            | Side for Begrep-tidsskriftet (utgaver, podkast, film, julekalender)                 |
+| `begrep-admin.html`      | 'Passordbeskyttet' admin-panel for å redigere Begrep-innhold                        |
+| `begrep-content.js`      | Innholdsdata for Begrep-siden (redigeres via admin-panel)                           |
+| `hjelp.html`             | Hjelp & ressurser (leser fra `hjelp-content.js`)                                    |
+| `hjelp-admin.html`       | 'Passordbeskyttet' admin-panel for å redigere Hjelp-siden                           |
+| `hjelp-content.js`       | Innholdsdata for Hjelp-siden (redigeres via admin-panel)                            |
+| `styret.html`            | Styret og beskrivelse av alle styreverv (leser fra `styret-content.js`)             |
+| `styret-admin.html`      | 'Passordbeskyttet' admin-panel for å redigere styret og verv                        |
+| `styret-content.js`      | Innholdsdata for styret-siden (redigeres via admin-panel)                           |
+| `styles.css`             | All styling                                                                         |
+| `app.js`                 | Meny, scroll-animasjoner og generell funksjonalitet                                 |
+| `apeiron-events.js`      | Henter arrangementer fra Google Kalender                                            |
+| `apeiron-fadder.js`      | Henter fadderuke-program fra Google Kalender                                        |
+| `aporetisk-cal.js`       | Kalender for Aporetisk Aften                                                        |
+| `site-search.js`         | Søkefunksjon                                                                        |
+| `image-slot.js`          | Gjenbrukbar bildekomponent (`<image-slot>`), bl.a. for styrebilder                  |
+| `assets/merch/`          | Bilder for merch-produkter (alternativ til base64)                                  |
+| `assets/begrep/`         | Bilder for Begrep-utgaver og -innhold                                               |
+| `assets/Styremedlemmer/` | Portrettbilder av styremedlemmer (alternativ til base64)                            |
+| `assets/`                | Logo og andre bilder                                                                |
+| `_headers`               | Cloudflare Pages — HTTP-sikkerhetsheadere                                           |
 
 ---
 
@@ -279,41 +314,44 @@ Hvis repoet ikke er koblet til Cloudflare Pages, eller om man ønsker å bytte C
 
 Kritisk:
 - [ ] Fikse domene - Se "Domene" nedenfor.
-- [ ] Sjekke på nytt hvordan alt oppfører seg på mobil.
-- [ ] Om man dobbeltrykker TAB på styret, vil bildene flytte seg oppover i ringen og vise en blå bakgrunn. 
-- [ ] Å trykke på "Styret" i menyen tar deg til index og ikke selve styret. Den burde ta deg til "Om vervene".
-- [ ] "Om vervene" burde skrives om til "Apeiron styret"
+- [ ] Kvadrupelsjekk at informasjon under Hjelp er helt riktig!! Sjekk numre og eposter!
+- [ ] Begreps "Meld interesse" knapp tar deg til google forms for å bestille en utgave- ikke hvordan man melder interesse.
+- [ ] Begrep: Legge til en knapp/lenke til google forms,
 
 Medium:
 - [ ] Be HF studentrådet om å oppdatere sidene deres og gi oss mer informasjon om hva de faktisk gjør. 
       - [ ] Hva gjør egentlig en PTV, ITV og FTV? 
       - [ ] Hvordan får vi kontakt med våre egne TVer?
-- [ ] Be HF studentrådet om å fikse "Bli kjent med oss" og "Kontakt oss" lenkene deres.
-- [ ] Mens HF fikser greiene sine: Se om vi kan fikse NTNU's litt lite intuitive "Si fra!" side og gjøre det mer tydelig på vår side.
-- [ ] Fjern fade på siden av rullebåndet på Hero. Det ble forstyrrende for øyet.
+- [ ] Be HF studentrådet om å fikse "Bli kjent med oss" og "Kontakt oss" lenkene deres. Jeg har nå funnet ut at de ikke er ødelagt, de legger bare til eposten deres på slutten av nettsiden... så https://www.hf-studentrad.no/ blir til https://www.hf-studentrad.no/ftv@hf.ntnu.no. Dette kan vi fikse for de.
 - [ ] Legge til side for Utmerkelser for personer som har stått ut i studentmiljøet eller det frivillige under IFR.
-- [ ] Noe av teksten på Begrep er vanskelig å lese.
+- [ ] Legge til side for møtereferat -> Kan tas i egen wiki, muligens.
+- [x] Lage egen Admin for hjelp (`hjelp-admin.html` + `hjelp-content.js`).
+- [ ] Lage egen Admin for index.
+- [ ] Oppdater readme's "Galleri" den tar litt feil på hvordan den fungerer.
 
 Lav:
 - [ ] Side eller plassering for "Oppnåelser" (Premier vi har fått, som sølv i håndball og "best oppmøte" fra Dionysos)
-- [ ] Burde det være en direkte måte for TVene ved IFR å legge ved oppdateringer på nettsiden vår?
 - [ ] Kunne trykke på emne under hvert studie og bli tatt til emnet i pensumlistene - kan bli et problem for admin filene.
 - [ ] Fikse bedre sikkerhet for API-nøkkelen.
 - [ ] Fylle ut SAK / utvide den.
 - [ ] Sette opp et arkiv.
-- [ ] Det er 5 lyse pixler på hero. Disse burde fjerne: to nede, en under "etterpå" til høyre, en over "linjeforening siden" og en over den store apeironlogoen.
-- [ ] Sammenlign med Online.ntnu.no.
+- [ ] Sammenlign med Online.ntnu.no og https://www.mfplacebo.no/
 
 Hadde vært kult:
 - [ ] Snakke med IFR/NTNU om API for automatisk oppdatering av emner for studiene.
 - [ ] Måte å vise nyheter/informasjon på.
 - [ ] Bygge KKI for Apeiron.
+- [ ] Burde det være en direkte måte for TVene ved IFR å legge ved oppdateringer på nettsiden vår?
 
 Forslag:
 - [ ] Mer velkommen / koselig forside? Bilder av tidligere arrangement å index. Siden føles kanskje litt kald/som om den prøver å selge noe.
 
+Må gjøres før vi slapper av med å bygge nettsiden:
+- [ ] Sjekke at alle admin sider fungerer.
+- [ ] Kvadrupelsjekk at informasjon under Hjelp er helt riktig!! Sjekk numre og eposter!
+- [ ] Sjekke på nytt hvordan alt oppfører seg på mobil.
+
 Domene:
-- [x] Spurt NTNU — venter på svar (sendt 12.06.26)
 - [ ] Få bedre domene
 
 **Status per 13.06.26:**
@@ -341,26 +379,6 @@ Merk: Cloudflare Registrar støtter ikke .no-domener. For .org er Cloudflare bil
 - Forsøkt omdirigering med `.htaccess` (`RedirectMatch (.*) https://apeironlf.pages.dev/`) — fungerte ikke.
 - Tilgang: For tilgang via sftp, skriv `sftp://dittbrukernavn@login.stud.ntnu.no/home/groups/apeiron` i filutforskeren (Linux). Per nå er det kun sosialansvarlig Iver (25/26) som har tilgang.
 - Avventer svar fra NTNU om muligheten for videre hjelp.
-
-
-Fulfført:
-- [x] Å trykke på "Arrangement", "Studiene" eller "Styret" burde ta deg rett til siden, og ikke tvinge brukeren til å velge "Arrangement", "Studiene" eller "Styret" i menyen som dukker opp.
-- [x] Søkefeltet i egne sider (Pensum og Merch) må endres.
-- [x] Legge til informasjon og bilder om Lesesalen
-- [x] Bildefremvisning av sosiale ting - Sjekke om dette kan gjøres med API eller automatisk med en enkel mappe i Github. Det er lettere for fremtidige styrer å laste opp bilder til en mappe.
-- [x] Når man er på "Bli medlem" blir fremdeles "Lesealen" markert i menyen.
-- [x] Migrere til en mer fast løsning: Cloudflare
-- [x] Kunne trykke på alle bilder for å se større versjon.
-- [x] Stressteste Galleriet
-- [x] Legge til egen Begrep side med admin-panel
-- [x] Legge til forklaring av vervene i styret (styret.html)
-- [x] Legge til faktiske bilder av styremedlemmene på forsiden og styret.html.
-- [x] Telefon: Søkefeltet er identisk med desktop.
-- [x] Telefon: Menyen er for stor/lang.
-- [x] Legge til egen TV seksjon.
-- [x] Lage egen side for Styret som handler om verv og lignende.
-- [x] Sjekke alle sidene, spesielt menyen, for hvordan de oppfører seg på mobil.
-- [x] Fylle ut verv under "Hva gjør vi".
 
 ---
 
@@ -404,10 +422,51 @@ Fulfført:
 - README oppdatert med strukturert oversikt over domene-alternativer: tilgjengelighet, priser og registrarer (Loopia, Domeneshop, Cloudflare Registrar).
 - Dokumentert status for NTNU-subdomenet (`apeiron.org.ntnu.no`) og SFTP-tilgang.
 
+**13.06.26 — Menyrestrukturering, bugfikser og kalender-tomtilstander**
+- Desktop-navigasjon omstrukturert: 9 toppnivå-elementer med ryddige dropdowns — Om oss▾ (Om oss / Lesesalen / Samarbeid), Studiene▾, Arrangementer▾ (Arrangementer / Aporetisk Aften / Fadderuke), Styret▾ (Styret / Om vervene / Tillitsvalgte / S.A.K), Begrep, Galleri, Merch▾ (Merch / Kjøp & bytte), Kontakt, Bli medlem.
+- Mobilmeny omgjort: søke-ikon vises nå direkte i topplinja (var skjult), skuffeменyen er komprimert med gruppeetiketter (FORENINGEN / STUDIENE / ARRANGEMENTER / STYRET / MER) i gullfarge. Hele menyen får plass på korte skjermer (≤700px høyde) uten scrolling.
+- Bugfikser: S.A.K-lenker pekte feil (`index.html#sak` → `styret.html#sak`) i alle 5 undersider og søkeindeksen; fadder-footer-knapp pekte på feil anker; kontaktlenke pekte på Netlify i stedet for Cloudflare Pages; «Hilberts Hotell» rettet til «Hilbert Hotell»; «Bli Medlem»-siden viste feilaktig «Lesesalen» som aktiv menylenke.
+- Interne vitser fjernet: Dennis/Iver-FAQ-spørsmål slettet, frisen byttet fra «jeg kan ikke lese» til «det gode liv».
+- Kalender-tomtilstander: alle tre Google Kalender-integrasjonene (`apeiron-events.js`, `apeiron-fadder.js`, `aporetisk-cal.js`) skiller nå mellom API-feil (viser genererte plassholderdatoer for utviklere) og API-suksess uten hendelser (viser brukervennlig «dato kommer»-melding).
+- Søkeindeks utvidet: Lesesalen, Galleri og Fellesskap & samarbeid lagt til som søkbare sider.
+
+**13.06.26 — Begrep-hero lesbarhet, "Apeiron styret" og menylenke**
+- Begrep-siden (`begrep.html`): eyebrow og undertekst i hero byttet fra mørk brungrå (`#7a7060`) til `rgba(240,236,224,.6)` — merkbart bedre lesbarhet mot den mørke bakgrunnen.
+- "Om vervene" omdøpt til "Apeiron styret" i alle nav-dropdowns, mobilmenyer, footere, CTA-knapp på forsiden og `<h1>`/`<title>`/`og:title` i `styret.html`.
+- "Styret"-triggeren i toppmenyen peker nå direkte på `styret.html` i stedet for `index.html#styret` — i alle 7 HTML-filer.
+
+**13.06.26 — Hjelp-side, kontaktinfo og footer-oppdatering**
+- Ny side `hjelp.html`: tre seksjoner med Si fra! (NTNUs varslingssystem med 6 kategorier forklart), faglig hjelp (PTV/ITV/FTV med synlige e-postadresser), og psykisk helse (SIT Helse og Rask psykisk helsehjelp med innhold hentet direkte fra sidene).
+- "Hjelp" lagt til i navigasjon (desktop og mobilmeny) og footer på alle 7 sider.
+- `begrep.html`: `begreptidsskrift@gmail.com` vist som lesbar tekst i kontaktseksjonen.
+- `styret.html`: FTV- (`ftv@hf.ntnu.no`) og ITV-e-posten (`hf-ifr@studentrad.ntnu.no`) skilt ut som tydelige kontaktlinjer under hvert TVene-kort.
+- Alle footere synkronisert: alle sider har nå samme komplette lenkesett (Begrep, Apeiron styret, Tillitsvalgte, Hjelp m.m. var manglende på flere sider).
+
 **13.06.26 — Visuell finpuss på forsiden og styret-siden**
 - Forsiden (`index.html` / `styles.css`): myk fokusring for tastatur, stat-tall som teller seg opp når de kommer i syne, jevnere hover på kort (Om oss, studieretninger, samarbeid), finere lenke-detaljer, mykere marquees med fade-kanter, og litt mer dybde i hero-bakgrunnen. Alt respekterer «reduser bevegelse».
+- Lyse pixler (støyartefakter) fjernet fra alle hero-bakgrunner: 5 artefakter på forsiden (to nede, én under «etterpå», én over «linjeforening siden», én over Apeiron-logoen) og tilsvarende på øvrige sider.
 - Styret-siden (`styret.html`): hover-løft på vervkort og styremedlem-portretter, og samme diskré stjernedryss i topp-banneret som på forsiden.
 - README oppdatert: styret-seksjonen beskriver nå admin-panelet (`styret-admin.html` + `styret-content.js`).
+
+**13.06.26 — Hjelp-siden: full utvidelse og omstrukturering**
+- Hjelp-siden utvidet fra 3 til 5 seksjoner: lagt til **Fysisk helse** (`#fysisk`) og **Akutt hjelp** (`#akutt`).
+- Hurtignav-kort rett under tittelen i subhero: ett klikkbart kort per seksjon (Si fra, Faglig hjelp, Psykisk helse, Fysisk helse, Akutt hjelp). Akutt-kortet fremhevet i maroon.
+- **Si fra-seksjonen** kraftig utvidet: kategori-flisene har nå direktelenker til avviksskjema (`ntnu.extend.no`), e-vaktmester (Lydia) og ekstern varslingkanal (`trustcom.pwc.no/ntnu`). Fire nye støttekort lagt til: Studentombudet (med tlf., e-post og drop-in-tid), Personvernombudet (studentvennlig forklaring uten fagsjargong), Studieveiledning ved IFR (`studieveiledning-ifr@hf.ntnu.no` for filosofi- og etikkstudenter) og Forbrukerrådet (med konkrete studenteksempler).
+- **Psykisk helse-seksjonen** utvidet med to nye kort: Studentpresten og Studenthumanisten — begge gratis, konfidensielle og åpne for alle uansett tro.
+- **Fysisk helse-seksjonen** lagt til: SIT tannhelse og seksuell helse (med merknad om at SIT ikke har eget fastlegetilbud), Helsestasjon for ungdom (Trondheim kommune) og Helsenorge/fastlege.
+- **Akutt hjelp-seksjonen** lagt til: nødnumre 113, 112, 110, 116117, 116123, Kirkens SOS (22 40 00 40) og 116111 — alle som klikkbare `tel:`-lenker med forklaring på når man ringer hvert enkelt. Livstruende numre visuelt skilt fra samtaletjenestene.
+- Rask psykisk helsehjelp-kortet fikk fremhevet merknad: «Trondheim kommune ber studenter sjekke SIT sine tilbud først.» (hentet direkte fra kommunens side).
+- SIT Fysisk helse-kortet rettet: fjernet feil påstand om legekontor (SIT har ikke eget fastlegetilbud), korrigert til tannhelse, seksuell helse og treningsveiledning.
+- Seksjonsspacing komprimert: `.section` padding redusert fra 104px til 72px (kun på denne siden).
+- Alle URL-tekster under knapper fjernet — de gjentok bare lenke-adressen og så ut som en bug.
+- Akutt-kortene fikk hover-animasjon (løft + skygge + mørkere venstrekant), og navn-etikettene ble gjort større og mørkere (fra grået-ut 0,7rem til full navy 1rem).
+
+**13.06.26 — Menyopprydding Styret og footer-synkronisering**
+- Fjernet redundant «Styret»-lenke (→ `index.html#styret`) fra alle nav-dropdowns og skuffemenyer på samtlige 8 sider — den gikk til samme sted som dropdown-triggeren.
+- «Apeiron styret» er nå første element i Styret-dropdownen; ny lenke «Verv» (→ `styret.html#vervene`) lagt til sist i alle dropdowns og skuffemenyer.
+- Fjernet «Styret 2025/26»-seksjonen fra forsiden (`index.html`) — innholdet finnes på `styret.html`.
+- Alle footere synkronisert: brutt «Styret»-lenke (→ `index.html#styret`) fjernet, «Verv» lagt til på alle 8 sider. `hjelp.html` manglet S.A.K — lagt til.
+- «Tilbake til Styret»-lenken øverst på `styret.html` pekte på den nå fjernede seksjonen — endret til «Tilbake» (→ `index.html`).
 
 ---
 
