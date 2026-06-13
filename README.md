@@ -293,6 +293,7 @@ Medium:
 Lav:
 - [ ] Side eller plassering for "Oppnåelser" (Premier vi har fått, som sølv i håndball og "best oppmøte" fra Dionysos)
 - [ ] Burde det være en direkte måte for TVene ved IFR å legge ved oppdateringer på nettsiden vår?
+- [ ] Kunne trykke på emne under hvert studie og bli tatt til emnet i pensumlistene - kan bli et problem for admin filene.
 
 Hadde vært kult:
 - [ ] Snakke med IFR/NTNU om API for automatisk oppdatering av emner for studiene.
