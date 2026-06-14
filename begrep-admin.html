@@ -376,6 +376,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
 
     card.innerHTML =
       '<div class="card-head">'
+        + '<span class="drag-handle" title="Dra for å sortere">⠿</span>'
         + '<span class="card-title">' + esc(titleVal) + '</span>'
         + '<div class="order-btns"><button class="btn-ord btn-up" type="button" title="Opp">↑</button><button class="btn-ord btn-dn" type="button" title="Ned">↓</button></div>'
         + '<button class="btn-del" type="button">Slett</button>'
@@ -515,6 +516,17 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
     b.addEventListener('click', function () { add(b.getAttribute('data-add')); });
   });
   document.getElementById('export-btn').addEventListener('click', exportFile);
+
+  /* ─── DRA-OG-SLIPP SORTERING ─── */
+  ['issues', 'podcasts', 'films'].forEach(function (list) {
+    AdminCommon.enableDragSort(document.getElementById('list-' + list), {
+      itemSelector: '.card', handleSelector: '.drag-handle',
+      onReorder: function (ids) {
+        data[list].sort(function (a, b) { return ids.indexOf(a.id) - ids.indexOf(b.id); });
+        lazySave();
+      }
+    });
+  });
 
   function init() { loadData(); renderAll(); }
 })();

@@ -18,12 +18,12 @@
      Mørk-variantene er lysere/pastell slik at de holder kontrast i marine-modus. */
   var PALETTE = {
     neutral: { light: '#5a5d72', dark: '#b3b8d2' },
-    maroon:  { light: '#76110f', dark: '#e0a8a0' },
+    maroon:  { light: '#76110f', dark: '#e3756e' },
     gold:    { light: '#8a6d10', dark: '#d4af37' },
-    navy:    { light: '#2b315a', dark: '#9fb4ff' },
-    green:   { light: '#3a6b4a', dark: '#7fc69a' },
+    navy:    { light: '#1c2347', dark: '#7d97ff' },
+    green:   { light: '#2f7d3f', dark: '#5fd16f' },
     teal:    { light: '#2c6b6b', dark: '#6fc3c3' },
-    blue:    { light: '#2f4ea0', dark: '#8fa8ee' },
+    blue:    { light: '#3e74e0', dark: '#a9c4ff' },
     plum:    { light: '#6a4570', dark: '#c79fce' },
     rust:    { light: '#9c531f', dark: '#e0a06a' }
   };
@@ -190,9 +190,12 @@
       return tv;                                                       // ferdig tema (eller '')
     }
     function refreshPrev() {
-      // Admin-UI er lys: vis lys-varianten (eller gradient-hint for animert).
+      // Animert: vis gradient-hint. Ellers: delt swatch som viser BÅDE lys- og
+      // mørkmodus-fargen (diagonal split), så man ser mørkmodusfargen før valg.
       var v = compose(), a = animOf(v);
-      prev.style.background = a ? animPreview(a) : resolveColor(v).light;
+      if (a) { prev.style.background = animPreview(a); return; }
+      var c = resolveColor(v);
+      prev.style.background = 'linear-gradient(135deg, ' + c.light + ' 0 50%, ' + c.dark + ' 50% 100%)';
     }
     function fire() { refreshPrev(); onChange(compose()); }
 

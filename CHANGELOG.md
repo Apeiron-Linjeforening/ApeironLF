@@ -1,18 +1,5 @@
 ## Siste endringer
 
-**14.06.26 — Merch-bestilling, admin-fundament og diverse fikser**
-- **Merch-bestilling med handlekurv:** ny handlekurv på merch-siden (`merch-cart.js`) med valg av størrelse/farge/antall, produktbilder, «tøm kurv» og tydelig kvittering. Bestillinger sendes til et **Google Apps Script** som skriver til et **Google Sheet** (med pris per linje + totalsum) og varsler styret på e-post. Faller tilbake til e-post hvis endepunkt mangler. Oppsett dokumentert i `docs/apps-script-oppsett.md`.
-  - **Spam-beskyttelse:** delt token (`MERCH_ORDER_TOKEN` / `ORDER_TOKEN`) + skjult honeypot-felt.
-  - Innstillinger samlet i `merch-config.js` (endepunkt, Vipps-info, token). Betaling via Vipps gjort tydelig i kurven og i «Slik bestiller du».
-  - Varianter (`sizes`/`colors`) lagt til produktskjemaet og merch-admin.
-- **Delt admin-fundament (`admin-common.js` + `admin-common.css`):** felles innlogging, «Logg ut»-knapp, varsler og «?»-hjelpebobler på tvers av alle admin-paneler.
-  - **Fikset innloggingsbug:** innlogging deles nå mellom alle admin-sider (localStorage), og auto-innlogging kjører riktig ved gjenåpning.
-  - **Direkte lagring til repo-fila:** ved lokal kjøring (localhost) kan admin skrive datafila rett til den lokale repo-fila i stedet for nedlastingsmappa, så man kan teste før push.
-- **Medlemskap:** priser er nå admin-redigerbare med to nivåer (ett studieår / hele studietiden) via `medlemskap-admin.html` → `membership-config.js`, vist på forsiden via `membership.js`.
-- **«Om aftenen»:** Aporetisk Aften henter nå beskrivelsen fra kalenderhendelsen.
-- **Merch-badge:** preset og egendefinert tekst slått sammen til ett valg; «Begrenset»/«Nyhet» virker nå uavhengig av tekst. Nytt eget glød-/fargevalg på badgen (lys/mørk).
-- **Mindre fikser:** GitHub-lenke i footer på alle sider, prisfelt skjules når tomt, dropdown-meny markerer riktig side (inkl. Styret), Netlify → Cloudflare i admin-tekster, mobiltilpasning av handlekurven.
-
 **11.06.26 — Første opplastning av nettsiden**
 - Første versjon av hele nettstedet lastet opp: forsiden (`index.html`) med hero, Om oss, Studiene, Arrangementer, Aporetisk Aften, Fadderuke, Styret, Lesesalen, Bli medlem, Kontakt og footer.
 - Alle undersider: `pensum.html`, `merch.html`, `marked.html`.
@@ -180,6 +167,39 @@
 - Badge-type gjort meningsfull: hver type har nå distinkt farge (Bestselger = gull, Nyhet = grønn, Begrenset = rust). Tidligere så Bestselger og Begrenset identiske ut. Fri badge-farge overstyrer typen.
 - Redigerbar knappetekst (f.eks. «Bestill» → «Utsolgt») via nytt tekstfelt i admin.
 - `@media (prefers-reduced-motion: reduce)` demper/stopper alle glød-animasjoner.
+- 
+**14.06.26 — Merch-bestilling, admin-fundament og diverse fikser**
+- **Merch-bestilling med handlekurv:** ny handlekurv på merch-siden (`merch-cart.js`) med valg av størrelse/farge/antall, produktbilder, «tøm kurv» og tydelig kvittering. Bestillinger sendes til et **Google Apps Script** som skriver til et **Google Sheet** (med pris per linje + totalsum) og varsler styret på e-post. Faller tilbake til e-post hvis endepunkt mangler. Oppsett dokumentert i `docs/apps-script-oppsett.md`.
+  - **Spam-beskyttelse:** delt token (`MERCH_ORDER_TOKEN` / `ORDER_TOKEN`) + skjult honeypot-felt.
+  - Innstillinger samlet i `merch-config.js` (endepunkt, Vipps-info, token). Betaling via Vipps gjort tydelig i kurven og i «Slik bestiller du».
+  - Varianter (`sizes`/`colors`) lagt til produktskjemaet og merch-admin.
+- **Delt admin-fundament (`admin-common.js` + `admin-common.css`):** felles innlogging, «Logg ut»-knapp, varsler og «?»-hjelpebobler på tvers av alle admin-paneler.
+  - **Fikset innloggingsbug:** innlogging deles nå mellom alle admin-sider (localStorage), og auto-innlogging kjører riktig ved gjenåpning.
+  - **Direkte lagring til repo-fila:** ved lokal kjøring (localhost) kan admin skrive datafila rett til den lokale repo-fila i stedet for nedlastingsmappa, så man kan teste før push.
+- **Medlemskap:** priser er nå admin-redigerbare med to nivåer (ett studieår / hele studietiden) via `medlemskap-admin.html` → `membership-config.js`, vist på forsiden via `membership.js`.
+- **«Om aftenen»:** Aporetisk Aften henter nå beskrivelsen fra kalenderhendelsen.
+- **Merch-badge:** preset og egendefinert tekst slått sammen til ett valg; «Begrenset»/«Nyhet» virker nå uavhengig av tekst. Nytt eget glød-/fargevalg på badgen (lys/mørk).
+- **Mindre fikser:** GitHub-lenke i footer på alle sider, prisfelt skjules når tomt, dropdown-meny markerer riktig side (inkl. Styret), Netlify → Cloudflare i admin-tekster, mobiltilpasning av handlekurven.
+
+**14.06.26 — TODO-opprydding: sikkerhet, medlemspris, dra-sortering og badge-/fargefikser**
+- **Sikkerhet:**
+  - XSS («DOM text reinterpreted as HTML») tettet: `esc()` i `merch-cart.js` escaper nå også anførselstegn, og tall (antall/pris) tvinges til `Number` i attributter (`merch-cart.js`, `medlemskap-admin.html`, `merch-admin.html`). De øvrige flaggede stedene var allerede escapet.
+  - API-nøkkel: bekreftet at koden allerede er ren (`apeiron-fadder.js` bruker `window.GOOGLE_API_KEY`); GitHub-varselet kom fra git-historikk. Nøkkel rotert og lagt inn i Cloudflare.
+  - `.github/dependabot.yml` lagt til (GitHub Actions, ukentlig).
+- **Admin «Logg ut»:** sender deg nå til den offentlige siden i stedet for å låse deg på passord-gaten (`admin-common.js`).
+- **Dra-og-slipp sortering:** ekte dra-sortering av kort i ALLE admin-paneler via ny delt `AdminCommon.enableDragSort` (merch, styret, begrep, medlemskap, hjelp). Tidligere fantes kun ↑/↓-knapper.
+- **Merch — medlemspris:** avhukingsboks «Jeg er medlem» i handlekurven; normalpris vises først, medlemspris under; total og bestillings-payload er medlems-bevisste. `docs/apps-script-oppsett.md` oppdatert med «Medlem»-kolonne og medlems-felt.
+- **Merch — info-banner:** redigerbart info-felt øverst i butikken, styrt fra merch-admin (`window.MERCH_INFO`).
+- **Merch-admin eksport:** fjernet File System Access-direktelagring som feilet på enkelte systemer (Linux) og ga to lagre-dialoger; nå alltid én ren nedlasting.
+- **Badge-fikser:** badge/glød hevet over produktbildet; badgen ligger nå over gløden (glød vises som skjær rundt kantene); «Egendefinert» badge har alltid farge (fallback vinrød); **ny egen tekstfarge-velger** for badgen (lys/mørk).
+- **Bilde-rotasjon:** roter-knapp (90°) på produktbilder i merch-admin.
+- **Farger/palett:** tydeligere Skoggrønn, klarere skille mellom Blå og Marineblå, bedre Rødbrun mørk-variant; fargeswatch viser nå delt lys/mørk; egne lys/mørk-gradienter for animert glød.
+- **Handlekurv:** fjern-/lukk-kryss tydeligere i lys og mørk modus.
+- **«Rapporter en feil»:** åpner nå en liten boks (kopier e-post / åpne e-post) i stedet for å hoppe rett til e-postklienten — ny `report.js` på alle sider.
+- **Aporetisk Aften:** lange «Hvor»-adresser vises som «Se adresse»-lenke til kart.
+- **Mobil:** berøring av bilder blokkerer ikke lenger scroll/sveip (index/Lesesalen og Galleri) — `touch-action: none` avgrenset til aktiv reframe i `image-slot.js`.
+- **Hjelp:** «Legevakt» utdypet til også å gjelde akutte psykiske plager/kriser.
+- *Gjenstår fra denne runden:* flere/farge-koblede bilder per produkt, og interaktiv crop/zoom (rotasjon er gjort).
 
 ---
 

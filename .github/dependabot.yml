@@ -1,0 +1,11 @@
+# Dependabot — holder GitHub Actions-versjonene i workflowene oppdaterte.
+# (Nettsiden er statisk og har ingen npm-/package-avhengigheter, så kun
+#  github-actions-økosystemet er relevant her.)
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "ci"

@@ -114,7 +114,24 @@
     }
     if (whereEl) {
       var placeSpan = whereEl.querySelector('span');
-      if (placeSpan) placeSpan.textContent = (state.live && nxt && nxt.place) ? nxt.place : '—';
+      var place = (state.live && nxt && nxt.place) ? nxt.place : '';
+      if (placeSpan) {
+        placeSpan.textContent = '';
+        if (!place) {
+          placeSpan.textContent = '—';
+        } else if (place.length <= 36) {
+          placeSpan.textContent = place;
+        } else {
+          // Lang adresse: vis kort lenke til kart i stedet for å fylle hele raden.
+          var a = document.createElement('a');
+          a.href = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(place);
+          a.target = '_blank';
+          a.rel = 'noopener';
+          a.textContent = 'Se adresse';
+          a.title = place;
+          placeSpan.appendChild(a);
+        }
+      }
     }
 
     // «Om aftenen» — beskrivelsen fra neste kalenderhendelse (om satt).

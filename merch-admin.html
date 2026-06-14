@@ -84,6 +84,18 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
   background: rgba(212,175,55,.08); border-radius: 3px;
   color: var(--gold-ink); font-size: .81rem;
 }
+.info-edit {
+  background: white; border: 1px solid var(--border); border-radius: 4px;
+  padding: 16px 20px; margin-bottom: 24px;
+}
+.info-edit label strong { color: var(--navy); font-size: .95rem; }
+.info-edit__hint { color: var(--ink-soft); font-size: .82rem; line-height: 1.5; margin: 4px 0 10px; }
+.info-edit textarea {
+  width: 100%; box-sizing: border-box; min-height: 64px; line-height: 1.5;
+  font-family: inherit; font-size: .9rem; padding: 9px 11px;
+  border: 1px solid var(--border); border-radius: 4px; resize: vertical;
+}
+.info-edit textarea:focus { outline: none; border-color: var(--navy); }
 .tip-reset {
   float: right; font-size: .76rem; color: var(--ink-soft); cursor: pointer;
   text-decoration: underline; text-underline-offset: 2px; border: none; background: none; padding: 0;
@@ -169,6 +181,13 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
   font-size: .72rem; display: none; align-items: center; justify-content: center;
 }
 .img-zone:hover .btn-clr-img { display: flex; }
+.btn-rot-img {
+  position: absolute; top: 5px; right: 30px; z-index: 4;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: rgba(0,0,0,.55); color: white; border: none; cursor: pointer;
+  font-size: .8rem; display: none; align-items: center; justify-content: center;
+}
+.img-zone:hover .btn-rot-img { display: flex; }
 
 /* Fields */
 .fields { padding: 16px 18px; display: flex; flex-direction: column; gap: 11px; }
@@ -260,7 +279,13 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
         <li>Cloudflare Pages oppdaterer nettsiden automatisk innen et minutt</li>
       </ol>
       <div class="tip-note">💾 Endringer lagres automatisk i nettleseren din — du mister dem ikke ved å laste siden på nytt. Last ned filen for å publisere til nettsiden.</div>
-      <div class="tip-note">🛠️ <b>Jobber du lokalt?</b> Åpne admin via en lokal server (f.eks. <code>python3 -m http.server</code> og gå til <code>localhost:8000/merch-admin.html</code>). Da kan du første gang velge <code>merch-products.js</code> i repoet, og senere lagres endringene <b>rett til fila</b> uten nedlasting. (Virker ikke når siden åpnes som <code>file://</code>.)</div>
+      <div class="tip-note">🛠️ Når du klikker <b>Last ned merch-products.js</b> lastes fila ned (én fil). Erstatt <code>merch-products.js</code> i repoet med den nedlastede og push for å publisere.</div>
+    </div>
+
+    <div class="info-edit">
+      <label for="info-input"><strong>Info-tekst øverst i butikken</strong></label>
+      <p class="info-edit__hint">Vises i en boks øverst på merch-siden — f.eks. leveringstid, henteinfo eller en beskjed. La stå tom for å skjule boksen. Dobbelt linjeskift gir nytt avsnitt.</p>
+      <textarea id="info-input" rows="3" placeholder="F.eks. «Neste utlevering på lesesalen torsdag 12. juni. Bestill innen mandag!»"></textarea>
     </div>
 
     <div id="plist"></div>
@@ -277,23 +302,33 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
 (function () {
   /* ─── CONFIG ─── */
   const LS_KEY = 'apeiron-merch-v1';
+  const LS_INFO_KEY = 'apeiron-merch-info-v1';
 
   /* ─── AUTH (delt logikk i admin-common.js) ─── */
   AdminCommon.setupAuth(init);
 
   /* ─── DATA ─── */
   let products = [];
+  let info = '';
 
   function loadData() {
     const raw = localStorage.getItem(LS_KEY);
     if (raw) {
-      try { products = JSON.parse(raw); return; } catch (_) {}
+      try { products = JSON.parse(raw); } catch (_) { products = fromPublished(); }
+    } else {
+      products = fromPublished();
     }
-    products = (window.MERCH_PRODUCTS || []).map(function (p) { return Object.assign({}, p); });
+    const rawInfo = localStorage.getItem(LS_INFO_KEY);
+    info = rawInfo != null ? rawInfo : (window.MERCH_INFO || '');
+  }
+
+  function fromPublished() {
+    return (window.MERCH_PRODUCTS || []).map(function (p) { return Object.assign({}, p); });
   }
 
   function saveData() {
     localStorage.setItem(LS_KEY, JSON.stringify(products));
+    localStorage.setItem(LS_INFO_KEY, info);
     showToast('Lagret i nettleseren');
   }
 
@@ -337,6 +372,26 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
       img.src = e.target.result;
     };
     reader.readAsDataURL(file);
+  }
+
+  // Roter lagret produktbilde 90° med klokka og bak resultatet inn i p.img.
+  function rotateImage(prodId, zone) {
+    const p = products.find(function (x) { return x.id === prodId; });
+    if (!p || !p.img) return;
+    const img = new Image();
+    img.onload = function () {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.height; canvas.height = img.width;   // 90°: bytt bredde/høyde
+      const ctx = canvas.getContext('2d');
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.rotate(Math.PI / 2);
+      ctx.drawImage(img, -img.width / 2, -img.height / 2);
+      const url = canvas.toDataURL('image/webp', 0.82);
+      setField(prodId, 'img', url);
+      if (zone) refreshImgZone(zone, url);
+      lazySave();
+    };
+    img.src = p.img;
   }
 
   /* ─── FIELD UPDATE ─── */
@@ -426,6 +481,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
         + '<div class="img-zone">'
           + '<div class="img-ph"><img src="assets/apeiron-logo.png" alt=""><span>Klikk eller dra inn bilde</span></div>'
           + '<div class="img-overlay">📷 Last opp bilde</div>'
+          + '<button class="btn-rot-img" type="button" title="Roter 90°">↻</button>'
           + '<button class="btn-clr-img" type="button" title="Fjern bilde">✕</button>'
         + '</div>'
         + '<div class="fields">'
@@ -439,15 +495,16 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
             + '<textarea data-f="desc" placeholder="Kort beskrivelse av produktet...">' + esc(p.desc || '') + '</textarea></div>'
           + '<div class="frow">'
             + '<div class="fg narrow"><label data-help="La feltet stå tomt for å skjule prisen helt — f.eks. for produkter som ikke selges enda.">Pris (kr)</label>'
-              + '<input type="number" data-f="price" value="' + (p.price != null ? p.price : '') + '" min="0" step="1" placeholder="tom = skjul pris"></div>'
+              + '<input type="number" data-f="price" value="' + (p.price != null && isFinite(p.price) ? Number(p.price) : '') + '" min="0" step="1" placeholder="tom = skjul pris"></div>'
             + '<div class="fg narrow"><label data-help="Valgfri rabattert pris for medlemmer. Tom = ingen egen medlemspris vises.">Medlemspris (kr)</label>'
-              + '<input type="number" data-f="memberPrice" value="' + (p.memberPrice != null ? p.memberPrice : '') + '" min="0" step="1" placeholder="tom = ingen"></div>'
+              + '<input type="number" data-f="memberPrice" value="' + (p.memberPrice != null && isFinite(p.memberPrice) ? Number(p.memberPrice) : '') + '" min="0" step="1" placeholder="tom = ingen"></div>'
           + '</div>'
           + '<div class="fg"><label data-help="Velg ett: enten en ferdig merkelapp (Bestseller/Nyhet/Begrenset) ELLER «Egendefinert» med egen tekst og farge. «Ingen» skjuler merkelappen.">Badge</label>'
             + '<div class="badge-opts">' + radios + '</div>'
             + '<div class="badge-custom' + (curSel === 'custom' ? ' on' : '') + '" data-badge-custom>'
               + '<input type="text" data-f="badge" value="' + esc(p.badge || '') + '" placeholder="Egendefinert badge-tekst, f.eks. «Snart utsolgt»">'
               + '<div class="badge-custom-color"><span class="app-lbl">Farge</span><div data-badge-host></div></div>'
+              + '<div class="badge-custom-color"><span class="app-lbl">Tekstfarge</span><div data-badgetext-host></div></div>'
             + '</div>'
           + '</div>'
           + '<div class="fg"><label data-help="Animert glød eller fast lysfarge rundt selve merkelappen. Eget valg, uavhengig av badge-fargen. Fast farge kan settes ulikt for lys og mørk modus.">Badge-glød</label>'
@@ -491,6 +548,10 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
       e.stopPropagation();
       setField(p.id, 'img', null);
       refreshImgZone(zone, null);
+    });
+    card.querySelector('.btn-rot-img').addEventListener('click', function (e) {
+      e.stopPropagation();
+      rotateImage(p.id, zone);
     });
 
     // Text field inputs
@@ -555,6 +616,11 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
     if (bHost && mkColor) bHost.appendChild(mkColor({
       value: p.badgeColor, emptyLabel: 'Standardfarge',
       onChange: function (v) { p.badgeColor = v || null; lazySave(); }
+    }));
+    const btxtHost = card.querySelector('[data-badgetext-host]');
+    if (btxtHost && mkColor) btxtHost.appendChild(mkColor({
+      value: p.badgeTextColor, emptyLabel: 'Hvit (standard)',
+      onChange: function (v) { p.badgeTextColor = v || null; lazySave(); }
     }));
     const bgHost = card.querySelector('[data-badgeglow-host]');
     if (bgHost && mkColor) bgHost.appendChild(mkColor({
@@ -621,17 +687,22 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
       + '   sizes/colors: array av varianter (f.eks. ["S","M","L"]) eller null\n'
       + '   price: null skjuler pris og gir «Kommer snart» i stedet for kjøp\n'
       + '   Farger (alle valgfrie) — palettnavn, { light, dark }, eller rå hex:\n'
-      + '     badgeColor : fri badge-farge (overstyrer typefargen)\n'
+      + '     badgeColor     : fri badge-farge (overstyrer typefargen)\n'
+      + '     badgeTextColor : fri tekstfarge på badgen (tom = hvit)\n'
+      + '     badgeGlow      : glød bak badgen — fast farge ELLER { anim: "..." }\n'
       + '     btnColor   : fri knappefarge\n'
       + '     edge       : farget kant rundt kortet, ELLER { anim: "aurora-bold" }\n'
       + '                  for animert glød (se APEIRON_ANIMATED i palette.js)\n'
       + '   img: null (viser segl-watermark), base64-bilde fra admin,\n'
       + '        eller "assets/merch/filnavn.jpg" for bilder i repoet */\n\n'
+      + 'window.MERCH_INFO = ' + JSON.stringify(info) + ';\n\n'
       + 'window.MERCH_PRODUCTS = ' + JSON.stringify(products, null, 2) + ';\n';
 
     AdminCommon.saveFile('merch-products.js', content).then(function (mode) {
       if (mode === 'direct') showToast('Lagret direkte til merch-products.js ✓');
       else if (mode === 'download') showToast('Fil lastet ned — erstatt i repoet og push!');
+    }, function () {
+      showToast('Kunne ikke skrive til fila — prøv på nytt og velg fila igjen.');
     });
   }
 
@@ -639,7 +710,10 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
   document.getElementById('reset-btn').addEventListener('click', function () {
     if (!confirm('Dette sletter alle ueksporterte endringer og laster inn siste publiserte versjon fra merch-products.js. Fortsette?')) return;
     localStorage.removeItem(LS_KEY);
-    products = (window.MERCH_PRODUCTS || []).map(function (p) { return Object.assign({}, p); });
+    localStorage.removeItem(LS_INFO_KEY);
+    products = fromPublished();
+    info = window.MERCH_INFO || '';
+    renderInfo();
     renderAll();
     showToast('Tilbakestilt til publisert versjon');
   });
@@ -648,8 +722,25 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
   document.getElementById('add-btn').addEventListener('click', add);
   document.getElementById('export-btn').addEventListener('click', exportFile);
 
+  /* ─── INFO-TEKST ─── */
+  const infoInput = document.getElementById('info-input');
+  if (infoInput) {
+    infoInput.addEventListener('input', function () { info = infoInput.value; lazySave(); });
+  }
+  function renderInfo() { if (infoInput) infoInput.value = info; }
+
+  /* ─── DRA-OG-SLIPP SORTERING ─── */
+  AdminCommon.enableDragSort(document.getElementById('plist'), {
+    itemSelector: '.pcard', handleSelector: '.drag-handle',
+    onReorder: function (ids) {
+      // DOM er allerede i ny rekkefølge — synk dataarrayen og lagre.
+      products.sort(function (a, b) { return ids.indexOf(a.id) - ids.indexOf(b.id); });
+      lazySave();
+    }
+  });
+
   /* ─── INIT ─── */
-  function init() { loadData(); renderAll(); }
+  function init() { loadData(); renderInfo(); renderAll(); }
 })();
 </script>
 </body>

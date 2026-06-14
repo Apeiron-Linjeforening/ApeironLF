@@ -57,6 +57,21 @@
   margin-bottom: 80px;
 }
 
+/* Redigerbar info-tekst øverst i butikken (window.MERCH_INFO) */
+.merch-info {
+  background: rgba(212,175,55,.12);
+  border: 1px solid rgba(212,175,55,.4);
+  border-left: 4px solid var(--gold);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin-bottom: 32px;
+  color: var(--ink);
+  font-size: .98rem;
+  line-height: 1.55;
+}
+.merch-info p { margin: 0 0 .5em; }
+.merch-info p:last-child { margin-bottom: 0; }
+
 .product {
   background: var(--card);
   border: 1px solid var(--line);
@@ -87,7 +102,7 @@
 }
 
 .product__badge {
-  position: absolute; top: 14px; left: 14px; z-index: 2;
+  position: absolute; top: 14px; left: 14px; z-index: 3;
   font-size: .64rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
   background: var(--maroon); color: var(--on-dark);
   border-radius: 2px; padding: .36em .8em;
@@ -200,8 +215,8 @@
    inline; CSS plukker mørk-variant via html[data-mode="marine"]. */
 
 /* Badge med fri farge (overstyrer den semantiske typefargen) */
-.product__badge--custom { background: var(--c-l); color: #fff; }
-html[data-mode="marine"] .product__badge--custom { background: var(--c-d); }
+.product__badge--custom { background: var(--c-l, var(--maroon)); color: var(--tc-l, #fff); }
+html[data-mode="marine"] .product__badge--custom { background: var(--c-d, var(--maroon)); color: var(--tc-d, #fff); }
 
 /* «Bestill»-knapp med fri farge */
 .product__btn { --bg: var(--c-l, var(--maroon)); --fg: #fff; border-color: var(--c-l, var(--maroon)); }
@@ -238,6 +253,18 @@ html[data-mode="marine"] .pglow-solid > .product { border-color: var(--c-d); }
 .pglow-rainbow-soft::before { background-image: linear-gradient(90deg,#ff6b6b,#feca57,#1dd1a1,#48dbfb,#ff9ff3,#ff6b6b); --gs:8s; --go:.6; --gb:13px; }
 .pglow-rainbow-bold::before { background-image: linear-gradient(90deg,#ff6b6b,#feca57,#1dd1a1,#48dbfb,#ff9ff3,#ff6b6b); --gs:3s; --go:1; --gb:7px; }
 
+/* Mørk modus (marine): egne, mer lysende gradient-varianter per animasjon, så
+   gløden holder seg tydelig mot mørk bakgrunn. Dekker både kort-kant (.pglow)
+   og badge-glød (.bglow gjenbruker de samme .pglow-*-klassene). */
+html[data-mode="marine"] .pglow-aurora-soft::before,
+html[data-mode="marine"] .pglow-aurora-bold::before  { background-image: linear-gradient(90deg,#f0d56a,#7fe3ff,#dcb8e2,#f0d56a); }
+html[data-mode="marine"] .pglow-ember-soft::before,
+html[data-mode="marine"] .pglow-ember-bold::before   { background-image: linear-gradient(90deg,#e3756e,#f0d56a,#f0c08a,#e3756e); }
+html[data-mode="marine"] .pglow-neon-soft::before,
+html[data-mode="marine"] .pglow-neon-bold::before    { background-image: linear-gradient(90deg,#7d97ff,#7fe3ff,#bcd0ff,#7d97ff); }
+html[data-mode="marine"] .pglow-rainbow-soft::before,
+html[data-mode="marine"] .pglow-rainbow-bold::before { background-image: linear-gradient(90deg,#ff8a8a,#ffd97a,#7fe3a8,#7fe3ff,#ffb8f5,#ff8a8a); }
+
 @media (prefers-reduced-motion: reduce) {
   .pglow::before { animation: none !important; opacity: calc(var(--go, .75) * .6); }
 }
@@ -245,8 +272,8 @@ html[data-mode="marine"] .pglow-solid > .product { border-color: var(--c-d); }
 /* ── Badge-glød (eget valg, uavhengig av badge-farge) ──
    Wrapper rundt selve merkelappen. Gjenbruker de animerte gradientklassene
    (.pglow-<preset>::before) for fargene, men har egen base-posisjonering. */
-.bglow { position: absolute; top: 14px; left: 14px; z-index: 2; display: inline-block; border-radius: 4px; }
-.bglow > .product__badge { position: static; top: auto; left: auto; z-index: 1; display: block; }
+.bglow { position: absolute; top: 14px; left: 14px; z-index: 3; display: inline-block; border-radius: 4px; }
+.bglow > .product__badge { position: relative; top: auto; left: auto; z-index: 1; display: block; }
 .bglow::before {
   content: ""; position: absolute; inset: -3px; border-radius: 5px; z-index: 0;
   filter: blur(var(--gb, 7px)); opacity: var(--go, .8); background-size: 200% 200%;
@@ -320,8 +347,9 @@ html[data-mode="marine"] .bglow-solid::before { background-image: linear-gradien
 .cart-drawer__head h3 { font-family: var(--display); font-size: 1.7rem; color: var(--ink); margin-right: auto; }
 .cart-clear { background: none; border: none; font-size: .8rem; color: var(--ink-soft); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
 .cart-clear:hover { color: var(--maroon); }
-.cart-close { background: none; border: none; font-size: 1.8rem; line-height: 1; color: var(--ink-soft); cursor: pointer; }
-.cart-close:hover { color: var(--maroon); }
+.cart-close { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; background: none; border: 1px solid var(--line); border-radius: 50%; font-size: 1.6rem; line-height: 1; color: var(--ink); cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
+.cart-close:hover { color: var(--paper); background: var(--maroon); border-color: var(--maroon); }
+html[data-mode="marine"] .cart-close:hover { color: var(--navy); background: var(--gold); border-color: var(--gold); }
 .cart-empty { color: var(--ink-soft); font-size: .96rem; padding: 18px 2px; line-height: 1.5; }
 
 .cart-item { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
@@ -337,9 +365,19 @@ html[data-mode="marine"] .bglow-solid::before { background-image: linear-gradien
 .cart-qty { width: 26px; height: 26px; border: 1px solid var(--line); background: var(--paper); border-radius: 4px; cursor: pointer; font-size: 1rem; line-height: 1; color: var(--ink); }
 .cart-qty:hover { border-color: var(--gold); }
 .cart-qty-num { width: 42px; text-align: center; border: 1px solid var(--line); border-radius: 4px; padding: 4px; font-family: var(--body); background: var(--card); color: var(--ink); }
-.cart-item__price { font-family: var(--display); font-size: 1.1rem; color: var(--warm); white-space: nowrap; }
-.cart-item__rm { background: none; border: none; color: var(--ink-soft); font-size: 1.2rem; line-height: 1; cursor: pointer; padding: 0 2px; }
-.cart-item__rm:hover { color: var(--maroon); }
+.cart-item__price { display: flex; flex-direction: column; align-items: flex-end; white-space: nowrap; }
+.cart-item__price-normal { font-family: var(--display); font-size: 1.1rem; color: var(--warm); }
+.cart-item__price-normal.is-struck { text-decoration: line-through; opacity: .55; font-size: .92rem; }
+.cart-item__price-member { font-size: .76rem; font-weight: 600; color: var(--ink-soft); margin-top: 1px; }
+.cart-item__price-member.is-active { color: var(--gold-ink); font-size: .95rem; font-family: var(--display); font-weight: 400; }
+html[data-mode="marine"] .cart-item__price-member.is-active { color: var(--gold); }
+.cart-member { display: flex; align-items: center; gap: 8px; margin: 14px 0 2px; font-size: .9rem; color: var(--ink); cursor: pointer; }
+.cart-member input { width: 16px; height: 16px; cursor: pointer; accent-color: var(--maroon); }
+html[data-mode="marine"] .cart-member input { accent-color: var(--gold); }
+.cart-member__note { color: var(--ink-soft); font-size: .82rem; }
+.cart-item__rm { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; background: none; border: 1px solid var(--line); border-radius: 50%; color: var(--ink); font-size: 1.1rem; line-height: 1; cursor: pointer; padding: 0; transition: background .15s, color .15s, border-color .15s; }
+.cart-item__rm:hover { color: var(--paper); background: var(--maroon); border-color: var(--maroon); }
+html[data-mode="marine"] .cart-item__rm:hover { color: var(--navy); background: var(--gold); border-color: var(--gold); }
 .cart-total { display: flex; justify-content: space-between; align-items: baseline; margin: 16px 0 4px; font-size: .95rem; }
 .cart-total b { font-family: var(--display); font-size: 1.5rem; color: var(--warm); }
 
@@ -509,6 +547,9 @@ html[data-mode="marine"] .bglow-solid::before { background-image: linear-gradien
 <section class="section" id="butikk">
   <div class="wrap">
 
+    <!-- Redigerbar info-tekst (styres fra merch-admin → window.MERCH_INFO) -->
+    <div class="merch-info" id="merch-info" hidden></div>
+
     <div class="merch-grid" id="merch-grid">
       <!-- Rendres av merch-products.js -->
     </div><!-- /merch-grid -->
@@ -625,6 +666,18 @@ html[data-mode="marine"] .bglow-solid::before { background-image: linear-gradien
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
+  function renderInfo() {
+    var box = document.getElementById('merch-info');
+    if (!box) return;
+    var txt = (window.MERCH_INFO || '').trim();
+    if (!txt) { box.hidden = true; box.innerHTML = ''; return; }
+    // Trygt: escape og gjør doble linjeskift om til avsnitt.
+    box.innerHTML = txt.split(/\n{2,}/).map(function (para) {
+      return '<p>' + esc(para).replace(/\n/g, '<br>') + '</p>';
+    }).join('');
+    box.hidden = false;
+  }
+
   function renderMerch() {
     var grid = document.getElementById('merch-grid');
     var data = window.MERCH_PRODUCTS;
@@ -647,7 +700,14 @@ html[data-mode="marine"] .bglow-solid::before { background-image: linear-gradien
       } else if (p.badge) {
         badgeText = p.badge;
         badgeCls = ' product__badge--custom';
-        badgeStyle = p.badgeColor ? ' style="' + sv(p.badgeColor) + '"' : '';
+        // Bakgrunnsfarge (--c-l/--c-d) og valgfri tekstfarge (--tc-l/--tc-d).
+        var bParts = [];
+        if (p.badgeColor) bParts.push(sv(p.badgeColor));
+        if (p.badgeTextColor) {
+          var tc = (window.resolveColor || function () { return { light: '', dark: '' }; })(p.badgeTextColor);
+          if (tc.light || tc.dark) bParts.push('--tc-l:' + tc.light + ';--tc-d:' + tc.dark);
+        }
+        badgeStyle = bParts.length ? ' style="' + bParts.join(';') + '"' : '';
       } else {
         badgeText = '';
         badgeCls = '';
@@ -749,11 +809,13 @@ html[data-mode="marine"] .bglow-solid::before { background-image: linear-gradien
     }
   }
 
+  renderInfo();
   renderMerch();
 })();
 </script>
 <script src="merch-config.js"></script>
 <script src="merch-cart.js"></script>
+<script src="report.js"></script>
 <script src="site-search.js"></script>
 </body>
 </html>
