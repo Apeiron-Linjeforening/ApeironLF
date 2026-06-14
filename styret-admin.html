@@ -148,6 +148,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
   .a-header h1 { display: none; }
 }
 </style>
+<link rel="stylesheet" href="admin-common.css">
 </head>
 <body>
 
@@ -191,13 +192,13 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
     <div class="meta-panel">
       <h3>Overskrift — Styremedlemmer</h3>
       <div class="meta-grid">
-        <div class="fg narrow"><label>Eyebrow</label><input type="text" id="meta-board-eyebrow"></div>
+        <div class="fg narrow"><label data-help="Liten etikett som vises over overskriften på siden, f.eks. «Hvem er vi».">Eyebrow</label><input type="text" id="meta-board-eyebrow"></div>
         <div class="fg"><label>Overskrift</label><input type="text" id="meta-board-heading"></div>
         <div class="fg"><label>Ingress</label><input type="text" id="meta-board-lede"></div>
       </div>
       <h3>Overskrift — Hva gjør vi (roller)</h3>
       <div class="meta-grid">
-        <div class="fg narrow"><label>Eyebrow</label><input type="text" id="meta-verv-eyebrow"></div>
+        <div class="fg narrow"><label data-help="Liten etikett som vises over overskriften på siden, f.eks. «Hvem er vi».">Eyebrow</label><input type="text" id="meta-verv-eyebrow"></div>
         <div class="fg"><label>Overskrift</label><input type="text" id="meta-verv-heading"></div>
         <div class="fg"><label>Ingress</label><input type="text" id="meta-verv-lede"></div>
       </div>
@@ -229,35 +230,16 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
 <input type="file" id="file-input" accept="image/png,image/jpeg,image/webp,image/avif" hidden>
 
 <script src="palette.js"></script>
+<script src="admin-common.js"></script>
 <script src="styret-content.js"></script>
 <script>
 (function () {
   /* ─── CONFIG ─── */
-  const PASSWORD = 'apeiron2026';
   const LS_KEY   = 'apeiron-styret-v1';
-  const LS_AUTH  = 'apeiron-admin-auth';
   /* Farger håndteres nå av palette.js (createColorControl + resolveColor). */
 
-  /* ─── AUTH ─── */
-  const gate = document.getElementById('gate');
-  const adminEl = document.getElementById('admin');
-  const pwInput = document.getElementById('pw-input');
-  const pwErr = document.getElementById('pw-err');
-
-  function login(pw) {
-    if (pw === PASSWORD) {
-      sessionStorage.setItem(LS_AUTH, '1');
-      gate.style.display = 'none'; adminEl.classList.add('on'); init();
-    } else {
-      pwErr.textContent = 'Feil passord — prøv igjen'; pwInput.value = ''; pwInput.focus();
-    }
-  }
-  if (sessionStorage.getItem(LS_AUTH) === '1') {
-    gate.style.display = 'none'; adminEl.classList.add('on'); init();
-  } else {
-    document.getElementById('pw-btn').addEventListener('click', function () { login(pwInput.value); });
-    pwInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') login(pwInput.value); });
-  }
+  /* ─── AUTH (delt logikk i admin-common.js) ─── */
+  AdminCommon.setupAuth(init);
 
   /* ─── DATA ─── */
   let data = { board: {}, verv: {}, members: [], roles: [] };
@@ -290,12 +272,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
   let saveTimer = null;
   function lazySave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveData, 350); }
 
-  const toastEl = document.getElementById('toast');
-  let toastTimer = null;
-  function showToast(msg) {
-    toastEl.textContent = msg; toastEl.classList.add('show');
-    clearTimeout(toastTimer); toastTimer = setTimeout(function () { toastEl.classList.remove('show'); }, 2200);
-  }
+  function showToast(msg) { AdminCommon.toast(msg); }
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -373,7 +350,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
             + '<div class="fg"><label>Navn</label><input type="text" data-f="name" value="' + esc(m.name) + '" placeholder="Fullt navn"></div>'
             + '<div class="fg narrow"><label>Initialer</label><input type="text" data-f="initials" value="' + esc(m.initials) + '" placeholder="f.eks. SL"></div>'
           + '</div>'
-          + '<div class="fg"><label>Hovedverv (Rolle)</label><input type="text" data-f="role" value="' + esc(m.role) + '" placeholder="f.eks. Leder"></div>'
+          + '<div class="fg"><label data-help="Personens viktigste verv, vises stort på kortet, f.eks. «Leder».">Hovedverv (Rolle)</label><input type="text" data-f="role" value="' + esc(m.role) + '" placeholder="f.eks. Leder"></div>'
           + '<div class="subed" data-tags></div>'
         + '</div>'
       + '</div>';
@@ -528,7 +505,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
     document.getElementById('meta-verv-heading').value = data.verv.heading || '';
     document.getElementById('meta-verv-lede').value = data.verv.lede || '';
   }
-  function renderAll() { renderMeta(); renderList('members'); renderList('roles'); }
+  function renderAll() { renderMeta(); renderList('members'); renderList('roles'); AdminCommon.enhanceHelp(document); }
 
   function updateCounts() {
     document.getElementById('count-members').textContent = data.members.length + ' medlemmer';

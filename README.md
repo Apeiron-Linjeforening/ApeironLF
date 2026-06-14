@@ -73,6 +73,19 @@ For større endringer anbefaler vi å jobbe lokalt på egen PC. Vi anbefaler **G
 
 Åpne `index.html` direkte i nettleseren — enten via filutforskeren, eller lim inn stien i adressefeltet: `file:///[mappe]/ApeironLF/index.html`
 
+**Lagre admin-endringer rett til repo-fila (lokalt, anbefalt):**
+
+Admin-panelene kan skrive den oppdaterte datafila (f.eks. `merch-products.js`) **direkte til den lokale repo-fila** i stedet for å havne i nedlastingsmappa. Da kan du se og teste endringen lokalt med en gang, og selv velge når du vil committe/pushe til GitHub.
+
+Dette krever at admin åpnes via en **lokal server** (nettleserens fil-skrive-API virker ikke når siden åpnes som `file://`):
+
+1. I terminalen, stå i repo-mappa og kjør: `python3 -m http.server`
+2. Åpne f.eks. `http://localhost:8000/merch-admin.html`
+3. Klikk «Last ned …» → **velg datafila i repoet din én gang** → godkjenn skrivetilgang
+4. Heretter lagres endringene rett til den lokale fila (toast: «Lagret direkte … ✓»). Filvalget huskes mellom økter.
+
+Endringen ligger nå **kun lokalt** — den er ikke på GitHub/nettsiden før du committer og pusher. Slik kan du teste i fred først. Åpnes admin uten lokal server (eller i en nettleser uten støtte), faller den automatisk tilbake til vanlig nedlasting.
+
 ---
 
 ## Hva kan du redigere, og hvor?
@@ -141,18 +154,27 @@ Hvert produkt er et objekt i `window.MERCH_PRODUCTS`-arrayen:
 ```js
 {
   id: "unikt-id",            // brukes internt
-  badge: "Nyhet",            // tekst på badge, eller null
-  badgeType: "new",          // "new" (gull) | "bestseller" (maroon) | null
+  badge: "Snart utsolgt",    // egendefinert badge-tekst (kun når badgeType er null)
+  badgeType: "new",          // "new" | "bestseller" | "limited" | null (preset, fast tekst)
+  badgeGlow: null,           // eget glød-/fargevalg på badgen, f.eks. { anim: "ember-soft" } eller null
   category: "Klær",
   name: "Produktnavn",
   desc: "Kort beskrivelse.",
-  price: 299,
-  memberPrice: 249,          // utelat hvis ingen medlemspris
+  price: 299,                // null = skjuler pris og viser «Kommer snart» i stedet for kjøp
+  memberPrice: 249,          // utelat/null hvis ingen medlemspris
+  sizes: ["S", "M", "L"],    // valgfrie varianter (nedtrekksmeny i handlekurven), eller null
+  colors: ["Marineblå"],     // valgfrie varianter, eller null
   img: null,                 // null = viser segl-watermark
                              // "assets/merch/filnavn.jpg" = bilde fra repoet
                              // (base64-streng fra admin-panel også støttet)
 }
 ```
+
+> **Badge:** velg **enten** en preset (`badgeType`) **eller** egendefinert tekst (`badge`) — ikke begge. `badgeGlow` er et eget, uavhengig valg for animert glød/farge rundt merkelappen.
+
+#### Bestilling: handlekurv + Google Sheet
+
+Merch bestilles via en **handlekurv** på `merch.html`: kunden velger variant/antall, legger i kurv og sender bestillingen med navn og e-post. Bestillingen lagres i et **Google Sheet** og styret varsles på e-post. Betaling skjer via **Vipps** etter at styret har bekreftet. Se [Merch-bestilling: Google Sheet + Apps Script](#merch-bestilling-google-sheet--apps-script) for teknisk oppsett.
 
 **Bilder (tre alternativer):**
 1. **Ingen bilde** (`img: null`) — viser Apeiron-seglet som watermark
@@ -281,6 +303,125 @@ Finn riktig seksjon ved hjelp av kommentarene: `<!-- ============ OM OSS =======
 
 ---
 
+## Merch-bestilling: Google Sheet + Apps Script
+
+Nettsiden er statisk og har ingen egen server. Merch-bestillinger håndteres derfor med Google sine gratis-verktøy:
+
+- **Handlekurven** på `merch.html` (`merch-cart.js`) samler produkter/varianter og sender bestillingen som JSON.
+- Et **Google Apps Script** (en «web-app») tar imot bestillingen, skriver den som en rad i et **Google Sheet**, og sender et **e-postvarsel** til styret.
+- `merch-config.js` peker på web-app-adressen og holder Vipps-info + spam-token.
+
+```
+Handlekurv (merch.html) ──POST JSON──▶ Apps Script (/exec) ──▶ Google Sheet + e-post til styret
+```
+
+Hvis web-app-adressen ikke er satt i `merch-config.js`, faller siden tilbake til en ferdig utfylt **e-post-bestilling**, så «Send bestilling» aldri blir død.
+
+### Innstillinger i `merch-config.js`
+
+```js
+window.MERCH_ORDER_ENDPOINT = '';          // web-app-URL fra Apps Script (slutter på /exec)
+window.MERCH_ORDER_EMAIL    = 'DIN_EPOST'; // brukes til e-post-fallback
+window.MERCH_VIPPS          = '#XXXXXX «Apeiron»'; // vises i kurven (betaling via Vipps)
+window.MERCH_ORDER_TOKEN    = '';          // delt hemmelig streng mot spam (samme som i Apps Script)
+```
+
+### Spam-beskyttelse
+
+Endepunktet må være offentlig for at nettsiden skal kunne sende inn, men det kan **kun skrive** bestillinger — ingen kan lese ut data via lenken. To enkle lag demper spam:
+
+1. **Delt token:** sett samme tilfeldige streng i `MERCH_ORDER_TOKEN` (`merch-config.js`) og `ORDER_TOKEN` (Apps Script). Skriptet avviser innsendinger uten riktig token.
+2. **Honeypot:** handlekurven har et skjult felt som bots fyller ut, men ikke mennesker. Slike innsendinger forkastes automatisk.
+
+> Token-en ligger også i klient-koden, så den stopper ikke en målrettet angriper — men fjerner nær sagt all automatisk drive-by-spam. **Ikke** lim den ekte `SHEET_ID`-en eller `/exec`-URL-en inn i offentlige filer som denne README-en.
+
+### Oppsett (kort)
+
+Full steg-for-steg-guide ligger i [`docs/apps-script-oppsett.md`](docs/apps-script-oppsett.md). Kort fortalt:
+
+1. Lag et Google Sheet med overskriftene `Tidspunkt | Navn | E-post | Telefon | Bestilling | Kommentar | Total` (A1–G1).
+2. **Utvidelser → Apps Script**, lim inn koden under (bytt ut plassholderne), lagre.
+3. **Distribuer → Ny distribusjon → Web-app**: «Kjør som: Meg», «Hvem har tilgang: Alle». Godkjenn tilgang.
+4. Kopier web-app-URL-en (`…/exec`) inn i `MERCH_ORDER_ENDPOINT`.
+5. Endrer du skriptet senere: **Distribuer → Administrer distribusjoner → Ny versjon** (URL-en forblir den samme).
+
+<details>
+<summary><b>Hele Apps Script-koden (klikk for å vise)</b></summary>
+
+```javascript
+// ── Apeiron — mottak av merch-bestillinger ──
+// Skriver hver bestilling til arket og varsler styret på e-post.
+
+var STYRE_EPOST = 'DIN_STYRE_EPOST@example.com';   // ← hvem som skal varsles
+var SHEET_ID    = 'DITT_GOOGLE_SHEET_ID';          // ← ID fra Sheet-URL-en (…/d/DETTE/edit)
+var ORDER_TOKEN = 'EN_HEMMELIG_TILFELDIG_STRENG';  // ← samme streng som MERCH_ORDER_TOKEN i merch-config.js
+
+function doPost(e) {
+  try {
+    var data = JSON.parse(e.postData.contents);
+
+    // Enkel spam-sperre: avvis hvis token ikke stemmer (når token er satt).
+    if (ORDER_TOKEN && data.token !== ORDER_TOKEN) {
+      return ContentService
+        .createTextOutput(JSON.stringify({ ok: false, error: 'unauthorized' }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // Bygg en lesbar oppsummering av handlekurven, med pris per linje
+    var linjer = (data.items || []).map(function (it) {
+      var v = [];
+      if (it.size)  v.push('str: ' + it.size);
+      if (it.color) v.push('farge: ' + it.color);
+      var variant = v.length ? ' (' + v.join(', ') + ')' : '';
+      var linjepris = (it.lineTotal != null) ? it.lineTotal
+                    : (it.price != null ? it.price * it.qty : null);
+      var pris = (linjepris != null) ? ' – ' + linjepris + ',–' : '';
+      return '• ' + it.qty + '× ' + it.name + variant + pris;
+    }).join('\n');
+
+    var total = (data.total != null) ? data.total : '';
+
+    // Åpne arket via ID (mer robust enn getActiveSpreadsheet i web-app)
+    var sheet = SpreadsheetApp.openById(SHEET_ID).getSheets()[0];
+    sheet.appendRow([
+      new Date(),
+      data.name || '',
+      data.email || '',
+      data.phone || '',
+      linjer,
+      data.comment || '',
+      total
+    ]);
+
+    // E-postvarsel til styret
+    MailApp.sendEmail({
+      to: STYRE_EPOST,
+      subject: 'Ny merch-bestilling fra ' + (data.name || 'ukjent'),
+      body: 'Ny bestilling mottatt:\n\n'
+        + 'Navn: ' + (data.name || '') + '\n'
+        + 'E-post: ' + (data.email || '') + '\n'
+        + 'Telefon: ' + (data.phone || '') + '\n\n'
+        + linjer + '\n\n'
+        + 'Totalt: ' + total + ',–\n\n'
+        + (data.comment ? 'Kommentar: ' + data.comment + '\n\n' : '')
+        + 'Se hele oversikten i Google Sheet.'
+    });
+
+    return ContentService
+      .createTextOutput(JSON.stringify({ ok: true }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ ok: false, error: String(err) }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+```
+
+</details>
+
+---
+
 ## Filstruktur
 
 | Fil                      | Hva det er                                                                          |
@@ -290,6 +431,14 @@ Finn riktig seksjon ved hjelp av kommentarene: `<!-- ============ OM OSS =======
 | `merch.html`             | Merch-side (produkter hentes fra `merch-products.js`)                               |
 | `merch-admin.html`       | 'Passordbeskyttet' admin-panel for å redigere merch                                 |
 | `merch-products.js`      | Produktdata for merch (redigeres via admin-panel)                                   |
+| `merch-cart.js`          | Handlekurv + bestilling på merch-siden                                              |
+| `merch-config.js`        | Innstillinger for merch-bestilling (Apps Script-URL, Vipps, spam-token)             |
+| `medlemskap-admin.html`  | 'Passordbeskyttet' admin-panel for medlemskapspriser                                |
+| `membership-config.js`   | Medlemskapsdata (priser/Vipps/steg — redigeres via admin-panel)                     |
+| `membership.js`          | Fyller «Bli medlem»-kortet på forsiden fra `membership-config.js`                   |
+| `admin-common.js`        | Delt admin-logikk: innlogging, «logg ut», varsler, hjelpebobler, fillagring         |
+| `admin-common.css`       | Delt stil for admin-panelene                                                        |
+| `docs/apps-script-oppsett.md` | Steg-for-steg-guide for Google Sheet + Apps Script (merch-bestilling)          |
 | `galleri.html`           | Bildegalleri (henter automatisk fra Google Drive)                                   |
 | `marked.html`            | Kjøp & bytte (pensum-marked)                                                        |
 | `begrep.html`            | Side for Begrep-tidsskriftet (utgaver, podkast, film, julekalender)                 |
@@ -330,19 +479,25 @@ Hvis repoet ikke er koblet til Cloudflare Pages, eller om man ønsker å bytte C
 
 Kritisk:
 - [ ] Fikse domene - Se "Domene" nedenfor.
+- [ ] Se på MacGyver serien igjen.
 - [ ] Kvadrupelsjekk at informasjon under Hjelp er helt riktig!! Sjekk numre og eposter!
-- [ ] Endre medlemskapsprisen: to priser: ett-års (100kr) og studietid (150kr).
-- [ ] Fikse admin-bug: Om man logger inn på en admin side, og ikke lukker nettsiden helt etterpå, vil man ikke kunne se en annen admin side.
 - [ ] Endre "Hjelp" i menyen med noe annet som uttrykker mer direkte hva siden er om.
-- [ ] Merch: "Bestill" knappen burde gjøre noe annet enn å åpne eposten i en nettside. -> Google forms?
-- [x] ~~Fikse mørk modus - Nå er det kun en shitty mørk modus på index. Meny/NAV må passes på her.~~
 - [ ] Fikse menyen / NAV slik at den fungerer bedre på smalere skjermer og mobil.
 - [ ] Legge til et informasjonsfelt for Fadderukene hvor man kan fylle inn generell info.
 - [ ] Sjekke at "Legg til fadderukeprogrammet i din kalender" fungerer: iCal og Google Kalender.
-- [ ] Aporetisk Aften kalender: Ta beskrivelsen fra kalenderen og gjøre det om til et "Om Aftenen".
-- [ ] Legge til '?' i admin som forklarer hva hvert felt og mulighet gjør.
-- [ ] Passe på at alle admin-filene er konsistente.
+- [x] ~~Aporetisk Aften kalender: Ta beskrivelsen fra kalenderen og gjøre det om til et "Om Aftenen".~~
 - [ ] Måte for Apeiron å legge inn viktig informasjon som er tydelig på index.
+- [ ] Merch: Gjøre om navn til butikk.
+- [ ] Butikken: Legge til en mulighet til å legge inn tekst i et tekstfelt øverst for div. informasjon.
+- [ ] "Logg ut" i admin setter deg fast på log inn siden.
+- [ ] Mech-admin det fungerer ikke å dra/sortere kortene/produktene.
+- [ ] Merch: legge til en avhukningsknapp for medlemmer slik at de får medlemspris -> pris vises i handlekurv først som normalt og under med medlemsrabatt -> legge til egen seksjon i google sheets + script.
+- [ ] Merch-admin: når man laster ned ny merch-products.js laster man ned to filer. Den første merch-products.js er tom, den andre inneholder faktisk endringene som ble gjort.
+- [ ] Merch-admin: legge til flere bilder for et produkt både som bare vises vanlig i kortet, og som er koblet mot farge.
+- [ ] Merch-admin: lett redigering av bilder som lastes opp for produkt: crop, zoom, rotasjon.
+- [ ] Merch-admin: Badge blir gjemt bak produktbilder.
+- [ ] Merch-admin: Badge glød havner over badgefarge
+- [ ] Merch-admin: Badge farge "egendefinert" har ingen farge.
 
 Medium:
 - [ ] Be HF studentrådet om å oppdatere sidene deres og gi oss mer informasjon om hva de faktisk gjør. 
@@ -357,10 +512,8 @@ Medium:
 - [ ] Legg til Logikk Panikk.
 - [ ] Finne en bedre måte å vise arrangement og plakater på -> Måte å vise nyheter/informasjon på.
 - [ ] Se om vi kan få menyen til å være en og samme entitet over alle sidene -> for å slippe å oppdatere hver en meny for hver side.
-- [ ] Merch: "Begrenset" badge funker ikke, "Nyhet" badge funker kun om det står "Nyhet" i badge tekst feltet. Gjør admin feltene om til ett felt: velg en av presetene eller skriv egen. Ingen begge.
-- [ ] Merch: Legge til animert farge/lys på badge.
-- [ ] Merch admin: Når pris ikke er satt burde prisfeltet fjernes, likt som med medlemspris.
 - [ ] Merch admin: animasjonsfarger/glød burde ha fastsatte forskjellige farger for lys og mørk modus + alternativ om å velge for lys og mørk modus individuelt. 
+- [ ] merch handlekurv: gjøre krysset tydeligere i mørk og lys modus.
 
 
 Lav:
@@ -388,8 +541,12 @@ Må gjøres før vi slapper av med å bygge nettsiden:
 - [ ] Kvadrupelsjekk at informasjon under Hjelp er helt riktig!! Sjekk numre og eposter!
 - [ ] Sjekke på nytt hvordan alt oppfører seg på mobil og smalere skjermer.
 - [ ] Fjern WIP banneret.
-- [ ] Rydde opp i Readme.
 - [ ] Lage en ordentlig How-To.
+- [ ] Rydde opp i Readme og sette inn i Readme hva som er gjort og hvordan alt fungerer
+
+Skjelett Prosjekt:
+- [ ] Gjøre om prosjektet til et nytt repo som kan klones og lett gjøres om til andre linjeforeninger.
+- [ ] Må lages en readme som sier hva man må gjøre for å starte,
 
 Domene:
 - [ ] Få bedre domene
@@ -419,6 +576,21 @@ Merk: Cloudflare Registrar støtter ikke .no-domener. For .org er Cloudflare bil
 - Forsøkt omdirigering med `.htaccess` (`RedirectMatch (.*) https://apeironlf.pages.dev/`) — fungerte ikke.
 - Tilgang: For tilgang via sftp, skriv `sftp://dittbrukernavn@login.stud.ntnu.no/home/groups/apeiron` i filutforskeren (Linux). Per nå er det kun sosialansvarlig Iver (25/26) som har tilgang.
 - Avventer svar fra NTNU om muligheten for videre hjelp.
+- 
+---
+
+                                  |
+                                 |||
+                                |||||
+                  |    |    |   |||||||
+                 )_)  )_)  )_)   ~|~
+                )___))___))___)\  |
+               )____)____)_____)\\|
+             _____|____|____|_____\\\__
+             \                       /
+       ~^~^~~^~^~~^~^~~^~^~~^~^~~^~^~~^~^~~^~^~
+               ~^~  all aboard!  ~^~
+       ~^~^~~^~^~~^~^~~^~^~~^~^~~^~^~~^~^~~^~^~
 
 ---
 

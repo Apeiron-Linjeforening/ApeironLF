@@ -1,5 +1,18 @@
 ## Siste endringer
 
+**14.06.26 — Merch-bestilling, admin-fundament og diverse fikser**
+- **Merch-bestilling med handlekurv:** ny handlekurv på merch-siden (`merch-cart.js`) med valg av størrelse/farge/antall, produktbilder, «tøm kurv» og tydelig kvittering. Bestillinger sendes til et **Google Apps Script** som skriver til et **Google Sheet** (med pris per linje + totalsum) og varsler styret på e-post. Faller tilbake til e-post hvis endepunkt mangler. Oppsett dokumentert i `docs/apps-script-oppsett.md`.
+  - **Spam-beskyttelse:** delt token (`MERCH_ORDER_TOKEN` / `ORDER_TOKEN`) + skjult honeypot-felt.
+  - Innstillinger samlet i `merch-config.js` (endepunkt, Vipps-info, token). Betaling via Vipps gjort tydelig i kurven og i «Slik bestiller du».
+  - Varianter (`sizes`/`colors`) lagt til produktskjemaet og merch-admin.
+- **Delt admin-fundament (`admin-common.js` + `admin-common.css`):** felles innlogging, «Logg ut»-knapp, varsler og «?»-hjelpebobler på tvers av alle admin-paneler.
+  - **Fikset innloggingsbug:** innlogging deles nå mellom alle admin-sider (localStorage), og auto-innlogging kjører riktig ved gjenåpning.
+  - **Direkte lagring til repo-fila:** ved lokal kjøring (localhost) kan admin skrive datafila rett til den lokale repo-fila i stedet for nedlastingsmappa, så man kan teste før push.
+- **Medlemskap:** priser er nå admin-redigerbare med to nivåer (ett studieår / hele studietiden) via `medlemskap-admin.html` → `membership-config.js`, vist på forsiden via `membership.js`.
+- **«Om aftenen»:** Aporetisk Aften henter nå beskrivelsen fra kalenderhendelsen.
+- **Merch-badge:** preset og egendefinert tekst slått sammen til ett valg; «Begrenset»/«Nyhet» virker nå uavhengig av tekst. Nytt eget glød-/fargevalg på badgen (lys/mørk).
+- **Mindre fikser:** GitHub-lenke i footer på alle sider, prisfelt skjules når tomt, dropdown-meny markerer riktig side (inkl. Styret), Netlify → Cloudflare i admin-tekster, mobiltilpasning av handlekurven.
+
 **11.06.26 — Første opplastning av nettsiden**
 - Første versjon av hele nettstedet lastet opp: forsiden (`index.html`) med hero, Om oss, Studiene, Arrangementer, Aporetisk Aften, Fadderuke, Styret, Lesesalen, Bli medlem, Kontakt og footer.
 - Alle undersider: `pensum.html`, `merch.html`, `marked.html`.
@@ -153,6 +166,20 @@
 - Arrangementer: alle tre visninger (Liste, Rutenett, Oversikt) dekket. Filterknapper skjules ved API-feil. Bug-aktig statusbanner fjernet. Rutenett-meldingen sentrert over alle kolonner.
 - Aporetisk Aften: «Når»-feltet viser «—» ved API-feil og «Dato kommer» ved tom kalender. Genererte torsdagsdatoer vises ikke lenger ved API-feil.
 - Fadderukene: skjelett-plassholderen erstattet med feilmelding ved API-feil.
+
+**14.06.26 — Felles fargesystem med lys/mørk-varianter for admin**
+- Ny fil `palette.js`: én kilde til sannhet for alle navngitte farger, hver med kuratert lys- OG mørk-variant. Lastes før render-scriptene på offentlige sider og før admin-koden. Erstatter fire tidligere duplikate fargedefinisjoner (member-tag-klasser, stripe-klasser og to `ACCENT_HEX`-tabeller).
+- Tre frihetsnivåer i ett delt admin-element (`createColorControl`): velg ferdig tema (gir lys+mørk automatisk), miks lys og mørk hver for seg, eller skriv inn rå hex via fargehjul (`<input type="color">`). Per-modus.
+- Alle farger rendres nå via inline CSS-variabler (`--c-l`/`--c-d`) som `html[data-mode]` plukker automatisk — ingen egne override-regler per farge.
+- `resolveColor()` håndterer alle dataformer bakoverkompatibelt: temanavn (string), `{light,dark}`-objekt og rå hex — eksisterende data trenger ingen migrering.
+- Rullet ut i `styret`/`styret-admin` (member-tags + vervkort-aksent), `hjelp`/`hjelp-admin` (kort-aksent) og `begrep`/`begrep-admin` (podkast-kort, bruker palettens mørk-variant siden siden alltid er mørk).
+
+**14.06.26 — Merch: fritt fargevalg, animert kortkant og redigerbar knapp**
+- Fritt fargevalg (palett / miks / rå hex, med lys+mørk) for badge, kortkant og «Bestill»-knapp i `merch-admin.html`.
+- Animerte glød-presets rundt hele produktkortet (Aurora / Ember / Neon / Regnbue, hver i dempet og tydelig). Implementert som et wrapper-element (`.pglow`) med `::before` utenfor kortets `overflow:hidden`, slik at gløden blir en ekte lysende kant rundt kortet og ikke lyser gjennom fyllet. Egendefinert kantfarge gir en rolig puls i valgt farge.
+- Badge-type gjort meningsfull: hver type har nå distinkt farge (Bestselger = gull, Nyhet = grønn, Begrenset = rust). Tidligere så Bestselger og Begrenset identiske ut. Fri badge-farge overstyrer typen.
+- Redigerbar knappetekst (f.eks. «Bestill» → «Utsolgt») via nytt tekstfelt i admin.
+- `@media (prefers-reduced-motion: reduce)` demper/stopper alle glød-animasjoner.
 
 ---
 

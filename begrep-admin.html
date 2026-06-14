@@ -123,6 +123,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
   .a-header h1 { display: none; }
 }
 </style>
+<link rel="stylesheet" href="admin-common.css">
 </head>
 <body>
 
@@ -164,9 +165,9 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
     <!-- META -->
     <div class="meta-panel">
       <div class="fg narrow"><label>Grunnlagt (år)</label><input type="number" id="meta-founded" min="1900" step="1"></div>
-      <div class="fg narrow"><label>Julekalender-episoder</label><input type="number" id="meta-jul" min="0" step="1"></div>
+      <div class="fg narrow"><label data-help="Antall luker/episoder i julekalenderen. Vises som telling på siden.">Julekalender-episoder</label><input type="number" id="meta-jul" min="0" step="1"></div>
       <div class="fg"><label>E-post (kontaktskjema)</label><input type="email" id="meta-email" placeholder="begreptidsskrift@gmail.com"></div>
-      <div class="fg" style="flex-basis:100%"><label>Bestillingslenke (Google Forms URL)</label><input type="url" id="meta-order-url" placeholder="https://docs.google.com/forms/..."></div>
+      <div class="fg" style="flex-basis:100%"><label data-help="Lim inn delingslenken til Google Forms-skjemaet. Brukes som «bestill»-knapp på siden.">Bestillingslenke (Google Forms URL)</label><input type="url" id="meta-order-url" placeholder="https://docs.google.com/forms/..."></div>
     </div>
 
     <!-- UTGAVER -->
@@ -205,34 +206,15 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
 <input type="file" id="file-input" accept="image/png,image/jpeg,image/webp,image/avif" hidden>
 
 <script src="palette.js"></script>
+<script src="admin-common.js"></script>
 <script src="begrep-content.js"></script>
 <script>
 (function () {
   /* ─── CONFIG ─── */
-  const PASSWORD = 'apeiron2026';
   const LS_KEY   = 'apeiron-begrep-v1';
-  const LS_AUTH  = 'apeiron-admin-auth';
 
-  /* ─── AUTH ─── */
-  const gate = document.getElementById('gate');
-  const adminEl = document.getElementById('admin');
-  const pwInput = document.getElementById('pw-input');
-  const pwErr = document.getElementById('pw-err');
-
-  function login(pw) {
-    if (pw === PASSWORD) {
-      sessionStorage.setItem(LS_AUTH, '1');
-      gate.style.display = 'none'; adminEl.classList.add('on'); init();
-    } else {
-      pwErr.textContent = 'Feil passord — prøv igjen'; pwInput.value = ''; pwInput.focus();
-    }
-  }
-  if (sessionStorage.getItem(LS_AUTH) === '1') {
-    gate.style.display = 'none'; adminEl.classList.add('on'); init();
-  } else {
-    document.getElementById('pw-btn').addEventListener('click', function () { login(pwInput.value); });
-    pwInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') login(pwInput.value); });
-  }
+  /* ─── AUTH (delt logikk i admin-common.js) ─── */
+  AdminCommon.setupAuth(init);
 
   /* ─── DATA ─── */
   let data = { meta: {}, issues: [], podcasts: [], films: [] };
@@ -255,12 +237,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
   let saveTimer = null;
   function lazySave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveData, 350); }
 
-  const toastEl = document.getElementById('toast');
-  let toastTimer = null;
-  function showToast(msg) {
-    toastEl.textContent = msg; toastEl.classList.add('show');
-    clearTimeout(toastTimer); toastTimer = setTimeout(function () { toastEl.classList.remove('show'); }, 2200);
-  }
+  function showToast(msg) { AdminCommon.toast(msg); }
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -463,6 +440,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
     document.getElementById('meta-jul').value = data.meta.julekalenderEpisodes != null ? data.meta.julekalenderEpisodes : '';
     document.getElementById('meta-email').value = data.meta.email || '';
     document.getElementById('meta-order-url').value = data.meta.orderFormUrl || '';
+    AdminCommon.enhanceHelp(document);
   }
 
   function updateCounts() {

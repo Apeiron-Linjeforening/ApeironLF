@@ -124,6 +124,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
   .a-header h1 { display: none; }
 }
 </style>
+<link rel="stylesheet" href="admin-common.css">
 </head>
 <body>
 
@@ -193,7 +194,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
       <div class="panel-title">Si fra</div>
       <div class="meta-panel">
         <div class="meta-grid">
-          <div class="fg narrow"><label>Eyebrow</label><input type="text" id="sifra-eyebrow"></div>
+          <div class="fg narrow"><label data-help="Liten etikett som vises over overskriften i seksjonen.">Eyebrow</label><input type="text" id="sifra-eyebrow"></div>
           <div class="fg"><label>Overskrift</label><input type="text" id="sifra-heading"></div>
         </div>
         <div class="meta-grid" style="margin-top:10px">
@@ -235,7 +236,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
       <div class="panel-title">Faglig hjelp</div>
       <div class="meta-panel">
         <div class="meta-grid">
-          <div class="fg narrow"><label>Eyebrow</label><input type="text" id="studier-eyebrow"></div>
+          <div class="fg narrow"><label data-help="Liten etikett som vises over overskriften i seksjonen.">Eyebrow</label><input type="text" id="studier-eyebrow"></div>
           <div class="fg"><label>Overskrift</label><input type="text" id="studier-heading"></div>
         </div>
         <div class="meta-grid" style="margin-top:10px">
@@ -254,7 +255,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
       <div class="panel-title">Psykisk helse</div>
       <div class="meta-panel">
         <div class="meta-grid">
-          <div class="fg narrow"><label>Eyebrow</label><input type="text" id="helse-eyebrow"></div>
+          <div class="fg narrow"><label data-help="Liten etikett som vises over overskriften i seksjonen.">Eyebrow</label><input type="text" id="helse-eyebrow"></div>
           <div class="fg"><label>Overskrift</label><input type="text" id="helse-heading"></div>
         </div>
         <div class="meta-grid" style="margin-top:10px">
@@ -273,7 +274,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
       <div class="panel-title">Fysisk helse</div>
       <div class="meta-panel">
         <div class="meta-grid">
-          <div class="fg narrow"><label>Eyebrow</label><input type="text" id="fysisk-eyebrow"></div>
+          <div class="fg narrow"><label data-help="Liten etikett som vises over overskriften i seksjonen.">Eyebrow</label><input type="text" id="fysisk-eyebrow"></div>
           <div class="fg"><label>Overskrift</label><input type="text" id="fysisk-heading"></div>
         </div>
         <div class="meta-grid" style="margin-top:10px">
@@ -292,7 +293,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
       <div class="panel-title">Akutt hjelp <small>nødnumre</small></div>
       <div class="meta-panel">
         <div class="meta-grid">
-          <div class="fg narrow"><label>Eyebrow</label><input type="text" id="akutt-eyebrow"></div>
+          <div class="fg narrow"><label data-help="Liten etikett som vises over overskriften i seksjonen.">Eyebrow</label><input type="text" id="akutt-eyebrow"></div>
           <div class="fg"><label>Overskrift</label><input type="text" id="akutt-heading"></div>
         </div>
         <div class="meta-grid" style="margin-top:10px">
@@ -311,36 +312,17 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
 <div class="toast" id="toast">Lagret i nettleseren</div>
 
 <script src="palette.js"></script>
+<script src="admin-common.js"></script>
 <script src="hjelp-content.js"></script>
 <script>
 (function () {
   /* ─── CONFIG ─── */
-  const PASSWORD = 'apeiron2026';
   const LS_KEY   = 'apeiron-hjelp-v1';
-  const LS_AUTH  = 'apeiron-admin-auth';
   /* Farger håndteres nå av palette.js (createColorControl + resolveColor). */
   const CARD_SECTIONS = ['sifra', 'studier', 'helse', 'fysisk'];
 
-  /* ─── AUTH ─── */
-  const gate = document.getElementById('gate');
-  const adminEl = document.getElementById('admin');
-  const pwInput = document.getElementById('pw-input');
-  const pwErr = document.getElementById('pw-err');
-
-  function login(pw) {
-    if (pw === PASSWORD) {
-      sessionStorage.setItem(LS_AUTH, '1');
-      gate.style.display = 'none'; adminEl.classList.add('on'); init();
-    } else {
-      pwErr.textContent = 'Feil passord — prøv igjen'; pwInput.value = ''; pwInput.focus();
-    }
-  }
-  if (sessionStorage.getItem(LS_AUTH) === '1') {
-    gate.style.display = 'none'; adminEl.classList.add('on'); init();
-  } else {
-    document.getElementById('pw-btn').addEventListener('click', function () { login(pwInput.value); });
-    pwInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') login(pwInput.value); });
-  }
+  /* ─── AUTH (delt logikk i admin-common.js) ─── */
+  AdminCommon.setupAuth(init);
 
   /* ─── DATA ─── */
   let data = {};
@@ -377,12 +359,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
   let saveTimer = null;
   function lazySave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveData, 350); }
 
-  const toastEl = document.getElementById('toast');
-  let toastTimer = null;
-  function showToast(msg) {
-    toastEl.textContent = msg; toastEl.classList.add('show');
-    clearTimeout(toastTimer); toastTimer = setTimeout(function () { toastEl.classList.remove('show'); }, 2200);
-  }
+  function showToast(msg) { AdminCommon.toast(msg); }
   function esc(s) {
     return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
@@ -421,14 +398,14 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
       + '<div class="fields">'
         + '<div class="frow">'
           + '<div class="fg"><label>Navn på kort</label><input type="text" data-f="name" value="' + esc(c.name) + '" placeholder="f.eks. Studentombudet"></div>'
-          + '<div class="fg narrow"><label>Eyebrow</label><input type="text" data-f="eyebrow" value="' + esc(c.eyebrow) + '" placeholder="liten etikett"></div>'
+          + '<div class="fg narrow"><label data-help="Liten etikett som vises over overskriften i seksjonen.">Eyebrow</label><input type="text" data-f="eyebrow" value="' + esc(c.eyebrow) + '" placeholder="liten etikett"></div>'
           + '<div class="fg narrow"><label>Fargestripe</label><div data-accent-host></div></div>'
         + '</div>'
         + '<div class="fg"><label>Beskrivelse</label><textarea data-f="desc" placeholder="Brødtekst. Blank linje gir nytt avsnitt.">' + esc(c.desc) + '</textarea></div>'
-        + '<div class="fg"><label>Uthevet merknad (rødbrun, vises før punktene)</label><input type="text" data-f="noteTop" value="' + esc(c.noteTop) + '" placeholder="valgfri — HTML lov"></div>'
+        + '<div class="fg"><label data-help="Valgfri rødbrun merknad over punktlisten. HTML er tillatt.">Uthevet merknad (rødbrun, vises før punktene)</label><input type="text" data-f="noteTop" value="' + esc(c.noteTop) + '" placeholder="valgfri — HTML lov"></div>'
         + '<div class="subed" data-resp></div>'
         + '<div class="subed" data-contacts></div>'
-        + '<div class="fg"><label>Diskré merknad (vises etter punktene)</label><input type="text" data-f="note" value="' + esc(c.note) + '" placeholder="valgfri — HTML lov"></div>'
+        + '<div class="fg"><label data-help="Valgfri diskré merknad under punktlisten. HTML er tillatt.">Diskré merknad (vises etter punktene)</label><input type="text" data-f="note" value="' + esc(c.note) + '" placeholder="valgfri — HTML lov"></div>'
         + '<div class="frow">'
           + '<div class="fg narrow"><label>Knappetekst</label><input type="text" data-f="btnLabel" value="' + esc(c.btnLabel) + '" placeholder="tom = ingen knapp"></div>'
           + '<div class="fg"><label>Knapp-lenke</label><input type="text" data-f="btnHref" value="' + esc(c.btnHref) + '" placeholder="https://..."></div>'
@@ -626,6 +603,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
     fillList('list-fysiskcards', data.fysisk.cards, roleCard);
     fillList('list-akutt', data.akutt.cards, akuttCard);
     updateCounts();
+    AdminCommon.enhanceHelp(document);
   }
 
   /* ─── META WIRING ─── */

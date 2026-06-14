@@ -242,6 +242,22 @@ html[data-mode="marine"] .pglow-solid > .product { border-color: var(--c-d); }
   .pglow::before { animation: none !important; opacity: calc(var(--go, .75) * .6); }
 }
 
+/* ── Badge-glød (eget valg, uavhengig av badge-farge) ──
+   Wrapper rundt selve merkelappen. Gjenbruker de animerte gradientklassene
+   (.pglow-<preset>::before) for fargene, men har egen base-posisjonering. */
+.bglow { position: absolute; top: 14px; left: 14px; z-index: 2; display: inline-block; border-radius: 4px; }
+.bglow > .product__badge { position: static; top: auto; left: auto; z-index: 1; display: block; }
+.bglow::before {
+  content: ""; position: absolute; inset: -3px; border-radius: 5px; z-index: 0;
+  filter: blur(var(--gb, 7px)); opacity: var(--go, .8); background-size: 200% 200%;
+}
+.bglow-anim::before { animation: pglow-move var(--gs, 5s) linear infinite; }
+.bglow-solid::before { background-image: linear-gradient(0deg, var(--c-l), var(--c-l)); animation: pglow-pulse 3.2s ease-in-out infinite; }
+html[data-mode="marine"] .bglow-solid::before { background-image: linear-gradient(0deg, var(--c-d), var(--c-d)); }
+@media (prefers-reduced-motion: reduce) {
+  .bglow::before { animation: none !important; opacity: calc(var(--go, .8) * .6); }
+}
+
 /* ── Responsive ── */
 @media (max-width: 980px) {
   .merch-grid { grid-template-columns: repeat(2, 1fr); }
@@ -251,6 +267,126 @@ html[data-mode="marine"] .pglow-solid > .product { border-color: var(--c-d); }
   .merch-grid { grid-template-columns: 1fr; gap: 20px; }
   .order-band { padding: 34px 26px; }
   .custom-band { padding: 28px 24px; }
+}
+
+/* ── Varianter på produktkort ── */
+.product__variants { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.product__variant { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 96px; }
+.product__variant > span { font-size: .62rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accent-ink); }
+.product__variant select, .product__variant input {
+  font-family: var(--body); font-size: .92rem; color: var(--ink);
+  border: 1px solid var(--line); border-radius: 4px; padding: 7px 9px; background: var(--card); width: 100%;
+}
+.product__variant select:focus, .product__variant input:focus { outline: none; border-color: var(--gold); }
+.product__variant--qty { flex: 0 0 74px; min-width: 64px; }
+.product__add { cursor: pointer; }
+.product__btn--soon { opacity: .5; pointer-events: none; cursor: default; }
+
+/* ── Legg i kurv-knapp (kompakt) ── */
+.product__add { display: inline-flex; align-items: center; gap: 7px; padding: 9px 16px; font-size: .85rem; border-radius: 4px; white-space: nowrap; }
+.product__add--ok { background: #3a6b4a !important; border-color: #3a6b4a !important; color: #fff !important; }
+
+/* ── Handlekurv ── */
+.cart-fab {
+  position: fixed; right: 22px; bottom: 22px; z-index: 400;
+  width: 56px; height: 56px; border-radius: 50%; border: none; cursor: pointer;
+  background: var(--maroon); color: #fff; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 14px 30px -10px rgba(0,0,0,.5); transition: transform .15s ease, background .2s;
+}
+.cart-fab:hover { transform: translateY(-2px); }
+.cart-fab svg { width: 24px; height: 24px; }
+.cart-fab.bump { animation: cart-bump .35s ease; }
+@keyframes cart-bump { 0%,100% { transform: scale(1); } 40% { transform: scale(1.18); } }
+.cart-fab__count {
+  position: absolute; top: -3px; right: -3px; min-width: 21px; height: 21px; padding: 0 5px;
+  border-radius: 11px; background: var(--gold); color: var(--navy);
+  font-size: .74rem; font-weight: 700; display: flex; align-items: center; justify-content: center;
+}
+
+/* Overlay + drawer styres av .cart-open på .cart-root (myk slide-in) */
+.cart-overlay {
+  position: fixed; inset: 0; z-index: 401; background: rgba(15,17,30,.5);
+  opacity: 0; visibility: hidden; transition: opacity .28s ease, visibility .28s ease;
+}
+.cart-root.cart-open .cart-overlay { opacity: 1; visibility: visible; }
+.cart-drawer {
+  position: fixed; top: 0; right: 0; bottom: 0; z-index: 402; width: min(420px, 92vw);
+  background: var(--card); color: var(--ink); display: flex; flex-direction: column;
+  box-shadow: -14px 0 40px -16px rgba(0,0,0,.5); padding: 20px 22px 26px; overflow-y: auto;
+  transform: translateX(100%); transition: transform .3s cubic-bezier(.4,0,.2,1);
+}
+.cart-root.cart-open .cart-drawer { transform: translateX(0); }
+.cart-drawer__head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.cart-drawer__head h3 { font-family: var(--display); font-size: 1.7rem; color: var(--ink); margin-right: auto; }
+.cart-clear { background: none; border: none; font-size: .8rem; color: var(--ink-soft); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+.cart-clear:hover { color: var(--maroon); }
+.cart-close { background: none; border: none; font-size: 1.8rem; line-height: 1; color: var(--ink-soft); cursor: pointer; }
+.cart-close:hover { color: var(--maroon); }
+.cart-empty { color: var(--ink-soft); font-size: .96rem; padding: 18px 2px; line-height: 1.5; }
+
+.cart-item { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.cart-item__thumb { flex: 0 0 56px; width: 56px; height: 56px; object-fit: cover; border-radius: 5px; background: var(--navy); }
+.cart-item__thumb[data-placeholder] { object-fit: contain; padding: 8px; opacity: .55; }
+.cart-item__main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.cart-item__top { display: flex; align-items: flex-start; gap: 8px; }
+.cart-item__info { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.cart-item__name { font-weight: 600; font-size: .96rem; line-height: 1.25; }
+.cart-item__variant { font-size: .78rem; color: var(--ink-soft); }
+.cart-item__bottom { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.cart-item__controls { display: flex; align-items: center; gap: 4px; }
+.cart-qty { width: 26px; height: 26px; border: 1px solid var(--line); background: var(--paper); border-radius: 4px; cursor: pointer; font-size: 1rem; line-height: 1; color: var(--ink); }
+.cart-qty:hover { border-color: var(--gold); }
+.cart-qty-num { width: 42px; text-align: center; border: 1px solid var(--line); border-radius: 4px; padding: 4px; font-family: var(--body); background: var(--card); color: var(--ink); }
+.cart-item__price { font-family: var(--display); font-size: 1.1rem; color: var(--warm); white-space: nowrap; }
+.cart-item__rm { background: none; border: none; color: var(--ink-soft); font-size: 1.2rem; line-height: 1; cursor: pointer; padding: 0 2px; }
+.cart-item__rm:hover { color: var(--maroon); }
+.cart-total { display: flex; justify-content: space-between; align-items: baseline; margin: 16px 0 4px; font-size: .95rem; }
+.cart-total b { font-family: var(--display); font-size: 1.5rem; color: var(--warm); }
+
+.cart-checkout { margin-top: 18px; display: flex; flex-direction: column; gap: 10px; }
+.cart-vipps { font-size: .85rem; line-height: 1.45; color: var(--ink); background: rgba(212,175,55,.12); border: 1px solid rgba(212,175,55,.4); border-radius: 5px; padding: 10px 12px; }
+.cart-checkout h4 { font-size: 1.05rem; color: var(--ink); }
+.cart-checkout label { display: flex; flex-direction: column; gap: 3px; font-size: .76rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+.cart-opt { font-weight: 400; text-transform: none; letter-spacing: 0; }
+.cart-checkout input, .cart-checkout textarea {
+  font-family: var(--body); font-size: .95rem; color: var(--ink);
+  border: 1px solid var(--line); border-radius: 4px; padding: 8px 10px; background: var(--paper); resize: vertical;
+}
+.cart-checkout input:focus, .cart-checkout textarea:focus { outline: none; border-color: var(--gold); }
+.cart-privacy { font-size: .76rem; color: var(--ink-soft); line-height: 1.45; }
+.cart-send { margin-top: 4px; justify-content: center; }
+.cart-send:disabled { opacity: .6; cursor: default; }
+.cart-status { font-size: .85rem; min-height: 1.1em; color: var(--ink-soft); }
+.cart-status--err { color: var(--maroon); }
+
+.cart-done { text-align: center; padding: 30px 6px; }
+.cart-done__check { width: 52px; height: 52px; margin: 0 auto 14px; border-radius: 50%; background: #3a6b4a; color: #fff; font-size: 1.7rem; display: flex; align-items: center; justify-content: center; }
+.cart-done h4 { font-family: var(--display); font-size: 1.5rem; color: var(--ink); margin-bottom: 8px; }
+.cart-done p { font-size: .92rem; color: var(--ink-soft); line-height: 1.5; margin-bottom: 18px; }
+
+/* Tydelig «fortsett å handle»/lukk-knapp nederst i kurven */
+.cart-continue {
+  margin-top: 18px; padding: 11px; width: 100%; cursor: pointer;
+  background: transparent; border: 1px solid var(--line); border-radius: 5px;
+  color: var(--ink-soft); font-family: var(--body); font-size: .9rem; transition: border-color .15s, color .15s;
+}
+.cart-continue:hover { border-color: var(--gold); color: var(--ink); }
+
+/* Honeypot — skjult for mennesker, fanger bots */
+.cart-hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cart-fab.bump { animation: none; }
+  .cart-drawer, .cart-overlay { transition: none; }
+}
+
+/* ── Mobil ── */
+@media (max-width: 560px) {
+  .cart-drawer { width: 100vw; padding: 18px 16px 24px; }
+  .cart-fab { right: 16px; bottom: 16px; width: 52px; height: 52px; }
+  /* 16px hindrer at iOS zoomer inn når man fokuserer et felt */
+  .cart-checkout input, .cart-checkout textarea { font-size: 16px; }
+  .product__variant { min-width: 84px; }
 }
 </style>
 </head>
@@ -302,7 +438,7 @@ html[data-mode="marine"] .pglow-solid > .product { border-color: var(--c-d); }
     <a href="galleri.html" class="nav__top">Galleri</a>
     <a href="hjelp.html" class="nav__top">Hjelp</a>
     <div class="nav__dropdown">
-      <a class="nav__drop-trigger nav__drop-trigger--active" href="merch.html">Merch <span class="nav__caret">▾</span></a>
+      <a class="nav__drop-trigger" href="merch.html">Merch <span class="nav__caret">▾</span></a>
       <div class="nav__drop-menu">
         <a href="merch.html" class="is-active">Merch</a>
         <a href="marked.html">Kjøp &amp; bytte</a>
@@ -382,29 +518,29 @@ html[data-mode="marine"] .pglow-solid > .product { border-color: var(--c-d); }
       <div>
         <span class="eyebrow">Slik bestiller du</span>
         <h2 class="h-section" style="font-size:clamp(1.9rem,3.5vw,2.8rem);">Enkel bestilling<br/>via Vipps</h2>
-        <p>All merch bestilles direkte fra Apeiron — ingen nettbutikk, bare en rask melding og Vipps. Vi svarer innen et par dager og avtaler henting på Dragvoll.</p>
+        <p>All merch bestilles direkte fra Apeiron — legg det du vil ha i handlekurven og send bestillingen. Betaling skjer via Vipps etter at vi har bekreftet. Vi svarer innen et par dager og avtaler henting på Dragvoll.</p>
         <p>Spørsmål? Send oss en mail på <a href="mailto:apeironlinjeforening@gmail.com" style="color:var(--gold);">apeironlinjeforening@gmail.com</a> eller stikk innom lesesalen.</p>
       </div>
       <ol class="order-steps">
         <li class="order-step">
           <span class="order-step__n">1</span>
           <div class="order-step__body">
-            <h4>Klikk «Bestill»</h4>
-            <p>En ferdigutfylt e-post åpner seg med produktnavnet i emnefeltet.</p>
+            <h4>Legg i kurv &amp; send</h4>
+            <p>Velg størrelse/farge, legg i handlekurven og send bestillingen med navn og e-post.</p>
           </div>
         </li>
         <li class="order-step">
           <span class="order-step__n">2</span>
           <div class="order-step__body">
             <h4>Vi bekrefter</h4>
-            <p>Styret svarer med betalingsinformasjon og bekreftelse på lager.</p>
+            <p>Styret svarer på e-post med bekreftelse på lager og betalingsinfo.</p>
           </div>
         </li>
         <li class="order-step">
           <span class="order-step__n">3</span>
           <div class="order-step__body">
-            <h4>Vipps <strong>#551937</strong></h4>
-            <p>Betal til Apeiron-nummeret. Skriv produktnavn i meldingsfeltet.</p>
+            <h4>Betal med Vipps <strong>#551937</strong></h4>
+            <p>Betal til Apeiron-nummeret «Apeiron». Skriv produktnavn i meldingsfeltet.</p>
           </div>
         </li>
         <li class="order-step">
@@ -444,6 +580,7 @@ html[data-mode="marine"] .pglow-solid > .product { border-color: var(--c-d); }
       <a href="index.html#kontakt">Kontakt</a>
     </div>
     <div class="footer__fine">© 2026 Apeiron Linjeforening</div>
+    <div class="footer__github"><a href="https://github.com/Apeiron-Linjeforening/ApeironLF" target="_blank" rel="noopener" aria-label="Apeiron på GitHub"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> GitHub</a></div>
     <div class="footer__report"><a href="mailto:apeironlinjeforening@gmail.com?subject=Feil%20p%C3%A5%20nettsiden">Rapporter en feil på nettsiden</a></div>
   </div>
 </footer>
@@ -500,13 +637,35 @@ html[data-mode="marine"] .pglow-solid > .product { border-color: var(--c-d); }
     data.forEach(function (p, i) {
       var delay = ['', ' d1', ' d2'][i % 3];
 
-      // Badge: fri farge overstyrer typefarge
-      var badgeStyle = p.badgeColor ? ' style="' + sv(p.badgeColor) + '"' : '';
-      var badgeCls = p.badgeColor ? ' product__badge--custom'
-                   : (p.badgeType ? ' product__badge--' + p.badgeType : '');
-      var badge = p.badge
-        ? '<span class="product__badge' + badgeCls + '"' + badgeStyle + '>' + esc(p.badge) + '</span>'
-        : '';
+      // Badge: enten en preset (fast tekst + farge) ELLER egendefinert tekst — aldri begge.
+      var BADGE_PRESETS = { bestseller: 'Bestseller', new: 'Nyhet', limited: 'Begrenset' };
+      var badgeText, badgeCls, badgeStyle;
+      if (p.badgeType && BADGE_PRESETS[p.badgeType]) {
+        badgeText = BADGE_PRESETS[p.badgeType];
+        badgeCls = ' product__badge--' + p.badgeType;
+        badgeStyle = '';
+      } else if (p.badge) {
+        badgeText = p.badge;
+        badgeCls = ' product__badge--custom';
+        badgeStyle = p.badgeColor ? ' style="' + sv(p.badgeColor) + '"' : '';
+      } else {
+        badgeText = '';
+        badgeCls = '';
+        badgeStyle = '';
+      }
+      var badge = '';
+      if (badgeText) {
+        var badgeSpan = '<span class="product__badge' + badgeCls + '"' + badgeStyle + '>' + esc(badgeText) + '</span>';
+        // Badge-glød: eget, uavhengig valg (animert preset eller fast farge m/ lys/mørk).
+        if (p.badgeGlow) {
+          var bAnim = animOf(p.badgeGlow);
+          var bGlowCls = 'bglow ' + (bAnim ? 'bglow-anim pglow-' + bAnim : 'bglow-solid');
+          var bGlowStyle = bAnim ? '' : ' style="' + sv(p.badgeGlow) + '"';
+          badge = '<span class="' + bGlowCls + '"' + bGlowStyle + '>' + badgeSpan + '</span>';
+        } else {
+          badge = badgeSpan;
+        }
+      }
 
       // Kortkant: lysende kant rundt HELE kortet (egen farge eller animert preset).
       // Realiseres via et wrapper-element (.pglow) så gløden ikke klippes av kortets
@@ -516,12 +675,37 @@ html[data-mode="marine"] .pglow-solid > .product { border-color: var(--c-d); }
       var photo = p.img
         ? '<img class="product__photo" src="' + esc(p.img) + '" alt="' + esc(p.name) + '">'
         : '';
-      var priceLine = p.memberPrice
-        ? p.price + ',–<small>kr pr. stk · <em>' + p.memberPrice + ',– for medlemmer</em></small>'
-        : p.price + ',–<small>kr pr. stk</small>';
-      var emailHref = 'mailto:apeironlinjeforening@gmail.com?subject='
-        + encodeURIComponent(p.emailSubject || 'Bestilling: ' + p.name)
-        + (p.emailBody ? '&body=' + encodeURIComponent(p.emailBody) : '');
+      var hasPrice = p.price != null && p.price !== '';
+      var priceLine = !hasPrice ? ''
+        : p.memberPrice
+          ? p.price + ',–<small>kr pr. stk · <em>' + p.memberPrice + ',– for medlemmer</em></small>'
+          : p.price + ',–<small>kr pr. stk</small>';
+      var priceHtml = hasPrice
+        ? '<div class="product__price product__price--member">' + priceLine + '</div>'
+        : '';
+      // Variant- og antallsvelgere (kun for produkter med pris = som kan bestilles)
+      var variantsHtml = '';
+      if (hasPrice) {
+        var vparts = '';
+        if (p.sizes && p.sizes.length) {
+          vparts += '<label class="product__variant"><span>Størrelse</span><select data-variant="size">'
+            + p.sizes.map(function (o) { return '<option>' + esc(o) + '</option>'; }).join('')
+            + '</select></label>';
+        }
+        if (p.colors && p.colors.length) {
+          vparts += '<label class="product__variant"><span>Farge</span><select data-variant="color">'
+            + p.colors.map(function (o) { return '<option>' + esc(o) + '</option>'; }).join('')
+            + '</select></label>';
+        }
+        vparts += '<label class="product__variant product__variant--qty"><span>Antall</span>'
+          + '<input type="number" data-variant="qty" value="1" min="1" inputmode="numeric"></label>';
+        variantsHtml = '<div class="product__variants">' + vparts + '</div>';
+      }
+
+      var actionHtml = hasPrice
+        ? '<button type="button" class="' + (p.btnColor ? 'btn product__btn' : 'btn btn--maroon') + ' product__add" data-add="' + esc(p.id) + '"'
+            + (p.btnColor ? ' style="' + sv(p.btnColor) + '"' : '') + '>' + esc(p.btnLabel || 'Legg i kurv') + '</button>'
+        : '<span class="btn btn--maroon product__btn--soon" aria-disabled="true">' + esc(p.btnLabel || 'Kommer snart') + '</span>';
 
       var article =
         '<article class="product reveal' + delay + '" id="prod-' + esc(p.id) + '">'
@@ -534,10 +718,10 @@ html[data-mode="marine"] .pglow-solid > .product { border-color: var(--c-d); }
         + '<span class="product__cat">' + esc(p.category) + '</span>'
         + '<h3>' + esc(p.name) + '</h3>'
         + '<p class="product__desc">' + esc(p.desc) + '</p>'
+        + variantsHtml
         + '<div class="product__footer">'
-        + '<div class="product__price product__price--member">' + priceLine + '</div>'
-        + '<a class="' + (p.btnColor ? 'btn product__btn' : 'btn btn--maroon') + '" href="' + esc(emailHref) + '"'
-          + (p.btnColor ? ' style="' + sv(p.btnColor) + '"' : '') + '>' + esc(p.btnLabel || 'Bestill') + '</a>'
+        + priceHtml
+        + actionHtml
         + '</div></div></article>';
 
       if (p.edge) {
@@ -568,6 +752,8 @@ html[data-mode="marine"] .pglow-solid > .product { border-color: var(--c-d); }
   renderMerch();
 })();
 </script>
+<script src="merch-config.js"></script>
+<script src="merch-cart.js"></script>
 <script src="site-search.js"></script>
 </body>
 </html>

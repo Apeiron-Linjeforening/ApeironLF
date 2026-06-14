@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medlemskap Admin — Apeiron</title>
+<link rel="icon" href="assets/apeiron-logo.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy: #232740; --gold: #d4af37; --gold-ink: #a07820;
+  --maroon: #76110f; --paper: #f4ecd9; --ink: #1a1d2e;
+  --ink-soft: rgba(26,29,46,.6); --border: rgba(35,39,64,.15);
+  --display: 'Cormorant Garamond', Georgia, serif;
+  --body: 'Spectral', Georgia, serif;
+}
+body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-height: 100vh; }
+
+/* Gate */
+#gate { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 40px; }
+#gate img { width: 72px; opacity: .85; }
+#gate h1 { font-family: var(--display); font-size: 2rem; color: var(--navy); }
+#gate p { color: var(--ink-soft); font-size: .88rem; }
+.gate-row { display: flex; gap: 8px; }
+#pw-input { padding: 9px 14px; border: 1.5px solid var(--border); border-radius: 4px; font-family: var(--body); font-size: .95rem; background: white; width: 200px; }
+#pw-input:focus { outline: none; border-color: var(--navy); }
+.btn-login { padding: 9px 18px; background: var(--navy); color: var(--paper); border: none; border-radius: 4px; font-family: var(--body); font-size: .95rem; cursor: pointer; }
+.btn-login:hover { background: #1a1d2e; }
+#pw-err { color: var(--maroon); font-size: .82rem; min-height: 1.1em; }
+
+/* Admin shell */
+#admin { display: none; }
+#admin.on { display: block; }
+.a-header {
+  background: var(--navy); color: var(--paper); padding: 14px 24px;
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 16px rgba(0,0,0,.22);
+}
+.a-header img { width: 32px; opacity: .85; }
+.a-header h1 { font-family: var(--display); font-size: 1.3rem; letter-spacing: .04em; margin-right: auto; }
+.a-header a { color: rgba(244,236,217,.65); font-size: .78rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; text-decoration: none; }
+.a-header a:hover { color: var(--paper); }
+.btn-export { padding: 7px 16px; background: var(--gold); color: var(--navy); border: none; border-radius: 4px; font-family: var(--body); font-size: .82rem; font-weight: 700; cursor: pointer; transition: filter .15s; }
+.btn-export:hover { filter: brightness(1.08); }
+
+.a-main { max-width: 760px; margin: 0 auto; padding: 28px 20px 80px; }
+
+.tip { background: white; border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: 4px; padding: 16px 20px; margin-bottom: 24px; font-size: .88rem; }
+.tip strong { color: var(--navy); font-size: .95rem; display: block; margin-bottom: 8px; }
+.tip ol { padding-left: 18px; }
+.tip li { margin: 5px 0; color: var(--ink-soft); line-height: 1.55; }
+.tip li b { color: var(--gold-ink); }
+.tip-note { margin-top: 10px; padding: 7px 11px; background: rgba(212,175,55,.08); border-radius: 3px; color: var(--gold-ink); font-size: .81rem; }
+.tip-reset { float: right; font-size: .76rem; color: var(--ink-soft); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; border: none; background: none; padding: 0; }
+.tip-reset:hover { color: var(--maroon); }
+
+.panel { background: white; border: 1px solid var(--border); border-radius: 6px; padding: 18px 20px; margin-bottom: 24px; }
+.sec-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.sec-head h2 { font-family: var(--display); font-size: 1.5rem; color: var(--navy); margin-right: auto; }
+.btn-add { padding: 7px 14px; background: rgba(212,175,55,.18); color: var(--gold-ink); border: 1px solid rgba(212,175,55,.5); border-radius: 4px; font-family: var(--body); font-size: .82rem; font-weight: 700; cursor: pointer; transition: background .15s; }
+.btn-add:hover { background: rgba(212,175,55,.3); }
+
+.list { display: flex; flex-direction: column; gap: 14px; }
+.card { background: #fbf7ec; border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px; }
+.card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.card-title { font-family: var(--display); font-size: 1.05rem; color: var(--navy); flex: 1; font-weight: 600; }
+.order-btns { display: flex; gap: 3px; }
+.btn-ord { width: 26px; height: 26px; border: 1px solid var(--border); border-radius: 3px; background: white; cursor: pointer; font-size: .7rem; color: var(--ink-soft); display: flex; align-items: center; justify-content: center; }
+.btn-ord:hover { background: rgba(35,39,64,.06); color: var(--navy); }
+.btn-del { padding: 4px 10px; border: 1px solid rgba(118,17,15,.25); border-radius: 3px; background: transparent; color: var(--maroon); font-size: .76rem; font-family: var(--body); cursor: pointer; }
+.btn-del:hover { background: rgba(118,17,15,.06); }
+
+.frow { display: flex; gap: 10px; flex-wrap: wrap; }
+.fg { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 120px; margin-bottom: 10px; }
+.fg label { font-size: .63rem; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; color: var(--ink-soft); }
+.fg input, .fg textarea { font-family: var(--body); font-size: .88rem; color: var(--ink); border: 1px solid var(--border); border-radius: 3px; padding: 6px 9px; background: white; resize: none; width: 100%; }
+.fg input:focus, .fg textarea:focus { outline: none; border-color: var(--navy); }
+.fg.narrow { flex: 0 0 130px; min-width: 100px; }
+
+.toast { position: fixed; bottom: 22px; right: 22px; background: var(--navy); color: var(--paper); padding: 8px 16px; border-radius: 4px; font-size: .8rem; opacity: 0; transition: opacity .25s; pointer-events: none; z-index: 200; }
+.toast.show { opacity: 1; }
+
+@media (max-width: 580px) { .a-header h1 { display: none; } }
+</style>
+<link rel="stylesheet" href="admin-common.css">
+</head>
+<body>
+
+<!-- ── GATE ── -->
+<div id="gate">
+  <img src="assets/apeiron-logo.png" alt="Apeiron">
+  <h1>Medlemskap Admin</h1>
+  <p>Logg inn for å redigere medlemskapspriser</p>
+  <div class="gate-row">
+    <input type="password" id="pw-input" placeholder="Passord" autocomplete="off">
+    <button class="btn-login" id="pw-btn" type="button">Logg inn</button>
+  </div>
+  <p id="pw-err"></p>
+</div>
+
+<!-- ── ADMIN ── -->
+<div id="admin">
+  <header class="a-header">
+    <img src="assets/apeiron-logo.png" alt="">
+    <h1>Medlemskap Admin</h1>
+    <a href="index.html#bli-medlem">← Se «Bli medlem»</a>
+    <button class="btn-export" id="export-btn" type="button">↓ Last ned membership-config.js</button>
+  </header>
+
+  <main class="a-main">
+    <div class="tip">
+      <button class="tip-reset" id="reset-btn" type="button">Tilbakestill til siste publiserte versjon</button>
+      <strong>Slik oppdaterer du medlemskapsprisene</strong>
+      <ol>
+        <li>Rediger Vipps-info, prisnivåer og innmeldingsstegene nedenfor</li>
+        <li>Klikk <b>Last ned membership-config.js</b></li>
+        <li>Erstatt <code>membership-config.js</code> i GitHub-repoet og commit/push</li>
+        <li>Cloudflare Pages oppdaterer nettsiden automatisk innen et minutt</li>
+      </ol>
+      <div class="tip-note">💾 Endringer lagres automatisk i nettleseren din. Last ned filen for å publisere.</div>
+    </div>
+
+    <div class="panel">
+      <div class="sec-head"><h2>Vipps</h2></div>
+      <div class="frow">
+        <div class="fg narrow"><label data-help="Vipps-nummeret medlemmer betaler til, f.eks. #551937.">Vipps-nummer</label>
+          <input type="text" id="f-vippsNumber" placeholder="#551937"></div>
+        <div class="fg"><label data-help="Navnet som vises i Vipps for mottakeren.">Vipps-navn</label>
+          <input type="text" id="f-vippsName" placeholder="Apeiron"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="sec-head"><h2>Prisnivåer</h2><button class="btn-add" id="add-tier" type="button">+ Nytt nivå</button></div>
+      <div class="list" id="tier-list"></div>
+    </div>
+
+    <div class="panel">
+      <div class="sec-head"><h2>Innmeldingssteg</h2><button class="btn-add" id="add-step" type="button">+ Nytt steg</button></div>
+      <p class="tip-note" style="margin:0 0 14px"><b>Tips:</b> bruk <code>{vipps}</code> for Vipps-nummeret og <code>{navn}</code> for Vipps-navnet i teksten.</p>
+      <div class="list" id="step-list"></div>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast">Lagret i nettleseren</div>
+
+<script src="admin-common.js"></script>
+<script src="membership-config.js"></script>
+<script>
+(function () {
+  'use strict';
+  const LS_KEY = 'apeiron-membership-v1';
+
+  /* ─── AUTH (delt logikk i admin-common.js) ─── */
+  AdminCommon.setupAuth(init);
+
+  /* ─── DATA ─── */
+  let data = { vippsNumber: '', vippsName: '', steps: [], tiers: [] };
+
+  function fresh() {
+    const c = window.MEMBERSHIP_CONFIG || {};
+    return {
+      vippsNumber: c.vippsNumber || '',
+      vippsName: c.vippsName || '',
+      steps: (c.steps || []).slice(),
+      tiers: (c.tiers || []).map(function (t) { return Object.assign({}, t); })
+    };
+  }
+  function loadData() {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) { try { data = JSON.parse(raw); normalize(); return; } catch (_) {} }
+    data = fresh();
+  }
+  function normalize() {
+    data.steps = Array.isArray(data.steps) ? data.steps : [];
+    data.tiers = Array.isArray(data.tiers) ? data.tiers : [];
+  }
+  function saveData() { localStorage.setItem(LS_KEY, JSON.stringify(data)); showToast('Lagret i nettleseren'); }
+  let saveTimer = null;
+  function lazySave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveData, 350); }
+  function showToast(msg) { AdminCommon.toast(msg); }
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function uid() { return 't' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
+
+  /* ─── RENDER ─── */
+  function renderMeta() {
+    document.getElementById('f-vippsNumber').value = data.vippsNumber || '';
+    document.getElementById('f-vippsName').value = data.vippsName || '';
+  }
+
+  function renderTiers() {
+    const host = document.getElementById('tier-list');
+    host.innerHTML = '';
+    data.tiers.forEach(function (t, i) {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML =
+        '<div class="card-head">'
+          + '<span class="card-title">' + esc(t.label || '(nytt nivå)') + '</span>'
+          + '<div class="order-btns">'
+            + '<button class="btn-ord" data-up type="button" title="Flytt opp">↑</button>'
+            + '<button class="btn-ord" data-dn type="button" title="Flytt ned">↓</button>'
+          + '</div>'
+          + '<button class="btn-del" type="button">Slett</button>'
+        + '</div>'
+        + '<div class="frow">'
+          + '<div class="fg"><label>Navn på nivå</label>'
+            + '<input type="text" data-f="label" value="' + esc(t.label || '') + '" placeholder="f.eks. Ett studieår"></div>'
+          + '<div class="fg narrow"><label data-help="Pris i kroner. Vises som «100,–».">Pris (kr)</label>'
+            + '<input type="number" data-f="price" value="' + (t.price != null ? t.price : '') + '" min="0" step="1" placeholder="100"></div>'
+        + '</div>'
+        + '<div class="fg"><label data-help="Kort forklaring under prisen. La stå tom for å skjule.">Forklaring</label>'
+          + '<input type="text" data-f="note" value="' + esc(t.note || '') + '" placeholder="f.eks. Gjelder ett studieår (høst + vår)."></div>';
+
+      card.querySelectorAll('[data-f]').forEach(function (el) {
+        el.addEventListener('input', function () {
+          const f = el.getAttribute('data-f');
+          t[f] = el.type === 'number' ? (el.value === '' ? null : Number(el.value)) : el.value;
+          if (f === 'label') card.querySelector('.card-title').textContent = el.value || '(nytt nivå)';
+          lazySave();
+        });
+      });
+      card.querySelector('[data-up]').addEventListener('click', function () { move(data.tiers, i, -1); renderTiers(); lazySave(); });
+      card.querySelector('[data-dn]').addEventListener('click', function () { move(data.tiers, i, 1); renderTiers(); lazySave(); });
+      card.querySelector('.btn-del').addEventListener('click', function () {
+        if (confirm('Slett «' + (t.label || 'dette nivået') + '»?')) { data.tiers.splice(i, 1); renderTiers(); lazySave(); }
+      });
+      host.appendChild(card);
+    });
+    AdminCommon.enhanceHelp(host);
+  }
+
+  function renderSteps() {
+    const host = document.getElementById('step-list');
+    host.innerHTML = '';
+    data.steps.forEach(function (txt, i) {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML =
+        '<div class="card-head">'
+          + '<span class="card-title">Steg ' + (i + 1) + '</span>'
+          + '<div class="order-btns">'
+            + '<button class="btn-ord" data-up type="button" title="Flytt opp">↑</button>'
+            + '<button class="btn-ord" data-dn type="button" title="Flytt ned">↓</button>'
+          + '</div>'
+          + '<button class="btn-del" type="button">Slett</button>'
+        + '</div>'
+        + '<div class="fg"><label>Tekst</label>'
+          + '<input type="text" data-f="step" value="' + esc(txt) + '" placeholder="f.eks. Vipps riktig beløp til {vipps} «{navn}»"></div>';
+      card.querySelector('[data-f]').addEventListener('input', function (e) { data.steps[i] = e.target.value; lazySave(); });
+      card.querySelector('[data-up]').addEventListener('click', function () { move(data.steps, i, -1); renderSteps(); lazySave(); });
+      card.querySelector('[data-dn]').addEventListener('click', function () { move(data.steps, i, 1); renderSteps(); lazySave(); });
+      card.querySelector('.btn-del').addEventListener('click', function () { data.steps.splice(i, 1); renderSteps(); lazySave(); });
+      host.appendChild(card);
+    });
+  }
+
+  function move(arr, i, dir) {
+    const j = i + dir;
+    if (j < 0 || j >= arr.length) return;
+    const tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+  }
+
+  function renderAll() { renderMeta(); renderTiers(); renderSteps(); }
+
+  /* ─── META WIRING ─── */
+  document.getElementById('f-vippsNumber').addEventListener('input', function (e) { data.vippsNumber = e.target.value; lazySave(); });
+  document.getElementById('f-vippsName').addEventListener('input', function (e) { data.vippsName = e.target.value; lazySave(); });
+  document.getElementById('add-tier').addEventListener('click', function () {
+    data.tiers.push({ id: uid(), label: '', price: null, note: '' }); renderTiers(); lazySave();
+  });
+  document.getElementById('add-step').addEventListener('click', function () {
+    data.steps.push(''); renderSteps(); lazySave();
+  });
+  document.getElementById('reset-btn').addEventListener('click', function () {
+    if (!confirm('Tilbakestille til siste publiserte versjon? Lokale endringer forsvinner.')) return;
+    localStorage.removeItem(LS_KEY); data = fresh(); renderAll(); showToast('Tilbakestilt til publisert versjon');
+  });
+
+  /* ─── EXPORT ─── */
+  function exportFile() {
+    const out = {
+      vippsNumber: data.vippsNumber || '',
+      vippsName: data.vippsName || '',
+      steps: data.steps,
+      tiers: data.tiers.map(function (t) {
+        return { id: t.id || uid(), label: t.label || '', price: t.price != null ? t.price : 0, note: t.note || '' };
+      })
+    };
+    const js = '/* ============================================================\n'
+      + '   membership-config.js — medlemskapspriser og innmeldingsinfo\n'
+      + '   Redigeres via medlemskap-admin.html (last ned og erstatt denne filen).\n'
+      + '   ============================================================ */\n'
+      + 'window.MEMBERSHIP_CONFIG = ' + JSON.stringify(out, null, 2) + ';\n';
+    const blob = new Blob([js], { type: 'text/javascript' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'membership-config.js';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+    showToast('Lastet ned membership-config.js');
+  }
+  document.getElementById('export-btn').addEventListener('click', exportFile);
+
+  /* ─── INIT ─── */
+  function init() { loadData(); renderAll(); }
+})();
+</script>
+</body>
+</html>

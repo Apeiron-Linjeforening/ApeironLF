@@ -25,7 +25,8 @@
     var m = summary.match(/^([^:]{2,22}):\s*(.+)$/);
     if (m) { cat = m[1].trim(); title = m[2].trim(); }
     return { title: title, cat: cat, start: start, allDay: allDay,
-             place: raw.location || '', link: raw.htmlLink || '' };
+             place: raw.location || '', link: raw.htmlLink || '',
+             description: (raw.description || '').trim() };
   }
 
   function isAporetisk(e) {
@@ -114,6 +115,24 @@
     if (whereEl) {
       var placeSpan = whereEl.querySelector('span');
       if (placeSpan) placeSpan.textContent = (state.live && nxt && nxt.place) ? nxt.place : '—';
+    }
+
+    // «Om aftenen» — beskrivelsen fra neste kalenderhendelse (om satt).
+    var aboutEl = document.getElementById('apoAbout');
+    if (aboutEl) {
+      var aboutBody = aboutEl.querySelector('.apo__about-body');
+      var desc = (state.live && nxt && nxt.description) ? nxt.description : '';
+      if (desc && aboutBody) {
+        // Org-styrt kalender: behold HTML hvis beskrivelsen inneholder tagger,
+        // ellers vis ren tekst med linjeskift bevart.
+        aboutBody.innerHTML = /<[a-z][\s\S]*>/i.test(desc)
+          ? desc
+          : esc(desc).replace(/\n/g, '<br>');
+        aboutEl.hidden = false;
+      } else {
+        if (aboutBody) aboutBody.innerHTML = '';
+        aboutEl.hidden = true;
+      }
     }
 
     // Render toggle + liste i apoCalRoot

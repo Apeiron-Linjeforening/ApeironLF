@@ -200,6 +200,9 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
 }
 .badge-opts input[type=radio]:checked + label { background: var(--navy); color: var(--paper); border-color: var(--navy); }
 .badge-opts label:hover { border-color: var(--navy); color: var(--navy); }
+.badge-custom { display: none; margin-top: 8px; gap: 8px; flex-direction: column; }
+.badge-custom.on { display: flex; }
+.badge-custom-color { display: flex; align-items: center; gap: 8px; }
 
 /* Advanced / email fields */
 .adv-toggle {
@@ -219,6 +222,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
   .fg.narrow { flex: 1; }
 }
 </style>
+<link rel="stylesheet" href="admin-common.css">
 </head>
 <body>
 
@@ -253,9 +257,10 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
         <li>Last opp bilder ved å <b>klikke på bildefeltet</b> eller dra et bilde inn på det</li>
         <li>Klikk <b>Last ned merch-products.js</b> — lagre filen fra nedlastingsmappen</li>
         <li>Erstatt <code>merch-products.js</code> i GitHub-repositoriet og push/commit</li>
-        <li>Netlify oppdaterer nettsiden automatisk innen et minutt</li>
+        <li>Cloudflare Pages oppdaterer nettsiden automatisk innen et minutt</li>
       </ol>
       <div class="tip-note">💾 Endringer lagres automatisk i nettleseren din — du mister dem ikke ved å laste siden på nytt. Last ned filen for å publisere til nettsiden.</div>
+      <div class="tip-note">🛠️ <b>Jobber du lokalt?</b> Åpne admin via en lokal server (f.eks. <code>python3 -m http.server</code> og gå til <code>localhost:8000/merch-admin.html</code>). Da kan du første gang velge <code>merch-products.js</code> i repoet, og senere lagres endringene <b>rett til fila</b> uten nedlasting. (Virker ikke når siden åpnes som <code>file://</code>.)</div>
     </div>
 
     <div id="plist"></div>
@@ -266,41 +271,15 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
 <input type="file" id="file-input" accept="image/png,image/jpeg,image/webp,image/avif" hidden>
 
 <script src="palette.js"></script>
+<script src="admin-common.js"></script>
 <script src="merch-products.js"></script>
 <script>
 (function () {
   /* ─── CONFIG ─── */
-  const PASSWORD  = 'apeiron2026'; // ← endre passordet her
-  const LS_KEY    = 'apeiron-merch-v1';
-  const LS_AUTH   = 'apeiron-admin-auth';
+  const LS_KEY = 'apeiron-merch-v1';
 
-  /* ─── AUTH ─── */
-  const gate      = document.getElementById('gate');
-  const adminEl   = document.getElementById('admin');
-  const pwInput   = document.getElementById('pw-input');
-  const pwErr     = document.getElementById('pw-err');
-
-  function login(pw) {
-    if (pw === PASSWORD) {
-      sessionStorage.setItem(LS_AUTH, '1');
-      gate.style.display = 'none';
-      adminEl.classList.add('on');
-      init();
-    } else {
-      pwErr.textContent = 'Feil passord — prøv igjen';
-      pwInput.value = '';
-      pwInput.focus();
-    }
-  }
-
-  if (sessionStorage.getItem(LS_AUTH) === '1') {
-    gate.style.display = 'none';
-    adminEl.classList.add('on');
-    init();
-  } else {
-    document.getElementById('pw-btn').addEventListener('click', function () { login(pwInput.value); });
-    pwInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') login(pwInput.value); });
-  }
+  /* ─── AUTH (delt logikk i admin-common.js) ─── */
+  AdminCommon.setupAuth(init);
 
   /* ─── DATA ─── */
   let products = [];
@@ -321,14 +300,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
   let saveTimer = null;
   function lazySave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveData, 350); }
 
-  const toastEl = document.getElementById('toast');
-  let toastTimer = null;
-  function showToast(msg) {
-    toastEl.textContent = msg;
-    toastEl.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () { toastEl.classList.remove('show'); }, 2200);
-  }
+  function showToast(msg) { AdminCommon.toast(msg); }
 
   /* ─── IMAGE PROCESSING ─── */
   let imgTarget = null;
@@ -423,17 +395,20 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
     card.className = 'pcard';
     card.setAttribute('data-id', p.id);
 
+    // Ett samlet badge-valg: enten en preset ELLER egendefinert tekst — aldri begge.
     const badgeTypes = [
       { v: '',           l: 'Ingen' },
       { v: 'bestseller', l: 'Bestseller' },
       { v: 'new',        l: 'Nyhet' },
-      { v: 'limited',    l: 'Begrenset' }
+      { v: 'limited',    l: 'Begrenset' },
+      { v: 'custom',     l: 'Egendefinert' }
     ];
-    const curBT = p.badgeType || '';
+    // Avled hvilket valg som er aktivt: preset > egendefinert tekst > ingen.
+    const curSel = p.badgeType ? p.badgeType : (p.badge ? 'custom' : '');
     const radios = badgeTypes.map(function (bt) {
       const rid = 'bt-' + p.id + '-' + (bt.v || 'none');
       return '<input type="radio" id="' + rid + '" name="bt-' + p.id + '" value="' + bt.v + '"'
-        + (curBT === bt.v ? ' checked' : '') + '>'
+        + (curSel === bt.v ? ' checked' : '') + '>'
         + '<label for="' + rid + '">' + bt.l + '</label>';
     }).join('');
 
@@ -463,19 +438,30 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
           + '<div class="fg"><label>Beskrivelse</label>'
             + '<textarea data-f="desc" placeholder="Kort beskrivelse av produktet...">' + esc(p.desc || '') + '</textarea></div>'
           + '<div class="frow">'
-            + '<div class="fg narrow"><label>Pris (kr)</label>'
-              + '<input type="number" data-f="price" value="' + (p.price != null ? p.price : '') + '" min="0" step="1" placeholder="0"></div>'
-            + '<div class="fg narrow"><label>Medlemspris (kr)</label>'
+            + '<div class="fg narrow"><label data-help="La feltet stå tomt for å skjule prisen helt — f.eks. for produkter som ikke selges enda.">Pris (kr)</label>'
+              + '<input type="number" data-f="price" value="' + (p.price != null ? p.price : '') + '" min="0" step="1" placeholder="tom = skjul pris"></div>'
+            + '<div class="fg narrow"><label data-help="Valgfri rabattert pris for medlemmer. Tom = ingen egen medlemspris vises.">Medlemspris (kr)</label>'
               + '<input type="number" data-f="memberPrice" value="' + (p.memberPrice != null ? p.memberPrice : '') + '" min="0" step="1" placeholder="tom = ingen"></div>'
-            + '<div class="fg"><label>Badge-tekst</label>'
-              + '<input type="text" data-f="badge" value="' + esc(p.badge || '') + '" placeholder="f.eks. Nyhet"></div>'
           + '</div>'
-          + '<div class="fg"><label>Badge-type</label><div class="badge-opts">' + radios + '</div></div>'
-          + '<div class="fg"><label>Bestill-knapp tekst</label>'
+          + '<div class="fg"><label data-help="Velg ett: enten en ferdig merkelapp (Bestseller/Nyhet/Begrenset) ELLER «Egendefinert» med egen tekst og farge. «Ingen» skjuler merkelappen.">Badge</label>'
+            + '<div class="badge-opts">' + radios + '</div>'
+            + '<div class="badge-custom' + (curSel === 'custom' ? ' on' : '') + '" data-badge-custom>'
+              + '<input type="text" data-f="badge" value="' + esc(p.badge || '') + '" placeholder="Egendefinert badge-tekst, f.eks. «Snart utsolgt»">'
+              + '<div class="badge-custom-color"><span class="app-lbl">Farge</span><div data-badge-host></div></div>'
+            + '</div>'
+          + '</div>'
+          + '<div class="fg"><label data-help="Animert glød eller fast lysfarge rundt selve merkelappen. Eget valg, uavhengig av badge-fargen. Fast farge kan settes ulikt for lys og mørk modus.">Badge-glød</label>'
+            + '<div data-badgeglow-host></div></div>'
+          + '<div class="frow">'
+            + '<div class="fg"><label data-help="Valgfrie størrelser, skilt med komma. Vises som nedtrekksmeny i handlekurven. Tom = ingen størrelsesvalg.">Størrelser (komma)</label>'
+              + '<input type="text" data-vlist="sizes" value="' + esc((p.sizes || []).join(', ')) + '" placeholder="f.eks. S, M, L, XL"></div>'
+            + '<div class="fg"><label data-help="Valgfrie farger, skilt med komma. Vises som nedtrekksmeny i handlekurven. Tom = ingen fargevalg.">Farger (komma)</label>'
+              + '<input type="text" data-vlist="colors" value="' + esc((p.colors || []).join(', ')) + '" placeholder="f.eks. Marineblå, Bordeaux"></div>'
+          + '</div>'
+          + '<div class="fg"><label data-help="Teksten på knappen. Standard er «Legg i kurv» — kan endres til f.eks. «Forhåndsbestill».">Bestill-knapp tekst</label>'
             + '<input type="text" data-f="btnLabel" value="' + esc(p.btnLabel || '') + '" placeholder="Bestill (f.eks. «Utsolgt»)"></div>'
-          + '<div class="fg"><label>Utseende — farger & kant</label>'
+          + '<div class="fg"><label data-help="Kortkant: lysende kant rundt hele produktkortet (fast farge eller animert glød). Knapp: farge på bestill-knappen.">Utseende — farger & kant</label>'
             + '<div class="appearance">'
-              + '<div class="app-col"><span class="app-lbl">Badge</span><div data-badge-host></div></div>'
               + '<div class="app-col"><span class="app-lbl">Kortkant</span><div data-edge-host></div></div>'
               + '<div class="app-col"><span class="app-lbl">Knapp</span><div data-btn-host></div></div>'
             + '</div></div>'
@@ -518,10 +504,31 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
       });
     });
 
-    // Badge radios
+    // Varianter (størrelser/farger): kommaseparert tekst → array.
+    card.querySelectorAll('[data-vlist]').forEach(function (el) {
+      el.addEventListener('input', function () {
+        const f = el.getAttribute('data-vlist');
+        const arr = el.value.split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+        setField(p.id, f, arr.length ? arr : null);
+      });
+    });
+
+    // Badge: ett valg styrer alt. Preset => fast tekst/farge, badge-tekst nullstilles.
+    // «Egendefinert» => ingen preset, vis tekst- og fargefelt.
+    const customWrap = card.querySelector('[data-badge-custom]');
     card.querySelectorAll('.badge-opts input[type=radio]').forEach(function (r) {
       r.addEventListener('change', function () {
-        if (r.checked) setField(p.id, 'badgeType', r.value || null);
+        if (!r.checked) return;
+        if (r.value === 'custom') {
+          setField(p.id, 'badgeType', null);
+          if (customWrap) customWrap.classList.add('on');
+        } else {
+          setField(p.id, 'badgeType', r.value || null);
+          setField(p.id, 'badge', null);
+          const txt = card.querySelector('[data-f="badge"]');
+          if (txt) txt.value = '';
+          if (customWrap) customWrap.classList.remove('on');
+        }
       });
     });
 
@@ -546,8 +553,14 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
     const mkColor = window.createColorControl;
     const bHost = card.querySelector('[data-badge-host]');
     if (bHost && mkColor) bHost.appendChild(mkColor({
-      value: p.badgeColor, emptyLabel: 'Følg badge-type',
+      value: p.badgeColor, emptyLabel: 'Standardfarge',
       onChange: function (v) { p.badgeColor = v || null; lazySave(); }
+    }));
+    const bgHost = card.querySelector('[data-badgeglow-host]');
+    if (bgHost && mkColor) bgHost.appendChild(mkColor({
+      value: p.badgeGlow, emptyLabel: 'Ingen glød',
+      animatedPresets: window.APEIRON_ANIMATED,
+      onChange: function (v) { p.badgeGlow = v || null; lazySave(); }
     }));
     const eHost = card.querySelector('[data-edge-host]');
     if (eHost && mkColor) eHost.appendChild(mkColor({
@@ -561,6 +574,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
       onChange: function (v) { p.btnColor = v || null; lazySave(); }
     }));
 
+    AdminCommon.enhanceHelp(card);
     return card;
   }
 
@@ -569,7 +583,8 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
     const p = {
       id: uid(), badge: null, badgeType: null,
       category: 'Tilbehør', name: '', desc: '',
-      price: 0, memberPrice: null, img: null,
+      price: null, memberPrice: null, img: null,
+      sizes: null, colors: null, badgeGlow: null,
       emailSubject: 'Bestilling: ', emailBody: ''
     };
     products.push(p);
@@ -602,7 +617,9 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
       + '   Rediger direkte her, eller åpne merch-admin.html for visuell redigering.\n'
       + '\n'
       + '   badgeType: "bestseller" | "new" | "limited" | null\n'
-      + '   btnLabel : tekst på Bestill-knappen (tom = "Bestill", f.eks. "Utsolgt")\n'
+      + '   btnLabel : tekst på handlekurv-knappen (tom = "Legg i kurv")\n'
+      + '   sizes/colors: array av varianter (f.eks. ["S","M","L"]) eller null\n'
+      + '   price: null skjuler pris og gir «Kommer snart» i stedet for kjøp\n'
       + '   Farger (alle valgfrie) — palettnavn, { light, dark }, eller rå hex:\n'
       + '     badgeColor : fri badge-farge (overstyrer typefargen)\n'
       + '     btnColor   : fri knappefarge\n'
@@ -612,13 +629,10 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
       + '        eller "assets/merch/filnavn.jpg" for bilder i repoet */\n\n'
       + 'window.MERCH_PRODUCTS = ' + JSON.stringify(products, null, 2) + ';\n';
 
-    const blob = new Blob([content], { type: 'text/javascript;charset=utf-8' });
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement('a');
-    a.href = url; a.download = 'merch-products.js';
-    document.body.appendChild(a); a.click();
-    document.body.removeChild(a); URL.revokeObjectURL(url);
-    showToast('Fil lastet ned — erstatt i GitHub og push!');
+    AdminCommon.saveFile('merch-products.js', content).then(function (mode) {
+      if (mode === 'direct') showToast('Lagret direkte til merch-products.js ✓');
+      else if (mode === 'download') showToast('Fil lastet ned — erstatt i repoet og push!');
+    });
   }
 
   /* ─── RESET ─── */

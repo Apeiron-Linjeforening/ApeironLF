@@ -561,6 +561,12 @@ html[data-mode="marine"] .apo__aside{ border-color:rgba(244,236,217,.16); }
 /* ============================================================
    APORETISK AFTEN — mini-kalender
    ============================================================ */
+.apo__about{ margin-top:1.6em; padding-top:1.3em; border-top:1px solid var(--line); }
+.apo__about[hidden]{ display:none; }
+.apo__about-title{ font-family:var(--body); font-size:.66rem; font-weight:600; letter-spacing:.22em; text-transform:uppercase; color:var(--accent-ink); margin-bottom:.6em; }
+.apo__about-body{ font-size:1.02rem; line-height:1.62; color:var(--ink-soft); max-width:54ch; }
+.apo__about-body a{ color:var(--accent-ink); text-decoration:underline; }
+html[data-mode="marine"] .apo__about-body{ color:rgba(244,236,217,.78); }
 .apo__cal-area{ margin-top:1.5em; }
 
 .apo-cal{
@@ -781,7 +787,13 @@ html[data-mode="marine"] .cal-popup__opt:hover{ background:rgba(212,175,55,.1); 
 .join__card::after{ content:""; position:absolute; inset:9px; border:1px solid rgba(118,17,15,.3); border-radius:3px; pointer-events:none; }
 .join__price{ font-family:var(--display); font-size:4.6rem; color:var(--warm); line-height:1; }
 .join__price small{ font-family:var(--body); font-size:1rem; color:var(--ink-soft); display:block; letter-spacing:.04em; }
-.join__card h3{ font-size:1.3rem; margin:.2em 0 1em; }
+.join__tiers{ display:grid; gap:14px; margin-bottom:8px; }
+.join__tier{ border:1px solid var(--line); border-radius:5px; padding:14px 16px; text-align:left; }
+.join__tier-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; }
+.join__tier-label{ font-size:1rem; font-weight:600; color:var(--ink); }
+.join__tier-price{ font-family:var(--display); font-size:2.1rem; color:var(--warm); line-height:1; }
+.join__tier-note{ font-size:.86rem; color:var(--ink-soft); margin-top:4px; line-height:1.45; }
+.join__card h3{ font-size:1.3rem; margin:.6em 0 1em; }
 .join__steps{ text-align:left; list-style:none; display:grid; gap:10px; margin:18px 0 26px; font-size:.96rem; }
 .join__steps li{ display:flex; gap:12px; }
 .join__steps .n{ flex:none; width:24px; height:24px; border-radius:50%; background:var(--navy); color:var(--gold); font-size:.8rem; display:grid; place-items:center; font-weight:700; }
@@ -833,6 +845,10 @@ html[data-mode="marine"] .cal-popup__opt:hover{ background:rgba(212,175,55,.1); 
 }
 .footer__links a:hover{ color:var(--gold); background-size:100% 1px; }
 .footer__fine{ font-size:.78rem; opacity:.6; letter-spacing:.04em; }
+.footer__github{ margin-top:18px; }
+.footer__github a{ display:inline-flex; align-items:center; gap:7px; font-size:.82rem; letter-spacing:.04em; opacity:.65; transition:opacity .2s ease, color .2s ease; }
+.footer__github a:hover{ opacity:1; color:var(--gold); }
+.footer__github svg{ width:16px; height:16px; }
 .footer__report{ margin-top:14px; }
 .footer__report a{ font-size:.72rem; opacity:.35; letter-spacing:.03em; transition:opacity .2s; }
 .footer__report a:hover{ opacity:.75; }

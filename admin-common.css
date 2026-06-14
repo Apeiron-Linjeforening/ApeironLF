@@ -1,0 +1,83 @@
+/* ============================================================
+   admin-common.css — delt stil for alle admin-paneler
+   Brukes sammen med admin-common.js. Lastes ETTER hver sides
+   egen <style> slik at den kan supplere eksisterende variabler.
+   ============================================================ */
+
+/* «Logg ut»-knapp i admin-headeren (lys tekst — headeren er mørk/navy) */
+.btn-logout {
+  margin-left: 8px;
+  background: transparent;
+  border: 1px solid rgba(244, 236, 217, .35);
+  color: rgba(244, 236, 217, .85);
+  border-radius: 4px;
+  padding: 7px 14px;
+  font-size: .82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.btn-logout:hover {
+  background: var(--maroon, #76110f);
+  border-color: var(--maroon, #76110f);
+  color: #fff;
+}
+
+/* «?»-hjelpeboble ved felt-etiketter */
+.help-tip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  margin-left: 6px;
+  border-radius: 50%;
+  background: var(--ink-soft, #4a4d63);
+  color: #fff;
+  font-size: .68rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: help;
+  position: relative;
+  vertical-align: middle;
+  user-select: none;
+}
+.help-tip__bubble {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 260px;
+  background: var(--navy, #232740);
+  color: #f4ecd9;
+  font-size: .76rem;
+  font-weight: 400;
+  line-height: 1.45;
+  text-align: left;
+  letter-spacing: .01em;
+  padding: 8px 11px;
+  border-radius: 5px;
+  box-shadow: 0 10px 28px -10px rgba(0, 0, 0, .5);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .15s ease, visibility .15s ease;
+  z-index: 300;
+  pointer-events: none;
+  white-space: normal;
+}
+.help-tip__bubble::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--navy, #232740);
+}
+.help-tip:hover .help-tip__bubble,
+.help-tip:focus .help-tip__bubble,
+.help-tip:focus-visible .help-tip__bubble {
+  opacity: 1;
+  visibility: visible;
+}

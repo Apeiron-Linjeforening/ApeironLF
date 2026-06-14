@@ -80,6 +80,37 @@
     if (node && node.nodeType === 3) node.nodeValue = text + ' ';
   }
 
+  // ── Side-basert aktiv tilstand ──────────────────────────────────────────
+  // Scrollspy over dekker bare #ankere på samme side. Her markerer vi lenker og
+  // dropdowns som peker til DENNE undersiden (f.eks. «Styret» => styret.html,
+  // «Merch» => merch.html, «Pensum» => pensum.html). Setter data-page-active på
+  // triggeren så scrollspy ikke nullstiller den når man er øverst på siden.
+  (function () {
+    function pageOf(href) {
+      return (href || '').split('#')[0].split('?')[0].split('/').pop().toLowerCase();
+    }
+    var cur = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
+
+    document.querySelectorAll('.nav__links .nav__dropdown').forEach(function (dd) {
+      var trigger = dd.querySelector('.nav__drop-trigger');
+      if (!trigger) return;
+      var match = pageOf(trigger.getAttribute('href')) === cur;
+      dd.querySelectorAll('.nav__drop-menu a').forEach(function (a) {
+        if (pageOf(a.getAttribute('href')) === cur) { a.classList.add('is-active'); match = true; }
+      });
+      if (match) {
+        trigger.classList.add('nav__drop-trigger--active');
+        trigger.setAttribute('data-page-active', '');
+      }
+    });
+
+    // Toppnivå-lenker som ikke ligger i en dropdown (Begrep, Galleri, Hjelp …)
+    document.querySelectorAll('.nav__links > a').forEach(function (a) {
+      if (a.classList.contains('nav__cta')) return;
+      if (pageOf(a.getAttribute('href')) === cur) a.classList.add('is-active');
+    });
+  })();
+
   // Only activate on pages that actually contain the linked sections
   var hasDropSections = dropGroups.length > 0 &&
     Object.keys(dropSectionIds).some(function (id) {
@@ -99,13 +130,15 @@
       var activeGroup = globalId ? (dropSectionIds[globalId] || null) : null;
 
       dropGroups.forEach(function (g) {
-        var isActive = activeGroup === g;
+        var scrollActive = activeGroup === g;
+        var pageActive = g.trigger.hasAttribute('data-page-active');
         var label = g.defaultText;
-        if (isActive) {
+        if (scrollActive) {
           var matched = g.entries.filter(function (e) { return e.id === globalId; })[0];
           if (matched) label = matched.label;
         }
-        g.trigger.classList.toggle('nav__drop-trigger--active', isActive);
+        // Side-aktiv trigger forblir markert selv uten en seksjon i visning.
+        g.trigger.classList.toggle('nav__drop-trigger--active', scrollActive || pageActive);
         setTriggerLabel(g.trigger, label);
       });
     };
