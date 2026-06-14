@@ -245,9 +245,11 @@ Hva hver kolonne betyr:
   skjule den uten å slette.
 - **Plassering** - hvor på siden nyheten vises. Gyldige verdier:
   `topp` (tynn stripe rett under menyen), `hovedoppslag` (boks i forsidebildet),
-  `arrangement`, `aporetisk`, `fadderuke`. (Skriv med små bokstaver.)
-- **Hastegrad** - en **rullegardin** med `Normal` og `Hast`. Velg `Hast` for vinrød,
-  tydelig markering; `Normal` gir vanlig gull-stil.
+  `arrangement`, `aporetisk`, `fadderuke`. (Skriv med små bokstaver. Vanlige
+  varianter som `aporetisk aften`, `arrangementer` og `fadderukene` godtas også.)
+- **Hastegrad** - en **rullegardin** med `Normal` og `Hast`. `Hast` gir en fylt
+  vinrød boks med lys tekst og «Viktig»-merke; `Normal` gir et rolig kort med
+  gull-aksent. De to ser tydelig forskjellige ut i både lys og mørk modus.
 - **Fra** og **Til** - valgfritt tidsvindu. Se «Datoer» rett under.
 - **Tittel** - kort overskrift (valgfri).
 - **Tekst** - selve meldingen. Støtter enkel formatering, se «Tekst-formatering».

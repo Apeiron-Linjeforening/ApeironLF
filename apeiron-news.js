@@ -33,6 +33,30 @@
     fadderuke:    'news-fadderuke'
   };
 
+  // Robust plasserings-tolkning: arket kan bruke litt ulike skrivemåter
+  // («Aporetisk aften», «Fadderukene», flertall osv.). Vi normaliserer og
+  // mapper kjente varianter til riktig sone, så ingen nyhet faller stille bort.
+  var PLACE_ALIASES = {
+    'topp':            'topp',
+    'hovedoppslag':    'hovedoppslag',
+    'hoved':           'hovedoppslag',
+    'arrangement':     'arrangement',
+    'arrangementer':   'arrangement',
+    'aporetisk':       'aporetisk',
+    'aporetisk aften': 'aporetisk',
+    'aporetiskaften':  'aporetisk',
+    'fadderuke':       'fadderuke',
+    'fadderuka':       'fadderuke',
+    'fadderukene':     'fadderuke',
+    'fadder':          'fadderuke'
+  };
+
+  function zoneFor(place) {
+    var p = String(place == null ? '' : place).trim().toLowerCase().replace(/\s+/g, ' ');
+    var key = PLACE_ALIASES[p] || p;
+    return ZONES[key] ? key : null;
+  }
+
   function esc(s) {
     var d = document.createElement('div');
     d.textContent = s == null ? '' : String(s);
@@ -108,9 +132,11 @@
     // Grupper på plassering, kun støttede soner og innenfor dato-vinduet.
     var byZone = {};
     items.forEach(function (n) {
-      if (!n || !ZONES[n.place]) return;
+      if (!n) return;
+      var place = zoneFor(n.place);
+      if (!place) return;
       if (!inWindow(n)) return;
-      (byZone[n.place] = byZone[n.place] || []).push(n);
+      (byZone[place] = byZone[place] || []).push(n);
     });
 
     Object.keys(ZONES).forEach(function (place) {

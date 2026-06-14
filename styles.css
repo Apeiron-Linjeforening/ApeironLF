@@ -297,30 +297,34 @@ h1,h2,h3{ font-family:var(--display); font-weight:600; line-height:1.04; letter-
 /* ============================================================
    Nyheter — «trådløse» beskjeder fra Google Sheet «Nyheter»
    (apeiron-news.js). To uttrykk: en stripe under menyen («topp»)
-   og banner-bokser inne i seksjonene. Hastegrad = vinrød markering.
+   og banner-bokser inne i seksjonene.
+     Normal  → rolig kort med gull venstre-aksent.
+     Hast    → fylt vinrød boks med lys tekst og «Viktig»-merke.
+   Hast bruker alltid solid maroon med konstant lys tekst, så
+   markeringen holder kontrast i både pergament- og marine-modus
+   (aldri rød tekst på rød bakgrunn).
    ============================================================ */
 .news-zone[hidden]{ display:none; }
 
-/* Banner-bokser (hero/arrangement/aporetisk/fadderuke) */
+/* ---- Normal: banner-kort (hovedoppslag/arrangement/aporetisk/fadderuke) ---- */
 .news-zone{ display:flex; flex-direction:column; gap:14px; margin:22px 0; }
 .news-item{
-  padding:18px 22px; border-radius:4px;
-  background:var(--paper-2); border:1px solid var(--line);
+  position:relative;
+  padding:18px 22px; border-radius:6px;
+  background:var(--card); border:1px solid var(--line);
   border-left:3px solid var(--gold);
 }
-.news-item.is-urgent{
-  border-left-color:var(--maroon);
-  background:rgba(118,17,15,.06);
-}
 .news-item__flag{
-  display:inline-block; margin-bottom:.5em;
-  font-size:.72rem; letter-spacing:.16em; text-transform:uppercase; font-weight:700;
-  color:var(--maroon);
+  display:inline-flex; align-items:center; gap:.55em; margin-bottom:.55em;
+  font-size:.7rem; letter-spacing:.18em; text-transform:uppercase; font-weight:700;
+  color:var(--warm);
 }
-html[data-mode="marine"] .news-item__flag{ color:var(--gold); }
+.news-item__flag::before{
+  content:""; width:7px; height:7px; border-radius:50%; background:currentColor;
+}
 .news-item__title{
   font-family:var(--display); font-size:1.35rem; color:var(--warm);
-  margin:0 0 .35em; line-height:1.15;
+  margin:0 0 .3em; line-height:1.18;
 }
 .news-item__text{ color:var(--ink-soft); font-size:1rem; line-height:1.6; }
 .news-item__text a{ color:var(--warm); text-underline-offset:2px; }
@@ -330,28 +334,51 @@ html[data-mode="marine"] .news-item__flag{ color:var(--gold); }
 }
 .news-item__link:hover{ text-decoration:underline; text-underline-offset:2px; }
 
-/* Stripe under menyen («topp») — full bredde, mer iøynefallende */
-.news-zone--strip{ margin:0; gap:0; }
+/* ---- Hast: fylt vinrød markering (lik i begge moduser) ---- */
+.news-item.is-urgent{
+  background:var(--maroon);
+  border:1px solid var(--maroon-2);
+  border-left:4px solid var(--gold);
+  color:var(--on-dark);
+}
+.news-item.is-urgent .news-item__flag{ color:var(--gold); }
+.news-item.is-urgent .news-item__title{ color:var(--on-dark); }
+.news-item.is-urgent .news-item__text{ color:rgba(244,236,217,.85); }
+.news-item.is-urgent .news-item__text a,
+.news-item.is-urgent .news-item__link{ color:var(--gold); }
+
+/* ---- Stripe under menyen («topp») — full bredde, kompakt ----
+   Henger sticky rett under nav-en (offset = --nav-h, satt i site-chrome.js)
+   gjennom hele .topnews-anchor (hero + frieze) og slipper taket ved «Om oss».
+   z-index under nav-en (1000), men over hero-innholdet. */
+.topnews-anchor{ background:var(--navy); }
+.news-zone--strip{
+  margin:0; gap:0;
+  position:sticky; top:var(--nav-h,72px); z-index:900;
+  box-shadow:0 12px 26px -18px rgba(0,0,0,.55);
+}
 .news-zone--strip .news-item{
-  border-radius:0; border-left:0;
-  border-top:0; border-bottom:1px solid var(--line);
-  padding:12px clamp(16px,5vw,48px);
-  display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 14px;
+  border-radius:0; border-left:0; border-right:0; border-top:0;
+  border-bottom:1px solid var(--line);
+  padding:11px clamp(16px,5vw,48px);
+  display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 14px;
   background:var(--paper-2);
 }
 .news-zone--strip .news-item + .news-item{ border-top:1px solid var(--line); }
-.news-zone--strip .news-item.is-urgent{
-  background:var(--maroon); border-bottom-color:var(--maroon-2);
-}
-.news-zone--strip .news-item.is-urgent .news-item__flag,
-.news-zone--strip .news-item.is-urgent .news-item__title,
-.news-zone--strip .news-item.is-urgent .news-item__text,
-.news-zone--strip .news-item.is-urgent .news-item__text a,
-.news-zone--strip .news-item.is-urgent .news-item__link{ color:#fff; }
 .news-zone--strip .news-item__flag{ margin:0; }
-.news-zone--strip .news-item__title{ font-size:1.05rem; margin:0; }
-.news-zone--strip .news-item__text{ font-size:.95rem; }
-.news-zone--strip .news-item__link{ margin:0; }
+.news-zone--strip .news-item__title{ font-size:1.02rem; margin:0; }
+.news-zone--strip .news-item__text{ font-size:.95rem; flex-basis:100%; }
+.news-zone--strip .news-item__link{ margin:.2em 0 0; flex-basis:100%; }
+/* Hast i stripa — fylt vinrød bånd, lys tekst fra reglene over */
+.news-zone--strip .news-item.is-urgent{
+  background:var(--maroon);
+  border:0; border-bottom:1px solid var(--maroon-2);
+}
+/* Mørk modus: løft den vanlige stripa litt fra den navy hero-bakgrunnen så
+   den ikke blir mørk-på-mørk (Hast beholder sin vinrøde fyll). */
+html[data-mode="marine"] .news-zone--strip .news-item:not(.is-urgent){
+  background:#2a2e4a; border-bottom-color:rgba(244,236,217,.16);
+}
 
 /* Stats band */
 .stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:0; border:1px solid rgba(35,39,64,.18); border-radius:4px; overflow:hidden; margin-top:64px; background:var(--paper-2); }

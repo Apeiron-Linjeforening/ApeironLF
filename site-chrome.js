@@ -198,13 +198,17 @@
   function wireNav() {
     var nav = document.getElementById('nav');
 
-    // Sticky nav
+    // Sticky nav + eksponer nav-høyden som --nav-h (topp-nyhetsstripa henger
+    // sticky rett under nav-en og trenger den faktiske høyden, som endrer seg
+    // når nav-en krymper i «is-stuck»-tilstand).
     if (nav) {
       var onScroll = function () {
         if (window.scrollY > 40) nav.classList.add('is-stuck');
         else nav.classList.remove('is-stuck');
+        document.documentElement.style.setProperty('--nav-h', nav.offsetHeight + 'px');
       };
       window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll);
       onScroll();
     }
 
