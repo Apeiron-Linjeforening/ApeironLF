@@ -67,11 +67,11 @@ window.STYRET_CONTENT = {
       "img": "assets/Styremedlemmer/Iver.jpg",
       "tags": [
         {
-          "label": "S.A.K",
+          "label": "A.S.A.P",
           "color": "maroon"
         },
         {
-          "label": "ASAP",
+          "label": "S.A.K",
           "color": "maroon"
         },
         {
@@ -80,6 +80,10 @@ window.STYRET_CONTENT = {
         },
         {
           "label": "web",
+          "color": "rust"
+        },
+        {
+          "label": "Unionen",
           "color": "blue"
         }
       ]
@@ -145,7 +149,11 @@ window.STYRET_CONTENT = {
       "img": "assets/Styremedlemmer/Fredrik2.jpg",
       "tags": [
         {
-          "label": "ASAP",
+          "label": "A.S.A.P",
+          "color": "maroon"
+        },
+        {
+          "label": "S.A.K",
           "color": "maroon"
         }
       ]
