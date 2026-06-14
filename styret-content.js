@@ -1,10 +1,11 @@
 /* Innhold for Styret-siden (styret.html).
-   Sist oppdatert: 13.6.2026
+   Sist oppdatert: 14.6.2026
    Rediger direkte her, eller åpne styret-admin.html for visuell redigering.
 
    members[].img : "assets/Styremedlemmer/filnavn.jpg", base64-bilde fra admin, eller null.
-   members[].tags: tilleggsverv som chips. color: "" (nøytral), "maroon" eller "gold".
-   roles[].accent: fargestripe — "" (gull), "maroon" eller "navy".
+   members[].tags: tilleggsverv som chips. color = palettnavn ("maroon"),
+                    eller { light, dark } med palettnavn/hex for egendefinert.
+   roles[].accent: fargestripe — palettnavn ("" = gull) eller { light, dark }.
    roles[].resp : punktliste under beskrivelsen. */
 
 window.STYRET_CONTENT = {
@@ -25,7 +26,12 @@ window.STYRET_CONTENT = {
       "role": "Leder",
       "initials": "SL",
       "img": "assets/Styremedlemmer/Stian.jpg",
-      "tags": []
+      "tags": [
+        {
+          "label": "ITV",
+          "color": "gold"
+        }
+      ]
     },
     {
       "id": "m2",
@@ -36,7 +42,7 @@ window.STYRET_CONTENT = {
       "tags": [
         {
           "label": "HIV",
-          "color": ""
+          "color": "navy"
         }
       ]
     },
@@ -49,7 +55,7 @@ window.STYRET_CONTENT = {
       "tags": [
         {
           "label": "HIV",
-          "color": ""
+          "color": "navy"
         }
       ]
     },
@@ -66,19 +72,15 @@ window.STYRET_CONTENT = {
         },
         {
           "label": "ASAP",
-          "color": "gold"
+          "color": "maroon"
         },
         {
           "label": "HIV",
-          "color": ""
+          "color": "navy"
         },
         {
-          "label": "Unionen",
+          "label": "web",
           "color": "blue"
-        },
-        {
-          "label": "Nettside",
-          "color": "plum"
         }
       ]
     },
@@ -115,7 +117,7 @@ window.STYRET_CONTENT = {
       "tags": [
         {
           "label": "PTV",
-          "color": ""
+          "color": "gold"
         }
       ]
     },
@@ -144,7 +146,7 @@ window.STYRET_CONTENT = {
       "tags": [
         {
           "label": "ASAP",
-          "color": "gold"
+          "color": "maroon"
         }
       ]
     }
@@ -267,15 +269,6 @@ window.STYRET_CONTENT = {
         "Designet den nye Apeiron-pinnen",
         "Arbeider med merch — gensere, kopper og muligens bøker",
         "Forvalter Apeirons visuelle identitet"
-      ]
-    },
-    {
-      "id": "rmqc29l8bvm7",
-      "name": "Unionsrepresentant",
-      "accent": "blue",
-      "desc": "Apeiron er med i Unionen — samarbeidet mellom linjeforeningene for klassiske fag på Dragvoll.\nLinjeforeningens unionsrepresentant har ansvaret for å møte med Unionen og være bindeleddet mellom Apeiron og de deltagende linjeforeningene.",
-      "resp": [
-        "Forbedre samarbeid mellom linjeforeningene"
       ]
     }
   ]

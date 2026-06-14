@@ -489,7 +489,6 @@ Kritisk:
 - [ ] Fikse menyen / NAV slik at den fungerer bedre på smalere skjermer og mobil.
 - [ ] Legge til et informasjonsfelt for Fadderukene hvor man kan fylle inn generell info.
 - [ ] Sjekke at "Legg til fadderukeprogrammet i din kalender" fungerer: iCal og Google Kalender.
-- [x] ~~Aporetisk Aften kalender: Ta beskrivelsen fra kalenderen og gjøre det om til et "Om Aftenen".~~
 - [ ] Måte for Apeiron å legge inn viktig informasjon som er tydelig på index.
 - [ ] Merch: Gjøre om navn til butikk.
 - [ ] Butikken: Legge til en mulighet til å legge inn tekst i et tekstfelt øverst for div. informasjon.
@@ -502,14 +501,15 @@ Kritisk:
 - [ ] Merch-admin: Badge blir gjemt bak produktbilder.
 - [ ] Merch-admin: Badge glød havner over badgefarge
 - [ ] Merch-admin: Badge farge "egendefinert" har ingen farge.
+- [ ] Aporetisk aften: Om "Hvor" har en lang adresse eller forklaring fyller denn opp mye plass -> burde gjøres om til noe som "Se adresse" eller "[startpåadresse]...", eller muligens fjerne "For hvem" og heller presissere i teksten over at det er åpent for alle.
+- [ ] Index.html og Galleri på mobil: Om man berører noen bilder kan man ikke rulle/sveipe på skjermen. Gjør det vanskelig å navigere forbi Lesesalen og i Galleri. 
 
 Medium:
 - [ ] Be HF studentrådet om å oppdatere sidene deres og gi oss mer informasjon om hva de faktisk gjør. 
       - [ ] Hva gjør egentlig en PTV, ITV og FTV? 
       - [ ] Hvordan får vi kontakt med våre egne TVer?
-- [ ] Be HF studentrådet om å fikse "Bli kjent med oss" og "Kontakt oss" lenkene deres. Jeg har nå funnet ut at de ikke er ødelagt, de legger bare til eposten deres på slutten av nettsiden... så https://www.hf-studentrad.no/ blir til https://www.hf-studentrad.no/ftv@hf.ntnu.no. Dette kan vi fikse for de.
 - [ ] Legge til side for Utmerkelser for personer som har stått ut i studentmiljøet eller det frivillige under IFR.
-- [ ] Legge til side for møtereferat -> Kan tas i egen wiki, muligens.
+
 - [ ] Lage egen Admin for index.
 - [ ] Utdype "Legevakt" til å inkludere psykiske lidelser som kan være akutt. 
 - [ ] Siden føles litt kommersiell ut....
@@ -527,7 +527,10 @@ Lav:
 - [ ] Sammenlign med https://www.mfplacebo.no/
 - [ ] Gjøre om admin filene til å gi nærest full kontroll over oppsett over sidene.
 - [ ] Menyen: Dropdown menyene skal endre seg for å vise hvor du er (Styret fungerer ikke).
-- [ ] Legge til Apeiron sin Github i footer.
+- [ ] Legge til alle Apeiron sine lenker i footer.
+- [ ] Legge til side for møtereferat -> Kan tas i egen wiki, muligens.
+- [ ] "Rapporter en feil på nettsiden" burde ikke sende deg rett til en epostside.
+- [ ] "Skoggrønn" farge i adminfilene er ikke tydelig at den er grønn. For å være helt ærlig tror jeg ikke at den er grønn. Den er samme nøytale farge som "Nøytral". Blå og Marineblå er for like. 
 
 Hadde vært kult:
 - [ ] Snakke med IFR/NTNU om API for automatisk oppdatering av emner for studiene.
