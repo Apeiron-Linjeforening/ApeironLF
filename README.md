@@ -297,6 +297,28 @@ Gi det ønskede bildet navn `lesesal1.jpg` (overskriv eller slett det gamle).
 
 > **Støttede formater:** `.jpg` / `.jpeg`. Bruk rimelig komprimerte bilder (under 1–2 MB per fil) for at siden skal laste raskt.
 
+### 📰 Nyheter / hastebeskjeder på forsiden
+Du kan legge ut generelle nyheter og hastebeskjeder på forsiden **uten å røre koden** —
+du skriver dem i et Google Sheet «Nyheter» fra mobil eller PC, og de dukker opp på
+siden innen noen få minutter.
+
+- **Plasseringer:** `topp` (tynn stripe rett under menyen), `hovedoppslag` (boks i
+  forsidebildet), `arrangement`, `aporetisk` og `fadderuke`. Du velger per nyhet i arket.
+- **Hastegrad:** velg `Hast` i rullegardinen for en tydelig vinrød markering, `Normal` gir vanlig gull-stil.
+- **Tidsvindu:** valgfrie `Fra`- og `Til`-datoer på formen `åå.mm.dd` (år.måned.dag,
+  altså året først, f.eks. `26.01.31`). Tom `Til` = blir stående til du fjerner den;
+  `Til` i fortid = forsvinner av seg selv; fjern avhukingen i `Synlig` = skjules uten å slette.
+- **Formatering i teksten:** `**fet**`, `*kursiv*`, `_understrek_`,
+  `[lenketekst](https://...)` og linjeskift.
+
+Nyhetene ligger i et **eget regneark** («Apeiron Nyheter») med sitt **eget, separate
+Apps Script**, helt adskilt fra merch, så det er lett å finne og vanskelig å glemme.
+Oppsett (eget regneark + eget skript, gjøres én gang) er beskrevet i
+[docs/apps-script-oppsett.md](docs/apps-script-oppsett.md), seksjonen «Nyheter».
+URL settes i `news-config.js` (la den stå tom for å slå funksjonen av). Der ligger
+også et valgfritt `NEWS_TOKEN`, et lite bot-filter (ikke sikkerhet, se docs), som
+må være samme streng som i Apps Script.
+
 ### 📖 Om oss / øvrig tekst
 All annen tekst (om oss, studiene, FAQ, kontakt osv.) redigeres direkte i `index.html`.
 Finn riktig seksjon ved hjelp av kommentarene: `<!-- ============ OM OSS ============ -->` osv.
@@ -309,7 +331,7 @@ Nettsiden er statisk og har ingen egen server. Merch-bestillinger håndteres der
 
 - **Handlekurven** på `merch.html` (`merch-cart.js`) samler produkter/varianter og sender bestillingen som JSON.
 - Et **Google Apps Script** (en «web-app») tar imot bestillingen, skriver den som en rad i et **Google Sheet**, og sender et **e-postvarsel** til styret.
-- `merch-config.js` peker på web-app-adressen og holder Vipps-info + spam-token.
+- `merch-config.js` peker på web-app-adressen og holder Vipps-info + bot-filter-token.
 
 ```
 Handlekurv (merch.html) ──POST JSON──▶ Apps Script (/exec) ──▶ Google Sheet + e-post til styret
@@ -323,17 +345,17 @@ Hvis web-app-adressen ikke er satt i `merch-config.js`, faller siden tilbake til
 window.MERCH_ORDER_ENDPOINT = '';          // web-app-URL fra Apps Script (slutter på /exec)
 window.MERCH_ORDER_EMAIL    = 'DIN_EPOST'; // brukes til e-post-fallback
 window.MERCH_VIPPS          = '#XXXXXX «Apeiron»'; // vises i kurven (betaling via Vipps)
-window.MERCH_ORDER_TOKEN    = '';          // delt hemmelig streng mot spam (samme som i Apps Script)
+window.MERCH_ORDER_TOKEN    = '';          // bot-filter-token (samme streng som i Apps Script)
 ```
 
-### Spam-beskyttelse
+### Bot-filter (mot spam-bestillinger)
 
-Endepunktet må være offentlig for at nettsiden skal kunne sende inn, men det kan **kun skrive** bestillinger — ingen kan lese ut data via lenken. To enkle lag demper spam:
+Endepunktet må være offentlig for at nettsiden skal kunne sende inn, men det kan **kun skrive** bestillinger — ingen kan lese ut data via lenken. To enkle lag filtrerer bort bots:
 
 1. **Delt token:** sett samme tilfeldige streng i `MERCH_ORDER_TOKEN` (`merch-config.js`) og `ORDER_TOKEN` (Apps Script). Skriptet avviser innsendinger uten riktig token.
 2. **Honeypot:** handlekurven har et skjult felt som bots fyller ut, men ikke mennesker. Slike innsendinger forkastes automatisk.
 
-> Token-en ligger også i klient-koden, så den stopper ikke en målrettet angriper — men fjerner nær sagt all automatisk drive-by-spam. **Ikke** lim den ekte `SHEET_ID`-en eller `/exec`-URL-en inn i offentlige filer som denne README-en.
+> Dette er et **bot-filter, ikke ekte sikkerhet:** token-en ligger åpent i klient-koden, så en målrettet person kan kopiere den. Men siden dette er et **skriv**-endepunkt, har filteret reell verdi: det fjerner nær sagt all automatisk drive-by-spam (falske bestillinger + e-postvarsler). **Ikke** lim den ekte `SHEET_ID`-en eller `/exec`-URL-en inn i offentlige filer som denne README-en.
 
 ### Oppsett (kort)
 
@@ -360,7 +382,7 @@ function doPost(e) {
   try {
     var data = JSON.parse(e.postData.contents);
 
-    // Enkel spam-sperre: avvis hvis token ikke stemmer (når token er satt).
+    // Bot-filter (ikke sikkerhet): avvis hvis token ikke stemmer (når token er satt).
     if (ORDER_TOKEN && data.token !== ORDER_TOKEN) {
       return ContentService
         .createTextOutput(JSON.stringify({ ok: false, error: 'unauthorized' }))
@@ -434,13 +456,15 @@ function doPost(e) {
 | `merch-admin.html`       | 'Passordbeskyttet' admin-panel for å redigere merch                                 |
 | `merch-products.js`      | Produktdata for merch (redigeres via admin-panel)                                   |
 | `merch-cart.js`          | Handlekurv + bestilling på merch-siden                                              |
-| `merch-config.js`        | Innstillinger for merch-bestilling (Apps Script-URL, Vipps, spam-token)             |
+| `merch-config.js`        | Innstillinger for merch-bestilling (Apps Script-URL, Vipps, bot-filter-token)       |
+| `apeiron-news.js`        | Henter «trådløse» nyheter til forsiden fra «Apeiron Nyheter» (Apps Script)           |
+| `news-config.js`         | Innstillinger for nyheter (eget Apps Script-URL + bot-filter-token)                 |
 | `medlemskap-admin.html`  | 'Passordbeskyttet' admin-panel for medlemskapspriser                                |
 | `membership-config.js`   | Medlemskapsdata (priser/Vipps/steg — redigeres via admin-panel)                     |
 | `membership.js`          | Fyller «Bli medlem»-kortet på forsiden fra `membership-config.js`                   |
 | `admin-common.js`        | Delt admin-logikk: innlogging, «logg ut», varsler, hjelpebobler, fillagring         |
 | `admin-common.css`       | Delt stil for admin-panelene                                                        |
-| `docs/apps-script-oppsett.md` | Steg-for-steg-guide for Google Sheet + Apps Script (merch-bestilling)          |
+| `docs/apps-script-oppsett.md` | Steg-for-steg-guide for Google Sheet + Apps Script (merch-bestilling + nyheter) |
 | `galleri.html`           | Bildegalleri (henter automatisk fra Google Drive)                                   |
 | `marked.html`            | Kjøp & bytte (pensum-marked)                                                        |
 | `begrep.html`            | Side for Begrep-tidsskriftet (utgaver, podkast, film, julekalender)                 |
@@ -479,21 +503,26 @@ Hvis repoet ikke er koblet til Cloudflare Pages, eller om man ønsker å bytte C
 3. Sett «Framework preset» til «None» og la «Build command» stå tom. «Build output directory» settes til `/`.
 4. Trykk «Save and Deploy» — fra nå av skjer alt automatisk
 ---
+## Kjente begrensninger og usikkerheter
+
+Ting vi vet om, men er usikre på om det er verdt å gjøre noe med. Ført opp så de ikke glemmes - ikke nødvendigvis feil som må fikses.
+
+- **Merch: én farge kan bare kobles til ett bilde.** Har du to bilder av samme farge (f.eks. for- og bakside av samme genser), kan bare det ene knyttes til fargen. Velger man samme farge på bilde nummer to, flyttes koblingen dit. Lite problem i praksis (kunden ser uansett hele galleriet via miniatyrstripa). Å støtte flere bilder pr. farge ville kreve en mer kompleks datamodell.
+- **Meny og footer vises et lite øyeblikk etter at siden lastes.** De bygges av `site-chrome.js` i nettleseren (for å slippe byggesteg og holde alt i én fil). På treg forbindelse kan man så vidt se at de «popper inn». Menyen er fast posisjonert, så selve innholdet hopper ikke. Alternativet (byggesteg) ble vurdert og valgt bort, se diskusjon i commit-historikk.
+- **Footer/meny krever JavaScript.** Med JS avslått vises ikke meny/footer. Gjelder en svært liten andel besøkende; resten av siden bruker uansett JS (kalender, søk, kurv).
+- **README-seksjonen «Lagre admin-endringer rett til repo-fila» (over) er utdatert.** Den direkte-lagrings-funksjonen (File System Access) ble fjernet fordi den feilet på enkelte systemer; admin-panelene laster nå alltid ned fila. Avsnittet bør ryddes ved anledning.
+- **Bilder lagres som base64 i datafilene.** Mange/store produktbilder gjør `merch-products.js` stor. Admin skalerer ned til maks 900px webp, men mange bilder kan likevel bli tungt. Vurder eksterne bildefiler (`assets/merch/...`) hvis filene blir veldig store. Vil ikke å lagre de eksternt bare gjøre bildene større? -> lagre de i base64 i egen fil?
+- **Bytte navn til Merch til Butikk** Apeiron har ikke en butikk, men vi har merch... men man kjøper merch... i en butikk.
+
+---
 ## To do
 
 Kritisk:
-- [ ] Fikse domene - Se "Domene" nedenfor.
-- [ ] Se på MacGyver serien igjen.
-- [ ] Kvadrupelsjekk at informasjon under Hjelp er helt riktig!! Sjekk numre og eposter!
 - [ ] Endre "Hjelp" i menyen med noe annet som uttrykker mer direkte hva siden er om.
 - [ ] Fikse menyen / NAV slik at den fungerer bedre på smalere skjermer og mobil.
-- [ ] Legge til et informasjonsfelt for Fadderukene hvor man kan fylle inn generell info.
+- [x] Legge til et informasjonsfelt for Fadderukene hvor man kan fylle inn generell info. *(Dekkes av nyhetsfunksjonen: bruk plassering `fadderuke` i Google Sheet «Nyheter».)*
 - [ ] Sjekke at "Legg til fadderukeprogrammet i din kalender" fungerer: iCal og Google Kalender.
-- [ ] Måte for Apeiron å legge inn viktig informasjon som er tydelig på index.
-- [ ] Merch: Gjøre om navn til butikk.
-- [ ] Merch-admin: legge til flere bilder for et produkt både som bare vises vanlig i kortet, og som er koblet mot farge.
-- [ ] Merch-admin: lett redigering av bilder som lastes opp for produkt: crop, zoom, rotasjon. *(Rotasjon (90°) er lagt til; crop/zoom gjenstår.)*
-- [ ] Oppdatere alle footers -> Fikse en felles footer for alle sider?
+- [x] Måte for Apeiron å legge inn viktig informasjon som er tydelig på index. *(Google Sheet «Nyheter» → live på forsiden via `apeiron-news.js`; plasseringer topp/hovedoppslag/arrangement/aporetisk/fadderuke, hast-markering og dato-vindu. Se docs/apps-script-oppsett.md.)*
 
 Medium:
 - [ ] Be HF studentrådet om å oppdatere sidene deres og gi oss mer informasjon om hva de faktisk gjør. 
@@ -501,12 +530,10 @@ Medium:
       - [ ] Hvordan får vi kontakt med våre egne TVer?
 - [ ] Legge til side for Utmerkelser for personer som har stått ut i studentmiljøet eller det frivillige under IFR.
 - [ ] Lage egen Admin for index.
-- [ ] Siden føles litt kommersiell ut....
 - [ ] Legg til Logikk Panikk.
 - [ ] Finne en bedre måte å vise arrangement og plakater på -> Måte å vise nyheter/informasjon på.
-- [ ] Se om vi kan få menyen til å være en og samme entitet over alle sidene -> for å slippe å oppdatere hver en meny for hver side.
-- [ ] merch handlekurv: legge til tydelig kryss oppe i høyre hjørne.
-- [ ] Legge til alle lenkene til Apeiron i footers: Github (gjort), Facebook, Instagram, Instagram (meme)
+- [x] Se om vi kan få menyen til å være en og samme entitet over alle sidene -> for å slippe å oppdatere hver en meny for hver side. *(Menyen bygges nå ETT sted i `site-chrome.js` og injiseres på alle sider via `#site-nav`.)*
+- [ ] Mini-forhåndsvisning per panel (som footer-admin). Jeg gjenskaper kort-utseendet i admin. Mest kontroll, men litt arbeid per panel, og må holdes i synk hvis det offentlige utseendet endres.
 
 Lav:
 - [ ] Side eller plassering for "Oppnåelser" (Premier vi har fått, som sølv i håndball og "best oppmøte" fra Dionysos)
@@ -514,10 +541,10 @@ Lav:
 - [ ] Sette opp et arkiv.
 - [ ] Sammenlign med https://www.mfplacebo.no/
 - [ ] Gjøre om admin filene til å gi nærest full kontroll over oppsett over sidene.
-- [ ] Menyen: Dropdown menyene skal endre seg for å vise hvor du er (Styret fungerer ikke).
-- [ ] Legge til alle Apeiron sine lenker i footer.
 - [ ] Legge til side for møtereferat -> Kan tas i egen wiki, muligens.
-- [ ] Dra sorteringen i admin er fremdeles litt merkelig, nesten ubrukelig pga hvordan den fungerer nå.
+- [ ] Header/meny-admin: GUI for å redigere menyen (dropdowns, undermenyer, ankerlenker, rekkefølge) - på linje med `footer-admin.html`, men mer omfattende pga. menyens struktur.
+- [ ] Live forhåndsvisning i alle admin-paneler (som i `footer-admin.html`). Tas inkrementelt per panel (merch-admin først), siden hvert panel lager ulikt innhold.
+- [ ] Opp Ned Side.
 
 Hadde vært kult:
 - [ ] Snakke med IFR/NTNU om API for automatisk oppdatering av emner for studiene.
@@ -537,6 +564,7 @@ Må gjøres før vi slapper av med å bygge nettsiden:
 - [ ] Fjern WIP banneret.
 - [ ] Lage en ordentlig How-To.
 - [ ] Rydde opp i Readme og sette inn i Readme hva som er gjort og hvordan alt fungerer
+- [ ] Oppdater søkeindex
 
 Skjelett Prosjekt:
 - [ ] Gjøre om prosjektet til et nytt repo som kan klones og lett gjøres om til andre linjeforeninger.

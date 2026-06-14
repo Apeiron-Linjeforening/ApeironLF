@@ -1,171 +1,12 @@
-/* Apeiron — interaksjoner: nav, mobilmeny, FAQ, scroll-reveal */
+/* Apeiron — innholds-interaksjoner: FAQ, scroll-reveal, stat-teller.
+   Nav/mobilmeny/scrollspy ligger nå i site-chrome.js (kjører på alle sider). */
 (function () {
-  // Lys/mørk modus håndteres nå av theme.js (lastet i <head>).
+  // Lys/mørk modus håndteres av theme.js (lastet i <head>).
+  // Header + footer + nav-oppførsel håndteres av site-chrome.js.
 
   // Year
   var y = document.getElementById('year');
   if (y) y.textContent = new Date().getFullYear();
-
-  // Sticky nav
-  var nav = document.getElementById('nav');
-  function onScroll() {
-    if (window.scrollY > 40) nav.classList.add('is-stuck');
-    else nav.classList.remove('is-stuck');
-  }
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
-
-  // Scrollspy: highlight the nav link for the section currently in view
-  var spyLinks = Array.prototype.slice.call(
-    document.querySelectorAll('.nav__links a[href^="#"]')
-  ).filter(function (a) { return !a.classList.contains('nav__cta'); });
-  var spyMap = spyLinks.map(function (a) {
-    var id = a.getAttribute('href').slice(1);
-    return { link: a, section: document.getElementById(id) };
-  }).filter(function (m) { return m.section; });
-
-  var allSections = Array.prototype.slice.call(document.querySelectorAll('section[id]'));
-
-  function onSpy() {
-    var pos = window.scrollY + window.innerHeight / 2; // section at viewport center wins
-    var activeId = null;
-    allSections.forEach(function (el) {
-      if (el.offsetTop <= pos) activeId = el.id;
-    });
-    // near the very bottom, force-activate the last section
-    if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 4) {
-      activeId = allSections[allSections.length - 1].id;
-    }
-    spyMap.forEach(function (m) {
-      m.link.classList.toggle('is-active', m.section.id === activeId);
-    });
-  }
-  if (spyMap.length) {
-    window.addEventListener('scroll', onSpy, { passive: true });
-    window.addEventListener('resize', onSpy);
-    onSpy();
-  }
-
-  // ── Dropdown trigger scrollspy: active highlight + dynamic label ──
-  // Collects all page <section id="…"> elements so non-nav sections (e.g. #bli-medlem)
-  // properly deactivate the dropdown group when scrolled into.
-  var allPageSections = Array.prototype.slice.call(document.querySelectorAll('section[id]'));
-
-  var dropGroups = [];
-  document.querySelectorAll('.nav__dropdown').forEach(function (dd) {
-    var trigger = dd.querySelector('.nav__drop-trigger');
-    if (!trigger) return;
-    var firstNode = trigger.firstChild;
-    var defaultText = (firstNode && firstNode.nodeType === 3)
-      ? firstNode.nodeValue.trim() : '';
-    // Only include links that point to a same-page anchor (#…)
-    var entries = Array.prototype.slice.call(
-      dd.querySelectorAll('.nav__drop-menu a[href^="#"]')
-    ).map(function (a) {
-      return { id: a.getAttribute('href').slice(1), label: a.textContent.trim() };
-    });
-    if (entries.length) {
-      dropGroups.push({ trigger: trigger, defaultText: defaultText, entries: entries });
-    }
-  });
-
-  // Build id → group lookup for O(1) matching
-  var dropSectionIds = {};
-  dropGroups.forEach(function (g) {
-    g.entries.forEach(function (e) { dropSectionIds[e.id] = g; });
-  });
-
-  function setTriggerLabel(btn, text) {
-    var node = btn.firstChild;
-    if (node && node.nodeType === 3) node.nodeValue = text + ' ';
-  }
-
-  // ── Side-basert aktiv tilstand ──────────────────────────────────────────
-  // Scrollspy over dekker bare #ankere på samme side. Her markerer vi lenker og
-  // dropdowns som peker til DENNE undersiden (f.eks. «Styret» => styret.html,
-  // «Merch» => merch.html, «Pensum» => pensum.html). Setter data-page-active på
-  // triggeren så scrollspy ikke nullstiller den når man er øverst på siden.
-  (function () {
-    function pageOf(href) {
-      return (href || '').split('#')[0].split('?')[0].split('/').pop().toLowerCase();
-    }
-    var cur = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
-
-    document.querySelectorAll('.nav__links .nav__dropdown').forEach(function (dd) {
-      var trigger = dd.querySelector('.nav__drop-trigger');
-      if (!trigger) return;
-      var match = pageOf(trigger.getAttribute('href')) === cur;
-      dd.querySelectorAll('.nav__drop-menu a').forEach(function (a) {
-        if (pageOf(a.getAttribute('href')) === cur) { a.classList.add('is-active'); match = true; }
-      });
-      if (match) {
-        trigger.classList.add('nav__drop-trigger--active');
-        trigger.setAttribute('data-page-active', '');
-      }
-    });
-
-    // Toppnivå-lenker som ikke ligger i en dropdown (Begrep, Galleri, Hjelp …)
-    document.querySelectorAll('.nav__links > a').forEach(function (a) {
-      if (a.classList.contains('nav__cta')) return;
-      if (pageOf(a.getAttribute('href')) === cur) a.classList.add('is-active');
-    });
-  })();
-
-  // Only activate on pages that actually contain the linked sections
-  var hasDropSections = dropGroups.length > 0 &&
-    Object.keys(dropSectionIds).some(function (id) {
-      return !!document.getElementById(id);
-    });
-
-  if (hasDropSections) {
-    var updateDropTriggers = function () {
-      var pos = window.scrollY + window.innerHeight / 2;
-
-      // Find the last section (including non-nav ones) whose top is above the fold
-      var globalSection = null;
-      allPageSections.forEach(function (el) {
-        if (el.offsetTop <= pos) globalSection = el;
-      });
-      var globalId = globalSection ? globalSection.id : null;
-      var activeGroup = globalId ? (dropSectionIds[globalId] || null) : null;
-
-      dropGroups.forEach(function (g) {
-        var scrollActive = activeGroup === g;
-        var pageActive = g.trigger.hasAttribute('data-page-active');
-        var label = g.defaultText;
-        if (scrollActive) {
-          var matched = g.entries.filter(function (e) { return e.id === globalId; })[0];
-          if (matched) label = matched.label;
-        }
-        // Side-aktiv trigger forblir markert selv uten en seksjon i visning.
-        g.trigger.classList.toggle('nav__drop-trigger--active', scrollActive || pageActive);
-        setTriggerLabel(g.trigger, label);
-      });
-    };
-
-    window.addEventListener('scroll', updateDropTriggers, { passive: true });
-    window.addEventListener('resize', updateDropTriggers);
-    updateDropTriggers();
-  }
-
-  // Mobile drawer
-  var burger = document.getElementById('burger');
-  var drawer = document.getElementById('drawer');
-  function closeDrawer() {
-    drawer.classList.remove('is-open');
-    document.body.style.overflow = '';
-  }
-  if (burger) {
-    burger.addEventListener('click', function () {
-      var open = drawer.classList.toggle('is-open');
-      document.body.style.overflow = open ? 'hidden' : '';
-    });
-  }
-  drawer.querySelectorAll('a').forEach(function (a) {
-    a.addEventListener('click', closeDrawer);
-  });
-  var dSearchBtn = drawer.querySelector('.drawer__search-row');
-  if (dSearchBtn) dSearchBtn.addEventListener('click', closeDrawer);
 
   // FAQ accordion
   document.querySelectorAll('.faq__item').forEach(function (item) {
@@ -227,7 +68,8 @@
       if (es.some(function (e) { return e.isIntersecting; })) ioAlive = true;
       probe.disconnect();
     }, {});
-    probe.observe(document.getElementById('nav'));
+    var probeEl = document.getElementById('nav') || document.body;
+    if (probeEl) probe.observe(probeEl);
     setTimeout(function () { if (!ioAlive) revealAll(); }, 700);
   }
 

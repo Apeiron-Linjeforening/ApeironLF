@@ -1,0 +1,315 @@
+/* ============================================================
+   site-chrome.js — delt meny (header + mobilmeny) og footer
+   Injiseres på alle offentlige sider, så menyen og footeren
+   vedlikeholdes ETT sted. Mønster som report.js (selvstendig).
+
+   Hver side har to ankre i <body>:
+     <div id="site-nav"></div>      (øverst, rett etter <body>)
+     <div id="site-footer"></div>   (nederst, før skriptene)
+   Dette skriptet bytter dem ut med ferdig markup og kobler på
+   all nav-oppførsel (sticky, scrollspy, dropdown-markering,
+   mobilmeny) — på ALLE sider, slik at «du er her» virker overalt.
+
+   Footer-innholdet kommer fra window.SITE_FOOTER (site-content.js),
+   som kan redigeres i footer-admin.html.
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var CUR = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
+  if (!CUR) CUR = 'index.html';
+
+  function pageOf(href) {
+    return (href || '').split('#')[0].split('?')[0].split('/').pop().toLowerCase();
+  }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  /* ─── Kanonisk meny-markup ───
+     Lenker til index-seksjoner skrives som "index.html#anker" så de virker fra
+     alle sider; localizeHrefs() forkorter dem til "#anker" på selve forsiden. */
+  var NAV_HTML =
+'<header class="nav" id="nav">' +
+  '<a class="nav__brand" href="index.html#top">' +
+    '<img src="assets/apeiron-logo.png" alt="Apeiron segl" />' +
+    '<span><span class="nm">APEIRON</span><span class="sub">Filosofi &amp; Etikk · NTNU</span></span>' +
+  '</a>' +
+  '<nav class="nav__links">' +
+    '<div class="nav__dropdown">' +
+      '<a class="nav__drop-trigger" href="index.html#om">Om oss <span class="nav__caret">▾</span></a>' +
+      '<div class="nav__drop-menu">' +
+        '<a href="index.html#om">Om oss</a>' +
+        '<a href="index.html#lesesalen">Lesesalen</a>' +
+        '<a href="index.html#samarbeid">Samarbeid</a>' +
+      '</div>' +
+    '</div>' +
+    '<div class="nav__dropdown">' +
+      '<a class="nav__drop-trigger" href="index.html#studiet">Studiene <span class="nav__caret">▾</span></a>' +
+      '<div class="nav__drop-menu">' +
+        '<a href="index.html#studiet">Studiene</a>' +
+        '<a href="pensum.html">Pensum</a>' +
+      '</div>' +
+    '</div>' +
+    '<div class="nav__dropdown">' +
+      '<a class="nav__drop-trigger" href="index.html#arrangementer">Arrangementer <span class="nav__caret">▾</span></a>' +
+      '<div class="nav__drop-menu">' +
+        '<a href="index.html#arrangementer">Arrangementer</a>' +
+        '<a href="index.html#aporetisk">Aporetisk Aften</a>' +
+        '<a href="index.html#fadderuke">Fadderuke</a>' +
+      '</div>' +
+    '</div>' +
+    '<div class="nav__dropdown">' +
+      '<a class="nav__drop-trigger" href="styret.html">Styret <span class="nav__caret">▾</span></a>' +
+      '<div class="nav__drop-menu">' +
+        '<a href="styret.html">Apeiron styret</a>' +
+        '<a href="styret.html#tillitsvalgte">Tillitsvalgte</a>' +
+        '<a href="styret.html#sak">S.A.K</a>' +
+        '<a href="styret.html#vervene">Verv</a>' +
+      '</div>' +
+    '</div>' +
+    '<a href="begrep.html" class="nav__top">Begrep</a>' +
+    '<a href="galleri.html" class="nav__top">Galleri</a>' +
+    '<a href="hjelp.html" class="nav__top">Hjelp</a>' +
+    '<div class="nav__dropdown">' +
+      '<a class="nav__drop-trigger" href="merch.html">Merch <span class="nav__caret">▾</span></a>' +
+      '<div class="nav__drop-menu">' +
+        '<a href="merch.html">Merch</a>' +
+        '<a href="marked.html">Kjøp &amp; bytte</a>' +
+      '</div>' +
+    '</div>' +
+    '<a href="index.html#kontakt">Kontakt</a>' +
+    '<a class="btn btn--gold nav__cta" href="index.html#bli-medlem">Bli medlem <span class="arr">→</span></a>' +
+  '</nav>' +
+  '<button class="nav__color-toggle" id="colorToggle" type="button" aria-label="Bytt fargemodus">' +
+    '<svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>' +
+    '<svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>' +
+  '</button>' +
+  '<button class="nav__search-btn" type="button" aria-label="Søk på nettstedet">' +
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>' +
+    '<span class="nav__search-hint">Søk</span>' +
+  '</button>' +
+  '<button class="nav__burger" id="burger" aria-label="Meny"><span></span><span></span><span></span></button>' +
+'</header>';
+
+  var DRAWER_HTML =
+'<div class="drawer" id="drawer">' +
+  '<span class="drawer__lbl">Foreningen</span>' +
+  '<a href="index.html#om">Om oss</a>' +
+  '<a href="index.html#lesesalen">Lesesalen</a>' +
+  '<a href="index.html#samarbeid">Samarbeid</a>' +
+  '<span class="drawer__lbl">Studiene</span>' +
+  '<a href="index.html#studiet">Studiene</a>' +
+  '<a href="pensum.html">Pensum</a>' +
+  '<span class="drawer__lbl">Arrangementer</span>' +
+  '<a href="index.html#arrangementer">Arrangementer</a>' +
+  '<a href="index.html#aporetisk">Aporetisk Aften</a>' +
+  '<a href="index.html#fadderuke">Fadderuke</a>' +
+  '<span class="drawer__lbl">Styret</span>' +
+  '<a href="styret.html">Apeiron styret</a>' +
+  '<a href="styret.html#tillitsvalgte">Tillitsvalgte</a>' +
+  '<a href="styret.html#sak">S.A.K</a>' +
+  '<a href="styret.html#vervene">Verv</a>' +
+  '<span class="drawer__lbl">Mer</span>' +
+  '<a href="begrep.html">Begrep</a>' +
+  '<a href="galleri.html">Galleri</a>' +
+  '<a href="hjelp.html">Hjelp</a>' +
+  '<a href="merch.html">Merch</a>' +
+  '<a href="marked.html">Kjøp &amp; bytte</a>' +
+  '<a href="index.html#kontakt">Kontakt</a>' +
+  '<a href="index.html#bli-medlem">Bli medlem</a>' +
+'</div>';
+
+  /* ─── Ikoner for sosiale lenker (felles sett i footer-icons.js) ─── */
+  var ICONS = window.FOOTER_ICONS || {};
+
+  /* ─── Bygg footeren fra window.SITE_FOOTER ─── */
+  function buildFooter() {
+    var f = window.SITE_FOOTER || {};
+    var links = (f.links || []).map(function (l) {
+      return '<a href="' + esc(l.href) + '">' + esc(l.label) + '</a>';
+    }).join('');
+    var social = (f.social || []).map(function (s) {
+      var ic = ICONS[(s.icon || '').toLowerCase()] || '';
+      return '<a href="' + esc(s.href) + '" target="_blank" rel="noopener" aria-label="' + esc(s.label) + '">' +
+        ic + ' ' + esc(s.label) + '</a>';
+    }).join('');
+    var rep = f.report || {};
+    var mailto = 'mailto:' + esc(rep.email || '') +
+      (rep.subject ? '?subject=' + encodeURIComponent(rep.subject) : '');
+    // begrep.html bruker en mørkere footer-bakgrunn
+    var style = CUR === 'begrep.html'
+      ? ' style="background:#060606; border-top:1px solid rgba(240,236,224,.08);"' : '';
+    return '<footer class="footer"' + style + '>' +
+      '<div class="wrap">' +
+        '<img src="assets/apeiron-logo.png" alt="Apeiron segl" />' +
+        '<div class="footer__name">' + esc(f.name || '') + '</div>' +
+        '<div class="footer__tag">' + esc(f.tagline || '') + '</div>' +
+        '<div class="footer__links">' + links + '</div>' +
+        '<div class="footer__fine">' + esc(f.fine || '') + '</div>' +
+        (social ? '<div class="footer__social">' + social + '</div>' : '') +
+        (rep.email ? '<div class="footer__report"><a href="' + mailto + '">' + esc(rep.label || 'Rapporter en feil') + '</a></div>' : '') +
+      '</div>' +
+    '</footer>';
+  }
+
+  function replaceAnchor(id, html) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    var frag = document.createDocumentFragment();
+    while (tmp.firstChild) frag.appendChild(tmp.firstChild);
+    el.parentNode.replaceChild(frag, el);
+  }
+
+  /* Forkort "denne-siden.html#anker" → "#anker" så det blir mykt scroll på egen side. */
+  function localizeHrefs(scope) {
+    scope.querySelectorAll('a[href]').forEach(function (a) {
+      var href = a.getAttribute('href');
+      var hash = href.indexOf('#');
+      if (hash > 0 && pageOf(href) === CUR) a.setAttribute('href', href.slice(hash));
+    });
+  }
+
+  /* Side-basert «du er her»-markering (flyttet fra app.js, kjører nå på alle sider). */
+  function markActive() {
+    document.querySelectorAll('.nav__links .nav__dropdown').forEach(function (dd) {
+      var trigger = dd.querySelector('.nav__drop-trigger');
+      if (!trigger) return;
+      var match = pageOf(trigger.getAttribute('href')) === CUR;
+      dd.querySelectorAll('.nav__drop-menu a').forEach(function (a) {
+        if (pageOf(a.getAttribute('href')) === CUR) { a.classList.add('is-active'); match = true; }
+      });
+      if (match) {
+        trigger.classList.add('nav__drop-trigger--active');
+        trigger.setAttribute('data-page-active', '');
+      }
+    });
+    document.querySelectorAll('.nav__links > a').forEach(function (a) {
+      if (a.classList.contains('nav__cta')) return;
+      if (pageOf(a.getAttribute('href')) === CUR) a.classList.add('is-active');
+    });
+  }
+
+  /* ─── Nav-oppførsel (flyttet fra app.js) ─── */
+  function wireNav() {
+    var nav = document.getElementById('nav');
+
+    // Sticky nav
+    if (nav) {
+      var onScroll = function () {
+        if (window.scrollY > 40) nav.classList.add('is-stuck');
+        else nav.classList.remove('is-stuck');
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+    }
+
+    // Scrollspy: marker nav-lenken for seksjonen i visning
+    var spyLinks = Array.prototype.slice.call(
+      document.querySelectorAll('.nav__links a[href^="#"]')
+    ).filter(function (a) { return !a.classList.contains('nav__cta'); });
+    var spyMap = spyLinks.map(function (a) {
+      return { link: a, section: document.getElementById(a.getAttribute('href').slice(1)) };
+    }).filter(function (m) { return m.section; });
+    var allSections = Array.prototype.slice.call(document.querySelectorAll('section[id]'));
+
+    function onSpy() {
+      var pos = window.scrollY + window.innerHeight / 2;
+      var activeId = null;
+      allSections.forEach(function (el) { if (el.offsetTop <= pos) activeId = el.id; });
+      if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 4 && allSections.length) {
+        activeId = allSections[allSections.length - 1].id;
+      }
+      spyMap.forEach(function (m) { m.link.classList.toggle('is-active', m.section.id === activeId); });
+    }
+    if (spyMap.length) {
+      window.addEventListener('scroll', onSpy, { passive: true });
+      window.addEventListener('resize', onSpy);
+      onSpy();
+    }
+
+    // Dropdown-trigger scrollspy + dynamisk etikett
+    var allPageSections = Array.prototype.slice.call(document.querySelectorAll('section[id]'));
+    var dropGroups = [];
+    document.querySelectorAll('.nav__dropdown').forEach(function (dd) {
+      var trigger = dd.querySelector('.nav__drop-trigger');
+      if (!trigger) return;
+      var firstNode = trigger.firstChild;
+      var defaultText = (firstNode && firstNode.nodeType === 3) ? firstNode.nodeValue.trim() : '';
+      var entries = Array.prototype.slice.call(
+        dd.querySelectorAll('.nav__drop-menu a[href^="#"]')
+      ).map(function (a) { return { id: a.getAttribute('href').slice(1), label: a.textContent.trim() }; });
+      if (entries.length) dropGroups.push({ trigger: trigger, defaultText: defaultText, entries: entries });
+    });
+    var dropSectionIds = {};
+    dropGroups.forEach(function (g) { g.entries.forEach(function (e) { dropSectionIds[e.id] = g; }); });
+    function setTriggerLabel(btn, text) {
+      var node = btn.firstChild;
+      if (node && node.nodeType === 3) node.nodeValue = text + ' ';
+    }
+    var hasDropSections = dropGroups.length > 0 &&
+      Object.keys(dropSectionIds).some(function (id) { return !!document.getElementById(id); });
+    if (hasDropSections) {
+      var updateDropTriggers = function () {
+        var pos = window.scrollY + window.innerHeight / 2;
+        var globalSection = null;
+        allPageSections.forEach(function (el) { if (el.offsetTop <= pos) globalSection = el; });
+        var globalId = globalSection ? globalSection.id : null;
+        var activeGroup = globalId ? (dropSectionIds[globalId] || null) : null;
+        dropGroups.forEach(function (g) {
+          var scrollActive = activeGroup === g;
+          var pageActive = g.trigger.hasAttribute('data-page-active');
+          var label = g.defaultText;
+          if (scrollActive) {
+            var matched = g.entries.filter(function (e) { return e.id === globalId; })[0];
+            if (matched) label = matched.label;
+          }
+          g.trigger.classList.toggle('nav__drop-trigger--active', scrollActive || pageActive);
+          setTriggerLabel(g.trigger, label);
+        });
+      };
+      window.addEventListener('scroll', updateDropTriggers, { passive: true });
+      window.addEventListener('resize', updateDropTriggers);
+      updateDropTriggers();
+    }
+
+    // Mobilmeny
+    var burger = document.getElementById('burger');
+    var drawer = document.getElementById('drawer');
+    if (drawer) {
+      var closeDrawer = function () {
+        drawer.classList.remove('is-open');
+        document.body.style.overflow = '';
+      };
+      if (burger) {
+        burger.addEventListener('click', function () {
+          var open = drawer.classList.toggle('is-open');
+          document.body.style.overflow = open ? 'hidden' : '';
+        });
+      }
+      drawer.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', closeDrawer); });
+      var dSearchBtn = drawer.querySelector('.drawer__search-row');
+      if (dSearchBtn) dSearchBtn.addEventListener('click', closeDrawer);
+    }
+  }
+
+  function init() {
+    replaceAnchor('site-nav', NAV_HTML + DRAWER_HTML);
+    replaceAnchor('site-footer', buildFooter());
+    var navLinks = document.querySelector('.nav__links');
+    var drawer = document.getElementById('drawer');
+    if (navLinks) localizeHrefs(navLinks);
+    if (drawer) localizeHrefs(drawer);
+    if (navLinks) markActive();
+    wireNav();
+  }
+
+  // Kjør så snart ankrene finnes (under parsing) så andre skript finner nav/footer.
+  if (document.getElementById('site-nav') || document.getElementById('site-footer')) init();
+  else if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();

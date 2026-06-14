@@ -140,12 +140,19 @@
     var qtyEl = card.querySelector('[data-variant="qty"]');
     var qty = Math.max(1, parseInt(qtyEl && qtyEl.value, 10) || 1);
     var key = [id, size, color].join('|');
+    // Velg miniatyr: fargekoblet bilde om det finnes, ellers hovedbildet.
+    var thumb = p.img || null;
+    if (color && p.colorImages && p.images && p.colorImages[color] != null) {
+      var ci = p.colorImages[color];
+      if (p.images[ci]) thumb = p.images[ci];
+    }
+    if (!thumb && p.images && p.images.length) thumb = p.images[0];
     var existing = cart.filter(function (it) { return it.key === key; })[0];
     if (existing) { existing.qty += qty; }
     else {
       cart.push({ key: key, id: id, name: p.name, price: p.price != null ? p.price : null,
                   memberPrice: p.memberPrice != null ? p.memberPrice : null,
-                  img: p.img || null, size: size, color: color, qty: qty });
+                  img: thumb, size: size, color: color, qty: qty });
     }
     saveCart(); renderCart(); flash(); confirmAdd(btn);
   }

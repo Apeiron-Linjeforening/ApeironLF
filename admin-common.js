@@ -90,11 +90,15 @@
   }
 
   /* ─── DRA-OG-SLIPP SORTERING ───
-     enableDragSort(container, { itemSelector, handleSelector, onReorder })
-     Gjør kortene i en liste sorterbare ved å dra i et håndtak. Fungerer med
-     både mus og touch (pointer events). Lytteren ligger på containeren, så den
-     overlever full re-render av kortene. onReorder(idArray) kalles når slippet
-     er ferdig, med ny rekkefølge av data-id-verdiene. */
+     enableDragSort(container, { itemSelector, handleSelector, idAttr, onReorder })
+     Gjør kortene i en liste sorterbare ved å dra i et håndtak. Fungerer med mus
+     og touch (pointer events). Lytteren ligger på containeren, så den overlever
+     full re-render av kortene. onReorder(idArray) kalles ved slipp, med ny
+     rekkefølge av data-id-verdiene.
+
+     Det dratte kortet «løftes» (position:fixed) og følger pekeren, en plassholder
+     viser hvor det vil lande, og siden auto-scroller når man drar mot topp/bunn.
+     En liten terskel skiller et vanlig klikk fra et dra. */
   function enableDragSort(container, opts) {
     if (!container || container._dragSortOn) return;
     container._dragSortOn = true;
@@ -102,6 +106,9 @@
     var handleSel = opts.handleSelector;
     var idAttr    = opts.idAttr || 'data-id';
     var onReorder = opts.onReorder || function () {};
+    var THRESH = 4;     // px før et klikk regnes som dra
+    var EDGE   = 64;    // px-sone øverst/nederst som auto-scroller
+    var MAXSPD = 20;    // maks scroll-fart pr. frame
 
     container.addEventListener('pointerdown', function (e) {
       if (e.button != null && e.button !== 0) return;
@@ -109,37 +116,88 @@
       if (!handle || !container.contains(handle)) return;
       var dragEl = handle.closest(itemSel);
       if (!dragEl) return;
-      e.preventDefault();
-      dragEl.classList.add('drag-active');
-      try { handle.setPointerCapture(e.pointerId); } catch (_) {}
 
-      function onMove(ev) {
-        if (!dragEl) return;
-        var y = ev.clientY, after = null;
+      var startX = e.clientX, startY = e.clientY;
+      var dragging = false, ph = null, offX = 0, offY = 0, lastY = startY, raf = null;
+
+      // Plasser plassholderen ut fra pekerens y-posisjon (ekskluderer dratt kort/ph).
+      function positionPlaceholder(y) {
         var items = container.querySelectorAll(itemSel);
+        var before = null;
         for (var i = 0; i < items.length; i++) {
           if (items[i] === dragEl) continue;
           var r = items[i].getBoundingClientRect();
-          if (y < r.top + r.height / 2) { after = items[i]; break; }
+          if (y < r.top + r.height / 2) { before = items[i]; break; }
         }
-        if (after) { if (after !== dragEl.nextSibling) container.insertBefore(dragEl, after); }
-        else if (dragEl !== container.lastElementChild) { container.appendChild(dragEl); }
+        if (before) container.insertBefore(ph, before);
+        else container.appendChild(ph);
       }
-      function onUp() {
-        try { handle.releasePointerCapture(e.pointerId); } catch (_) {}
+
+      function begin() {
+        dragging = true;
+        var r = dragEl.getBoundingClientRect();
+        offX = startX - r.left; offY = startY - r.top;
+        ph = document.createElement('div');
+        ph.className = 'drag-placeholder';
+        ph.style.height = r.height + 'px';
+        dragEl.parentNode.insertBefore(ph, dragEl.nextSibling);
+        dragEl.classList.add('drag-active');
+        dragEl.style.position = 'fixed';
+        dragEl.style.zIndex = '9999';
+        dragEl.style.width = r.width + 'px';
+        dragEl.style.height = r.height + 'px';
+        dragEl.style.left = r.left + 'px';
+        dragEl.style.top = r.top + 'px';
+        dragEl.style.margin = '0';
+        dragEl.style.pointerEvents = 'none';
+        dragEl.style.boxSizing = 'border-box';
+        try { handle.setPointerCapture(e.pointerId); } catch (_) {}
+        autoScroll();
+      }
+
+      function autoScroll() {
+        raf = requestAnimationFrame(autoScroll);
+        var vh = window.innerHeight, spd = 0;
+        if (lastY < EDGE) spd = -Math.ceil((EDGE - lastY) / EDGE * MAXSPD);
+        else if (lastY > vh - EDGE) spd = Math.ceil((lastY - (vh - EDGE)) / EDGE * MAXSPD);
+        if (spd) { window.scrollBy(0, spd); positionPlaceholder(lastY); }
+      }
+
+      function onMove(ev) {
+        if (!dragging) {
+          if (Math.abs(ev.clientX - startX) < THRESH && Math.abs(ev.clientY - startY) < THRESH) return;
+          begin();
+        }
+        lastY = ev.clientY;
+        dragEl.style.left = (ev.clientX - offX) + 'px';
+        dragEl.style.top = (ev.clientY - offY) + 'px';
+        positionPlaceholder(ev.clientY);
+      }
+
+      function end() {
         handle.removeEventListener('pointermove', onMove);
-        handle.removeEventListener('pointerup', onUp);
-        handle.removeEventListener('pointercancel', onUp);
-        if (dragEl) dragEl.classList.remove('drag-active');
+        handle.removeEventListener('pointerup', end);
+        handle.removeEventListener('pointercancel', end);
+        try { handle.releasePointerCapture(e.pointerId); } catch (_) {}
+        if (raf) cancelAnimationFrame(raf);
+        if (dragging) {
+          if (ph && ph.parentNode) container.insertBefore(dragEl, ph);
+          if (ph && ph.parentNode) ph.parentNode.removeChild(ph);
+          dragEl.classList.remove('drag-active');
+          ['position', 'zIndex', 'width', 'height', 'left', 'top', 'margin', 'pointerEvents', 'boxSizing']
+            .forEach(function (p) { dragEl.style[p] = ''; });
+          var ids = Array.prototype.map.call(container.querySelectorAll(itemSel), function (el) {
+            return el.getAttribute(idAttr);
+          });
+          onReorder(ids);
+        }
         dragEl = null;
-        var ids = Array.prototype.map.call(container.querySelectorAll(itemSel), function (el) {
-          return el.getAttribute(idAttr);
-        });
-        onReorder(ids);
       }
+
+      e.preventDefault();
       handle.addEventListener('pointermove', onMove);
-      handle.addEventListener('pointerup', onUp);
-      handle.addEventListener('pointercancel', onUp);
+      handle.addEventListener('pointerup', end);
+      handle.addEventListener('pointercancel', end);
     });
   }
 

@@ -80,6 +80,13 @@
   function init() {
     var links = document.querySelectorAll('.footer__report a');
     if (!links.length) return;
+    // Les e-post/emne fra footer-lenken (kan endres i footer-admin) – fall tilbake til standard.
+    var href = links[0].getAttribute('href') || '';
+    var m = href.match(/^mailto:([^?]+)(?:\?subject=([^&]*))?/i);
+    if (m) {
+      EMAIL = decodeURIComponent(m[1]);
+      if (m[2]) SUBJECT = decodeURIComponent(m[2].replace(/\+/g, ' '));
+    }
     injectCss();
     var ov = build();
     Array.prototype.forEach.call(links, function (a) {

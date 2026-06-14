@@ -210,6 +210,21 @@
   z-index: 2;
 }
 
+/* ── Bildegalleri: miniatyrstripe under hovedbildet ── */
+.product__thumbs {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  padding: 12px 14px 0;
+}
+.product__thumb {
+  width: 52px; height: 52px; padding: 0; flex: 0 0 auto;
+  border: 1px solid var(--line); border-radius: 4px; overflow: hidden;
+  background: var(--navy); cursor: pointer;
+  transition: border-color .15s, transform .15s;
+}
+.product__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.product__thumb:hover { transform: translateY(-2px); }
+.product__thumb.is-active { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold); }
+
 /* ── Admin-fargevalg (palette.js) ──
    Produktkort arver lys/mørk via globale tokens. Feltene under setter --c-l/--c-d
    inline; CSS plukker mørk-variant via html[data-mode="marine"]. */
@@ -330,16 +345,18 @@ html[data-mode="marine"] .bglow-solid::before { background-image: linear-gradien
   font-size: .74rem; font-weight: 700; display: flex; align-items: center; justify-content: center;
 }
 
-/* Overlay + drawer styres av .cart-open på .cart-root (myk slide-in) */
+/* Overlay + drawer styres av .cart-open på .cart-root (myk slide-in).
+   z-index må ligge OVER den faste menyen (.nav = 1000), ellers skjules
+   toppen av kurven (med lukk-krysset) bak headeren. */
 .cart-overlay {
-  position: fixed; inset: 0; z-index: 401; background: rgba(15,17,30,.5);
+  position: fixed; inset: 0; z-index: 1100; background: rgba(15,17,30,.5);
   opacity: 0; visibility: hidden; transition: opacity .28s ease, visibility .28s ease;
 }
 .cart-root.cart-open .cart-overlay { opacity: 1; visibility: visible; }
 .cart-drawer {
-  position: fixed; top: 0; right: 0; bottom: 0; z-index: 402; width: min(420px, 92vw);
+  position: fixed; top: 0; right: 0; bottom: 0; z-index: 1101; width: min(420px, 92vw);
   background: var(--card); color: var(--ink); display: flex; flex-direction: column;
-  box-shadow: -14px 0 40px -16px rgba(0,0,0,.5); padding: 20px 22px 26px; overflow-y: auto;
+  box-shadow: -14px 0 40px -16px rgba(0,0,0,.5); padding: 84px 22px 26px; overflow-y: auto;
   transform: translateX(100%); transition: transform .3s cubic-bezier(.4,0,.2,1);
 }
 .cart-root.cart-open .cart-drawer { transform: translateX(0); }
@@ -420,7 +437,7 @@ html[data-mode="marine"] .cart-item__rm:hover { color: var(--navy); background: 
 
 /* ── Mobil ── */
 @media (max-width: 560px) {
-  .cart-drawer { width: 100vw; padding: 18px 16px 24px; }
+  .cart-drawer { width: 100vw; padding: 76px 16px 24px; }
   .cart-fab { right: 16px; bottom: 16px; width: 52px; height: 52px; }
   /* 16px hindrer at iOS zoomer inn når man fokuserer et felt */
   .cart-checkout input, .cart-checkout textarea { font-size: 16px; }
@@ -431,99 +448,7 @@ html[data-mode="marine"] .cart-item__rm:hover { color: var(--navy); background: 
 <body data-mode="paper">
 
 <!-- ============ NAV ============ -->
-<header class="nav" id="nav">
-  <a class="nav__brand" href="index.html">
-    <img src="assets/apeiron-logo.png" alt="Apeiron segl" />
-    <span>
-      <span class="nm">APEIRON</span>
-      <span class="sub">Filosofi &amp; Etikk · NTNU</span>
-    </span>
-  </a>
-  <nav class="nav__links">
-    <div class="nav__dropdown">
-      <a class="nav__drop-trigger" href="index.html#om">Om oss <span class="nav__caret">▾</span></a>
-      <div class="nav__drop-menu">
-        <a href="index.html#om">Om oss</a>
-        <a href="index.html#lesesalen">Lesesalen</a>
-        <a href="index.html#samarbeid">Samarbeid</a>
-      </div>
-    </div>
-    <div class="nav__dropdown">
-      <a class="nav__drop-trigger" href="index.html#studiet">Studiene <span class="nav__caret">▾</span></a>
-      <div class="nav__drop-menu">
-        <a href="index.html#studiet">Studiene</a>
-        <a href="pensum.html">Pensum</a>
-      </div>
-    </div>
-    <div class="nav__dropdown">
-      <a class="nav__drop-trigger" href="index.html#arrangementer">Arrangementer <span class="nav__caret">▾</span></a>
-      <div class="nav__drop-menu">
-        <a href="index.html#arrangementer">Arrangementer</a>
-        <a href="index.html#aporetisk">Aporetisk Aften</a>
-        <a href="index.html#fadderuke">Fadderuke</a>
-      </div>
-    </div>
-    <div class="nav__dropdown">
-      <a class="nav__drop-trigger" href="styret.html">Styret <span class="nav__caret">▾</span></a>
-      <div class="nav__drop-menu">
-        <a href="styret.html">Apeiron styret</a>
-        <a href="styret.html#tillitsvalgte">Tillitsvalgte</a>
-        <a href="styret.html#sak">S.A.K</a>
-        <a href="styret.html#vervene">Verv</a>
-      </div>
-    </div>
-    <a href="begrep.html" class="nav__top">Begrep</a>
-    <a href="galleri.html" class="nav__top">Galleri</a>
-    <a href="hjelp.html" class="nav__top">Hjelp</a>
-    <div class="nav__dropdown">
-      <a class="nav__drop-trigger" href="merch.html">Merch <span class="nav__caret">▾</span></a>
-      <div class="nav__drop-menu">
-        <a href="merch.html" class="is-active">Merch</a>
-        <a href="marked.html">Kjøp &amp; bytte</a>
-      </div>
-    </div>
-    <a href="index.html#kontakt">Kontakt</a>
-    <a class="btn btn--gold nav__cta" href="index.html#bli-medlem">Bli medlem <span class="arr">→</span></a>
-  </nav>
-  <button class="nav__color-toggle" id="colorToggle" type="button" aria-label="Bytt fargemodus">
-    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
-    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-  </button>
-  <button class="nav__search-btn" type="button" aria-label="Søk på nettstedet">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
-    <span class="nav__search-hint">Søk</span>
-  </button>
-  <button class="nav__burger" id="burger" aria-label="Meny">
-    <span></span><span></span><span></span>
-  </button>
-</header>
-
-<div class="drawer" id="drawer">
-  <span class="drawer__lbl">Foreningen</span>
-  <a href="index.html#om">Om oss</a>
-  <a href="index.html#lesesalen">Lesesalen</a>
-  <a href="index.html#samarbeid">Samarbeid</a>
-  <span class="drawer__lbl">Studiene</span>
-  <a href="index.html#studiet">Studiene</a>
-  <a href="pensum.html">Pensum</a>
-  <span class="drawer__lbl">Arrangementer</span>
-  <a href="index.html#arrangementer">Arrangementer</a>
-  <a href="index.html#aporetisk">Aporetisk Aften</a>
-  <a href="index.html#fadderuke">Fadderuke</a>
-  <span class="drawer__lbl">Styret</span>
-  <a href="styret.html">Apeiron styret</a>
-  <a href="styret.html#tillitsvalgte">Tillitsvalgte</a>
-  <a href="styret.html#sak">S.A.K</a>
-  <a href="styret.html#vervene">Verv</a>
-  <span class="drawer__lbl">Mer</span>
-  <a href="begrep.html">Begrep</a>
-  <a href="galleri.html">Galleri</a>
-  <a href="hjelp.html">Hjelp</a>
-  <a href="merch.html" class="is-active">Merch</a>
-  <a href="marked.html">Kjøp &amp; bytte</a>
-  <a href="index.html#kontakt">Kontakt</a>
-  <a href="index.html#bli-medlem">Bli medlem</a>
-</div>
+<div id="site-nav"></div>
 
 <!-- ============ SUBPAGE HEADER ============ -->
 <section class="subhero">
@@ -598,33 +523,11 @@ html[data-mode="marine"] .cart-item__rm:hover { color: var(--navy); background: 
 </section>
 
 <!-- ============ FOOTER ============ -->
-<footer class="footer">
-  <div class="wrap">
-    <img src="assets/apeiron-logo.png" alt="Apeiron segl" />
-    <div class="footer__name">APEIRON</div>
-    <div class="footer__tag">filosofi &amp; etikk · NTNU Trondheim</div>
-    <div class="footer__links">
-      <a href="index.html#om">Om oss</a>
-      <a href="index.html#studiet">Studiet</a>
-      <a href="pensum.html">Pensum</a>
-      <a href="begrep.html">Begrep</a>
-      <a href="index.html#arrangementer">Arrangementer</a>
-      <a href="styret.html">Apeiron styret</a>
-      <a href="styret.html#tillitsvalgte">Tillitsvalgte</a>
-      <a href="styret.html#sak">S.A.K</a>
-      <a href="styret.html#vervene">Verv</a>
-      <a href="galleri.html">Galleri</a>
-      <a href="hjelp.html">Hjelp</a>
-      <a href="merch.html">Merch</a>
-      <a href="marked.html">Kjøp &amp; bytte</a>
-      <a href="index.html#bli-medlem">Bli medlem</a>
-      <a href="index.html#kontakt">Kontakt</a>
-    </div>
-    <div class="footer__fine">© 2026 Apeiron Linjeforening</div>
-    <div class="footer__github"><a href="https://github.com/Apeiron-Linjeforening/ApeironLF" target="_blank" rel="noopener" aria-label="Apeiron på GitHub"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> GitHub</a></div>
-    <div class="footer__report"><a href="mailto:apeironlinjeforening@gmail.com?subject=Feil%20p%C3%A5%20nettsiden">Rapporter en feil på nettsiden</a></div>
-  </div>
-</footer>
+<div id="site-footer"></div>
+
+<script src="footer-icons.js"></script>
+<script src="site-content.js"></script>
+<script src="site-chrome.js"></script>
 
 <script>
 (function () {
@@ -686,6 +589,7 @@ html[data-mode="marine"] .cart-item__rm:hover { color: var(--navy); background: 
     var sv = window.paletteStyleVars || function () { return ''; };
     var animOf = window.paletteAnim || function () { return null; };
 
+    var galleries = {};   // pid -> { imgs:[...], colorMap:{farge:indeks} }
     var html = '';
     data.forEach(function (p, i) {
       var delay = ['', ' d1', ' d2'][i % 3];
@@ -732,9 +636,18 @@ html[data-mode="marine"] .cart-item__rm:hover { color: var(--navy); background: 
       // overflow:hidden og ikke lyser gjennom fyllet.
       var edgeAnim = animOf(p.edge);
 
-      var photo = p.img
-        ? '<img class="product__photo" src="' + esc(p.img) + '" alt="' + esc(p.name) + '">'
+      // Bildegalleri: bruk images-arrayen om den finnes, ellers fall tilbake på p.img.
+      var imgs = (p.images && p.images.length) ? p.images.slice() : (p.img ? [p.img] : []);
+      galleries[p.id] = { imgs: imgs, colorMap: (p.colorImages && typeof p.colorImages === 'object') ? p.colorImages : {} };
+      var photo = imgs.length
+        ? '<img class="product__photo" src="' + esc(imgs[0]) + '" alt="' + esc(p.name) + '">'
         : '';
+      var thumbs = '';
+      if (imgs.length > 1) {
+        thumbs = '<div class="product__thumbs">' + imgs.map(function (u, ti) {
+          return '<button type="button" class="product__thumb' + (ti === 0 ? ' is-active' : '') + '" data-thumb="' + ti + '" aria-label="Vis bilde ' + (ti + 1) + '"><img src="' + esc(u) + '" alt=""></button>';
+        }).join('') + '</div>';
+      }
       var hasPrice = p.price != null && p.price !== '';
       var priceLine = !hasPrice ? ''
         : p.memberPrice
@@ -769,11 +682,12 @@ html[data-mode="marine"] .cart-item__rm:hover { color: var(--navy); background: 
 
       var article =
         '<article class="product reveal' + delay + '" id="prod-' + esc(p.id) + '">'
-        + '<div class="product__img">'
+        + '<div class="product__img" data-pid="' + esc(p.id) + '">'
         + badge
         + '<div class="product__watermark"><img src="assets/apeiron-logo.png" alt=""></div>'
         + photo
         + '</div>'
+        + thumbs
         + '<div class="product__body">'
         + '<span class="product__cat">' + esc(p.category) + '</span>'
         + '<h3>' + esc(p.name) + '</h3>'
@@ -794,6 +708,32 @@ html[data-mode="marine"] .cart-item__rm:hover { color: var(--navy); background: 
     });
 
     grid.innerHTML = html;
+
+    // Galleri: bytt hovedbilde ved klikk på miniatyr eller når en farge velges.
+    grid.querySelectorAll('.product').forEach(function (art) {
+      var imgWrap = art.querySelector('.product__img');
+      var pid = imgWrap && imgWrap.getAttribute('data-pid');
+      var info = pid && galleries[pid];
+      var photoEl = art.querySelector('.product__photo');
+      if (!info || !photoEl) return;
+      function setMain(idx) {
+        if (idx == null || idx < 0 || idx >= info.imgs.length) return;
+        photoEl.src = info.imgs[idx];
+        art.querySelectorAll('.product__thumb').forEach(function (t) {
+          t.classList.toggle('is-active', Number(t.getAttribute('data-thumb')) === idx);
+        });
+      }
+      art.querySelectorAll('.product__thumb').forEach(function (t) {
+        t.addEventListener('click', function () { setMain(Number(t.getAttribute('data-thumb'))); });
+      });
+      var colorSel = art.querySelector('[data-variant="color"]');
+      if (colorSel) {
+        colorSel.addEventListener('change', function () {
+          var idx = info.colorMap[colorSel.value];
+          if (idx != null) setMain(idx);
+        });
+      }
+    });
 
     // Intersection observer for reveal-animasjon
     var reveals = Array.prototype.slice.call(grid.querySelectorAll('.reveal'));
