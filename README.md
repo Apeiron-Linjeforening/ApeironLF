@@ -585,9 +585,9 @@ Merk: Cloudflare Registrar støtter ikke .no-domener. For .org er Cloudflare bil
 - Tilgang: For tilgang via sftp, skriv `sftp://dittbrukernavn@login.stud.ntnu.no/home/groups/apeiron` i filutforskeren (Linux). Per nå er det kun sosialansvarlig Iver (25/26) som har tilgang.
 - Avventer svar fra NTNU om muligheten for videre hjelp.
 
-
+## Lisens
 ---
-Lisens: Vet ikke.
+[MIT License](LICENSE)
 
                                   |
                                  |||
