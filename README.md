@@ -423,6 +423,8 @@ function doPost(e) {
 ---
 
 ## Filstruktur
+<details>
+<summary><b>Hele filstrukturen og kort forklaring av hva filene er (klikk for å vise)</b></summary>
 
 | Fil                      | Hva det er                                                                          |
 | --------------------------| -------------------------------------------------------------------------------------|
@@ -463,6 +465,8 @@ function doPost(e) {
 | `assets/Styremedlemmer/` | Portrettbilder av styremedlemmer (alternativ til base64)                            |
 | `assets/`                | Logo og andre bilder                                                                |
 | `_headers`               | Cloudflare Pages — HTTP-sikkerhetsheadere                                           |
+</details>
+
 
 ---
 
@@ -576,8 +580,10 @@ Merk: Cloudflare Registrar støtter ikke .no-domener. For .org er Cloudflare bil
 - Forsøkt omdirigering med `.htaccess` (`RedirectMatch (.*) https://apeironlf.pages.dev/`) — fungerte ikke.
 - Tilgang: For tilgang via sftp, skriv `sftp://dittbrukernavn@login.stud.ntnu.no/home/groups/apeiron` i filutforskeren (Linux). Per nå er det kun sosialansvarlig Iver (25/26) som har tilgang.
 - Avventer svar fra NTNU om muligheten for videre hjelp.
-- 
+
+
 ---
+Lisens: Vet ikke.
 
                                   |
                                  |||
