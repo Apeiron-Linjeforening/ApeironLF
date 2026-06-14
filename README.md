@@ -479,21 +479,32 @@ Hvis repoet ikke er koblet til Cloudflare Pages, eller om man ønsker å bytte C
 3. Sett «Framework preset» til «None» og la «Build command» stå tom. «Build output directory» settes til `/`.
 4. Trykk «Save and Deploy» — fra nå av skjer alt automatisk
 ---
+## Kjente begrensninger og usikkerheter
+
+Ting vi vet om, men er usikre på om det er verdt å gjøre noe med. Ført opp så de ikke glemmes - ikke nødvendigvis feil som må fikses.
+
+- **Merch: én farge kan bare kobles til ett bilde.** Har du to bilder av samme farge (f.eks. for- og bakside av samme genser), kan bare det ene knyttes til fargen. Velger man samme farge på bilde nummer to, flyttes koblingen dit. Lite problem i praksis (kunden ser uansett hele galleriet via miniatyrstripa). Å støtte flere bilder pr. farge ville kreve en mer kompleks datamodell.
+- **Meny og footer vises et lite øyeblikk etter at siden lastes.** De bygges av `site-chrome.js` i nettleseren (for å slippe byggesteg og holde alt i én fil). På treg forbindelse kan man så vidt se at de «popper inn». Menyen er fast posisjonert, så selve innholdet hopper ikke. Alternativet (byggesteg) ble vurdert og valgt bort, se diskusjon i commit-historikk.
+- **Footer/meny krever JavaScript.** Med JS avslått vises ikke meny/footer. Gjelder en svært liten andel besøkende; resten av siden bruker uansett JS (kalender, søk, kurv).
+- **README-seksjonen «Lagre admin-endringer rett til repo-fila» (over) er utdatert.** Den direkte-lagrings-funksjonen (File System Access) ble fjernet fordi den feilet på enkelte systemer; admin-panelene laster nå alltid ned fila. Avsnittet bør ryddes ved anledning.
+- **Bilder lagres som base64 i datafilene.** Mange/store produktbilder gjør `merch-products.js` stor. Admin skalerer ned til maks 900px webp, men mange bilder kan likevel bli tungt. Vurder eksterne bildefiler (`assets/merch/...`) hvis filene blir veldig store. Vil ikke å lagre de eksternt bare gjøre bildene større? -> lagre de i base64 i egen fil?
+- **Bytte navn til Merch til Butikk** Apeiron har ikke en butikk, men vi har merch... men man kjøper merch... i en butikk.
+
+---
 ## To do
 
 Kritisk:
 - [ ] Fikse domene - Se "Domene" nedenfor.
-- [ ] Se på MacGyver serien igjen.
 - [ ] Kvadrupelsjekk at informasjon under Hjelp er helt riktig!! Sjekk numre og eposter!
 - [ ] Endre "Hjelp" i menyen med noe annet som uttrykker mer direkte hva siden er om.
 - [ ] Fikse menyen / NAV slik at den fungerer bedre på smalere skjermer og mobil.
 - [ ] Legge til et informasjonsfelt for Fadderukene hvor man kan fylle inn generell info.
 - [ ] Sjekke at "Legg til fadderukeprogrammet i din kalender" fungerer: iCal og Google Kalender.
 - [ ] Måte for Apeiron å legge inn viktig informasjon som er tydelig på index.
-- [ ] Merch: Gjøre om navn til butikk.
-- [ ] Merch-admin: legge til flere bilder for et produkt både som bare vises vanlig i kortet, og som er koblet mot farge.
-- [ ] Merch-admin: lett redigering av bilder som lastes opp for produkt: crop, zoom, rotasjon. *(Rotasjon (90°) er lagt til; crop/zoom gjenstår.)*
-- [ ] Oppdatere alle footers -> Fikse en felles footer for alle sider?
+
+- [x] Merch-admin: legge til flere bilder for et produkt både som bare vises vanlig i kortet, og som er koblet mot farge. *(Galleri pr. produkt med miniatyrstripe i butikken; hvert bilde kan kobles til en farge så hovedbildet byttes ved fargevalg. Se «Kjente begrensninger» om én farge pr. bilde.)*
+- [x] Merch-admin: lett redigering av bilder som lastes opp for produkt: crop, zoom, rotasjon. *(Rotér (90°), samt crop/zoom-editor (dra + glidebryter/scrollhjul) som bakes inn i bildet.)*
+- [x] Oppdatere alle footers -> Fikse en felles footer for alle sider. *(Footeren bygges nå ETT sted av `site-chrome.js` fra data i `site-content.js`; redigeres i `footer-admin.html`.)*
 
 Medium:
 - [ ] Be HF studentrådet om å oppdatere sidene deres og gi oss mer informasjon om hva de faktisk gjør. 
@@ -501,12 +512,12 @@ Medium:
       - [ ] Hvordan får vi kontakt med våre egne TVer?
 - [ ] Legge til side for Utmerkelser for personer som har stått ut i studentmiljøet eller det frivillige under IFR.
 - [ ] Lage egen Admin for index.
-- [ ] Siden føles litt kommersiell ut....
 - [ ] Legg til Logikk Panikk.
 - [ ] Finne en bedre måte å vise arrangement og plakater på -> Måte å vise nyheter/informasjon på.
-- [ ] Se om vi kan få menyen til å være en og samme entitet over alle sidene -> for å slippe å oppdatere hver en meny for hver side.
-- [ ] merch handlekurv: legge til tydelig kryss oppe i høyre hjørne.
-- [ ] Legge til alle lenkene til Apeiron i footers: Github (gjort), Facebook, Instagram, Instagram (meme)
+- [x] Se om vi kan få menyen til å være en og samme entitet over alle sidene -> for å slippe å oppdatere hver en meny for hver side. *(Menyen bygges nå ETT sted i `site-chrome.js` og injiseres på alle sider via `#site-nav`.)*
+- [x] merch handlekurv: legge til tydelig kryss oppe i høyre hjørne. *(Krysset fantes, men kurven lå under headeren; hevet kurvens z-index over menyen så krysset er synlig.)*
+- [x] Legge til alle lenkene til Apeiron i footers: Github (gjort), Facebook, Instagram, Instagram (meme) *(Lagt til som egen sosial-rad i den felles footeren.)*
+- [ ] Mini-forhåndsvisning per panel (som footer-admin). Jeg gjenskaper kort-utseendet i admin. Mest kontroll, men litt arbeid per panel, og må holdes i synk hvis det offentlige utseendet endres.
 
 Lav:
 - [ ] Side eller plassering for "Oppnåelser" (Premier vi har fått, som sølv i håndball og "best oppmøte" fra Dionysos)
@@ -514,10 +525,12 @@ Lav:
 - [ ] Sette opp et arkiv.
 - [ ] Sammenlign med https://www.mfplacebo.no/
 - [ ] Gjøre om admin filene til å gi nærest full kontroll over oppsett over sidene.
-- [ ] Menyen: Dropdown menyene skal endre seg for å vise hvor du er (Styret fungerer ikke).
-- [ ] Legge til alle Apeiron sine lenker i footer.
+- [x] Menyen: Dropdown menyene skal endre seg for å vise hvor du er (Styret fungerer ikke). *(Nav-logikken lå kun i `app.js` på forsiden; flyttet til `site-chrome.js` så aktiv-markering kjører på alle sider.)*
 - [ ] Legge til side for møtereferat -> Kan tas i egen wiki, muligens.
-- [ ] Dra sorteringen i admin er fremdeles litt merkelig, nesten ubrukelig pga hvordan den fungerer nå.
+- [x] Dra sorteringen i admin er fremdeles litt merkelig, nesten ubrukelig pga hvordan den fungerer nå. *(Skrevet om `enableDragSort`: kortet løftes og følger pekeren, plassholder viser landingssted, auto-scroll mot kantene, klikketerskel.)*
+- [ ] Header/meny-admin: GUI for å redigere menyen (dropdowns, undermenyer, ankerlenker, rekkefølge) - på linje med `footer-admin.html`, men mer omfattende pga. menyens struktur.
+- [ ] Live forhåndsvisning i alle admin-paneler (som i `footer-admin.html`). Tas inkrementelt per panel (merch-admin først), siden hvert panel lager ulikt innhold.
+- [ ] Opp Ned Side.
 
 Hadde vært kult:
 - [ ] Snakke med IFR/NTNU om API for automatisk oppdatering av emner for studiene.
@@ -537,6 +550,7 @@ Må gjøres før vi slapper av med å bygge nettsiden:
 - [ ] Fjern WIP banneret.
 - [ ] Lage en ordentlig How-To.
 - [ ] Rydde opp i Readme og sette inn i Readme hva som er gjort og hvordan alt fungerer
+- [ ] Oppdater søkeindex
 
 Skjelett Prosjekt:
 - [ ] Gjøre om prosjektet til et nytt repo som kan klones og lett gjøres om til andre linjeforeninger.

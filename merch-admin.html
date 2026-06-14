@@ -189,6 +189,82 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
 }
 .img-zone:hover .btn-rot-img { display: flex; }
 
+/* ── Bildegalleri (flere bilder pr. produkt) ── */
+.img-gallery {
+  width: 160px; flex-shrink: 0; background: var(--navy);
+  border-right: 1px solid rgba(35,39,64,.09);
+  padding: 10px; display: flex; flex-direction: column; gap: 10px;
+}
+.img-thumb { position: relative; border-radius: 5px; overflow: hidden; background: #0d1020; }
+.img-thumb img { width: 100%; height: 104px; object-fit: cover; display: block; }
+.img-thumb__primary {
+  position: absolute; top: 5px; left: 5px; z-index: 2;
+  background: var(--gold); color: var(--navy);
+  font-size: .54rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  padding: 2px 6px; border-radius: 3px;
+}
+.img-thumb__clr {
+  position: absolute; top: 5px; right: 5px; z-index: 2;
+  background: rgba(212,175,55,.92); color: var(--navy);
+  font-size: .52rem; font-weight: 700; letter-spacing: .04em;
+  padding: 2px 6px; border-radius: 3px; max-width: 70%;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.img-thumb__bar { display: flex; gap: 4px; align-items: center; padding: 5px; background: rgba(0,0,0,.4); }
+.img-thumb__color { padding: 0 5px 5px; background: rgba(0,0,0,.4); }
+.img-thumb__color select {
+  width: 100%; font-family: var(--body); font-size: .72rem;
+  border: 1px solid rgba(244,236,217,.25); border-radius: 3px;
+  background: rgba(255,255,255,.06); color: #f4ecd9; padding: 3px 5px;
+}
+.img-thumb__color select option { color: #1a1d2e; }
+
+/* ── Crop/zoom-editor ── */
+.crop-ov {
+  position: fixed; inset: 0; background: rgba(15,17,30,.6);
+  display: none; align-items: center; justify-content: center; z-index: 500; padding: 20px;
+}
+.crop-ov.on { display: flex; }
+.crop-box {
+  background: var(--paper); border-radius: 8px; padding: 20px;
+  width: min(380px, 94vw); box-shadow: 0 24px 60px -20px rgba(0,0,0,.5);
+}
+.crop-box h3 { font-family: var(--display); color: var(--navy); font-size: 1.3rem; margin-bottom: 12px; }
+.crop-view {
+  position: relative; width: 100%; max-width: 320px; aspect-ratio: 1; margin: 0 auto;
+  overflow: hidden; border-radius: 6px; background: var(--navy);
+  touch-action: none; cursor: grab;
+}
+.crop-view:active { cursor: grabbing; }
+.crop-view img { position: absolute; max-width: none; user-select: none; -webkit-user-drag: none; pointer-events: none; }
+.crop-row { display: flex; align-items: center; gap: 10px; margin: 14px 0 4px; font-size: .78rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
+.crop-row input[type=range] { flex: 1; accent-color: var(--gold); }
+.crop-hint { font-size: .76rem; color: var(--ink-soft); line-height: 1.45; margin-bottom: 16px; }
+.crop-actions { display: flex; gap: 10px; justify-content: flex-end; }
+.crop-actions button { padding: 8px 18px; border-radius: 4px; font-family: var(--body); font-size: .85rem; cursor: pointer; border: 1px solid var(--border); background: white; color: var(--ink); }
+.crop-cancel:hover { background: rgba(35,39,64,.06); }
+.crop-apply { background: var(--gold); border-color: var(--gold); color: var(--navy); font-weight: 700; }
+.crop-apply:hover { filter: brightness(1.08); }
+.img-thumb__bar .grip { cursor: grab; color: #fff; opacity: .55; font-size: .95rem; line-height: 1; margin-right: auto; touch-action: none; user-select: none; }
+.img-thumb__bar .grip:active { cursor: grabbing; }
+.img-thumb .tbtn {
+  width: 24px; height: 24px; flex: 0 0 auto; border: none; border-radius: 4px;
+  background: rgba(255,255,255,.14); color: #fff; cursor: pointer; font-size: .78rem;
+  display: flex; align-items: center; justify-content: center;
+}
+.img-thumb .tbtn:hover { background: rgba(255,255,255,.3); }
+.img-thumb .tbtn.x:hover { background: var(--maroon); }
+.img-add {
+  border: 1.5px dashed rgba(244,236,217,.3); border-radius: 5px;
+  color: rgba(244,236,217,.55); font-size: .72rem; line-height: 1.4;
+  padding: 14px 8px; text-align: center; cursor: pointer; background: rgba(255,255,255,.03);
+  transition: border-color .15s, color .15s;
+}
+.img-add:hover, .img-gallery[data-over] .img-add { border-color: var(--gold); color: var(--gold); }
+@media (max-width: 580px) {
+  .img-gallery { width: 100%; border-right: none; border-bottom: 1px solid rgba(35,39,64,.09); }
+}
+
 /* Fields */
 .fields { padding: 16px 18px; display: flex; flex-direction: column; gap: 11px; }
 .appearance { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; align-items: start; }
@@ -273,11 +349,15 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
       <strong>Slik oppdaterer du merch-siden</strong>
       <ol>
         <li>Rediger produktene nedenfor — klikk på et felt for å redigere det</li>
-        <li>Last opp bilder ved å <b>klikke på bildefeltet</b> eller dra et bilde inn på det</li>
+        <li>Last opp bilder ved å <b>klikke på bildefeltet</b> eller dra bilder inn på det (du kan velge flere)</li>
+        <li><b>Koble farger til bilder:</b> har produktet farger, kan du velge på hvert bilde hvilken farge det hører til - da byttes hovedbildet i butikken når kunden velger den fargen</li>
         <li>Klikk <b>Last ned merch-products.js</b> — lagre filen fra nedlastingsmappen</li>
         <li>Erstatt <code>merch-products.js</code> i GitHub-repositoriet og push/commit</li>
         <li>Cloudflare Pages oppdaterer nettsiden automatisk innen et minutt</li>
       </ol>
+      <div class="tip-note">🖼️ <b>Bilder pr. produkt:</b> Legg til så mange bilder du vil. Det <b>første</b> bildet er hovedbildet (merket «Hoved»). På hver miniatyr kan du:
+        <b>⠿</b> dra for å endre rekkefølge · <b>⛶</b> beskjære/zoome (dra + glidebryter eller scrollhjul, så «Bruk») · <b>↻</b> rotere 90° · <b>✕</b> slette.
+        Har produktet farger, kan du via nedtrekksmenyen på en miniatyr velge at <b>bildet vises når den fargen velges</b> i butikken (hver farge kan kobles til ett bilde).</div>
       <div class="tip-note">💾 Endringer lagres automatisk i nettleseren din — du mister dem ikke ved å laste siden på nytt. Last ned filen for å publisere til nettsiden.</div>
       <div class="tip-note">🛠️ Når du klikker <b>Last ned merch-products.js</b> lastes fila ned (én fil). Erstatt <code>merch-products.js</code> i repoet med den nedlastede og push for å publisere.</div>
     </div>
@@ -293,7 +373,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
 </div>
 
 <div class="toast" id="toast">Lagret i nettleseren</div>
-<input type="file" id="file-input" accept="image/png,image/jpeg,image/webp,image/avif" hidden>
+<input type="file" id="file-input" accept="image/png,image/jpeg,image/webp,image/avif" multiple hidden>
 
 <script src="palette.js"></script>
 <script src="admin-common.js"></script>
@@ -318,6 +398,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
     } else {
       products = fromPublished();
     }
+    normalizeProducts();
     const rawInfo = localStorage.getItem(LS_INFO_KEY);
     info = rawInfo != null ? rawInfo : (window.MERCH_INFO || '');
   }
@@ -337,47 +418,86 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
 
   function showToast(msg) { AdminCommon.toast(msg); }
 
-  /* ─── IMAGE PROCESSING ─── */
-  let imgTarget = null;
+  /* ─── BILDER: flere pr. produkt (galleri) ───
+     p.images: array av data-URL-er (galleri). Hovedbildet = images[0].
+     p.img holdes synket til images[0] for bakoverkompatibilitet (handlekurv,
+     eldre lesere). p.colorImages: { fargenavn: indeks } (brukes i butikken). */
   const fileInput = document.getElementById('file-input');
+  let imgTarget = null;   // prodId som mottar opplastede bilder
 
   fileInput.addEventListener('change', function () {
-    const f = fileInput.files && fileInput.files[0];
-    if (f && imgTarget) processImage(f, imgTarget);
+    const files = fileInput.files;
+    if (files && files.length && imgTarget) addImages(imgTarget, files);
     fileInput.value = '';
   });
-
   function openPicker(id) { imgTarget = id; fileInput.click(); }
 
-  function processImage(file, prodId) {
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      const img = new Image();
-      img.onload = function () {
-        const MAX = 900;
-        let w = img.width, h = img.height;
-        if (Math.max(w, h) > MAX) {
-          const s = MAX / Math.max(w, h);
-          w = Math.round(w * s); h = Math.round(h * s);
-        }
-        const canvas = document.createElement('canvas');
-        canvas.width = w; canvas.height = h;
-        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        const url = canvas.toDataURL('image/webp', 0.82);
-        setField(prodId, 'img', url);
-        const zone = document.querySelector('[data-id="' + prodId + '"] .img-zone');
-        if (zone) refreshImgZone(zone, url);
-        lazySave();
+  function prod(id) { return products.find(function (x) { return x.id === id; }); }
+
+  // Sørg for at hvert produkt har images-array + colorImages, og synk p.img.
+  function normalizeProducts() {
+    products.forEach(function (p) {
+      if (!Array.isArray(p.images)) p.images = (p.img ? [p.img] : []);
+      p.images = p.images.filter(function (u) { return typeof u === 'string' && u; });
+      if (!p.colorImages || typeof p.colorImages !== 'object') p.colorImages = {};
+      syncPrimary(p);
+    });
+  }
+  function syncPrimary(p) { p.img = p.images.length ? p.images[0] : null; }
+
+  // Skaler ned + komprimer en fil til webp data-URL. Returnerer Promise.
+  function toWebp(file) {
+    return new Promise(function (resolve, reject) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const img = new Image();
+        img.onload = function () {
+          const MAX = 900;
+          let w = img.width, h = img.height;
+          if (Math.max(w, h) > MAX) { const s = MAX / Math.max(w, h); w = Math.round(w * s); h = Math.round(h * s); }
+          const canvas = document.createElement('canvas');
+          canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL('image/webp', 0.82));
+        };
+        img.onerror = reject;
+        img.src = e.target.result;
       };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
   }
 
-  // Roter lagret produktbilde 90° med klokka og bak resultatet inn i p.img.
-  function rotateImage(prodId, zone) {
-    const p = products.find(function (x) { return x.id === prodId; });
-    if (!p || !p.img) return;
+  function addImages(prodId, fileList) {
+    const p = prod(prodId);
+    if (!p) return;
+    const files = Array.prototype.slice.call(fileList).filter(function (f) { return f && /^image\//.test(f.type); });
+    Promise.all(files.map(toWebp)).then(function (urls) {
+      urls.forEach(function (u) { p.images.push(u); });
+      syncPrimary(p);
+      renderGallery(prodId);
+      lazySave();
+    });
+  }
+
+  function removeImageAt(prodId, idx) {
+    const p = prod(prodId);
+    if (!p || idx < 0 || idx >= p.images.length) return;
+    p.images.splice(idx, 1);
+    // Fiks fargekoblinger: fjern/forskyv indekser.
+    const cm = p.colorImages || {};
+    Object.keys(cm).forEach(function (c) {
+      if (cm[c] === idx) delete cm[c];
+      else if (cm[c] > idx) cm[c] = cm[c] - 1;
+    });
+    syncPrimary(p);
+    renderGallery(prodId);
+    lazySave();
+  }
+
+  function rotateImageAt(prodId, idx) {
+    const p = prod(prodId);
+    if (!p || !p.images[idx]) return;
     const img = new Image();
     img.onload = function () {
       const canvas = document.createElement('canvas');
@@ -386,12 +506,227 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
       ctx.translate(canvas.width / 2, canvas.height / 2);
       ctx.rotate(Math.PI / 2);
       ctx.drawImage(img, -img.width / 2, -img.height / 2);
-      const url = canvas.toDataURL('image/webp', 0.82);
-      setField(prodId, 'img', url);
-      if (zone) refreshImgZone(zone, url);
+      p.images[idx] = canvas.toDataURL('image/webp', 0.82);
+      syncPrimary(p);
+      renderGallery(prodId);
       lazySave();
     };
-    img.src = p.img;
+    img.src = p.images[idx];
+  }
+
+  // Ny rekkefølge fra dra-sortering: ids = gamle indekser (som strenger) i ny rekkefølge.
+  function reorderImages(prodId, ids) {
+    const p = prod(prodId);
+    if (!p) return;
+    const order = ids.map(function (s) { return parseInt(s, 10); }).filter(function (n) { return !isNaN(n) && n < p.images.length; });
+    if (order.length !== p.images.length) { renderGallery(prodId); return; }
+    const newImages = order.map(function (oi) { return p.images[oi]; });
+    // Remap fargekoblinger til nye indekser.
+    const remap = {}; order.forEach(function (oi, ni) { remap[oi] = ni; });
+    const cm = p.colorImages || {}; const ncm = {};
+    Object.keys(cm).forEach(function (c) { if (remap[cm[c]] != null) ncm[c] = remap[cm[c]]; });
+    p.images = newImages; p.colorImages = ncm;
+    syncPrimary(p);
+    renderGallery(prodId);
+    lazySave();
+  }
+
+  // Bygg galleriet inn i kortets [data-gallery]-container.
+  // wrap kan sendes inn direkte (når kortet ennå ikke er lagt i DOM, f.eks. fra makeCard).
+  function renderGallery(prodId, wrap) {
+    const p = prod(prodId);
+    wrap = wrap || document.querySelector('[data-id="' + prodId + '"] [data-gallery]');
+    if (!p || !wrap) return;
+    const cm = p.colorImages || {};
+    const colors = (p.colors || []).filter(Boolean);
+    let html = '';
+    p.images.forEach(function (u, i) {
+      // Hvilken farge (om noen) viser dette bildet i butikken?
+      let curColor = '';
+      Object.keys(cm).forEach(function (k) { if (cm[k] === i) curColor = k; });
+      let colorRow = '';
+      if (colors.length) {
+        const opts = '<option value="">(vanlig)</option>'
+          + colors.map(function (c) { return '<option value="' + esc(c) + '"' + (c === curColor ? ' selected' : '') + '>' + esc(c) + '</option>'; }).join('');
+        colorRow = '<div class="img-thumb__color"><select data-colorsel="' + i + '" title="Vis dette bildet når denne fargen velges">' + opts + '</select></div>';
+      }
+      html += '<div class="img-thumb" data-id="' + i + '">'
+        + (i === 0 ? '<span class="img-thumb__primary">Hoved</span>' : '')
+        + (curColor ? '<span class="img-thumb__clr" title="Vises for fargen ' + esc(curColor) + '">' + esc(curColor) + '</span>' : '')
+        + '<img src="' + esc(u) + '" alt="">'
+        + '<div class="img-thumb__bar">'
+          + '<span class="grip" title="Dra for å endre rekkefølge">⠿</span>'
+          + '<button class="tbtn crop" type="button" title="Beskjær / zoom" data-act="crop" data-i="' + i + '">⛶</button>'
+          + '<button class="tbtn rot" type="button" title="Roter 90°" data-act="rot" data-i="' + i + '">↻</button>'
+          + '<button class="tbtn x" type="button" title="Fjern bilde" data-act="del" data-i="' + i + '">✕</button>'
+        + '</div>'
+        + colorRow
+      + '</div>';
+    });
+    html += '<div class="img-add" data-add-img>'
+      + (p.images.length ? '+ Legg til flere bilder' : '📷 Klikk eller dra inn bilde(r)')
+      + '</div>';
+    wrap.innerHTML = html;
+    wrap.querySelectorAll('[data-act="rot"]').forEach(function (b) {
+      b.addEventListener('click', function () { rotateImageAt(prodId, Number(b.getAttribute('data-i'))); });
+    });
+    wrap.querySelectorAll('[data-act="del"]').forEach(function (b) {
+      b.addEventListener('click', function () { removeImageAt(prodId, Number(b.getAttribute('data-i'))); });
+    });
+    wrap.querySelectorAll('[data-act="crop"]').forEach(function (b) {
+      b.addEventListener('click', function () { openCrop(prodId, Number(b.getAttribute('data-i'))); });
+    });
+    wrap.querySelectorAll('[data-colorsel]').forEach(function (sel) {
+      sel.addEventListener('change', function () { setImageColor(prodId, Number(sel.getAttribute('data-colorsel')), sel.value); });
+    });
+    const addTile = wrap.querySelector('[data-add-img]');
+    if (addTile) addTile.addEventListener('click', function () { openPicker(prodId); });
+  }
+
+  // Knytt (eller løsne) et bilde til en farge. Hver farge viser maks ett bilde.
+  function setImageColor(prodId, idx, color) {
+    const p = prod(prodId);
+    if (!p) return;
+    const cm = p.colorImages || (p.colorImages = {});
+    // Fjern eventuelle farger som allerede peker på dette bildet.
+    Object.keys(cm).forEach(function (k) { if (cm[k] === idx) delete cm[k]; });
+    if (color) cm[color] = idx;   // overskriver evt. tidligere tilordning av samme farge
+    renderGallery(prodId);
+    lazySave();
+  }
+
+  /* ─── CROP/ZOOM-EDITOR ───
+     Dra for å flytte, glidebryter for å zoome. «Bruk» bakes den synlige
+     kvadratiske utsnittet inn i et nytt bilde (erstatter det gamle). */
+  let crop = null;        // { prodId, idx, img, V, base, s, x, y }
+  let cropEls = null;
+
+  function buildCropModal() {
+    if (cropEls) return cropEls;
+    const ov = document.createElement('div');
+    ov.className = 'crop-ov';
+    ov.innerHTML =
+      '<div class="crop-box">'
+        + '<h3>Beskjær / zoom</h3>'
+        + '<div class="crop-view"><img alt=""></div>'
+        + '<div class="crop-row"><span>Zoom</span><input type="range" class="crop-zoom" min="1" max="4" step="0.01" value="1"></div>'
+        + '<p class="crop-hint">Dra bildet for å flytte. Zoom med glidebryteren eller scrollhjulet. «Bruk» beskjærer til et kvadrat.</p>'
+        + '<div class="crop-actions">'
+          + '<button type="button" class="crop-cancel">Avbryt</button>'
+          + '<button type="button" class="crop-apply">Bruk</button>'
+        + '</div>'
+      + '</div>';
+    document.body.appendChild(ov);
+    const view = ov.querySelector('.crop-view');
+    const img  = ov.querySelector('.crop-view img');
+    const zoom = ov.querySelector('.crop-zoom');
+    cropEls = { ov: ov, view: view, img: img, zoom: zoom };
+
+    ov.addEventListener('click', function (e) { if (e.target === ov) closeCrop(); });
+    ov.querySelector('.crop-cancel').addEventListener('click', closeCrop);
+    ov.querySelector('.crop-apply').addEventListener('click', applyCrop);
+    zoom.addEventListener('input', function () { setCropZoom(parseFloat(zoom.value)); });
+
+    let dragging = false, lastX = 0, lastY = 0;
+    view.addEventListener('pointerdown', function (e) {
+      if (!crop) return;
+      dragging = true; lastX = e.clientX; lastY = e.clientY;
+      try { view.setPointerCapture(e.pointerId); } catch (_) {}
+      e.preventDefault();
+    });
+    view.addEventListener('pointermove', function (e) {
+      if (!dragging || !crop) return;
+      crop.x += e.clientX - lastX; crop.y += e.clientY - lastY;
+      lastX = e.clientX; lastY = e.clientY;
+      clampCrop(); applyCropView();
+    });
+    function endDrag(e) { dragging = false; try { view.releasePointerCapture(e.pointerId); } catch (_) {} }
+    view.addEventListener('pointerup', endDrag);
+    view.addEventListener('pointercancel', endDrag);
+    // Scrollhjul zoomer mot pekeren.
+    view.addEventListener('wheel', function (e) {
+      if (!crop) return;
+      e.preventDefault();
+      const rect = view.getBoundingClientRect();
+      let z = (crop.s / crop.base) * (e.deltaY < 0 ? 1.1 : 1 / 1.1);
+      z = Math.max(1, Math.min(4, z));
+      cropZoomAt(crop.base * z, e.clientX - rect.left, e.clientY - rect.top);
+    }, { passive: false });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && crop) closeCrop(); });
+    return cropEls;
+  }
+
+  function openCrop(prodId, idx) {
+    const p = prod(prodId);
+    if (!p || !p.images[idx]) return;
+    const els = buildCropModal();
+    els.ov.classList.add('on');
+    els.img.src = p.images[idx];
+    const image = new Image();
+    image.onload = function () {
+      const V = els.view.clientWidth || 320;
+      const base = V / Math.min(image.naturalWidth, image.naturalHeight);   // «cover»
+      crop = { prodId: prodId, idx: idx, img: image, V: V, base: base, s: base, x: 0, y: 0 };
+      crop.x = (V - image.naturalWidth * crop.s) / 2;
+      crop.y = (V - image.naturalHeight * crop.s) / 2;
+      els.zoom.value = '1';
+      clampCrop(); applyCropView();
+    };
+    image.src = p.images[idx];
+  }
+
+  function setCropZoom(z) {
+    if (!crop) return;
+    cropZoomAt(crop.base * z, crop.V / 2, crop.V / 2);   // zoom mot senter (glidebryter)
+  }
+
+  // Zoom slik at bildepunktet under (px,py) i visningen blir liggende i ro.
+  function cropZoomAt(newS, px, py) {
+    if (!crop) return;
+    const ix = (px - crop.x) / crop.s, iy = (py - crop.y) / crop.s;
+    crop.s = newS;
+    crop.x = px - ix * crop.s;
+    crop.y = py - iy * crop.s;
+    clampCrop(); applyCropView();
+    if (cropEls) cropEls.zoom.value = String(Math.max(1, Math.min(4, crop.s / crop.base)));
+  }
+
+  function clampCrop() {
+    if (!crop) return;
+    const V = crop.V;
+    const w = crop.img.naturalWidth * crop.s, h = crop.img.naturalHeight * crop.s;
+    crop.x = w <= V ? (V - w) / 2 : Math.max(V - w, Math.min(0, crop.x));
+    crop.y = h <= V ? (V - h) / 2 : Math.max(V - h, Math.min(0, crop.y));
+  }
+
+  function applyCropView() {
+    if (!cropEls || !crop) return;
+    const im = cropEls.img;
+    im.style.width  = (crop.img.naturalWidth * crop.s) + 'px';
+    im.style.height = (crop.img.naturalHeight * crop.s) + 'px';
+    im.style.left = crop.x + 'px';
+    im.style.top  = crop.y + 'px';
+  }
+
+  function closeCrop() { if (cropEls) cropEls.ov.classList.remove('on'); crop = null; }
+
+  function applyCrop() {
+    if (!crop) return;
+    const s = crop.s, V = crop.V;
+    const sx = -crop.x / s, sy = -crop.y / s, sw = V / s, sh = V / s;
+    const OUT = Math.min(900, Math.max(1, Math.round(sw)));
+    const canvas = document.createElement('canvas');
+    canvas.width = OUT; canvas.height = OUT;
+    canvas.getContext('2d').drawImage(crop.img, sx, sy, sw, sh, 0, 0, OUT, OUT);
+    const url = canvas.toDataURL('image/webp', 0.85);
+    const p = prod(crop.prodId);
+    if (p && p.images[crop.idx] != null) {
+      p.images[crop.idx] = url;
+      syncPrimary(p);
+      renderGallery(crop.prodId);
+      lazySave();
+    }
+    closeCrop();
   }
 
   /* ─── FIELD UPDATE ─── */
@@ -478,12 +813,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
         + '<button class="btn-del" type="button">Slett</button>'
       + '</div>'
       + '<div class="pcard-body">'
-        + '<div class="img-zone">'
-          + '<div class="img-ph"><img src="assets/apeiron-logo.png" alt=""><span>Klikk eller dra inn bilde</span></div>'
-          + '<div class="img-overlay">📷 Last opp bilde</div>'
-          + '<button class="btn-rot-img" type="button" title="Roter 90°">↻</button>'
-          + '<button class="btn-clr-img" type="button" title="Fjern bilde">✕</button>'
-        + '</div>'
+        + '<div class="img-gallery" data-gallery></div>'
         + '<div class="fields">'
           + '<div class="frow">'
             + '<div class="fg narrow"><label>Kategori</label>'
@@ -532,26 +862,20 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
         + '</div>'
       + '</div>';
 
-    // Image zone interactions
-    const zone = card.querySelector('.img-zone');
-    if (p.img) refreshImgZone(zone, p.img);
-    zone.addEventListener('click', function () { openPicker(p.id); });
-    zone.addEventListener('dragenter', function (e) { e.preventDefault(); zone.setAttribute('data-over', ''); });
-    zone.addEventListener('dragover',  function (e) { e.preventDefault(); });
-    zone.addEventListener('dragleave', function ()  { zone.removeAttribute('data-over'); });
-    zone.addEventListener('drop', function (e) {
-      e.preventDefault(); zone.removeAttribute('data-over');
-      const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
-      if (f) processImage(f, p.id);
+    // Bildegalleri: render + dra-inn-opplasting + dra-sortering av bilder
+    const gal = card.querySelector('[data-gallery]');
+    renderGallery(p.id, gal);
+    gal.addEventListener('dragenter', function (e) { e.preventDefault(); gal.setAttribute('data-over', ''); });
+    gal.addEventListener('dragover',  function (e) { e.preventDefault(); });
+    gal.addEventListener('dragleave', function ()  { gal.removeAttribute('data-over'); });
+    gal.addEventListener('drop', function (e) {
+      e.preventDefault(); gal.removeAttribute('data-over');
+      const files = e.dataTransfer && e.dataTransfer.files;
+      if (files && files.length) addImages(p.id, files);
     });
-    card.querySelector('.btn-clr-img').addEventListener('click', function (e) {
-      e.stopPropagation();
-      setField(p.id, 'img', null);
-      refreshImgZone(zone, null);
-    });
-    card.querySelector('.btn-rot-img').addEventListener('click', function (e) {
-      e.stopPropagation();
-      rotateImage(p.id, zone);
+    AdminCommon.enableDragSort(gal, {
+      itemSelector: '.img-thumb', handleSelector: '.grip',
+      onReorder: function (ids) { reorderImages(p.id, ids); }
     });
 
     // Text field inputs
@@ -571,6 +895,8 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
         const f = el.getAttribute('data-vlist');
         const arr = el.value.split(',').map(function (s) { return s.trim(); }).filter(Boolean);
         setField(p.id, f, arr.length ? arr : null);
+        // Fargevalg pr. bilde må oppdateres når fargelista endres.
+        if (f === 'colors') renderGallery(p.id);
       });
     });
 
@@ -650,6 +976,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
       id: uid(), badge: null, badgeType: null,
       category: 'Tilbehør', name: '', desc: '',
       price: null, memberPrice: null, img: null,
+      images: [], colorImages: {},
       sizes: null, colors: null, badgeGlow: null,
       emailSubject: 'Bestilling: ', emailBody: ''
     };
@@ -693,6 +1020,9 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
       + '     btnColor   : fri knappefarge\n'
       + '     edge       : farget kant rundt kortet, ELLER { anim: "aurora-bold" }\n'
       + '                  for animert glød (se APEIRON_ANIMATED i palette.js)\n'
+      + '   images: array av bilder (galleri) — base64 fra admin eller "assets/merch/..." stier.\n'
+      + '           Hovedbildet = images[0]. img holdes synket til images[0] (bakoverkomp.).\n'
+      + '   colorImages: { "Fargenavn": indeks-i-images } — bytt bilde når en farge velges.\n'
       + '   img: null (viser segl-watermark), base64-bilde fra admin,\n'
       + '        eller "assets/merch/filnavn.jpg" for bilder i repoet */\n\n'
       + 'window.MERCH_INFO = ' + JSON.stringify(info) + ';\n\n'

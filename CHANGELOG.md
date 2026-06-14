@@ -201,6 +201,26 @@
 - **Hjelp:** «Legevakt» utdypet til også å gjelde akutte psykiske plager/kriser.
 - *Gjenstår fra denne runden:* flere/farge-koblede bilder per produkt, og interaktiv crop/zoom (rotasjon er gjort).
 
+**14.06.26 — Delt meny og footer, footer-admin, kurv-fiks og bedre dra-sortering**
+- **Felles meny (ett sted):** header-menyen og mobilmenyen bygges nå i `site-chrome.js` og injiseres på alle 8 offentlige sider via `<div id="site-nav">`. Slutt på å vedlikeholde samme meny i 8 filer.
+- **Felles footer (ett sted):** footeren bygges av `site-chrome.js` fra data i `site-content.js` og injiseres via `<div id="site-footer">`. Sosial-rad lagt til: GitHub, Facebook, Instagram og meme-Instagram.
+- **Ny `footer-admin.html`:** passordbeskyttet panel (samme mønster som de andre) for å redigere footeren fritt - navn, tagline, copyright, generelle lenker (legg til / fjern / dra-sorter), sosiale lenker med ikon, og «Rapporter en feil»-tekst/e-post. Eksporterer `site-content.js`. Live forhåndsvisning innebygd.
+- **«Du er her»-markering virker overalt:** nav-logikken (aktiv-markering, dropdown-scrollspy, mobilmeny, sticky) lå tidligere kun i `app.js` på forsiden. Flyttet til `site-chrome.js` så den kjører på alle sider - «Styret» (og øvrige) highlightes nå korrekt på undersidene. `app.js` beholder forside-innhold (FAQ, scroll-reveal, statistikk-teller).
+- **Handlekurv-kryss synlig:** kurv-skuffen lå under den faste menyen, så toppen (med ×) ble skjult. Hevet `.cart-overlay`/`.cart-drawer` over menyens z-index.
+- **Bedre dra-sortering:** `AdminCommon.enableDragSort` skrevet om - det dratte kortet løftes og følger pekeren, en plassholder viser hvor det lander, listen auto-scroller mot topp/bunn, og en liten terskel skiller klikk fra dra. Gjelder alle admin-paneler.
+- **`report.js`:** leser nå e-post/emne fra footer-lenken (som settes i footer-admin) i stedet for fast verdi.
+- **Footer-admin finpuss:** felles ikonsett `footer-icons.js` (GitHub, Facebook, Instagram, YouTube, TikTok, Discord, LinkedIn, X, e-post, nettside) som både footeren og ikon-velgeren deler; `?`-hjelpebobler på alle felt (bl.a. forklaring av hvordan Adresse fungerer).
+- **Handlekurv:** innholdet flyttet litt ned (større topp-padding) så det sitter mer midt på skuffen og klarer headeren.
+- *Gjenstår:* flere/farge-koblede bilder per produkt og interaktiv crop/zoom (egen runde, krever testing i nettleser); eget header/meny-admin; live forhåndsvisning i øvrige admin-paneler.
+
+**14.06.26 — Merch: flere bilder pr. produkt, fargekobling og crop/zoom**
+- **Bildegalleri pr. produkt:** merch-admin har nå et galleri i stedet for ett bildefelt. Last opp flere bilder, slett, rotér (90°) og dra for å endre rekkefølge. Hovedbildet = første bilde. Datamodellen utvidet med `images[]` og `colorImages` (bakoverkompatibelt - `img` migreres og holdes synket til `images[0]`).
+- **Fargekoblede bilder:** hvert bilde kan knyttes til en farge i admin. I butikken byttes hovedbildet automatisk når kunden velger den fargen, og handlekurven bruker det fargekoblede bildet som miniatyr.
+- **Butikk-galleri:** produktkort med flere bilder viser en miniatyrstripe under hovedbildet; klikk for å bytte.
+- **Crop/zoom-editor:** ⛶-knapp på hver miniatyr åpner en editor (dra for å flytte, glidebryter eller scrollhjul for å zoome) som beskjærer til kvadrat og baker resultatet inn i bildet.
+- Ny `footer-icons.js` med felles ikonsett (se forrige oppføring).
+- Ny seksjon «Kjente begrensninger og usikkerheter» i README.
+
 ---
 
 © 2026 Apeiron Linjeforening
