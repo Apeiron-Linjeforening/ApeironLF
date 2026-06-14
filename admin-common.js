@@ -28,7 +28,12 @@
 
   function logout() {
     try { localStorage.removeItem(AUTH_KEY); sessionStorage.removeItem(AUTH_KEY); } catch (_) {}
-    location.reload();
+    // Naviger til den offentlige siden i stedet for å laste admin-siden på nytt
+    // (ellers blir man stående fast på passord-gaten uten vei tilbake).
+    // «begrep-admin.html» → «begrep.html»; faller tilbake til forsiden.
+    var file = (location.pathname.split('/').pop() || '');
+    var dest = /-admin\.html$/.test(file) ? file.replace(/-admin\.html$/, '.html') : 'index.html';
+    location.href = dest;
   }
 
   // Legg til en «Logg ut»-knapp i admin-headeren (én gang).
@@ -82,6 +87,60 @@
       if (pwBtn)   pwBtn.addEventListener('click', function () { login(pwInput ? pwInput.value : ''); });
       if (pwInput) pwInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') login(pwInput.value); });
     }
+  }
+
+  /* ─── DRA-OG-SLIPP SORTERING ───
+     enableDragSort(container, { itemSelector, handleSelector, onReorder })
+     Gjør kortene i en liste sorterbare ved å dra i et håndtak. Fungerer med
+     både mus og touch (pointer events). Lytteren ligger på containeren, så den
+     overlever full re-render av kortene. onReorder(idArray) kalles når slippet
+     er ferdig, med ny rekkefølge av data-id-verdiene. */
+  function enableDragSort(container, opts) {
+    if (!container || container._dragSortOn) return;
+    container._dragSortOn = true;
+    var itemSel   = opts.itemSelector;
+    var handleSel = opts.handleSelector;
+    var idAttr    = opts.idAttr || 'data-id';
+    var onReorder = opts.onReorder || function () {};
+
+    container.addEventListener('pointerdown', function (e) {
+      if (e.button != null && e.button !== 0) return;
+      var handle = e.target.closest && e.target.closest(handleSel);
+      if (!handle || !container.contains(handle)) return;
+      var dragEl = handle.closest(itemSel);
+      if (!dragEl) return;
+      e.preventDefault();
+      dragEl.classList.add('drag-active');
+      try { handle.setPointerCapture(e.pointerId); } catch (_) {}
+
+      function onMove(ev) {
+        if (!dragEl) return;
+        var y = ev.clientY, after = null;
+        var items = container.querySelectorAll(itemSel);
+        for (var i = 0; i < items.length; i++) {
+          if (items[i] === dragEl) continue;
+          var r = items[i].getBoundingClientRect();
+          if (y < r.top + r.height / 2) { after = items[i]; break; }
+        }
+        if (after) { if (after !== dragEl.nextSibling) container.insertBefore(dragEl, after); }
+        else if (dragEl !== container.lastElementChild) { container.appendChild(dragEl); }
+      }
+      function onUp() {
+        try { handle.releasePointerCapture(e.pointerId); } catch (_) {}
+        handle.removeEventListener('pointermove', onMove);
+        handle.removeEventListener('pointerup', onUp);
+        handle.removeEventListener('pointercancel', onUp);
+        if (dragEl) dragEl.classList.remove('drag-active');
+        dragEl = null;
+        var ids = Array.prototype.map.call(container.querySelectorAll(itemSel), function (el) {
+          return el.getAttribute(idAttr);
+        });
+        onReorder(ids);
+      }
+      handle.addEventListener('pointermove', onMove);
+      handle.addEventListener('pointerup', onUp);
+      handle.addEventListener('pointercancel', onUp);
+    });
   }
 
   /* ─── TOAST ─── */
@@ -168,30 +227,13 @@
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
     URL.revokeObjectURL(url);
   }
+  // Vanlig nedlasting — én fil, én dialog, hver gang. Vi brukte tidligere File
+  // System Access («lagre rett til fila»), men den feiler på enkelte systemer
+  // (bl.a. Linux) og ga DA to dialoger: filvelger + nedlasting. Vanlig
+  // nedlasting er forutsigbart og likt de andre admin-panelene.
   function saveFile(filename, content) {
-    if (!window.showSaveFilePicker || !window.indexedDB) {
-      downloadBlob(filename, content);
-      return Promise.resolve('download');
-    }
-    var KEY = 'file:' + filename;
-    function pick() {
-      return window.showSaveFilePicker({
-        suggestedName: filename,
-        types: [{ description: 'JavaScript', accept: { 'text/javascript': ['.js'] } }]
-      }).then(function (h) { return idbSet(KEY, h).then(function () { return h; }); });
-    }
-    return idbGet(KEY).then(function (handle) {
-      if (!handle) return pick();
-      return verifyPermission(handle).then(function (ok) { return ok ? handle : pick(); });
-    }).then(function (handle) {
-      return handle.createWritable()
-        .then(function (w) { return w.write(content).then(function () { return w.close(); }); })
-        .then(function () { return 'direct'; });
-    }).catch(function (e) {
-      if (e && e.name === 'AbortError') return 'cancel';
-      downloadBlob(filename, content);
-      return 'download';
-    });
+    downloadBlob(filename, content);
+    return Promise.resolve('download');
   }
 
   window.AdminCommon = {
@@ -202,6 +244,7 @@
     help: makeHelp,
     enhanceHelp: enhanceHelp,
     saveFile: saveFile,
-    downloadBlob: downloadBlob
+    downloadBlob: downloadBlob,
+    enableDragSort: enableDragSort
   };
 })();

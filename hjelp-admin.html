@@ -389,8 +389,10 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
   function roleCard(c, arr) {
     const card = document.createElement('div');
     card.className = 'card';
+    card.setAttribute('data-id', arr.indexOf(c));
     card.innerHTML =
       '<div class="card-head">'
+        + '<span class="drag-handle" title="Dra for å sortere">⠿</span>'
         + '<span class="card-title">' + esc(c.name || '(uten navn)') + '</span>'
         + '<div class="order-btns"><button class="btn-ord up" type="button" title="Opp">↑</button><button class="btn-ord dn" type="button" title="Ned">↓</button></div>'
         + '<button class="btn-del" type="button">Slett</button>'
@@ -441,8 +443,10 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
   function sifraItem(it, arr) {
     const card = document.createElement('div');
     card.className = 'card';
+    card.setAttribute('data-id', arr.indexOf(it));
     card.innerHTML =
       '<div class="card-head">'
+        + '<span class="drag-handle" title="Dra for å sortere">⠿</span>'
         + '<span class="card-title">' + esc(it.title || '(uten tittel)') + '</span>'
         + '<div class="order-btns"><button class="btn-ord up" type="button">↑</button><button class="btn-ord dn" type="button">↓</button></div>'
         + '<button class="btn-del" type="button">Slett</button>'
@@ -470,8 +474,10 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
   function navCard(n, arr) {
     const card = document.createElement('div');
     card.className = 'card';
+    card.setAttribute('data-id', arr.indexOf(n));
     card.innerHTML =
       '<div class="card-head">'
+        + '<span class="drag-handle" title="Dra for å sortere">⠿</span>'
         + '<span class="card-title">' + esc(n.title || '(uten tittel)') + '</span>'
         + '<div class="order-btns"><button class="btn-ord up" type="button">↑</button><button class="btn-ord dn" type="button">↓</button></div>'
         + '<button class="btn-del" type="button">Slett</button>'
@@ -505,8 +511,10 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
   function akuttCard(a, arr) {
     const card = document.createElement('div');
     card.className = 'card';
+    card.setAttribute('data-id', arr.indexOf(a));
     card.innerHTML =
       '<div class="card-head">'
+        + '<span class="drag-handle" title="Dra for å sortere">⠿</span>'
         + '<span class="card-title">' + esc(a.name || '(uten navn)') + '</span>'
         + '<div class="order-btns"><button class="btn-ord up" type="button">↑</button><button class="btn-ord dn" type="button">↓</button></div>'
         + '<button class="btn-del" type="button">Slett</button>'
@@ -690,6 +698,28 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
   });
 
   document.getElementById('export-btn').addEventListener('click', exportFile);
+
+  /* ─── DRA-OG-SLIPP SORTERING ───
+     Kortene er rene objekt-arrayer med indeks som data-id. Ved slipp bygges
+     arrayen om fra den nye rekkefølgen og hele seksjonen re-renders. */
+  [
+    ['list-nav',         function () { return data.hero.nav; },     function (v) { data.hero.nav = v; }],
+    ['list-items',       function () { return data.sifra.items; },  function (v) { data.sifra.items = v; }],
+    ['list-sifracards',  function () { return data.sifra.cards; },  function (v) { data.sifra.cards = v; }],
+    ['list-studiercards',function () { return data.studier.cards; },function (v) { data.studier.cards = v; }],
+    ['list-helsecards',  function () { return data.helse.cards; },  function (v) { data.helse.cards = v; }],
+    ['list-fysiskcards', function () { return data.fysisk.cards; }, function (v) { data.fysisk.cards = v; }],
+    ['list-akutt',       function () { return data.akutt.cards; },  function (v) { data.akutt.cards = v; }]
+  ].forEach(function (cfg) {
+    AdminCommon.enableDragSort(document.getElementById(cfg[0]), {
+      itemSelector: '.card', handleSelector: '.drag-handle',
+      onReorder: function (ids) {
+        var snap = cfg[1]().slice();
+        cfg[2](ids.map(function (o) { return snap[Number(o)]; }));
+        renderAll(); lazySave();
+      }
+    });
+  });
 
   function init() { loadData(); wireMeta(); renderAll(); }
 })();

@@ -17,14 +17,15 @@ den til et **Google Apps Script Web App** som:
 
 1. Gå til <https://sheets.new> (logg inn med Apeiron sin Google-konto).
 2. Gi arket et navn, f.eks. **«Merch-bestillinger»**.
-3. Skriv inn disse kolonneoverskriftene i rad 1 (A1–G1):
+3. Skriv inn disse kolonneoverskriftene i rad 1 (A1–H1):
 
-   | A | B | C | D | E | F | G |
-   |---|---|---|---|---|---|---|
-   | Tidspunkt | Navn | E-post | Telefon | Bestilling | Kommentar | Total |
+   | A | B | C | D | E | F | G | H |
+   |---|---|---|---|---|---|---|---|
+   | Tidspunkt | Navn | E-post | Telefon | Bestilling | Kommentar | Total | Medlem |
 
    La resten stå tomt — skriptet fyller inn radene.
-   (Har du allerede et ark uten «Total»-kolonne: skriv «Total» i celle **G1**.)
+   (Har du allerede et ark uten «Total»-kolonne: skriv «Total» i celle **G1**.
+   Mangler du «Medlem»-kolonnen: skriv «Medlem» i celle **H1**.)
 
 ---
 
@@ -56,7 +57,11 @@ function doPost(e) {
         .setMimeType(ContentService.MimeType.JSON);
     }
 
-    // Bygg en lesbar oppsummering av handlekurven, med pris per linje
+    // Brukte kunden medlemspris? (avhukingsboks i handlekurven)
+    var erMedlem = data.isMember === true;
+
+    // Bygg en lesbar oppsummering av handlekurven, med pris per linje.
+    // it.unitPrice/it.lineTotal er allerede medlemspris når medlem er huket av.
     var linjer = (data.items || []).map(function (it) {
       var v = [];
       if (it.size)  v.push('str: ' + it.size);
@@ -65,10 +70,13 @@ function doPost(e) {
       var linjepris = (it.lineTotal != null) ? it.lineTotal
                     : (it.price != null ? it.price * it.qty : null);
       var pris = (linjepris != null) ? ' – ' + linjepris + ',–' : '';
-      return '• ' + it.qty + '× ' + it.name + variant + pris;
+      // Marker linjer der medlemsprisen faktisk ble brukt.
+      var medlemsmerke = (erMedlem && it.memberPrice != null) ? ' (medlemspris)' : '';
+      return '• ' + it.qty + '× ' + it.name + variant + pris + medlemsmerke;
     }).join('\n');
 
     var total = (data.total != null) ? data.total : '';
+    var medlemTekst = erMedlem ? 'Ja' : 'Nei';
 
     // Åpne arket via ID (mer robust enn getActiveSpreadsheet i web-app)
     var sheet = SpreadsheetApp.openById(SHEET_ID).getSheets()[0];
@@ -79,7 +87,8 @@ function doPost(e) {
       data.phone || '',
       linjer,
       data.comment || '',
-      total
+      total,
+      medlemTekst
     ]);
 
     // E-postvarsel til styret
@@ -89,7 +98,8 @@ function doPost(e) {
       body: 'Ny bestilling mottatt:\n\n'
         + 'Navn: ' + (data.name || '') + '\n'
         + 'E-post: ' + (data.email || '') + '\n'
-        + 'Telefon: ' + (data.phone || '') + '\n\n'
+        + 'Telefon: ' + (data.phone || '') + '\n'
+        + 'Medlem: ' + medlemTekst + '\n\n'
         + linjer + '\n\n'
         + 'Totalt: ' + total + ',–\n\n'
         + (data.comment ? 'Kommentar: ' + data.comment + '\n\n' : '')

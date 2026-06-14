@@ -8,19 +8,43 @@
   'use strict';
 
   var LS = 'apeiron-cart-v1';
+  var MEMBER_LS = 'apeiron-cart-member-v1';
   var endpoint = (window.MERCH_ORDER_ENDPOINT || '').trim();
   var fallbackEmail = window.MERCH_ORDER_EMAIL || 'apeironlinjeforening@gmail.com';
   var vippsInfo = window.MERCH_VIPPS || '#551937 «Apeiron»';
   var LOGO = 'assets/apeiron-logo.png';
 
   var cart = loadCart();
+  var isMember = loadMember();
 
   function loadCart() { try { return JSON.parse(localStorage.getItem(LS)) || []; } catch (_) { return []; } }
   function saveCart() { try { localStorage.setItem(LS, JSON.stringify(cart)); } catch (_) {} }
-  function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
+  function loadMember() { try { return localStorage.getItem(MEMBER_LS) === '1'; } catch (_) { return false; } }
+  function saveMember() { try { localStorage.setItem(MEMBER_LS, isMember ? '1' : '0'); } catch (_) {} }
+  // Medlemspris for en kurv-linje (fra linja, ev. oppslag mot produktet for
+  // gamle kurver lagret før medlemspris fantes). null = ingen medlemspris.
+  function memberPriceOf(it) {
+    if (it.memberPrice != null) return it.memberPrice;
+    var p = product(it.id);
+    return (p && p.memberPrice != null) ? p.memberPrice : null;
+  }
+  // Effektiv enhetspris ut fra om «medlem» er huket av.
+  function unitPrice(it) {
+    var mp = memberPriceOf(it);
+    if (isMember && mp != null) return mp;
+    return it.price != null ? it.price : null;
+  }
+  function anyMemberPrice() { return cart.some(function (it) { return memberPriceOf(it) != null; }); }
+  // Escaper både tekst- og attributt-kontekst: i tillegg til <>& også " og '
+  // slik at verdier trygt kan limes inn i value="…"/src="…" o.l.
+  function esc(s) {
+    return (s == null ? '' : String(s))
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
   function product(id) { return (window.MERCH_PRODUCTS || []).filter(function (p) { return p.id === id; })[0]; }
   function count() { return cart.reduce(function (n, it) { return n + it.qty; }, 0); }
-  function total() { return cart.reduce(function (n, it) { return n + (Number(it.price) || 0) * it.qty; }, 0); }
+  function total() { return cart.reduce(function (n, it) { return n + (Number(unitPrice(it)) || 0) * it.qty; }, 0); }
 
   /* ── UI-oppbygging ── */
   var root = document.createElement('div');
@@ -120,6 +144,7 @@
     if (existing) { existing.qty += qty; }
     else {
       cart.push({ key: key, id: id, name: p.name, price: p.price != null ? p.price : null,
+                  memberPrice: p.memberPrice != null ? p.memberPrice : null,
                   img: p.img || null, size: size, color: color, qty: qty });
     }
     saveCart(); renderCart(); flash(); confirmAdd(btn);
@@ -161,6 +186,17 @@
     }
     var html = cart.map(function (it) {
       var line = (Number(it.price) || 0) * it.qty;
+      var mp = memberPriceOf(it);
+      var priceHtml;
+      if (it.price == null) {
+        priceHtml = '—';
+      } else {
+        // Normalpris først; medlemspris under når produktet har en.
+        priceHtml = '<span class="cart-item__price-normal' + (isMember && mp != null ? ' is-struck' : '') + '">' + line + ',–</span>';
+        if (mp != null) {
+          priceHtml += '<span class="cart-item__price-member' + (isMember ? ' is-active' : '') + '">Medlem: ' + (Number(mp) * it.qty) + ',–</span>';
+        }
+      }
       return '<div class="cart-item" data-key="' + esc(it.key) + '">'
         + '<img class="cart-item__thumb" src="' + esc(it.img || LOGO) + '" alt=""'
           + (it.img ? '' : ' data-placeholder') + '>'
@@ -172,18 +208,27 @@
           + '<div class="cart-item__bottom">'
             + '<div class="cart-item__controls">'
               + '<button type="button" class="cart-qty" data-dec aria-label="Færre">−</button>'
-              + '<input type="number" class="cart-qty-num" value="' + it.qty + '" min="1" inputmode="numeric">'
+              + '<input type="number" class="cart-qty-num" value="' + (Number(it.qty) || 1) + '" min="1" inputmode="numeric">'
               + '<button type="button" class="cart-qty" data-inc aria-label="Flere">+</button>'
             + '</div>'
-            + '<div class="cart-item__price">' + (it.price != null ? line + ',–' : '—') + '</div>'
+            + '<div class="cart-item__price">' + priceHtml + '</div>'
           + '</div>'
         + '</div>'
       + '</div>';
     }).join('');
+    if (anyMemberPrice()) {
+      html += '<label class="cart-member"><input type="checkbox" class="cart-member__cb"'
+        + (isMember ? ' checked' : '') + '> Jeg er medlem <span class="cart-member__note">(få medlemspris)</span></label>';
+    }
     html += '<div class="cart-total"><span>Totalt</span><b>' + total() + ',–</b></div>';
     itemsEl.innerHTML = html;
     form.hidden = false;
     setStatus('');
+
+    var memberCb = itemsEl.querySelector('.cart-member__cb');
+    if (memberCb) memberCb.addEventListener('change', function () {
+      isMember = memberCb.checked; saveMember(); renderCart();
+    });
 
     itemsEl.querySelectorAll('.cart-item').forEach(function (row) {
       var key = row.getAttribute('data-key');
@@ -199,13 +244,16 @@
 
   /* ── Innsending ── */
   function summaryText() {
-    return cart.map(function (it) {
+    var lines = cart.map(function (it) {
       var v = [];
       if (it.size) v.push('str: ' + it.size);
       if (it.color) v.push('farge: ' + it.color);
-      var pris = it.price != null ? ' = ' + (Number(it.price) * it.qty) + ',–' : '';
+      var u = unitPrice(it);
+      var pris = u != null ? ' = ' + (Number(u) * it.qty) + ',–' : '';
       return '- ' + it.qty + 'x ' + it.name + (v.length ? ' (' + v.join(', ') + ')' : '') + pris;
-    }).join('\n');
+    });
+    if (isMember && anyMemberPrice()) lines.push('(Medlemspris benyttet)');
+    return lines.join('\n');
   }
 
   function setStatus(msg, kind) {
@@ -225,10 +273,13 @@
       email: (fd.get('email') || '').trim(),
       phone: (fd.get('phone') || '').trim(),
       comment: (fd.get('comment') || '').trim(),
+      isMember: isMember,
       total: total(),
       items: cart.map(function (it) {
+        var u = unitPrice(it);
         return { id: it.id, name: it.name, qty: it.qty, size: it.size, color: it.color,
-                 price: it.price, lineTotal: (Number(it.price) || 0) * it.qty };
+                 price: it.price, memberPrice: memberPriceOf(it), unitPrice: u,
+                 lineTotal: (Number(u) || 0) * it.qty };
       })
     };
 

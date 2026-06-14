@@ -491,35 +491,22 @@ Kritisk:
 - [ ] Sjekke at "Legg til fadderukeprogrammet i din kalender" fungerer: iCal og Google Kalender.
 - [ ] Måte for Apeiron å legge inn viktig informasjon som er tydelig på index.
 - [ ] Merch: Gjøre om navn til butikk.
-- [ ] Butikken: Legge til en mulighet til å legge inn tekst i et tekstfelt øverst for div. informasjon.
-- [ ] "Logg ut" i admin setter deg fast på log inn siden.
-- [ ] Mech-admin det fungerer ikke å dra/sortere kortene/produktene.
-- [ ] Merch: legge til en avhukningsknapp for medlemmer slik at de får medlemspris -> pris vises i handlekurv først som normalt og under med medlemsrabatt -> legge til egen seksjon i google sheets + script.
-- [ ] Merch-admin: når man laster ned ny merch-products.js laster man ned to filer. Den første merch-products.js er tom, den andre inneholder faktisk endringene som ble gjort.
 - [ ] Merch-admin: legge til flere bilder for et produkt både som bare vises vanlig i kortet, og som er koblet mot farge.
-- [ ] Merch-admin: lett redigering av bilder som lastes opp for produkt: crop, zoom, rotasjon.
-- [ ] Merch-admin: Badge blir gjemt bak produktbilder.
-- [ ] Merch-admin: Badge glød havner over badgefarge
-- [ ] Merch-admin: Badge farge "egendefinert" har ingen farge.
-- [ ] Aporetisk aften: Om "Hvor" har en lang adresse eller forklaring fyller denn opp mye plass -> burde gjøres om til noe som "Se adresse" eller "[startpåadresse]...", eller muligens fjerne "For hvem" og heller presissere i teksten over at det er åpent for alle.
-- [ ] Index.html og Galleri på mobil: Om man berører noen bilder kan man ikke rulle/sveipe på skjermen. Gjør det vanskelig å navigere forbi Lesesalen og i Galleri. 
-- [ ] Admin farger: For preset så bør fargeikonene på høyre side være av både lys og mørk modus. +Rødbrun sin mørkmodus farge er ew.
+- [ ] Merch-admin: lett redigering av bilder som lastes opp for produkt: crop, zoom, rotasjon. *(Rotasjon (90°) er lagt til; crop/zoom gjenstår.)*
+- [ ] Oppdatere alle footers -> Fikse en felles footer for alle sider?
 
 Medium:
 - [ ] Be HF studentrådet om å oppdatere sidene deres og gi oss mer informasjon om hva de faktisk gjør. 
       - [ ] Hva gjør egentlig en PTV, ITV og FTV? 
       - [ ] Hvordan får vi kontakt med våre egne TVer?
 - [ ] Legge til side for Utmerkelser for personer som har stått ut i studentmiljøet eller det frivillige under IFR.
-
 - [ ] Lage egen Admin for index.
-- [ ] Utdype "Legevakt" til å inkludere psykiske lidelser som kan være akutt. 
 - [ ] Siden føles litt kommersiell ut....
 - [ ] Legg til Logikk Panikk.
 - [ ] Finne en bedre måte å vise arrangement og plakater på -> Måte å vise nyheter/informasjon på.
 - [ ] Se om vi kan få menyen til å være en og samme entitet over alle sidene -> for å slippe å oppdatere hver en meny for hver side.
-- [ ] Merch admin: animasjonsfarger/glød burde ha fastsatte forskjellige farger for lys og mørk modus + alternativ om å velge for lys og mørk modus individuelt. 
-- [ ] merch handlekurv: gjøre krysset tydeligere i mørk og lys modus.
-
+- [ ] merch handlekurv: legge til tydelig kryss oppe i høyre hjørne.
+- [ ] Legge til alle lenkene til Apeiron i footers: Github (gjort), Facebook, Instagram, Instagram (meme)
 
 Lav:
 - [ ] Side eller plassering for "Oppnåelser" (Premier vi har fått, som sølv i håndball og "best oppmøte" fra Dionysos)
@@ -530,8 +517,7 @@ Lav:
 - [ ] Menyen: Dropdown menyene skal endre seg for å vise hvor du er (Styret fungerer ikke).
 - [ ] Legge til alle Apeiron sine lenker i footer.
 - [ ] Legge til side for møtereferat -> Kan tas i egen wiki, muligens.
-- [ ] "Rapporter en feil på nettsiden" burde ikke sende deg rett til en epostside.
-- [ ] "Skoggrønn" farge i adminfilene er ikke tydelig at den er grønn. For å være helt ærlig tror jeg ikke at den er grønn. Den er samme nøytale farge som "Nøytral". Blå og Marineblå er for like. 
+- [ ] Dra sorteringen i admin er fremdeles litt merkelig, nesten ubrukelig pga hvordan den fungerer nå.
 
 Hadde vært kult:
 - [ ] Snakke med IFR/NTNU om API for automatisk oppdatering av emner for studiene.

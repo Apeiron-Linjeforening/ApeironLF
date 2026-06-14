@@ -3,7 +3,7 @@
    Lim inn web-app-URL fra Google Apps Script (se
    docs/apps-script-oppsett.md). La stå tom for e-post-fallback.
    ============================================================ */
-window.MERCH_ORDER_ENDPOINT = 'https://script.google.com/macros/s/AKfycbx2TxuxvVGl6OSx2wtyp5hpLpiX8r_MJDVMPnaS0_Ot3Hi4rDi7nYdqBAw97CzS55CzZw/exec';
+window.MERCH_ORDER_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyZEa3-JoT1qI6NTHCKsyY8WEPwdDKhHf61DSjSWO1LH1VV-YmrG-jU1Zxd-j3srHc5QA/exec';
 window.MERCH_ORDER_EMAIL = 'apeironlinjeforening@gmail.com';
 // Vises i handlekurven for å gjøre det tydelig at betaling skjer via Vipps.
 window.MERCH_VIPPS = '#551937 «Apeiron»';

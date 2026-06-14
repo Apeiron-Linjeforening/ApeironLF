@@ -202,8 +202,10 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
     data.tiers.forEach(function (t, i) {
       const card = document.createElement('div');
       card.className = 'card';
+      card.setAttribute('data-id', t.id);
       card.innerHTML =
         '<div class="card-head">'
+          + '<span class="drag-handle" title="Dra for å sortere">⠿</span>'
           + '<span class="card-title">' + esc(t.label || '(nytt nivå)') + '</span>'
           + '<div class="order-btns">'
             + '<button class="btn-ord" data-up type="button" title="Flytt opp">↑</button>'
@@ -215,7 +217,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
           + '<div class="fg"><label>Navn på nivå</label>'
             + '<input type="text" data-f="label" value="' + esc(t.label || '') + '" placeholder="f.eks. Ett studieår"></div>'
           + '<div class="fg narrow"><label data-help="Pris i kroner. Vises som «100,–».">Pris (kr)</label>'
-            + '<input type="number" data-f="price" value="' + (t.price != null ? t.price : '') + '" min="0" step="1" placeholder="100"></div>'
+            + '<input type="number" data-f="price" value="' + (t.price != null && isFinite(t.price) ? Number(t.price) : '') + '" min="0" step="1" placeholder="100"></div>'
         + '</div>'
         + '<div class="fg"><label data-help="Kort forklaring under prisen. La stå tom for å skjule.">Forklaring</label>'
           + '<input type="text" data-f="note" value="' + esc(t.note || '') + '" placeholder="f.eks. Gjelder ett studieår (høst + vår)."></div>';
@@ -244,8 +246,10 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
     data.steps.forEach(function (txt, i) {
       const card = document.createElement('div');
       card.className = 'card';
+      card.setAttribute('data-id', i);
       card.innerHTML =
         '<div class="card-head">'
+          + '<span class="drag-handle" title="Dra for å sortere">⠿</span>'
           + '<span class="card-title">Steg ' + (i + 1) + '</span>'
           + '<div class="order-btns">'
             + '<button class="btn-ord" data-up type="button" title="Flytt opp">↑</button>'
@@ -309,6 +313,24 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
     showToast('Lastet ned membership-config.js');
   }
   document.getElementById('export-btn').addEventListener('click', exportFile);
+
+  /* ─── DRA-OG-SLIPP SORTERING ─── */
+  AdminCommon.enableDragSort(document.getElementById('tier-list'), {
+    itemSelector: '.card', handleSelector: '.drag-handle',
+    onReorder: function (ids) {
+      data.tiers.sort(function (a, b) { return ids.indexOf(a.id) - ids.indexOf(b.id); });
+      renderTiers(); lazySave();
+    }
+  });
+  AdminCommon.enableDragSort(document.getElementById('step-list'), {
+    itemSelector: '.card', handleSelector: '.drag-handle',
+    onReorder: function (ids) {
+      // Steg er rene strenger med indeks som data-id — bygg om fra ny rekkefølge.
+      var snap = data.steps.slice();
+      data.steps = ids.map(function (o) { return snap[Number(o)]; });
+      renderSteps(); lazySave();
+    }
+  });
 
   /* ─── INIT ─── */
   function init() { loadData(); renderAll(); }
