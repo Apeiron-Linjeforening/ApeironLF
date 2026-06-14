@@ -221,6 +221,15 @@
 - Ny `footer-icons.js` med felles ikonsett (se forrige oppføring).
 - Ny seksjon «Kjente begrensninger og usikkerheter» i README.
 
+**14.06.26 — «Trådløse» nyheter/hastebeskjeder på forsiden**
+- **Nyheter uten å røre koden:** forsiden henter nå nyheter live fra et Google Sheet «Apeiron Nyheter» (`apeiron-news.js` + `news-config.js`), redigerbart fra mobil/PC. Endringer er synlige innen cache-vinduet (~3 min). Eget, separat regneark og eget Apps Script (egen `/exec`-URL), helt adskilt fra merch.
+- **Fem plasseringer:** stripe under menyen (`topp`), `hovedoppslag` (boks i forsidebildet), og inne i seksjonene Arrangementer, Aporetisk Aften og Fadderuke. Velges per nyhet i arket.
+- **Hastegrad + tidsvindu:** `Hast` gir vinrød markering; valgfrie `Fra`/`Til`-datoer (`åå.mm.dd`, år.måned.dag) styrer når nyheten vises; fjernet avhuking i `Synlig` skjuler uten å slette.
+- **Enkel formatering, XSS-trygt:** `**fet**`, `*kursiv*`, `_understrek_`, `[tekst](url)` og linjeskift. All tekst escapes før markup; lenke-protokoller valideres.
+- **Feiler stille:** mangler endepunkt/ark eller feiler henting, vises forsiden som før uten bannere.
+- **Bot-filter + buffer:** valgfritt `NEWS_TOKEN` (samme i `news-config.js` og Apps Script) stopper dumme skrapere, og 3-min buffer demper hamring. Token-en er et bot-filter, ikke sikkerhet (den ligger åpent i klient-koden); endepunktet er kun-lese og innholdet er offentlig uansett.
+- `docs/apps-script-oppsett.md` utvidet med «Nyheter»-guide (arkoppsett, `doGet`-kode, datoregler, formateringskoder).
+
 ---
 
 © 2026 Apeiron Linjeforening

@@ -294,6 +294,65 @@ h1,h2,h3{ font-family:var(--display); font-weight:600; line-height:1.04; letter-
 }
 .about__teaser p{ color:var(--ink-soft); font-size:1rem; margin-bottom:1.3em; }
 
+/* ============================================================
+   Nyheter — «trådløse» beskjeder fra Google Sheet «Nyheter»
+   (apeiron-news.js). To uttrykk: en stripe under menyen («topp»)
+   og banner-bokser inne i seksjonene. Hastegrad = vinrød markering.
+   ============================================================ */
+.news-zone[hidden]{ display:none; }
+
+/* Banner-bokser (hero/arrangement/aporetisk/fadderuke) */
+.news-zone{ display:flex; flex-direction:column; gap:14px; margin:22px 0; }
+.news-item{
+  padding:18px 22px; border-radius:4px;
+  background:var(--paper-2); border:1px solid var(--line);
+  border-left:3px solid var(--gold);
+}
+.news-item.is-urgent{
+  border-left-color:var(--maroon);
+  background:rgba(118,17,15,.06);
+}
+.news-item__flag{
+  display:inline-block; margin-bottom:.5em;
+  font-size:.72rem; letter-spacing:.16em; text-transform:uppercase; font-weight:700;
+  color:var(--maroon);
+}
+html[data-mode="marine"] .news-item__flag{ color:var(--gold); }
+.news-item__title{
+  font-family:var(--display); font-size:1.35rem; color:var(--warm);
+  margin:0 0 .35em; line-height:1.15;
+}
+.news-item__text{ color:var(--ink-soft); font-size:1rem; line-height:1.6; }
+.news-item__text a{ color:var(--warm); text-underline-offset:2px; }
+.news-item__link{
+  display:inline-block; margin-top:.7em; font-size:.92rem; font-weight:600;
+  color:var(--warm); text-decoration:none;
+}
+.news-item__link:hover{ text-decoration:underline; text-underline-offset:2px; }
+
+/* Stripe under menyen («topp») — full bredde, mer iøynefallende */
+.news-zone--strip{ margin:0; gap:0; }
+.news-zone--strip .news-item{
+  border-radius:0; border-left:0;
+  border-top:0; border-bottom:1px solid var(--line);
+  padding:12px clamp(16px,5vw,48px);
+  display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 14px;
+  background:var(--paper-2);
+}
+.news-zone--strip .news-item + .news-item{ border-top:1px solid var(--line); }
+.news-zone--strip .news-item.is-urgent{
+  background:var(--maroon); border-bottom-color:var(--maroon-2);
+}
+.news-zone--strip .news-item.is-urgent .news-item__flag,
+.news-zone--strip .news-item.is-urgent .news-item__title,
+.news-zone--strip .news-item.is-urgent .news-item__text,
+.news-zone--strip .news-item.is-urgent .news-item__text a,
+.news-zone--strip .news-item.is-urgent .news-item__link{ color:#fff; }
+.news-zone--strip .news-item__flag{ margin:0; }
+.news-zone--strip .news-item__title{ font-size:1.05rem; margin:0; }
+.news-zone--strip .news-item__text{ font-size:.95rem; }
+.news-zone--strip .news-item__link{ margin:0; }
+
 /* Stats band */
 .stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:0; border:1px solid rgba(35,39,64,.18); border-radius:4px; overflow:hidden; margin-top:64px; background:var(--paper-2); }
 .stat{ padding:34px 24px; text-align:center; border-right:1px solid rgba(35,39,64,.14); }

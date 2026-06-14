@@ -22,6 +22,9 @@
 <!-- ============ NAV ============ -->
 <div id="site-nav"></div>
 
+<!-- Nyheter: stripe under menyen (redigeres i Google Sheet «Nyheter», plassering «topp») -->
+<div id="news-topp" class="news-zone news-zone--strip" hidden></div>
+
 <!-- ============ HERO ============ -->
 <section class="hero" id="top" data-screen-label="Hero">
   <img class="hero__seal" src="assets/apeiron-logo.png" alt="" aria-hidden="true" />
@@ -41,6 +44,8 @@
         <img src="assets/apeiron-logo.png" alt="Apeiron sitt segl med timeglass og gresk inskripsjon" />
       </div>
     </div>
+    <!-- Nyheter: hovedoppslag (plassering «hovedoppslag» i Google Sheet «Nyheter») -->
+    <div id="news-hovedoppslag" class="news-zone" hidden></div>
   </div>
   <div class="hero__scroll" aria-hidden="true"><span>Bla ned</span><span class="line"></span></div>
   <!-- ============ UNDER CONSTRUCTION — fjern denne linjen for å skjule banneret ============ -->
@@ -273,6 +278,9 @@ samtale &amp; vin
       <p class="lede">Fra dyptpløyende fagkvelder til legendariske symposion. Se hele semesterprogrammet som liste, rutenett eller helhetlig oversikt — og legg det rett inn i din egen kalender.</p>
     </div>
 
+    <!-- Nyheter: arrangementer (plassering «arrangement» i Google Sheet «Nyheter») -->
+    <div id="news-arrangement" class="news-zone" hidden></div>
+
     <div class="ev-toolbar reveal">
       <div class="ev-views" role="tablist" aria-label="Visning">
         <button class="ev-view is-active" data-view="list" type="button">Liste</button>
@@ -308,6 +316,8 @@ samtale &amp; vin
           <span class="apo__meta-item" id="apoWhere"><b>Hvor</b><span>—</span></span>
           <span class="apo__meta-item"><b>For hvem</b>Åpent for alle</span>
         </div>
+        <!-- Nyheter: Aporetisk Aften (plassering «aporetisk» i Google Sheet «Nyheter») -->
+        <div id="news-aporetisk" class="news-zone" hidden></div>
         <div class="apo__about" id="apoAbout" hidden>
           <h3 class="apo__about-title">Om aftenen</h3>
           <div class="apo__about-body"></div>
@@ -334,6 +344,8 @@ samtale &amp; vin
       <p class="lede">Studiestartens beste uker — bli kjent med faget, byen og hverandre. Velg en dag for å se programmet.</p>
       <span class="fadder__dates"><span class="fadder__dates-lbl">Datoer</span><span id="fadderDates">[ datoer kommer ]</span></span>
       <p class="fadder__placeholder" id="fadderPlaceholder">⚠ Programmet under er plassholdere — kobles automatisk til fadderuke-kalenderen så snart den er satt opp.</p>
+      <!-- Nyheter: fadderuke (plassering «fadderuke» i Google Sheet «Nyheter») -->
+      <div id="news-fadderuke" class="news-zone" hidden></div>
     </div>
 
     <div class="fadder__stage" data-fadder-layout="picker">
@@ -646,6 +658,8 @@ samtale &amp; vin
 <script src="apeiron-events.js"></script>
 <script src="aporetisk-cal.js"></script>
 <script src="apeiron-fadder.js"></script>
+<script src="news-config.js"></script>
+<script src="apeiron-news.js"></script>
 <script src="report.js"></script>
 <script src="site-search.js"></script>
 </body>
