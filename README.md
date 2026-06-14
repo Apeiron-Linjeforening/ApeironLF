@@ -503,6 +503,7 @@ Kritisk:
 - [ ] Merch-admin: Badge farge "egendefinert" har ingen farge.
 - [ ] Aporetisk aften: Om "Hvor" har en lang adresse eller forklaring fyller denn opp mye plass -> burde gjøres om til noe som "Se adresse" eller "[startpåadresse]...", eller muligens fjerne "For hvem" og heller presissere i teksten over at det er åpent for alle.
 - [ ] Index.html og Galleri på mobil: Om man berører noen bilder kan man ikke rulle/sveipe på skjermen. Gjør det vanskelig å navigere forbi Lesesalen og i Galleri. 
+- [ ] Admin farger: For preset så bør fargeikonene på høyre side være av både lys og mørk modus. +Rødbrun sin mørkmodus farge er ew.
 
 Medium:
 - [ ] Be HF studentrådet om å oppdatere sidene deres og gi oss mer informasjon om hva de faktisk gjør. 
