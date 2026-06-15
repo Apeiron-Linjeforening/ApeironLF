@@ -570,10 +570,10 @@ Skjelett Prosjekt:
 - [ ] Gjøre om prosjektet til et nytt repo som kan klones og lett gjøres om til andre linjeforeninger.
 - [ ] Må lages en readme som sier hva man må gjøre for å starte,
 
-Domene:
-- [ ] Få bedre domene
-
-**Status per 13.06.26:**
+**Domene:**
+**Status per 15.06.26:**
+**NTNU-alternativ (`apeiron.org.ntnu.no`):**
+- Adressen er gjenopplivet og apeiron.org.ntnu.no viser nå til nettsiden.
 
 | Domene                 | Status      | Pris       | Registrar            |
 | ------------------------| -------------| ------------| ----------------------|
@@ -592,12 +592,6 @@ Domene:
 | apeironlf.no + .online | **Ledig** ✅ | 99 kr /år  | Domeneshop           |
 
 Merk: Cloudflare Registrar støtter ikke .no-domener. For .org er Cloudflare billigst.
-
-**NTNU-alternativ (`apeiron.org.ntnu.no`):**
-- Adressen er gjenopplivet, men fungerer som en filserver (NTNU sitt mappesystem), ikke som et vanlig domene.
-- Forsøkt omdirigering med `.htaccess` (`RedirectMatch (.*) https://apeironlf.pages.dev/`) — fungerte ikke.
-- Tilgang: For tilgang via sftp, skriv `sftp://dittbrukernavn@login.stud.ntnu.no/home/groups/apeiron` i filutforskeren (Linux). Per nå er det kun sosialansvarlig Iver (25/26) som har tilgang.
-- Avventer svar fra NTNU om muligheten for videre hjelp.
 
 ## Lisens
 ---
