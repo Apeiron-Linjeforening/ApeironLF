@@ -523,6 +523,9 @@ Kritisk:
 - [x] Legge til et informasjonsfelt for Fadderukene hvor man kan fylle inn generell info. *(Dekkes av nyhetsfunksjonen: bruk plassering `fadderuke` i Google Sheet «Nyheter».)*
 - [ ] Sjekke at "Legg til fadderukeprogrammet i din kalender" fungerer: iCal og Google Kalender.
 - [x] Måte for Apeiron å legge inn viktig informasjon som er tydelig på index. *(Google Sheet «Nyheter» → live på forsiden via `apeiron-news.js`; plasseringer topp/hovedoppslag/arrangement/aporetisk/fadderuke, hast-markering og dato-vindu. Se docs/apps-script-oppsett.md.)*
+- [ ] Mobilk: Glitchy å dra nedover sidene. 
+- [ ] Påmelding for arrangement, gjøres ish likt som merch bestillinger.
+- [ ] Div. kalendere burde kunne flyttes opp til Hero i bestemte tidsspan (f.eks fadderukekalender fra 1 uke før fadderukene og frem til fadderukene er ferdig)
 
 Medium:
 - [ ] Be HF studentrådet om å oppdatere sidene deres og gi oss mer informasjon om hva de faktisk gjør. 
