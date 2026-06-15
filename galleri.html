@@ -381,6 +381,7 @@
 
 <script src="footer-icons.js"></script>
 <script src="site-content.js"></script>
+<script src="nav-content.js"></script>
 <script src="site-chrome.js"></script>
 
 <script src="api-config.js"></script>
@@ -790,10 +791,7 @@
   var burger = document.getElementById('burger');
   var drawer = document.getElementById('drawer');
   function closeDrawer() { drawer.classList.remove('is-open'); document.body.style.overflow = ''; }
-  if (burger) burger.addEventListener('click', function () {
-    var open = drawer.classList.toggle('is-open');
-    document.body.style.overflow = open ? 'hidden' : '';
-  });
+  /* Mobilmeny håndteres nå av site-chrome.js (ikke dupliser her) */
   if (drawer) {
     drawer.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', closeDrawer); });
     var dSearchBtn = drawer.querySelector('.drawer__search-row');

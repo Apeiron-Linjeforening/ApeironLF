@@ -451,6 +451,11 @@ samtale &amp; vin
         </div>
         <script>
           (async () => {
+            // Vent til hele dokumentet er parset, slik at lightbox-markupen
+            // nederst i <body> finnes før vi kobler på hendelser.
+            if (document.readyState === 'loading') {
+              await new Promise(r => document.addEventListener('DOMContentLoaded', r, { once: true }));
+            }
             const probe = src => new Promise(resolve => {
               const img = new Image();
               img.onload = () => resolve(true);
@@ -465,11 +470,12 @@ samtale &amp; vin
               found.push(src);
             }
 
-            // Lightbox setup — DOM is fully parsed by now (awaits above yielded)
+            // Lightbox setup
             const allSrcs = ['assets/lesesalen/lesesal1.jpg'].concat(found);
             const lb = document.getElementById('lsLb');
             const lbImg = document.getElementById('lsLbImg');
             const lbInfo = document.getElementById('lsLbInfo');
+            if (!lb || !lbImg || !lbInfo) return;
             let lbIdx = 0;
 
             function showLb(idx) {
@@ -606,7 +612,7 @@ samtale &amp; vin
         <h3>Ta kontakt</h3>
         <div class="contact__row">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
-          <a href="mailto:apeironlinjeforening@gmail.com">apeironlinjeforening@gmail.com</a>
+          <a href="/cdn-cgi/l/email-protection#771607121e0518191b1e191d1211180512191e191037101a161e1b5914181a"><span class="__cf_email__" data-cfemail="422332272b302d2c2e2b2c2827242d30272c2b2c2502252f232b2e6c212d2f">[email&#160;protected]</span></a>
         </div>
         <div class="contact__row">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 21s-7-5.6-7-11a7 7 0 0 1 14 0c0 5.4-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
@@ -629,7 +635,7 @@ samtale &amp; vin
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 8h2V5h-2a3 3 0 0 0-3 3v2H9v3h2v6h3v-6h2l1-3h-3V8.5A.5.5 0 0 1 14.5 8H14Z"/></svg>
             <span>Facebook</span>
           </a>
-          <a href="mailto:apeironlinjeforening@gmail.com" aria-label="E-post" class="contact__social-link">
+          <a href="/cdn-cgi/l/email-protection#1d7c6d78746f727371747377787b726f787374737a5d7a707c7471337e7270" aria-label="E-post" class="contact__social-link">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
             <span>E-post</span>
           </a>
@@ -642,15 +648,16 @@ samtale &amp; vin
 <!-- ============ FOOTER ============ -->
 <div id="site-footer"></div>
 
-<script src="footer-icons.js"></script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="footer-icons.js"></script>
 <script src="site-content.js"></script>
+<script src="nav-content.js"></script>
 <script src="site-chrome.js"></script>
 
 <!-- ============ LESESALEN LIGHTBOX ============ -->
 <div class="ls-lb" id="lsLb" role="dialog" aria-modal="true" aria-label="Lesesalen bilder">
   <button class="ls-lb__close" id="lsLbClose" aria-label="Lukk">&times;</button>
   <div class="ls-lb__img-wrap">
-    <img class="ls-lb__img" id="lsLbImg" src="" alt="Lesesalen" />
+    <img class="ls-lb__img" id="lsLbImg" src="assets/lesesalen/lesesal1.jpg" alt="Lesesalen" />
   </div>
   <button class="ls-lb__btn ls-lb__prev" id="lsLbPrev" aria-label="Forrige bilde">&#8592;</button>
   <button class="ls-lb__btn ls-lb__next" id="lsLbNext" aria-label="Neste bilde">&#8594;</button>

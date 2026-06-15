@@ -341,6 +341,7 @@ html[data-mode="marine"] .akutt-card--life { background: #2e1c20; border-color: 
 
 <script src="footer-icons.js"></script>
 <script src="site-content.js"></script>
+<script src="nav-content.js"></script>
 <script src="site-chrome.js"></script>
 
 <script src="image-slot.js"></script>
@@ -470,10 +471,7 @@ html[data-mode="marine"] .akutt-card--life { background: #2e1c20; border-color: 
   var burger = document.getElementById('burger');
   var drawer = document.getElementById('drawer');
   function closeDrawer() { drawer.classList.remove('is-open'); document.body.style.overflow = ''; }
-  if (burger) burger.addEventListener('click', function () {
-    var open = drawer.classList.toggle('is-open');
-    document.body.style.overflow = open ? 'hidden' : '';
-  });
+  /* Mobilmeny håndteres nå av site-chrome.js (ikke dupliser her) */
   if (drawer) {
     drawer.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', closeDrawer); });
   }

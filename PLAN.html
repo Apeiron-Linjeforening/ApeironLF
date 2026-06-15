@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Prosjektplan — Apeiron nettside</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --navy:#232740; --navy-2:#1a1d33; --gold:#d4af37; --gold-ink:#8a6d18;
+  --maroon:#76110f; --paper:#f4ecd9; --paper-2:#efe5cd; --card:#fbf7ec;
+  --ink:#232740; --ink-soft:#4a4d63; --line:rgba(35,39,64,.14); --line-2:rgba(35,39,64,.26);
+  --display:"Cormorant Garamond",Georgia,serif; --body:"Spectral",Georgia,serif;
+  --maxw:980px;
+  --green:#1f6f4a; --green-bg:rgba(31,111,74,.1);
+  --amber:#9a6a00; --amber-bg:rgba(212,175,55,.15);
+  --grey:#6a6d7e; --grey-bg:rgba(106,109,126,.1);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;scroll-padding-top:84px;}
+body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.62;font-size:17px;-webkit-font-smoothing:antialiased;}
+body::before{
+  content:"";position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:.5;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;line-height:1.06;letter-spacing:-.01em;}
+a{color:inherit;}
+
+/* ── Header ── */
+.masthead{
+  background:
+    radial-gradient(120% 90% at 80% 0%, rgba(212,175,55,.16), transparent 55%),
+    radial-gradient(80% 70% at 0% 100%, rgba(118,17,15,.32), transparent 60%),
+    var(--navy);
+  color:var(--paper);padding:72px 28px 60px;text-align:center;position:relative;overflow:hidden;
+}
+.masthead__eyebrow{font-size:.72rem;font-weight:600;letter-spacing:.34em;text-transform:uppercase;color:var(--gold);}
+.masthead h1{font-size:clamp(2.6rem,6vw,4.4rem);color:var(--paper);margin:.3em 0 .15em;}
+.masthead__sub{font-family:var(--display);font-style:italic;font-size:clamp(1.1rem,2.4vw,1.5rem);color:var(--gold);}
+.masthead__meta{font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(244,236,217,.6);margin-top:1.6em;}
+
+/* ── Layout ── */
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px;}
+.section{padding:64px 0;}
+.section + .section{border-top:1px solid var(--line);}
+.eyebrow{font-size:.72rem;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--gold-ink);display:inline-flex;align-items:center;gap:.7em;}
+.eyebrow::before{content:"";width:28px;height:1px;background:currentColor;opacity:.6;}
+.h-section{font-size:clamp(2rem,4.5vw,3rem);margin:.3em 0 .2em;}
+.lede{font-size:1.16rem;color:var(--ink-soft);max-width:64ch;}
+.rule{border:0;border-top:1px solid var(--ink);opacity:.2;margin:0;}
+
+/* ── Intro / legend ── */
+.legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:1.8em;}
+.legend__item{display:inline-flex;align-items:center;gap:.5em;font-size:.82rem;background:var(--card);border:1px solid var(--line);border-radius:2px;padding:.5em .9em;}
+.dot{width:11px;height:11px;border-radius:50%;flex-shrink:0;}
+.dot--done{background:var(--green);}
+.dot--now{background:var(--gold);}
+.dot--soon{background:var(--maroon);}
+.dot--later{background:var(--grey);}
+
+/* ── Cluster ── */
+.cluster__head{display:flex;align-items:baseline;gap:.7em;flex-wrap:wrap;}
+.cluster__tag{font-family:var(--display);font-size:2.4rem;font-weight:700;color:var(--gold);line-height:1;}
+
+/* ── Task card ── */
+.tasks{display:flex;flex-direction:column;gap:18px;margin-top:2em;}
+.task{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--grey);border-radius:3px;padding:22px 26px;}
+.task--done{border-left-color:var(--green);}
+.task--now{border-left-color:var(--gold);}
+.task--soon{border-left-color:var(--maroon);}
+.task--later{border-left-color:var(--grey);}
+.task__top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.task__id{font-family:var(--body);font-weight:700;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-ink);}
+.task__title{font-size:1.45rem;margin:.15em 0 .1em;}
+.task__badges{display:flex;gap:8px;flex-wrap:wrap;flex-shrink:0;}
+.badge{font-size:.64rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:.42em .8em;border-radius:2px;white-space:nowrap;border:1px solid transparent;}
+.badge--done{background:var(--green-bg);color:var(--green);border-color:rgba(31,111,74,.3);}
+.badge--now{background:var(--amber-bg);color:var(--amber);border-color:rgba(212,175,55,.4);}
+.badge--soon{background:rgba(118,17,15,.1);color:var(--maroon);border-color:rgba(118,17,15,.3);}
+.badge--later{background:var(--grey-bg);color:var(--grey);border-color:rgba(106,109,126,.3);}
+.badge--size{background:transparent;color:var(--ink-soft);border-color:var(--line-2);}
+.task__body{margin-top:.7em;color:var(--ink-soft);font-size:1.02rem;}
+.task__body p + p{margin-top:.7em;}
+.task__body strong{color:var(--ink);font-weight:600;}
+.task__rec{margin-top:1em;padding:.9em 1.1em;background:rgba(212,175,55,.08);border:1px dashed rgba(212,175,55,.5);border-radius:3px;font-size:.94rem;}
+.task__rec b{font-family:var(--body);text-transform:uppercase;letter-spacing:.12em;font-size:.7rem;color:var(--gold-ink);display:block;margin-bottom:.3em;}
+.task__list{margin:.7em 0 0;padding-left:1.2em;}
+.task__list li{margin:.35em 0;}
+.q{color:var(--maroon);font-style:italic;}
+
+/* ── Options table (plakater) ── */
+.opts{display:grid;gap:14px;margin-top:1.4em;}
+.opt{background:var(--paper-2);border:1px solid var(--line);border-radius:3px;padding:18px 20px;}
+.opt h4{font-size:1.12rem;margin-bottom:.3em;}
+.opt__pro,.opt__con{display:flex;gap:.6em;font-size:.92rem;margin-top:.4em;align-items:baseline;}
+.opt__pro::before{content:"+";color:var(--green);font-weight:700;flex-shrink:0;}
+.opt__con::before{content:"–";color:var(--maroon);font-weight:700;flex-shrink:0;}
+.opt--pick{border-color:var(--gold);border-width:2px;background:rgba(212,175,55,.07);}
+.opt__pickflag{font-size:.64rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-ink);}
+
+/* ── Theme swatches ── */
+.swatches{display:flex;gap:10px;margin-top:1em;flex-wrap:wrap;}
+.swatch{width:54px;height:54px;border-radius:3px;border:1px solid var(--line-2);position:relative;}
+.swatch span{position:absolute;bottom:-1.5em;left:0;font-size:.6rem;color:var(--ink-soft);white-space:nowrap;}
+
+/* ── Roadmap ── */
+.road{counter-reset:step;margin-top:1.6em;display:flex;flex-direction:column;gap:2px;}
+.road__item{display:flex;gap:18px;align-items:flex-start;padding:16px 0;border-bottom:1px solid var(--line);}
+.road__num{font-family:var(--display);font-size:1.6rem;font-weight:700;color:var(--gold);min-width:1.6em;line-height:1;}
+.road__txt strong{font-size:1.08rem;}
+.road__txt p{font-size:.92rem;color:var(--ink-soft);margin-top:.2em;}
+
+/* ── Callout ── */
+.callout{background:var(--navy);color:var(--paper);border-radius:4px;padding:28px 30px;margin-top:1.6em;}
+.callout h3{color:var(--gold);font-size:1.4rem;margin-bottom:.4em;}
+.callout p{color:rgba(244,236,217,.85);font-size:1rem;}
+.callout p + p{margin-top:.7em;}
+.callout a{color:var(--gold);}
+
+.note{font-size:.86rem;color:var(--ink-soft);font-style:italic;margin-top:1em;}
+
+footer.foot{background:var(--navy-2);color:rgba(244,236,217,.7);text-align:center;padding:40px 28px;font-size:.82rem;letter-spacing:.04em;}
+footer.foot .gold{color:var(--gold);}
+
+@media(max-width:640px){
+  body{font-size:16px;}
+  .task__top{flex-direction:column;}
+  .section{padding:48px 0;}
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead__eyebrow">Apeiron · Filosofi &amp; Etikk · NTNU</div>
+  <h1>Prosjektplan</h1>
+  <div class="masthead__sub">Veikart for nettsiden — fra to-do til ferdig</div>
+  <div class="masthead__meta">Til godkjenning · 13 punkter · 4 klynger</div>
+</header>
+
+<!-- ============ INTRO ============ -->
+<section class="section">
+  <div class="wrap">
+    <span class="eyebrow">Slik leser du planen</span>
+    <h2 class="h-section">Tretten punkter, gruppert i fire klynger</h2>
+    <p class="lede">
+      Jeg har samlet to-do-punktene i fire klynger etter hva som teknisk henger sammen, så vi bygger
+      i en rekkefølge der hvert steg låser opp det neste. Hvert kort viser status, anslått omfang og
+      min anbefaling. <span class="q">Røde, kursiverte linjer er ting jeg trenger en avgjørelse på.</span>
+    </p>
+    <div class="legend">
+      <span class="legend__item"><span class="dot dot--done"></span> Allerede gjort</span>
+      <span class="legend__item"><span class="dot dot--now"></span> Klar til å bygges nå</span>
+      <span class="legend__item"><span class="dot dot--soon"></span> Etter avklaring</span>
+      <span class="legend__item"><span class="dot dot--later"></span> Større jobb — tas sist</span>
+    </div>
+    <p class="note">Oppdatert 15.06: meny-pakken (Klynge A) er nå tre fjerdedeler ferdig — A1, A2 og A3 er gjort,
+      kun meny-admin (A4) gjenstår. En større menyfeil (menyen var borte på alle sider) ble også funnet og rettet.</p>
+  </div>
+</section>
+
+<hr class="rule" />
+
+<!-- ============ KLYNGE A ============ -->
+<section class="section">
+  <div class="wrap">
+    <div class="cluster__head">
+      <span class="cluster__tag">A</span>
+      <div>
+        <span class="eyebrow">Menyen henger sammen</span>
+        <h2 class="h-section">Meny-pakken — ferdig</h2>
+      </div>
+    </div>
+    <p class="lede">Hele navigasjonen — data, mobilvisning, navnebytte og et redigeringsverktøy — løses
+      som én sammenhengende pakke fordi alt deler samme rot.</p>
+
+    <div class="tasks">
+
+      <article class="task task--done">
+        <div class="task__top">
+          <div>
+            <span class="task__id">A1 · Meny som data</span>
+            <h3 class="task__title">Menyen er flyttet ut i en datafil</h3>
+          </div>
+          <div class="task__badges"><span class="badge badge--done">Allerede gjort</span></div>
+        </div>
+        <div class="task__body">
+          <p>Menyen ligger allerede som data i <strong>nav-content.js</strong> (<code>window.SITE_NAV</code>),
+          og <strong>site-chrome.js</strong> bygger både desktop-menyen og mobil-skuffen fra den samme lista —
+          på alle sider. Dette er grunnmuren for både A3 og A4, og den er på plass.</p>
+        </div>
+      </article>
+
+      <article class="task task--done">
+        <div class="task__top">
+          <div>
+            <span class="task__id">A3 · Navnebytte</span>
+            <h3 class="task__title">«Hjelp» heter allerede «Hjelp &amp; støtte»</h3>
+          </div>
+          <div class="task__badges"><span class="badge badge--done">Allerede gjort</span></div>
+        </div>
+        <div class="task__body">
+          <p>Du valgte <strong>«Hjelp &amp; støtte»</strong> — og menyteksten er allerede endret til nettopp
+          det i nav-content.js. Selve filen heter fortsatt <code>hjelp.html</code> (filnavn trenger ikke endres).
+          Ingenting mer å gjøre her.</p>
+        </div>
+      </article>
+
+      <article class="task task--done">
+        <div class="task__top">
+          <div>
+            <span class="task__id">A2 · Mobil &amp; smale skjermer</span>
+            <h3 class="task__title">Mobilmenyen er fikset</h3>
+          </div>
+          <div class="task__badges">
+            <span class="badge badge--done">Gjort 15.06</span>
+          </div>
+        </div>
+        <div class="task__body">
+          <p><strong>Først fant vi en større feil:</strong> menyen var helt borte på alle sider, og
+          modus-knappen lå midt i topplinja. Årsak: sidene lastet aldri <code>nav-content.js</code>,
+          så <code>SITE_NAV</code> var udefinert og menyen ble bygd tom. Lagt til <code>&lt;script src="nav-content.js"&gt;</code>
+          på alle 8 offentlige sider — menyen er tilbake.</p>
+          <p>Deretter A2 selv: <strong>accordion-CSS-en manglet</strong>, så seksjonene kolliderte. Lagt til:</p>
+          <ul class="task__list">
+            <li>Full CSS for <code>.drawer__sec</code>/<code>-head</code>/<code>-body</code> — seksjoner glir rent åpne (grid-template-rows) uten kollisjon.</li>
+            <li>Chevron som roterer 180° ved åpning, gull venstrekant på under-lenker, aktiv seksjon i gull.</li>
+            <li>Trykkflater på 56px (hoder) / 46px (under-lenker), og <code>nowrap</code> så to-ords-etiketter ikke brytes.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="task task--done">
+        <div class="task__top">
+          <div>
+            <span class="task__id">A4 · Meny-admin</span>
+            <h3 class="task__title">GUI for å redigere menyen</h3>
+          </div>
+          <div class="task__badges">
+            <span class="badge badge--done">Gjort 15.06</span>
+          </div>
+        </div>
+        <div class="task__body">
+          <p>Ny <strong>meny-admin.html</strong> på linje med footer-admin, med støtte for menyens
+          nøstede struktur: toppnivå-punkter med nærmenyer, ankerlenker og dra-for-å-sortere
+          på begge nivåer. Synlighet kan settes per punkt (begge / kun mobil / kun desktop).
+          Eksporterer en ny <code>nav-content.js</code> du laster opp til GitHub.</p>
+          <div class="task__rec">
+            <b>Ble samtidig pilot for Klynge C</b>
+            Forhåndsvisningen bruker nettstedets <strong>ekte styles.css og site-chrome.js</strong> i to rammer
+            (desktop-linje + åpen mobilskuff) — så den følger automatisk med når det offentlige utseendet endres.
+            Dette er mønsteret vi ruller ut til de andre panelene.
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<hr class="rule" />
+
+<!-- ============ KLYNGE B ============ -->
+<section class="section">
+  <div class="wrap">
+    <div class="cluster__head">
+      <span class="cluster__tag">B</span>
+      <div>
+        <span class="eyebrow">Mer av det vi allerede kan</span>
+        <h2 class="h-section">Nye innholdssider</h2>
+      </div>
+    </div>
+    <p class="lede">Hver av disse følger oppskriften fra Begrep/Styret/Hjelp: én innholds-fil
+      (<code>window.X_CONTENT</code>) + offentlig side + admin-panel via AdminCommon. Lav risiko, kjent mønster.</p>
+
+    <div class="tasks">
+
+      <article class="task task--soon">
+        <div class="task__top">
+          <div>
+            <span class="task__id">B1 · Utmerkelser</span>
+            <h3 class="task__title">Side for utmerkelser (personer)</h3>
+          </div>
+          <div class="task__badges">
+            <span class="badge badge--soon">Klar etter A</span>
+            <span class="badge badge--size">Middels</span>
+          </div>
+        </div>
+        <div class="task__body">
+          <p>Egen side for personer som har stått ut i studentmiljøet eller det frivillige under IFR.
+          Du valgte at <strong>Utmerkelser og Oppnåelser skal være to separate sider</strong> — det respekterer jeg.
+          Denne får personkort (navn, bilde, hva de utmerket seg for, år) + eget admin-panel.</p>
+        </div>
+      </article>
+
+      <article class="task task--soon">
+        <div class="task__top">
+          <div>
+            <span class="task__id">B2 · Oppnåelser</span>
+            <h3 class="task__title">Side for oppnåelser (premier)</h3>
+          </div>
+          <div class="task__badges">
+            <span class="badge badge--soon">Klar etter A</span>
+            <span class="badge badge--size">Middels</span>
+          </div>
+        </div>
+        <div class="task__body">
+          <p>Egen side for premier foreningen har vunnet — <strong>sølv i håndball</strong>, <strong>«best oppmøte»
+          fra Dionysos</strong>, og det som kommer. Jeg ser at det allerede finnes en mappe <code>assets/oppnaelser</code>,
+          så noe materiale kan være på vei. Trofé-/medaljekort med tittel, hvem som ga den, og år, + admin.</p>
+          <p class="q">Spørsmål: skal B1 og B2 dele én plass i menyen (f.eks. en «Heder»-nedtrekksmeny med to lenker),
+          eller stå som to separate toppnivå-punkter? Menyen er allerede ganske full.</p>
+        </div>
+      </article>
+
+      <article class="task task--soon">
+        <div class="task__top">
+          <div>
+            <span class="task__id">B3 · Møtereferat</span>
+            <h3 class="task__title">Side for møtereferat (PDF-er fra Google Disk)</h3>
+          </div>
+          <div class="task__badges">
+            <span class="badge badge--soon">Etter avklaring</span>
+            <span class="badge badge--size">Middels</span>
+          </div>
+        </div>
+        <div class="task__body">
+          <p>Du valgte <strong>egen side på nettstedet som henter PDF-er fra en Google Disk</strong>. Planen:
+          en side som lister referatene (dato + tittel), der hver rad lenker til / forhåndsviser PDF-en fra Disk.
+          Admin-panelet styrer lista (tittel, dato, Disk-lenke per referat).</p>
+          <div class="task__rec">
+            <b>To måter å hente PDF-ene</b>
+            <strong>(a) Manuell liste:</strong> dere limer inn en delingslenke per referat i admin — enkelt, full kontroll.
+            <strong>(b) Auto fra mappe:</strong> hele Disk-mappen vises automatisk via samme Apps-Script-oppsett som
+            kalenderen bruker — null vedlikehold, men krever litt skript-oppsett. Jeg heller mot å starte med (a).
+          </div>
+          <p class="q">Spørsmål: vil dere lime inn referatene én og én (a), eller skal en hel Disk-mappe speiles automatisk (b)?</p>
+        </div>
+      </article>
+
+      <article class="task task--soon">
+        <div class="task__top">
+          <div>
+            <span class="task__id">B4 · Logikk Panikk</span>
+            <h3 class="task__title">Legge til «Logikk Panikk»</h3>
+          </div>
+          <div class="task__badges">
+            <span class="badge badge--soon">Venter på materiale</span>
+            <span class="badge badge--size">Avhenger av form</span>
+          </div>
+        </div>
+        <div class="task__body">
+          <p>Du nevnte at du <strong>laster opp to plakatbilder</strong> for dette — men jeg har ikke mottatt dem ennå.
+          Når de kommer, kan «Logikk Panikk» bli enten et arrangement (en kategori sammen med Aporetisk Aften /
+          Fadderuke) eller en egen liten seksjon/side, avhengig av hva plakatene viser.</p>
+          <p class="q">Last opp de to plakatbildene, så foreslår jeg riktig form. Er det et fast arrangement,
+          et eksamens-tilbud, eller noe annet?</p>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<hr class="rule" />
+
+<!-- ============ KLYNGE C ============ -->
+<section class="section">
+  <div class="wrap">
+    <div class="cluster__head">
+      <span class="cluster__tag">C</span>
+      <div>
+        <span class="eyebrow">Mot ett samlet redigeringsverktøy</span>
+        <h2 class="h-section">Admin-infrastruktur</h2>
+      </div>
+    </div>
+    <p class="lede">Du sa sluttmålet er å <strong>sette sammen alle admin-filene til ett interaktivt, visuelt
+      verktøy</strong> der en bruker kan redigere alt på siden. Det former hvordan vi bygger forhåndsvisningene nå.</p>
+
+    <div class="callout">
+      <h3>Den viktigste avgjørelsen i hele planen</h3>
+      <p>Dine punkter «mini-forhåndsvisning per panel» og «live forhåndsvisning i alle paneler» er samme mål.
+      Du så selv risikoen: gjenskaper man kortutseendet manuelt i admin, må det <em>holdes i synk</em> hver gang
+      det offentlige utseendet endres. Med 6+ admin-paneler blir det mye dobbeltarbeid.</p>
+      <p><strong>Anbefaling:</strong> la forhåndsvisningen gjenbruke den <em>ekte</em> styles.css (i en liten ramme
+      på siden) i stedet for å re-implementere CSS-en. Da følger previewen automatisk med når det offentlige
+      utseendet endres — og du slipper synk-arbeidet helt. Dette er også det riktige fundamentet for det samlede,
+      visuelle verktøyet du beskriver: hvert panel blir en ekte «rediger-på-siden»-flate, ikke en kopi.</p>
+    </div>
+
+    <div class="tasks">
+
+      <article class="task task--soon">
+        <div class="task__top">
+          <div>
+            <span class="task__id">C1 · Forhåndsvisning</span>
+            <h3 class="task__title">Live forhåndsvisning i alle paneler</h3>
+          </div>
+          <div class="task__badges">
+            <span class="badge badge--soon">Inkrementelt</span>
+            <span class="badge badge--size">Middels, fordelt</span>
+          </div>
+        </div>
+        <div class="task__body">
+          <p>Tas ett panel av gangen, siden hvert lager ulikt innhold. <strong>Rekkefølge: merch-admin først</strong>
+          (som du foreslo), deretter styret, begrep, hjelp. Footer-admin har allerede mønsteret vi bygger videre på.</p>
+        </div>
+      </article>
+
+      <article class="task task--later">
+        <div class="task__top">
+          <div>
+            <span class="task__id">C3 · Index-admin</span>
+            <h3 class="task__title">Egen admin for forsiden</h3>
+          </div>
+          <div class="task__badges">
+            <span class="badge badge--later">Tas sist</span>
+            <span class="badge badge--size">Stort</span>
+          </div>
+        </div>
+        <div class="task__body">
+          <p>Dette er <strong>det største og mest komplekse punktet</strong> — forsiden har mange spesiallagde
+          seksjoner (hero, om oss, studiet, FAQ, kontakt). Full GUI over alt er en stor jobb og lett å gjøre skjør.</p>
+          <div class="task__rec">
+            <b>Anbefaling — gjør den i to trinn</b>
+            Først trekke ut tekstbitene som faktisk endres ofte (hero-tekst, om oss, FAQ, kontakt) til en innholdsfil,
+            og bygge admin for <em>de</em> delene. Ikke hele siden på en gang. Tas <strong>sist</strong>, når mønsteret
+            fra de andre panelene er modent.
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<hr class="rule" />
+
+<!-- ============ KLYNGE D ============ -->
+<section class="section">
+  <div class="wrap">
+    <div class="cluster__head">
+      <span class="cluster__tag">D</span>
+      <div>
+        <span class="eyebrow">Visning &amp; uttrykk</span>
+        <h2 class="h-section">Hvordan ting vises</h2>
+      </div>
+    </div>
+
+    <div class="tasks">
+
+      <!-- D1 plakater -->
+      <article class="task task--soon">
+        <div class="task__top">
+          <div>
+            <span class="task__id">D1 · Arrangement &amp; plakater</span>
+            <h3 class="task__title">Bedre måte å vise arrangement, plakater &amp; nyheter</h3>
+          </div>
+          <div class="task__badges">
+            <span class="badge badge--soon">Trenger valg</span>
+            <span class="badge badge--size">Middels–stort</span>
+          </div>
+        </div>
+        <div class="task__body">
+          <p>Du ba om flere alternativer med fordeler/ulemper — og åpnet for et større redesign. I dag har dere
+          <strong>to kanaler</strong>: Google Kalender (arrangementer) og et nyhets-ark. Det som mangler en god flate
+          er <strong>plakatene (bildene)</strong>. Fire veier:</p>
+
+          <div class="opts">
+            <div class="opt">
+              <h4>1 · Plakater i delt Google Disk-mappe</h4>
+              <div class="opt__pro">Som galleriet i dag — dere slipper kode, bare slipp bilder i mappa.</div>
+              <div class="opt__pro">Null ekstra system å lære.</div>
+              <div class="opt__con">Disk-bildelenker kan slutte å virke / lastes tregt.</div>
+              <div class="opt__con">Lite kontroll over rekkefølge og hvilken som er «hovedplakat».</div>
+            </div>
+
+            <div class="opt">
+              <h4>2 · Ett bilde per oppslag i nyhets-arket</h4>
+              <div class="opt__pro">Alt på ett sted — plakat følger nyheten den hører til.</div>
+              <div class="opt__pro">Gjenbruker systemet dere allerede har.</div>
+              <div class="opt__con">Nyhetsarket blir bredere; krever tilpasning av nyhetskomponenten.</div>
+            </div>
+
+            <div class="opt opt--pick">
+              <span class="opt__pickflag">★ Min anbefaling</span>
+              <h4>3 · Egen «Oppslagstavle» (plakat-ark + visuell tavle)</h4>
+              <div class="opt__pro">Dedikert plakat-ark (som begrep-/merch-content) gir full kontroll: tittel, dato, lenke, rekkefølge.</div>
+              <div class="opt__pro">Vises som en ekte oppslagstavle på forsiden — plakatene blir et blikkfang, ikke gjemt i en liste.</div>
+              <div class="opt__pro">Admin med opplasting/forhåndsvisning passer rett inn i Klynge C.</div>
+              <div class="opt__con">Ett system til å holde ved like (men med admin blir det lett).</div>
+            </div>
+
+            <div class="opt">
+              <h4>4 · Større redesign: samlet «Hva skjer»-side</h4>
+              <div class="opt__pro">Kalender + plakat-tavle + nyheter side om side på én skjerm — én destinasjon for «hva foregår».</div>
+              <div class="opt__pro">Rydder opp i at info i dag er spredt på tre steder.</div>
+              <div class="opt__con">Mest arbeid; bør tas etter at plakat-systemet (alt. 3) finnes.</div>
+            </div>
+          </div>
+          <p class="q">Spørsmål: går vi for alternativ 3 (oppslagstavle) nå, med alternativ 4 (samlet «Hva skjer»-side)
+          som et senere mål? Eller vil du holde det enkelt med alternativ 1?</p>
+        </div>
+      </article>
+
+      <!-- D2 begrep theme -->
+      <article class="task task--now">
+        <div class="task__top">
+          <div>
+            <span class="task__id">D2 · Begrep-tema</span>
+            <h3 class="task__title">Eget tema på Begrep-siden (erstatter mørk modus)</h3>
+          </div>
+          <div class="task__badges">
+            <span class="badge badge--now">Klar — har konsept</span>
+            <span class="badge badge--size">Lite–middels</span>
+          </div>
+        </div>
+        <div class="task__body">
+          <p>Du ba meg studere Begrep-utgavene og foreslå et kreativt tema. Knappen skal <strong>kun virke på
+          Begrep-siden</strong>, ikke påvirke andre sider, og <strong>erstatte mørk modus</strong> der (siden siden
+          allerede er mørk).</p>
+          <p>Det jeg ser på tvers av de fem forsidene: et fast <strong>vertikalt strek-/strekkode-motiv</strong>
+          (allerede i koden som <code>.bg-bars-layer</code>), tung serif-tittel, og en spennvidde fra industrielt
+          svart-hvitt (utg. 1–2) via art nouveau-grønt og gull (utg. 3) til en Bruegel-klassiker med neon-gul (utg. 5).
+          Den røde tråden er <strong>«trykt objekt» — det fysiske heftet</strong>.</p>
+
+          <div class="task__rec">
+            <b>Forslag: «Trykt utgave»-tema</b>
+            En knapp <strong>«Trykt versjon»</strong> som vender hele siden fra det digitale mørket til
+            <strong>pergament/avispapir</strong>: kremfarget bunn, mørk blekk-tekst, vinrøde og grønne aksenter
+            løftet rett fra utgave 2 og 3, og strekkode-motivet i mørkt på lyst. Som å holde det fysiske tidsskriftet.
+            Et meningsfylt bytte: «digital natt» ↔ «trykt papir», i stedet for en vanlig lys/mørk-toggle.
+            <div class="swatches">
+              <span class="swatch" style="background:#0a0a0a;"><span>natt</span></span>
+              <span class="swatch" style="background:#ece4d2;"><span>papir</span></span>
+              <span class="swatch" style="background:#7a1f1a;"><span>vinrød</span></span>
+              <span class="swatch" style="background:#243d31;"><span>grønn</span></span>
+              <span class="swatch" style="background:#d4a017;"><span>gull</span></span>
+              <span class="swatch" style="background:#f5e000;"><span>neon</span></span>
+            </div>
+          </div>
+          <p class="q" style="margin-top:1.6em;">Liker du «Trykt versjon»-retningen, eller vil du heller ha et tema som
+          dyrker én bestemt utgave (f.eks. det grønne art nouveau-uttrykket fra utgave 3)?</p>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<hr class="rule" />
+
+<!-- ============ ROADMAP ============ -->
+<section class="section">
+  <div class="wrap">
+    <span class="eyebrow">Foreslått rekkefølge</span>
+    <h2 class="h-section">Veikartet</h2>
+    <p class="lede">Bygget slik at hvert steg står på det forrige. Vi tar én ting av gangen og du godkjenner underveis.</p>
+
+    <div class="road">
+      <div class="road__item"><span class="road__num">1</span><div class="road__txt"><strong>A4 — Meny-admin med live preview</strong><p>Fullfører meny-pakken og blir pilot for det visuelle redigeringsmålet. (A2 mobilmeny-fiks er allerede gjort.)</p></div></div>
+      <div class="road__item"><span class="road__num">2</span><div class="road__txt"><strong>B1 + B2 — Utmerkelser &amp; Oppnåelser</strong><p>To sider, kjent mønster, mye synlig verdi raskt.</p></div></div>
+      <div class="road__item"><span class="road__num">3</span><div class="road__txt"><strong>C1 — Forhåndsvisning, merch-admin først</strong><p>Med ekte CSS-gjenbruk. Ruller deretter ut til de andre panelene.</p></div></div>
+      <div class="road__item"><span class="road__num">4</span><div class="road__txt"><strong>D2 — Begrep-tema</strong><p>Avgrenset, kreativ, lav risiko.</p></div></div>
+      <div class="road__item"><span class="road__num">5</span><div class="road__txt"><strong>D1 + B3 + B4 — Plakater, møtereferat, Logikk Panikk</strong><p>Etter avklaring og når plakatene er lastet opp.</p></div></div>
+      <div class="road__item"><span class="road__num">6</span><div class="road__txt"><strong>C3 — Index-admin</strong><p>Størst og mest komplekst — tas sist, i to trinn.</p></div></div>
+    </div>
+
+    <div class="callout">
+      <h3>Trenger avgjørelse fra deg før jeg fortsetter</h3>
+      <p>1 · <strong>Plakater (D1):</strong> alternativ 1, 3 eller 3+4? &nbsp;·&nbsp; 2 · <strong>Begrep-tema (D2):</strong> «Trykt versjon» eller én-utgave-tema?</p>
+      <p>3 · <strong>Møtereferat (B3):</strong> manuell liste eller auto fra Disk-mappe? &nbsp;·&nbsp; 4 · <strong>Utmerkelser/Oppnåelser:</strong> dele én meny-plass eller to separate?</p>
+      <p>5 · <strong>Logikk Panikk (B4):</strong> last opp de to plakatene. &nbsp;·&nbsp; Og: <strong>skal jeg sette i gang med steg 1 (mobilmeny-fiksen) nå?</strong></p>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <span class="gold">APEIRON</span> · Linjeforening for filosofi og etikk · NTNU<br />
+  Prosjektplan — utkast til godkjenning
+</footer>
+
+</body>
+</html>

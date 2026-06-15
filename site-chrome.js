@@ -28,99 +28,89 @@
     });
   }
 
-  /* ─── Kanonisk meny-markup ───
+  /* ─── Meny-markup bygges fra window.SITE_NAV (nav-content.js) ───
      Lenker til index-seksjoner skrives som "index.html#anker" så de virker fra
-     alle sider; localizeHrefs() forkorter dem til "#anker" på selve forsiden. */
-  var NAV_HTML =
-'<header class="nav" id="nav">' +
-  '<a class="nav__brand" href="index.html#top">' +
-    '<img src="assets/apeiron-logo.png" alt="Apeiron segl" />' +
-    '<span><span class="nm">APEIRON</span><span class="sub">Filosofi &amp; Etikk · NTNU</span></span>' +
-  '</a>' +
-  '<nav class="nav__links">' +
-    '<div class="nav__dropdown">' +
-      '<a class="nav__drop-trigger" href="index.html#om">Om oss <span class="nav__caret">▾</span></a>' +
-      '<div class="nav__drop-menu">' +
-        '<a href="index.html#om">Om oss</a>' +
-        '<a href="index.html#lesesalen">Lesesalen</a>' +
-        '<a href="index.html#samarbeid">Samarbeid</a>' +
-      '</div>' +
-    '</div>' +
-    '<div class="nav__dropdown">' +
-      '<a class="nav__drop-trigger" href="index.html#studiet">Studiene <span class="nav__caret">▾</span></a>' +
-      '<div class="nav__drop-menu">' +
-        '<a href="index.html#studiet">Studiene</a>' +
-        '<a href="pensum.html">Pensum</a>' +
-      '</div>' +
-    '</div>' +
-    '<div class="nav__dropdown">' +
-      '<a class="nav__drop-trigger" href="index.html#arrangementer">Arrangementer <span class="nav__caret">▾</span></a>' +
-      '<div class="nav__drop-menu">' +
-        '<a href="index.html#arrangementer">Arrangementer</a>' +
-        '<a href="index.html#aporetisk">Aporetisk Aften</a>' +
-        '<a href="index.html#fadderuke">Fadderuke</a>' +
-      '</div>' +
-    '</div>' +
-    '<div class="nav__dropdown">' +
-      '<a class="nav__drop-trigger" href="styret.html">Styret <span class="nav__caret">▾</span></a>' +
-      '<div class="nav__drop-menu">' +
-        '<a href="styret.html">Apeiron styret</a>' +
-        '<a href="styret.html#tillitsvalgte">Tillitsvalgte</a>' +
-        '<a href="styret.html#sak">S.A.K</a>' +
-        '<a href="styret.html#vervene">Verv</a>' +
-      '</div>' +
-    '</div>' +
-    '<a href="begrep.html" class="nav__top">Begrep</a>' +
-    '<a href="galleri.html" class="nav__top">Galleri</a>' +
-    '<a href="hjelp.html" class="nav__top">Hjelp</a>' +
-    '<div class="nav__dropdown">' +
-      '<a class="nav__drop-trigger" href="merch.html">Merch <span class="nav__caret">▾</span></a>' +
-      '<div class="nav__drop-menu">' +
-        '<a href="merch.html">Merch</a>' +
-        '<a href="marked.html">Kjøp &amp; bytte</a>' +
-      '</div>' +
-    '</div>' +
-    '<a href="index.html#kontakt">Kontakt</a>' +
-    '<a class="btn btn--gold nav__cta" href="index.html#bli-medlem">Bli medlem <span class="arr">→</span></a>' +
-  '</nav>' +
-  '<button class="nav__color-toggle" id="colorToggle" type="button" aria-label="Bytt fargemodus">' +
-    '<svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>' +
-    '<svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>' +
-  '</button>' +
-  '<button class="nav__search-btn" type="button" aria-label="Søk på nettstedet">' +
-    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>' +
-    '<span class="nav__search-hint">Søk</span>' +
-  '</button>' +
-  '<button class="nav__burger" id="burger" aria-label="Meny"><span></span><span></span><span></span></button>' +
-'</header>';
+     alle sider; localizeHrefs() forkorter dem til "#anker" på selve forsiden.
+     Header-menyen (desktop) får SAMME DOM som før, så scrollspy/aktiv-markering
+     virker uendret. Mobilmenyen bygges nå som sammenleggbare seksjoner. */
+  function navData() {
+    return (window.SITE_NAV && window.SITE_NAV.length) ? window.SITE_NAV : [];
+  }
+  function hasKids(it) { return it && it.children && it.children.length; }
 
-  var DRAWER_HTML =
-'<div class="drawer" id="drawer">' +
-  '<span class="drawer__lbl">Foreningen</span>' +
-  '<a href="index.html#om">Om oss</a>' +
-  '<a href="index.html#lesesalen">Lesesalen</a>' +
-  '<a href="index.html#samarbeid">Samarbeid</a>' +
-  '<span class="drawer__lbl">Studiene</span>' +
-  '<a href="index.html#studiet">Studiene</a>' +
-  '<a href="pensum.html">Pensum</a>' +
-  '<span class="drawer__lbl">Arrangementer</span>' +
-  '<a href="index.html#arrangementer">Arrangementer</a>' +
-  '<a href="index.html#aporetisk">Aporetisk Aften</a>' +
-  '<a href="index.html#fadderuke">Fadderuke</a>' +
-  '<span class="drawer__lbl">Styret</span>' +
-  '<a href="styret.html">Apeiron styret</a>' +
-  '<a href="styret.html#tillitsvalgte">Tillitsvalgte</a>' +
-  '<a href="styret.html#sak">S.A.K</a>' +
-  '<a href="styret.html#vervene">Verv</a>' +
-  '<span class="drawer__lbl">Mer</span>' +
-  '<a href="begrep.html">Begrep</a>' +
-  '<a href="galleri.html">Galleri</a>' +
-  '<a href="hjelp.html">Hjelp</a>' +
-  '<a href="merch.html">Merch</a>' +
-  '<a href="marked.html">Kjøp &amp; bytte</a>' +
-  '<a href="index.html#kontakt">Kontakt</a>' +
-  '<a href="index.html#bli-medlem">Bli medlem</a>' +
-'</div>';
+  // Desktop: én rad med lenker + nedtrekksmenyer
+  function buildHeaderLinks() {
+    return navData().filter(function (it) { return !it.drawerOnly; }).map(function (it) {
+      if (hasKids(it)) {
+        var sub = it.children.map(function (c) {
+          return '<a href="' + esc(c.href) + '">' + esc(c.label) + '</a>';
+        }).join('');
+        return '<div class="nav__dropdown">' +
+          '<a class="nav__drop-trigger" href="' + esc(it.href) + '">' + esc(it.label) +
+            ' <span class="nav__caret">▾</span></a>' +
+          '<div class="nav__drop-menu">' + sub + '</div>' +
+        '</div>';
+      }
+      return '<a href="' + esc(it.href) + '" class="nav__top">' + esc(it.label) + '</a>';
+    }).join('');
+  }
+
+  function buildNav() {
+    return '<header class="nav" id="nav">' +
+      '<a class="nav__brand" href="index.html#top">' +
+        '<img src="assets/apeiron-logo.png" alt="Apeiron segl" />' +
+        '<span><span class="nm">APEIRON</span><span class="sub">Filosofi &amp; Etikk · NTNU</span></span>' +
+      '</a>' +
+      '<span class="nav__spacer" data-spacer="l"></span>' +
+      '<nav class="nav__links">' + buildHeaderLinks() + '</nav>' +
+      '<span class="nav__spacer" data-spacer="r"></span>' +
+      '<button class="nav__color-toggle" id="colorToggle" type="button" data-color-toggle aria-label="Bytt fargemodus">' +
+        '<svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>' +
+        '<svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>' +
+      '</button>' +
+      '<button class="nav__search-btn" type="button" aria-label="Søk på nettstedet">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>' +
+        '<span class="nav__search-hint">Søk</span>' +
+      '</button>' +
+      '<button class="nav__burger" id="burger" aria-label="Åpne meny" aria-expanded="false"><span></span><span></span><span></span></button>' +
+    '</header>';
+  }
+
+  // Mobil: skuff med sammenleggbare seksjoner (samme struktur som desktop —
+  // nedtrekksmenyer → sammenleggbare seksjoner, vanlige lenker → direkte lenker).
+  function buildDrawer() {
+    var items = navData().map(function (it) {
+      if (hasKids(it)) {
+        var links = it.children.map(function (c) {
+          return '<a href="' + esc(c.href) + '">' + esc(c.label) + '</a>';
+        }).join('');
+        return '<div class="drawer__sec">' +
+          '<button class="drawer__sec-head" type="button" aria-expanded="false">' +
+            '<span>' + esc(it.label) + '</span>' +
+            '<span class="drawer__chev" aria-hidden="true">▾</span>' +
+          '</button>' +
+          '<div class="drawer__sec-body"><div class="drawer__sec-inner">' + links + '</div></div>' +
+        '</div>';
+      }
+      return '<a class="drawer__link" href="' + esc(it.href) + '">' + esc(it.label) + '</a>';
+    }).join('');
+    return '<div class="drawer" id="drawer">' +
+      '<button class="drawer__close" id="drawerClose" type="button" aria-label="Lukk meny">✕</button>' +
+      '<div class="drawer__inner">' +
+        '<a class="drawer__brand" href="index.html#top">' +
+          '<img src="assets/apeiron-logo.png" alt="Apeiron segl" />' +
+          '<span><span class="nm">APEIRON</span><span class="sub">Filosofi &amp; Etikk · NTNU</span></span>' +
+        '</a>' +
+        '<nav class="drawer__nav">' + items + '</nav>' +
+        '<button class="drawer__mode" type="button" data-color-toggle aria-label="Bytt fargemodus">' +
+          '<svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>' +
+          '<svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>' +
+          '<span class="drawer__mode-label drawer__mode-label--dark">Mørk modus</span>' +
+          '<span class="drawer__mode-label drawer__mode-label--light">Lys modus</span>' +
+        '</button>' +
+      '</div>' +
+    '</div>';
+  }
 
   /* ─── Ikoner for sosiale lenker (felles sett i footer-icons.js) ─── */
   var ICONS = window.FOOTER_ICONS || {};
@@ -194,6 +184,22 @@
     });
   }
 
+  /* ─── Plassering av lenkene på menylinja ───
+     window.SITE_NAV_CONFIG.align: 0=venstre, 50=sentrert, 100=høyre (hakk på 5).
+     To fleksible mellomrom (spacers) på hver side av lenkene fordeler ledig plass
+     etter forholdet align : (100−align). */
+  function applyNavAlign() {
+    var cfg = window.SITE_NAV_CONFIG || {};
+    var a = cfg.align;
+    if (a === 'left') a = 0; else if (a === 'center') a = 50; else if (a === 'right') a = 100;
+    a = Number(a); if (isNaN(a)) a = 0;
+    a = Math.max(0, Math.min(100, a));
+    var sl = document.querySelector('.nav__spacer[data-spacer="l"]');
+    var sr = document.querySelector('.nav__spacer[data-spacer="r"]');
+    if (sl) sl.style.flexGrow = String(a);
+    if (sr) sr.style.flexGrow = String(100 - a);
+  }
+
   /* ─── Nav-oppførsel (flyttet fra app.js) ─── */
   function wireNav() {
     var nav = document.getElementById('nav');
@@ -202,6 +208,21 @@
     // sticky rett under nav-en og trenger den faktiske høyden, som endrer seg
     // når nav-en krymper i «is-stuck»-tilstand).
     if (nav) {
+      // Plassering av lenkene på linja (venstrelent/sentrert/høyrelent + finhakk)
+      applyNavAlign();
+
+      // Innholdsbasert kollaps: vis burgeren så snart desktop-lenkene ikke får
+      // plass på topplinja — uansett hvor mange menypunkter som legges til.
+      // Måler i utvidet tilstand: fjern klassen, les overflow, sett den igjen.
+      var applyNavFit = function () {
+        nav.classList.remove('is-collapsed');
+        // +2px buffer mot avrunding; behold burger på ekte smale skjermer uansett
+        if (nav.scrollWidth > nav.clientWidth + 2) nav.classList.add('is-collapsed');
+      };
+      applyNavFit();
+      window.addEventListener('resize', applyNavFit);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(applyNavFit);
+
       var onScroll = function () {
         if (window.scrollY > 40) nav.classList.add('is-stuck');
         else nav.classList.remove('is-stuck');
@@ -281,34 +302,67 @@
       updateDropTriggers();
     }
 
-    // Mobilmeny
+    // Mobilmeny (skuff) med sammenleggbare seksjoner
     var burger = document.getElementById('burger');
     var drawer = document.getElementById('drawer');
     if (drawer) {
-      var closeDrawer = function () {
-        drawer.classList.remove('is-open');
-        document.body.style.overflow = '';
+      var setOpen = function (open) {
+        drawer.classList.toggle('is-open', open);
+        document.body.style.overflow = open ? 'hidden' : '';
+        if (burger) {
+          burger.classList.toggle('is-open', open);
+          burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+          burger.setAttribute('aria-label', open ? 'Lukk meny' : 'Åpne meny');
+        }
       };
+      var closeDrawer = function () { setOpen(false); };
       if (burger) {
         burger.addEventListener('click', function () {
-          var open = drawer.classList.toggle('is-open');
-          document.body.style.overflow = open ? 'hidden' : '';
+          setOpen(!drawer.classList.contains('is-open'));
         });
       }
-      drawer.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', closeDrawer); });
-      var dSearchBtn = drawer.querySelector('.drawer__search-row');
-      if (dSearchBtn) dSearchBtn.addEventListener('click', closeDrawer);
+      var closeBtn = document.getElementById('drawerClose');
+      if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+      // Et klikk på en faktisk lenke lukker skuffen (men ikke på seksjonshoder)
+      drawer.querySelectorAll('a[href]').forEach(function (a) { a.addEventListener('click', closeDrawer); });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && drawer.classList.contains('is-open')) closeDrawer();
+      });
+
+      // Sammenleggbare seksjoner — åpne den som inneholder gjeldende side
+      drawer.querySelectorAll('.drawer__sec').forEach(function (sec) {
+        var head = sec.querySelector('.drawer__sec-head');
+        if (!head) return;
+        var hasCurrent = Array.prototype.some.call(sec.querySelectorAll('a[href]'), function (a) {
+          return pageOf(a.getAttribute('href')) === CUR;
+        });
+        if (hasCurrent) { sec.classList.add('is-open'); head.setAttribute('aria-expanded', 'true'); }
+        head.addEventListener('click', function () {
+          var open = sec.classList.toggle('is-open');
+          head.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+      });
     }
   }
 
+  /* Side-basert «du er her»-markering i mobilmenyen. */
+  function markActiveDrawer() {
+    var drawer = document.getElementById('drawer');
+    if (!drawer) return;
+    drawer.querySelectorAll('a[href]').forEach(function (a) {
+      if (pageOf(a.getAttribute('href')) === CUR) a.classList.add('is-active');
+    });
+  }
+
   function init() {
-    replaceAnchor('site-nav', NAV_HTML + DRAWER_HTML);
+    replaceAnchor('site-nav', buildNav() + buildDrawer());
     replaceAnchor('site-footer', buildFooter());
     var navLinks = document.querySelector('.nav__links');
     var drawer = document.getElementById('drawer');
     if (navLinks) localizeHrefs(navLinks);
     if (drawer) localizeHrefs(drawer);
     if (navLinks) markActive();
+    if (drawer) markActiveDrawer();
     wireNav();
   }
 

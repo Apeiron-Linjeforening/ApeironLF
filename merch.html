@@ -485,7 +485,7 @@ html[data-mode="marine"] .cart-item__rm:hover { color: var(--navy); background: 
         <span class="eyebrow">Slik bestiller du</span>
         <h2 class="h-section" style="font-size:clamp(1.9rem,3.5vw,2.8rem);">Enkel bestilling<br/>via Vipps</h2>
         <p>All merch bestilles direkte fra Apeiron — legg det du vil ha i handlekurven og send bestillingen. Betaling skjer via Vipps etter at vi har bekreftet. Vi svarer innen et par dager og avtaler henting på Dragvoll.</p>
-        <p>Spørsmål? Send oss en mail på <a href="mailto:apeironlinjeforening@gmail.com" style="color:var(--gold);">apeironlinjeforening@gmail.com</a> eller stikk innom lesesalen.</p>
+        <p>Spørsmål? Send oss en mail på <a href="/cdn-cgi/l/email-protection#d4b5a4b1bda6bbbab8bdbabeb1b2bba6b1babdbab394b3b9b5bdb8fab7bbb9" style="color:var(--gold);"><span class="__cf_email__" data-cfemail="83e2f3e6eaf1ecedefeaede9e6e5ecf1e6edeaede4c3e4eee2eaefade0ecee">[email&#160;protected]</span></a> eller stikk innom lesesalen.</p>
       </div>
       <ol class="order-steps">
         <li class="order-step">
@@ -525,8 +525,9 @@ html[data-mode="marine"] .cart-item__rm:hover { color: var(--navy); background: 
 <!-- ============ FOOTER ============ -->
 <div id="site-footer"></div>
 
-<script src="footer-icons.js"></script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="footer-icons.js"></script>
 <script src="site-content.js"></script>
+<script src="nav-content.js"></script>
 <script src="site-chrome.js"></script>
 
 <script>
@@ -539,10 +540,7 @@ html[data-mode="marine"] .cart-item__rm:hover { color: var(--navy); background: 
   var burger = document.getElementById('burger');
   var drawer = document.getElementById('drawer');
   function closeDrawer() { drawer.classList.remove('is-open'); document.body.style.overflow = ''; }
-  if (burger) burger.addEventListener('click', function () {
-    var open = drawer.classList.toggle('is-open');
-    document.body.style.overflow = open ? 'hidden' : '';
-  });
+  /* Mobilmeny håndteres nå av site-chrome.js (ikke dupliser her) */
   if (drawer) {
     drawer.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', closeDrawer); });
     var dSearchBtn = drawer.querySelector('.drawer__search-row');

@@ -10,12 +10,14 @@
   }
 
   document.addEventListener('DOMContentLoaded', function () {
-    var t = document.getElementById('colorToggle');
-    if (!t) return;
-    t.addEventListener('click', function () {
-      var d = document.documentElement.dataset.mode === 'marine';
-      document.documentElement.dataset.mode = d ? 'paper' : 'marine';
-      try { localStorage.setItem('colorMode', d ? 'light' : 'dark'); } catch (e) {}
+    var toggles = document.querySelectorAll('[data-color-toggle]');
+    if (!toggles.length) return;
+    toggles.forEach(function (t) {
+      t.addEventListener('click', function () {
+        var d = document.documentElement.dataset.mode === 'marine';
+        document.documentElement.dataset.mode = d ? 'paper' : 'marine';
+        try { localStorage.setItem('colorMode', d ? 'light' : 'dark'); } catch (e) {}
+      });
     });
   });
 })();

@@ -234,7 +234,7 @@ html[data-mode="marine"] .role-card { border-left-color: var(--c-d, var(--gold))
         <div class="role-card__eyebrow">Instituttnivå · IFR</div>
         <h3>ITV — Institutt-tillitsvalgt</h3>
         <p>ITV representerer alle studenter ved Institutt for filosofi og religionsvitenskap (IFR). De sitter i instituttets styrende organer, deltar i ansettelsesprosesser og tar opp saker som angår hele instituttet.</p>
-        <p class="role-card__contact">Kontakt: <strong>hf-ifr@studentrad.ntnu.no</strong></p>
+        <p class="role-card__contact">Kontakt: <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="dcb4baf1b5baae9cafa8a9b8b9b2a8aebdb8f2b2a8b2a9f2b2b3">[email&#160;protected]</a></strong></p>
         <ul class="role-card__resp">
           <li>Sitter i instituttstyret ved IFR</li>
           <li>Deltar i ansettelsesprosesser for vitenskapelige stillinger</li>
@@ -247,7 +247,7 @@ html[data-mode="marine"] .role-card { border-left-color: var(--c-d, var(--gold))
         <div class="role-card__eyebrow">Fakultetsnivå · HF</div>
         <h3>FTV — Fakultetstillitsvalgt</h3>
         <p>FTV representerer alle studentene ved Det humanistiske fakultet (HF) og jobber med saker som angår hele fakultetet. De sitter i fakultetsstyret og ulike komiteer, og er studentenes øverste talspersoner overfor HF-ledelsen.</p>
-        <p class="role-card__contact">Kontakt: <strong>ftv@hf.ntnu.no</strong></p>
+        <p class="role-card__contact">Kontakt: <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b8decccef8d0de96d6ccd6cd96d6d7">[email&#160;protected]</a></strong></p>
         <ul class="role-card__resp">
           <li>Sitter i fakultetsstyret ved HF</li>
           <li>Jobber med læringsmiljø, internasjonalisering og kommunikasjon på fakultetsnivå</li>
@@ -274,8 +274,9 @@ html[data-mode="marine"] .role-card { border-left-color: var(--c-d, var(--gold))
 <!-- ============ FOOTER ============ -->
 <div id="site-footer"></div>
 
-<script src="footer-icons.js"></script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="footer-icons.js"></script>
 <script src="site-content.js"></script>
+<script src="nav-content.js"></script>
 <script src="site-chrome.js"></script>
 
 <script src="image-slot.js"></script>
@@ -348,10 +349,7 @@ html[data-mode="marine"] .role-card { border-left-color: var(--c-d, var(--gold))
   var burger = document.getElementById('burger');
   var drawer = document.getElementById('drawer');
   function closeDrawer() { drawer.classList.remove('is-open'); document.body.style.overflow = ''; }
-  if (burger) burger.addEventListener('click', function () {
-    var open = drawer.classList.toggle('is-open');
-    document.body.style.overflow = open ? 'hidden' : '';
-  });
+  /* Mobilmeny håndteres nå av site-chrome.js (ikke dupliser her) */
   if (drawer) {
     drawer.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', closeDrawer); });
     var dSearchBtn = drawer.querySelector('.drawer__search-row');

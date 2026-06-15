@@ -675,7 +675,7 @@
       Vi tar imot tekster fra alle som studerer filosofi og etikk ved NTNU —
       og fra andre som har noe på hjertet.
     </p>
-    <p class="bg-cta__email" id="bg-kontakt-email">E-post: <strong>begreptidsskrift@gmail.com</strong></p>
+    <p class="bg-cta__email" id="bg-kontakt-email">E-post: <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a3c1c6c4d1c6d3d7cac7d0d0c8d1cac5d7e3c4cec2cacf8dc0ccce">[email&#160;protected]</a></strong></p>
     <div class="bg-socials">
       <a class="bg-social-btn" href="https://www.instagram.com/begreptidsskrift/" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
@@ -700,8 +700,9 @@
 <!-- ============ FOOTER ============ -->
 <div id="site-footer"></div>
 
-<script src="footer-icons.js"></script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="footer-icons.js"></script>
 <script src="site-content.js"></script>
+<script src="nav-content.js"></script>
 <script src="site-chrome.js"></script>
 
 <script src="palette.js"></script>
@@ -858,10 +859,7 @@
   var burger = document.getElementById('burger');
   var drawer = document.getElementById('drawer');
   function closeDrawer() { drawer.classList.remove('is-open'); document.body.style.overflow = ''; }
-  if (burger) burger.addEventListener('click', function () {
-    var open = drawer.classList.toggle('is-open');
-    document.body.style.overflow = open ? 'hidden' : '';
-  });
+  /* Mobilmeny håndteres nå av site-chrome.js (ikke dupliser her) */
   if (drawer) {
     drawer.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', closeDrawer); });
     var dSearchBtn = drawer.querySelector('.drawer__search-row');
