@@ -551,6 +551,7 @@ Lav:
 - [ ] Live forhåndsvisning i alle admin-paneler (som i `footer-admin.html`). Tas inkrementelt per panel (merch-admin først), siden hvert panel lager ulikt innhold.
 - [ ] Opp Ned Side.
 - [ ] Informasjon om div. frivillige verv i Trondheim (f.eks språkhjelp).
+- [ ] Finne alternativ for google sheets for Merch og google calendar for kalendere.
 
 Hadde vært kult:
 - [ ] Snakke med IFR/NTNU om API for automatisk oppdatering av emner for studiene.
