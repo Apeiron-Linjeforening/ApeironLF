@@ -4,6 +4,8 @@ Nettsiden for Apeiron, linjeforeningen for filosofi og etikk ved NTNU.
 Statisk nettside (HTML/CSS/JS). Ingen byggesteg, ingen avhengigheter å installere.
 **Vibrasjonskoding har aldri vært så effektivt!**
 
+Se HVORDAN.md for hvordan man kan redigere og bruke nettsiden, samt meget rotete informasjon om den.
+
 # OBS!: 
 **Nettsiden er under oppbygging. Det som står på siden burde tas kun som plassholdere.**
 
@@ -40,12 +42,7 @@ Lav:
 - [ ] Fylle ut SAK / utvide den.
 - [ ] Sette opp et arkiv.
 - [ ] Full revamp av hvordan hele siden redigeres: mer square space aktig.
-        - [ ] Hva kan ikke gjøres per nå: 
-                - [ ] Endre av logo
-                - [ ] Flytte om på seksjoner
-                - [ ] Flytte seksjoner mellom sider
-                - [ ] Endre alt fra én admin side
-                - [ ] Visuell endring direkte i et preview
+      Hva kan ikke gjøres per nå: Endre av logo - Flytte om på seksjoner - Flytte seksjoner mellom sider - Endre alt fra én admin side - Visuell endring direkte i et preview.
 
 Ønsker:
 - [ ] Snakke med IFR/NTNU om API for automatisk oppdatering av emner for studiene.
