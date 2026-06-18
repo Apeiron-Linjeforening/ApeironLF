@@ -68,7 +68,17 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
 }
 .btn-export:hover { filter: brightness(1.08); }
 
-.a-main { max-width: 860px; margin: 0 auto; padding: 28px 20px 80px; }
+.a-main { width: 100%; max-width: 1180px; margin: 0 auto; padding: 24px 20px 80px; }
+
+/* ── Live forhåndsvisning (øverst — hele den ekte merch-siden, nedskalert) ── */
+.preview-top { margin-bottom: 30px; }
+.preview-top h3 { font-family: var(--display); font-size: 1.4rem; color: var(--navy); }
+.preview-top .pp-sub { font-size: .82rem; color: var(--ink-soft); margin: 2px 0 12px; line-height: 1.45; }
+.pv-shop-wrap {
+  border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+  background: var(--paper); box-shadow: 0 4px 22px rgba(35,39,64,.07);
+}
+#pv-shop { border: 0; display: block; background: var(--paper); transform-origin: top left; }
 
 /* ── Instructions ── */
 .tip {
@@ -344,6 +354,12 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
   </header>
 
   <main class="a-main">
+    <section class="preview-top">
+      <h3>Forhåndsvisning</h3>
+      <p class="pp-sub">Live fra den ekte merch-siden — bla i ruta for å se hele siden (info-tekst, «Merch»-toppen og bestillingsboksen nederst). Endringene dine vises umiddelbart.</p>
+      <div class="pv-shop-wrap"><iframe id="pv-shop" src="merch.html?preview=1" title="Forhåndsvisning av butikken"></iframe></div>
+    </section>
+    <div class="editor-col">
     <div class="tip">
       <button class="tip-reset" id="reset-btn" type="button">Tilbakestill til siste publiserte versjon</button>
       <strong>Slik oppdaterer du merch-siden</strong>
@@ -369,6 +385,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
     </div>
 
     <div id="plist"></div>
+    </div><!-- /.editor-col -->
   </main>
 </div>
 
@@ -411,6 +428,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
     localStorage.setItem(LS_KEY, JSON.stringify(products));
     localStorage.setItem(LS_INFO_KEY, info);
     showToast('Lagret i nettleseren');
+    pushPreview();
   }
 
   let saveTimer = null;
@@ -1046,6 +1064,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
     renderInfo();
     renderAll();
     showToast('Tilbakestilt til publisert versjon');
+    pushPreview();
   });
 
   /* ─── WIRE UP ─── */
@@ -1069,8 +1088,41 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
     }
   });
 
+  /* ─── LIVE FORHÅNDSVISNING (gjenbruker ekte merch.html?preview=1) ─── */
+  var pvFrame = document.getElementById('pv-shop');
+  function pushPreview() {
+    if (!pvFrame || !pvFrame.contentWindow) return;
+    try {
+      pvFrame.contentWindow.postMessage(
+        { type: 'apeiron-merch-preview', products: products, info: info }, '*');
+    } catch (e) {}
+  }
+  window.addEventListener('message', function (e) {
+    if (e.data && e.data.type === 'apeiron-merch-preview-ready') { pushPreview(); fitShop(); }
+  });
+  // Skaler den ekte siden ned så previewen er lik eller mindre enn faktisk størrelse.
+  function fitShop() {
+    var wrap = document.querySelector('.pv-shop-wrap');
+    if (!pvFrame || !wrap) return;
+    var W = wrap.clientWidth;
+    if (!W) return;                            // skjult (gate) — kalles på nytt ved init
+    var contentW = 1180;                       // desktop-bredde på merch-siden
+    var scale = Math.min(1, W / contentW);     // aldri større enn faktisk størrelse
+    var visibleH = Math.max(420, Math.min(680, Math.round(window.innerHeight * 0.66)));
+    pvFrame.style.width = contentW + 'px';
+    pvFrame.style.height = Math.round(visibleH / scale) + 'px';
+    pvFrame.style.transform = 'scale(' + scale + ')';
+    wrap.style.height = visibleH + 'px';
+  }
+  if (pvFrame) pvFrame.addEventListener('load', fitShop);
+  window.addEventListener('resize', fitShop);
+
   /* ─── INIT ─── */
-  function init() { loadData(); renderInfo(); renderAll(); }
+  function init() {
+    loadData(); renderInfo(); renderAll();
+    fitShop(); setTimeout(fitShop, 80);
+    pushPreview(); setTimeout(pushPreview, 150);   // send data etter at den er lastet
+  }
 })();
 </script>
 </body>

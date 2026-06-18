@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8" />
+<script src="theme.js"></script>
+<script>try{if(/[?&]preview\b/.test(location.search))document.documentElement.classList.add('is-preview');}catch(e){}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Om oss — Apeiron · NTNU</title>
+<meta name="description" content="Hva er Apeiron? Linjeforeningen for filosofi og etikk ved NTNU — fellesskapet, samarbeidet på Dragvoll, lesesalen og hvordan du blir medlem." />
+<meta property="og:title" content="Om oss — Apeiron · NTNU" />
+<meta property="og:description" content="Bli kjent med Apeiron: hvem vi er, hvem vi henger med, lesesalen og hvordan du blir medlem." />
+<meta property="og:image" content="assets/apeiron-logo.png" />
+<meta property="og:type" content="website" />
+<meta name="theme-color" content="#232740" />
+<link rel="icon" href="assets/apeiron-logo.png" type="image/png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<style>
+/* ── Subpage header ── */
+.subhero {
+  background:
+    radial-gradient(100% 80% at 90% 0%, rgba(212,175,55,.12), transparent 55%),
+    radial-gradient(70% 60% at 5% 100%, rgba(118,17,15,.28), transparent 60%),
+    var(--navy);
+  color: var(--paper);
+  padding: 148px 0 72px;
+  position: relative;
+  overflow: hidden;
+}
+.subhero__seal {
+  position: absolute; right: -4%; top: 50%; transform: translateY(-50%);
+  width: min(44vw, 540px); opacity: .09; pointer-events: none; z-index: 1;
+  filter: drop-shadow(0 0 1px rgba(212,175,55,.4));
+}
+.subhero__inner { position: relative; z-index: 2; max-width: var(--maxw); margin: 0 auto; padding: 0 28px; }
+.subhero h1 {
+  color: var(--paper);
+  font-size: clamp(3rem, 8vw, 6.5rem);
+  line-height: .95; letter-spacing: .01em; margin: .22em 0 .35em;
+}
+.subhero__lede { font-size: 1.18rem; color: rgba(244,236,217,.8); max-width: 56ch; line-height: 1.65; }
+.subhero__back {
+  display: flex; width: fit-content; align-items: center; gap: .5em;
+  font-size: .82rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+  color: rgba(244,236,217,.55); margin-bottom: .6em; transition: color .2s;
+}
+.subhero__back:hover { color: var(--gold); }
+.subhero__back::before { content: "←"; font-style: normal; }
+</style>
+</head>
+<body data-mode="paper">
+
+<!-- ============ NAV ============ -->
+<div id="site-nav"></div>
+
+<!-- ============ SUBPAGE HEADER ============ -->
+<section class="subhero">
+  <img class="subhero__seal" src="assets/apeiron-logo.png" alt="" aria-hidden="true" />
+  <div class="subhero__inner">
+    <a class="subhero__back" href="index.html">Til forsiden</a>
+    <h1>Om oss</h1>
+    <p class="subhero__lede">Hvem vi er, hvem vi henger med, og det lille tilfluktsstedet vårt på Dragvoll — alt om Apeiron, samlet på ett sted.</p>
+  </div>
+</section>
+
+<!-- ============ OM OSS ============ -->
+<section class="section about" id="om" data-screen-label="Om oss">
+  <div class="wrap">
+    <div class="about__grid">
+      <div class="reveal">
+        <span class="eyebrow" id="ix-om-eyebrow">Om oss</span>
+        <h2 class="h-section">Hva er <em style="font-style:italic;color:var(--warm)">apeiron</em>?</h2>
+        <div class="about__greek" id="ix-om-greek">ἄπειρον
+          <small>a-pei-ron · «det grenseløse»</small>
+        </div>
+        <p style="margin-top:1.4em" id="ix-om-p1">Ordet kommer fra filosofen Anaximander, som mente at alt som finnes springer ut av apeiron, det uendelige og ubestemte urstoffet bak verden. For oss betyr dette et fellesskap uten faste grenser, der enhver tanke får plass.</p>
+        <p id="ix-om-p2">Apeiron er linjeforeningen for deg som studerer filosofi eller etikk ved NTNU. Vi arrangerer fagkvelder, lesesirkler, fester, turer og lange kveldssamtaler for alle som liker å lure på hvordan ting egentlig henger sammen.</p>
+        <p id="ix-om-p3">Hos oss trenger du ikke ha lest hele Kant for å henge med. Du trenger bare nysgjerrighet og lyst til å være med.</p>
+      </div>
+      <div>
+        <div class="about__card reveal d2">
+          <svg class="about__hourglass" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12M6 22h12M6 2c0 5 4 6 6 10 2-4 6-5 6-10M6 22c0-5 4-6 6-10 2 4 6 5 6 10"/></svg>
+          <h3 id="ix-om-card-title">Hvorfor timeglasset?</h3>
+          <p id="ix-om-card-body">Seglet vårt bærer et timeglass, et gammelt symbol for tid, forgjengelighet og det å bruke tiden sin på noe som betyr noe. For oss handler studietiden om akkurat det: gode samtaler, gode venner og spørsmål verdt å sitte oppe til langt på natt med.</p>
+        </div>
+        <div class="about__teaser reveal d3">
+          <span class="eyebrow" id="ix-om-teaser-eyebrow">Større enn oss selv</span>
+          <h4 id="ix-om-teaser-title">Fellesskap &amp; samarbeid</h4>
+          <p id="ix-om-teaser-body">Apeiron står ikke alene. Sammen med de andre linjeforeningene på Dragvoll skaper vi et større miljø med flere fester, større arrangementer og et bredere nettverk.</p>
+          <a class="btn btn--ghost" id="ix-om-teaser-link" href="#samarbeid"><span id="ix-om-teaser-link-label">Les mer om samarbeidet</span> <span class="arr">→</span></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats reveal" id="ix-om-stats">
+      <div class="stat"><div class="stat__num">1981</div><div class="stat__lbl">Grunnlagt</div></div>
+      <div class="stat"><div class="stat__num">180+</div><div class="stat__lbl">Medlemmer</div></div>
+      <div class="stat"><div class="stat__num">25</div><div class="stat__lbl">Arrangementer i året</div></div>
+      <div class="stat"><div class="stat__num">∞</div><div class="stat__lbl">Kanner kaffe</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FELLESSKAP & SAMARBEID ============ -->
+<section class="section allies" id="samarbeid" data-screen-label="Samarbeid">
+  <div class="wrap">
+    <div class="center" style="margin-bottom:54px">
+      <span class="eyebrow eyebrow--center">Større enn oss selv</span>
+      <h2 class="h-section">Fellesskap &amp; samarbeid</h2>
+      <p class="lede">Apeiron står ikke alene. Vi er del av et større studentmiljø på Dragvoll — tett på vår egen søsterforening, studenttidsskriftet og linjeforeningene rundt oss.</p>
+    </div>
+
+    <div class="ally__grid">
+      <article class="ally reveal">
+        <span class="ally__glyph" aria-hidden="true">⁋</span>
+        <span class="prog__level">Samarbeid</span>
+        <h3>Unionen</h3>
+        <p>Apeiron er med i Unionen — samarbeidet mellom linjeforeningene på Dragvoll. Sammen arrangerer vi på tvers av fagene, deler erfaringer og gjør studentstemmen sterkere inn mot institutt og fakultet. Det gir flere fester, større arrangementer og et bredere nettverk enn étt studieprogram får til alene.</p>
+        <div class="ally__links">
+          <a class="ally__link" href="https://www.instagram.com/unionen.ntnu/" target="_blank" rel="noopener">Instagram →</a>
+        </div>
+      </article>
+      <article class="ally reveal d1">
+        <span class="ally__glyph" aria-hidden="true">Δ</span>
+        <span class="prog__level">Søsterforening</span>
+        <h3>Dionysos</h3>
+        <p>Vår nære søsterforening er Dionysos, linjeforeningen for religionsvitenskap. Vi deler institutt — Institutt for filosofi og religionsvitenskap (IFR) — og holder til på samme campus. Siden 2012 har de samlet religionsstudentene til faglige og sosiale treff, og vi finner ofte sammen om alt fra fagkvelder til fest.</p>
+        <div class="ally__links">
+          <a class="ally__link" href="https://www.instagram.com/dionysos_ntnu/" target="_blank" rel="noopener">Instagram →</a>
+          <a class="ally__link" href="https://www.facebook.com/LinjeforeningenDionysos/" target="_blank" rel="noopener">Facebook →</a>
+        </div>
+      </article>
+      <article class="ally reveal d2">
+        <span class="ally__glyph" aria-hidden="true">Β</span>
+        <span class="prog__level">Studenttidsskrift</span>
+        <h3>Begrep</h3>
+        <p>Begrep er et studentdrevet filosofitidsskrift laget hovedsakelig av nåværende og tidligere filosofi og etikk studenter. Det er ikke en del av Apeiron, men springer ut av det samme studentmiljøet. Begrep gir ut et tidsskrift i semesteret, og har i tillegg laget en film (Grev van Orton), en julekalender (Hilbert Hotell) og en påskekrim. Alle kan sende inn bidrag til tidsskriftet og få redaksjonell tilbakemelding.</p>
+        <div class="ally__links">
+          <a class="ally__link" href="https://linktr.ee/begrep" target="_blank" rel="noopener">Linktree →</a>
+          <a class="ally__link" href="https://www.youtube.com/@BegrepTidsskrift" target="_blank" rel="noopener">YouTube →</a>
+          <a class="ally__link" href="https://www.instagram.com/begrep.filosoftidsskrift/" target="_blank" rel="noopener">Instagram →</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LESESALEN ============ -->
+<section class="section lesesal" id="lesesalen" data-screen-label="Lesesalen">
+  <div class="wrap">
+    <div class="lesesal__grid">
+      <div class="reveal">
+        <span class="eyebrow">En skjult perle på Dragvoll</span>
+        <h2 class="h-section">Lesesalen</h2>
+        <p class="lesesal__lede">De fleste vet ikke at den finnes, men om du gjør det, er den vanskelig å gi fra seg. Lesesalen er filosofi og etikk studentenes eget lille tilfluktssted på Dragvoll: lun, romslig og med alt du trenger for en god studieøkt eller godt selskap.</p>
+        <ul class="lesesal__features">
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <div><strong>Eget bibliotek</strong><span>Hyllevis med filosofi, etikk og tilstøtende fag — pent sortert og fritt tilgjengelig.</span></div>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+            <div><strong>Gratis kaffe for medlemmer</strong><span>Alltid en varm kanne klar. En av de små godene ved å ha et Apeiron-kort i lomma.</span></div>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <div><strong>To sofaer og god plass</strong><span>Luftig lokale med to sofaer, god arbeidsplass og en atmosfære som faktisk innbyr til å sette seg ned.</span></div>
+          </li>
+        </ul>
+      </div>
+      <div class="lesesal__gallery reveal d1">
+        <div class="lesesal__img-main">
+          <image-slot id="ls1" shape="rect" placeholder="Lesesalen — oversiktsbilde" src="assets/lesesalen/lesesal1.jpg"></image-slot>
+        </div>
+        <div class="lesesal__marquee-wrap">
+          <div class="lesesal__marquee-track" id="lesesal-marquee"></div>
+        </div>
+        <script>
+          (async () => {
+            // Vent til hele dokumentet er parset, slik at lightbox-markupen
+            // nederst i <body> finnes før vi kobler på hendelser.
+            if (document.readyState === 'loading') {
+              await new Promise(r => document.addEventListener('DOMContentLoaded', r, { once: true }));
+            }
+            const probe = src => new Promise(resolve => {
+              const img = new Image();
+              img.onload = () => resolve(true);
+              img.onerror = () => resolve(false);
+              img.src = src;
+            });
+            const track = document.getElementById('lesesal-marquee');
+            const found = [];
+            for (let i = 2; i <= 99; i++) {
+              const src = `assets/lesesalen/lesesal${i}.jpg`;
+              if (!await probe(src)) break;
+              found.push(src);
+            }
+
+            // Lightbox setup
+            const allSrcs = ['assets/lesesalen/lesesal1.jpg'].concat(found);
+            const lb = document.getElementById('lsLb');
+            const lbImg = document.getElementById('lsLbImg');
+            const lbInfo = document.getElementById('lsLbInfo');
+            if (!lb || !lbImg || !lbInfo) return;
+            let lbIdx = 0;
+
+            function showLb(idx) {
+              lbIdx = ((idx % allSrcs.length) + allSrcs.length) % allSrcs.length;
+              lbImg.src = allSrcs[lbIdx];
+              lbInfo.textContent = (lbIdx + 1) + ' / ' + allSrcs.length;
+              lb.classList.add('is-open');
+              document.body.style.overflow = 'hidden';
+            }
+            function closeLb() {
+              lb.classList.remove('is-open');
+              document.body.style.overflow = '';
+              lbImg.src = '';
+            }
+
+            document.getElementById('lsLbClose').addEventListener('click', closeLb);
+            document.getElementById('lsLbPrev').addEventListener('click', () => showLb(lbIdx - 1));
+            document.getElementById('lsLbNext').addEventListener('click', () => showLb(lbIdx + 1));
+            lb.addEventListener('click', e => { if (e.target === lb) closeLb(); });
+            document.addEventListener('keydown', e => {
+              if (!lb.classList.contains('is-open')) return;
+              if (e.key === 'ArrowLeft') showLb(lbIdx - 1);
+              if (e.key === 'ArrowRight') showLb(lbIdx + 1);
+              if (e.key === 'Escape') closeLb();
+            });
+
+            // Make main image clickable
+            const mainSlot = document.getElementById('ls1');
+            if (mainSlot) mainSlot.addEventListener('click', () => showLb(0));
+
+            if (!found.length) return;
+
+            const make = (src, i, suffix) => {
+              const el = document.createElement('image-slot');
+              el.id = `ls${i}${suffix}`;
+              el.setAttribute('shape', 'rect');
+              el.setAttribute('placeholder', `Lesesalen — bilde ${i}`);
+              el.setAttribute('src', src);
+              return el;
+            };
+            found.forEach((src, idx) => {
+              const el = make(src, idx + 2, '');
+              el.addEventListener('click', () => showLb(idx + 1));
+              track.appendChild(el);
+            });
+            found.forEach((src, idx) => {
+              const el = make(src, idx + 2, 'b');
+              el.addEventListener('click', () => showLb(idx + 1));
+              track.appendChild(el);
+            });
+          })();
+        </script>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MØT STYRET ============ -->
+<section class="section allies" id="mot-styret" data-screen-label="Møt styret">
+  <div class="wrap">
+    <div class="center" style="margin-bottom:54px">
+      <span class="eyebrow eyebrow--center">Folkene bak</span>
+      <h2 class="h-section">Møt styret</h2>
+      <p class="lede">Apeiron drives av studenter som deg. Bli kjent med dem som holder hjulene i gang — og se hvordan du selv kan ta et verv.</p>
+    </div>
+    <div class="ally__grid">
+      <article class="ally reveal">
+        <span class="ally__glyph" aria-hidden="true">Σ</span>
+        <span class="prog__level">Styret</span>
+        <h3>Styret 2025/26</h3>
+        <p>Leder, nestleder, økonomi, sosialansvarlig, faddersjef, fagansvarlig og resten av gjengen som driver foreningen gjennom året.</p>
+        <div class="ally__links">
+          <a class="ally__link" href="styret.html">Se styret →</a>
+        </div>
+      </article>
+      <article class="ally reveal d1">
+        <span class="ally__glyph" aria-hidden="true">Ψ</span>
+        <span class="prog__level">Tillitsvalgte</span>
+        <h3>Tillitsvalgte</h3>
+        <p>Studentenes stemme inn mot institutt og program — de som tar med seg tilbakemeldingene dine dit beslutningene tas.</p>
+        <div class="ally__links">
+          <a class="ally__link" href="styret.html#tillitsvalgte">Se tillitsvalgte →</a>
+        </div>
+      </article>
+      <article class="ally reveal d2">
+        <span class="ally__glyph" aria-hidden="true">Δ</span>
+        <span class="prog__level">Engasjer deg</span>
+        <h3>Verv &amp; komiteer</h3>
+        <p>Lyst til å bidra? Det finnes mange måter å engasjere seg på — fra komité til styreverv. Se hva som finnes og hvordan du blir med.</p>
+        <div class="ally__links">
+          <a class="ally__link" href="styret.html#vervene">Se vervene →</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BLI MEDLEM ============ -->
+<section class="section join" id="bli-medlem" data-screen-label="Bli medlem">
+  <div class="wrap">
+    <div class="join__grid">
+      <div class="reveal">
+        <span class="eyebrow">Bli en av oss</span>
+        <h2 class="h-section">Bli medlem i Apeiron</h2>
+        <p class="join__lede">Studerer du filosofi eller etikk ved NTNU? Da hører du hjemme her. Ett medlemskap, et helt fellesskap.</p>
+        <ul class="join__benefits">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg> Rabattert inngang på alle arrangementer</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg> Gratis kaffe på lesesalen, og rabatt på Apeiron-pins</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg> Et fellesskap av nysgjerrige folk på tvers av kull</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg> Mulighet til å sitte i komité eller styre</li>
+        </ul>
+      </div>
+
+      <div class="join__card reveal d2">
+        <div class="join__tiers" id="joinTiers">
+          <div class="join__tier">
+            <div class="join__tier-head"><span class="join__tier-label">Ett studieår</span><span class="join__tier-price">100,–</span></div>
+            <p class="join__tier-note">Gjelder ett studieår (høst + vår).</p>
+          </div>
+          <div class="join__tier">
+            <div class="join__tier-head"><span class="join__tier-label">Hele studietiden</span><span class="join__tier-price">150,–</span></div>
+            <p class="join__tier-note">Engangsbeløp som varer så lenge du studerer.</p>
+          </div>
+        </div>
+        <h3>Medlemskap</h3>
+        <ol class="join__steps" id="joinSteps">
+          <li><span class="n">1</span> Vipps riktig beløp (se over) til <b>#551937</b> «Apeiron»</li>
+          <li><span class="n">2</span> Skriv navn og studieprogram i meldingen</li>
+          <li><span class="n">3</span> Følg oss på Instagram for oppdateringer</li>
+        </ol>
+        <a class="btn btn--maroon" href="index.html#kontakt" style="width:100%;justify-content:center">Meld deg inn i dag</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="section" id="faq" data-screen-label="FAQ">
+  <div class="wrap">
+    <div class="center" style="margin-bottom:54px">
+      <span class="eyebrow eyebrow--center" id="ix-faq-eyebrow">Spørsmål?</span>
+      <h2 class="h-section" id="ix-faq-heading">Ofte stilte spørsmål</h2>
+    </div>
+    <div class="faq reveal" id="ix-faq-list" style="max-width:760px;margin:0 auto">
+      <div class="faq__item">
+        <button class="faq__q">Må jeg studere filosofi for å bli med?</button>
+        <div class="faq__a"><p>Nei! Vi favner bredt. Studerer du filosofi eller etikk er du selvsagt midt i målgruppa, men er du bare nysgjerrig på de store spørsmålene, er du like velkommen.</p></div>
+      </div>
+      <div class="faq__item">
+        <button class="faq__q">Jeg er fersk student — passer det for meg?</button>
+        <div class="faq__a"><p>Absolutt. Mange blir med allerede i fadderuka. Du trenger ingen forkunnskaper — bare møt opp på et arrangement, så finner du fort noen å prate med.</p></div>
+      </div>
+      <div class="faq__item">
+        <button class="faq__q">Hvordan kan jeg engasjere meg mer?</button>
+        <div class="faq__a"><p>Bli med i en komité! Det er den enkleste veien inn. Si fra til en i styret, eller send oss en melding på Instagram, så kobler vi deg på.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<div id="site-footer"></div>
+
+<!-- ============ LESESALEN LIGHTBOX ============ -->
+<div class="ls-lb" id="lsLb" role="dialog" aria-modal="true" aria-label="Lesesalen bilder">
+  <button class="ls-lb__close" id="lsLbClose" aria-label="Lukk">&times;</button>
+  <div class="ls-lb__img-wrap">
+    <img class="ls-lb__img" id="lsLbImg" src="assets/lesesalen/lesesal1.jpg" alt="Lesesalen" />
+  </div>
+  <button class="ls-lb__btn ls-lb__prev" id="lsLbPrev" aria-label="Forrige bilde">&#8592;</button>
+  <button class="ls-lb__btn ls-lb__next" id="lsLbNext" aria-label="Neste bilde">&#8594;</button>
+  <div class="ls-lb__info" id="lsLbInfo"></div>
+</div>
+
+<script src="footer-icons.js"></script>
+<script src="site-content.js"></script>
+<script src="nav-content.js"></script>
+<script src="site-chrome.js"></script>
+
+<script src="membership-config.js"></script>
+<script src="membership.js"></script>
+<script src="image-slot.js"></script>
+<script src="om-content.js"></script>
+<script src="apeiron-om.js"></script>
+<script src="app.js"></script>
+<script src="report.js"></script>
+<script src="site-search.js"></script>
+</body>
+</html>

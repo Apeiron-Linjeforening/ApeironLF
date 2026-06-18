@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <script src="theme.js"></script>
+<script>try{if(/[?&]preview\b/.test(location.search))document.documentElement.classList.add('is-preview');}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Merch — Apeiron · NTNU</title>
 <meta name="description" content="Apeiron-merch i begrenset opplag — pins, gensere og mer med linjeforeningens segl. Bestill via e-post og hent på lesesalen på Dragvoll." />
@@ -485,7 +486,7 @@ html[data-mode="marine"] .cart-item__rm:hover { color: var(--navy); background: 
         <span class="eyebrow">Slik bestiller du</span>
         <h2 class="h-section" style="font-size:clamp(1.9rem,3.5vw,2.8rem);">Enkel bestilling<br/>via Vipps</h2>
         <p>All merch bestilles direkte fra Apeiron — legg det du vil ha i handlekurven og send bestillingen. Betaling skjer via Vipps etter at vi har bekreftet. Vi svarer innen et par dager og avtaler henting på Dragvoll.</p>
-        <p>Spørsmål? Send oss en mail på <a href="/cdn-cgi/l/email-protection#d4b5a4b1bda6bbbab8bdbabeb1b2bba6b1babdbab394b3b9b5bdb8fab7bbb9" style="color:var(--gold);"><span class="__cf_email__" data-cfemail="83e2f3e6eaf1ecedefeaede9e6e5ecf1e6edeaede4c3e4eee2eaefade0ecee">[email&#160;protected]</span></a> eller stikk innom lesesalen.</p>
+        <p>Spørsmål? Send oss en mail på <a href="mailto:apeironlinjeforening@gmail.com" style="color:var(--gold);">apeironlinjeforening@gmail.com</a> eller stikk innom lesesalen.</p>
       </div>
       <ol class="order-steps">
         <li class="order-step">
@@ -525,7 +526,7 @@ html[data-mode="marine"] .cart-item__rm:hover { color: var(--navy); background: 
 <!-- ============ FOOTER ============ -->
 <div id="site-footer"></div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="footer-icons.js"></script>
+<script src="footer-icons.js"></script>
 <script src="site-content.js"></script>
 <script src="nav-content.js"></script>
 <script src="site-chrome.js"></script>
@@ -749,6 +750,29 @@ html[data-mode="marine"] .cart-item__rm:hover { color: var(--navy); background: 
 
   renderInfo();
   renderMerch();
+
+  /* ── Live forhåndsvisning fra merch-admin ──
+     Når siden åpnes som merch.html?preview=1 lytter den etter produktdata fra
+     admin-panelet og re-renderer butikken med ekte stil. Slik slipper vi å
+     gjenskape kortutseendet i admin — previewen ER den ekte siden. */
+  if (/[?&]preview\b/.test(location.search)) {
+    var pvNotifyHeight = function () {
+      try { parent.postMessage({ type: 'apeiron-merch-preview-height', height: document.documentElement.scrollHeight }, '*'); } catch (e) {}
+    };
+    window.addEventListener('message', function (e) {
+      var d = e.data;
+      if (!d || d.type !== 'apeiron-merch-preview') return;
+      if (Array.isArray(d.products)) window.MERCH_PRODUCTS = d.products;
+      window.MERCH_INFO = (d.info != null ? d.info : '');
+      renderInfo();
+      renderMerch();
+      // Vis alle kort umiddelbart i preview (ingen scroll-avsløring).
+      var g = document.getElementById('merch-grid');
+      if (g) g.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+      pvNotifyHeight();
+    });
+    try { parent.postMessage({ type: 'apeiron-merch-preview-ready' }, '*'); } catch (e) {}
+  }
 })();
 </script>
 <script src="merch-config.js"></script>

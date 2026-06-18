@@ -1,5 +1,58 @@
 ## Siste endringer
 
+**18.06.26 — Ryddigere navigasjon (B) + kapittelskiller på forsiden (A)**
+- **Toppmenyen slanket fra 10 til 7 synlige valg** (`nav-content.js`), ordnet i fem «verdener»: **Hjem · Hva skjer ▾ · Begrep · Faglig ▾ · Foreningen ▾ · Merch ▾ · Hjelp & støtte** (+ «Bli medlem» i mobilmeny/hero). Ingenting fjernet — alt er omgruppert.
+  - **Hva skjer:** Arrangementer · Oppslagstavla · Aporetisk Aften · Fadderuke · Galleri.
+  - **Begrep** løftet til eget toppvalg; **Faglig:** Pensum & studieretninger · Grader & løp.
+  - **Foreningen:** Om oss · Styret & tillitsvalgte · Verv · Fellesskap & samarbeid · Lesesalen · Utmerkelser · Oppnåelser.
+  - **S.A.K** og **Tillitsvalgte** ute av menyen, lever videre på `styret.html` (`#sak` / `#tillitsvalgte`). **Kontakt** ute av toppen, fortsatt i bunnteksten.
+- **Tre kapittelskiller på forsiden** (`index.html`): «I · Akkurat nå», «II · Det du kan regne med», «III · Bli med» — kompakt sentrert merke (Cormorant-tall + eyebrow-merkelapp + kort gulltikk).
+  - Ligger **inne i seksjonen** de introduserer, så de deler samme bakgrunn (ingen fargeskjøt); lys variant (`--on-dark`) på den rødbrune medlemsseksjonen.
+- Forslag-/forhåndsvisningsfiler: `forslag-navigasjon.html`, `forslag-kapittelskiller.html`.
+
+**18.06.26 — Planfiler ryddet**
+- `PLAN.html` (full prosjektplan A–F) er fjernet — alle klynger A–E er ferdige og trenger ikke lenger veikart.
+- Ny **`Plan F.html`** spunnet ut med kun Klynge F-innholdet (F1–F5 + trinnveikart + åpne spørsmål). Denne er nå eneste gjenstående plan-fil.
+
+**18.06.26 — Oppslagstavla-admin: stedvelger, Ferdig-toggle, bilderediger og live-preview-fiks**
+- **📍 Stedvelger på lenke-feltet** i `oppslagstavla-admin.html` — samme popover som `meny-admin`: søkbar liste over alle sider og seksjoner med lesbare navn, fyller `side.html#anker` automatisk.
+- **● Aktiv / ✓ Ferdig-toggle** på hver plakat. Klikk for å arkivere — kortet dimmes og strykes over i admin. Arkiverte plakater vises i en ny **«Tidligere oppslag»**-seksjon nederst på `oppslagstavla.html` (dempet/gråtonet), men **ikke** på forsideteaser-en.
+- **Bilderediger:** ↻ rotér (90°) og ⛶ beskjær/zoom (dra + glidebryter + scrollhjul) direkte på plakatbildet i admin — identisk mekanikk som `merch-admin`. Knappene vises ved hover over bildesonen.
+- **Live-preview-fiks:** `IS_PREVIEW` i `oppslagstavla.html` sjekker nå `window.self !== window.top` i tillegg til `?preview=1` — previewen oppdateres sanntid igjen.
+- **localStorage-sync:** `oppslagstavla.html` og `index.html` leser nå admin-utkastet fra `localStorage` (nøkkel `apeiron-oppslag-v1`) ved direkte besøk i samme nettlesersesjon, slik at endringer i admin umiddelbart reflekteres på begge sider uten eksport. Previewen i admin bruker fortsatt postMessage.
+- **Oppslagstavla-teaser på index** bruker nå `OPPSLAG_CONTENT.intro.heading` og `.intro.lede` fra admin-innstillingene.
+
+**18.06.26 — Forsiden: CTA, seksjonsrytme og mørk Arrangementer-seksjon**
+- **Hero CTA #2** («Se hva som skjer») peker nå til `#oppslagstavla-teaser` i stedet for `#arrangementer` — oppslagstavla er mer visuelt engasjerende som første stopp.
+- **Seksjonspaddingen** redusert fra 104 px til 64 px (`styles.css`) — fjerner overdrevne luftlommer mellom alle seksjoner på alle sider. `section--tight`: 76 → 48 px. Mobil: 72 → 44 px.
+- **Arrangementer-seksjonen** har nå `background: var(--navy)` med lys tekst — gir siden én tydelig mørk rytme-seksjon mellom de lyse. Alle under-elementer (event-rader, knapper, toolbar, feil-bokser) tilpasset mørk bakgrunn. Gjelder begge moduser (marine legger `.events` til re-tokeniserings-listen slik `.fadder` gjør).
+- **`index-admin.html`:** «Se hjem»-lenken fikset — `target="_blank"` fjernet (blokkeres av iframe-sandbox).
+- **`oppslag-content.js`:** nytt `done`-felt (`false`/`true`) per plakat (arkivstatus). Bakoverkompatibelt: manglende felt = aktiv.
+
+**18.06.26 — «Om oss» fikk sin egen admin (én admin per side)**
+- Splittet innholdet: `index-content.js` dekker nå **kun Hjem** (hero + kontakt); ny **`om-content.js`** (`window.OM_CONTENT`) dekker **Om oss** (om + faq).
+- Nye renderere: `apeiron-index.js` trimmet til hero/kontakt; ny **`apeiron-om.js`** gjengir om/faq på `om-oss.html` (preview-protokoll `apeiron-om-preview`).
+- **To separate admin-paneler:** `index-admin.html` (Hjem: hero + kontakt → `index-content.js`) og ny **`om-oss-admin.html`** (Om oss: «Hva er apeiron?» + FAQ → `om-content.js`). Hver med egen live-preview; krysslenket i topplinja.
+- `om-oss.html` laster nå `om-content.js` + `apeiron-om.js` i stedet for index-filene.
+- Den korte FAQ-en ved siden av Kontakt på Hjem er nå redigerbar i **Hjem-admin** (egen liste under Kontakt) — `kontakt.faq` i `index-content.js`.
+- **Forhåndsvisning:** begge admin viser nå siden i ekte proporsjoner — hele desktop-layouten skalert så den fitter i bredden, i en høyere boks (var enten nedskalert for smått eller 1:1 som ikke fikk plass).
+
+**18.06.26 — Ny «Om oss»-side + forsiden ryddet til nytte-først «Hjem»**
+- **Forsiden = «Hjem»:** Oppslagstavla løftet helt opp (der «Om oss» lå), så «hva skjer nå» møter deg først. Hero fikk en diskré bro «Ny her? Bli kjent med Apeiron →».
+- **Ny side `om-oss.html`** samler «bli kjent»-innholdet: Hva er Apeiron, Fellesskap & samarbeid, Lesesalen, full FAQ og en utfyllende «Bli medlem».
+- **Begge publikum dekket:** Hjem beholder en kompakt «Bli medlem» (pris + steg) og en kort FAQ (3 praktiske + lenke til Om oss); Kontakt blir på Hjem.
+- **Meny:** ny «Hjem» først; «Studiene» foldet inn under «Om oss»-nedtrekket; nytte-først rekkefølge. Footer, søk og adresse-velgeren i `meny-admin.html` oppdatert; alle `index.html#om / #samarbeid / #lesesalen` repekt til `om-oss.html#…`.
+- **Egne admin-paneler:** Hjem (hero + kontakt) og Om oss (om + faq) har nå hver sin admin med egen live-preview (se neste oppføring over).
+
+**18.06.26 — Justeringer etter gjennomgang**
+- **«Bli medlem» tilbakestilt** til den fyldige vinrøde stripa (fordeler + kort) på Hjem — den kompakte varianten ble for stusselig.
+- **Bakgrunnsrytme:** Oppslagstavla-båndet på Hjem fikk dypere pergamenttone (`--paper-2`) så det ikke smelter sammen med Arrangementer.
+- **Om oss:** «Ofte stilte spørsmål» flyttet under «Bli medlem», og ny **«Møt styret»**-seksjon (Styret · Tillitsvalgte · Verv) lagt til som veiviser mot styret-siden.
+
+**18.06.26 — B4: Logikk Panikk & Logikk Drikk på oppslagstavla**
+- Begge mottatte plakatene lagt inn på **Oppslagstavla** (`oppslag-content.js`): «Logikk Drikk» (årets siste, Den gode nabo) og «Logikk Panikk» (hver mandag 14–16 på Låven). Plakatbildene ligger i `assets/logikk-panikk/`.
+- Seed-plakaten «Symposion» fjernet, og «Fadderuke 2026» flyttet ett hakk fram. Redigerbart videre i `oppslagstavla-admin.html`.
+
 **15.06.26 — Visuelle bugfikser og nav-opprydding**
 - **Nav-overflyt fikset:** menyen fløt over (~93 px) og klippet søkeknapp og fargebryter på 1184 px-skjermer (typisk 13"-laptop). Link-padding redusert, gap strammet, og burgeren bytter til full desktopvisning fra 1120 px (var 1080 px). Nav har nå 60 px margin ved 1184 px.
 - **«Bli medlem» fjernet fra toppmeny:** CTA-knappen i navigasjonslinjen fjernet — «Bli medlem» finnes allerede fremtredende i hero-seksjonen. Lenken er beholdt i mobilmenyen (skuffemenyen) for mobile brukere.

@@ -518,40 +518,33 @@ Ting vi vet om, men er usikre på om det er verdt å gjøre noe med. Ført opp s
 ## To do
 
 Kritisk:
-- [ ] Endre "Hjelp" i menyen med noe annet som uttrykker mer direkte hva siden er om.
-- [ ] Fikse menyen / NAV slik at den fungerer bedre på smalere skjermer og mobil.
+- [x] Endre "Hjelp" i menyen med noe annet som uttrykker mer direkte hva siden er om.
+- [x] Fikse menyen / NAV slik at den fungerer bedre på smalere skjermer og mobil.
 - [x] Legge til et informasjonsfelt for Fadderukene hvor man kan fylle inn generell info. *(Dekkes av nyhetsfunksjonen: bruk plassering `fadderuke` i Google Sheet «Nyheter».)*
 - [ ] Sjekke at "Legg til fadderukeprogrammet i din kalender" fungerer: iCal og Google Kalender.
 - [x] Måte for Apeiron å legge inn viktig informasjon som er tydelig på index. *(Google Sheet «Nyheter» → live på forsiden via `apeiron-news.js`; plasseringer topp/hovedoppslag/arrangement/aporetisk/fadderuke, hast-markering og dato-vindu. Se docs/apps-script-oppsett.md.)*
-- [x] Mobilk: Glitchy å dra nedover sidene. 
-- [ ] Påmelding for arrangement, gjøres ish likt som merch bestillinger.
-- [ ] Div. kalendere burde kunne flyttes opp til Hero i bestemte tidsspan (f.eks fadderukekalender fra 1 uke før fadderukene og frem til fadderukene er ferdig)
-- [ ] Annen måte å gi informasjon på enn Sheets. Informasjonsfeltene dukker opp for tregt.
-- [ ] Redesign av index.html - Om studiene kan gå til samme side som Pensum(?).
 
 Medium:
 - [ ] Be HF studentrådet om å oppdatere sidene deres og gi oss mer informasjon om hva de faktisk gjør. 
       - [ ] Hva gjør egentlig en PTV, ITV og FTV? 
       - [ ] Hvordan får vi kontakt med våre egne TVer?
-- [ ] Legge til side for Utmerkelser for personer som har stått ut i studentmiljøet eller det frivillige under IFR.
+- [x] Legge til side for Utmerkelser for personer som har stått ut i studentmiljøet eller det frivillige under IFR.
 - [ ] Lage egen Admin for index.
-- [ ] Legg til Logikk Panikk.
+- [x] Legg til Logikk Panikk.
 - [ ] Finne en bedre måte å vise arrangement og plakater på -> Måte å vise nyheter/informasjon på.
 - [x] Se om vi kan få menyen til å være en og samme entitet over alle sidene -> for å slippe å oppdatere hver en meny for hver side. *(Menyen bygges nå ETT sted i `site-chrome.js` og injiseres på alle sider via `#site-nav`.)*
 - [ ] Mini-forhåndsvisning per panel (som footer-admin). Jeg gjenskaper kort-utseendet i admin. Mest kontroll, men litt arbeid per panel, og må holdes i synk hvis det offentlige utseendet endres.
 
 Lav:
-- [ ] Side eller plassering for "Oppnåelser" (Premier vi har fått, som sølv i håndball og "best oppmøte" fra Dionysos)
+- [x] Side eller plassering for "Oppnåelser" (Premier vi har fått, som sølv i håndball og "best oppmøte" fra Dionysos)
 - [ ] Fylle ut SAK / utvide den.
 - [ ] Sette opp et arkiv.
 - [ ] Sammenlign med https://www.mfplacebo.no/
 - [ ] Gjøre om admin filene til å gi nærest full kontroll over oppsett over sidene.
 - [ ] Legge til side for møtereferat -> Kan tas i egen wiki, muligens.
-- [ ] Header/meny-admin: GUI for å redigere menyen (dropdowns, undermenyer, ankerlenker, rekkefølge) - på linje med `footer-admin.html`, men mer omfattende pga. menyens struktur.
+- [x] Header/meny-admin: GUI for å redigere menyen (dropdowns, undermenyer, ankerlenker, rekkefølge) - på linje med `footer-admin.html`, men mer omfattende pga. menyens struktur.
 - [ ] Live forhåndsvisning i alle admin-paneler (som i `footer-admin.html`). Tas inkrementelt per panel (merch-admin først), siden hvert panel lager ulikt innhold.
 - [ ] Opp Ned Side.
-- [ ] Informasjon om div. frivillige verv i Trondheim (f.eks språkhjelp).
-- [ ] Finne alternativ for google sheets for Merch og google calendar for kalendere.
 
 Hadde vært kult:
 - [ ] Snakke med IFR/NTNU om API for automatisk oppdatering av emner for studiene.
@@ -577,10 +570,10 @@ Skjelett Prosjekt:
 - [ ] Gjøre om prosjektet til et nytt repo som kan klones og lett gjøres om til andre linjeforeninger.
 - [ ] Må lages en readme som sier hva man må gjøre for å starte,
 
-**Domene:**
-**Status per 15.06.26:**
-**NTNU-alternativ (`apeiron.org.ntnu.no`):**
-- Adressen er gjenopplivet og apeiron.org.ntnu.no viser nå til nettsiden.
+Domene:
+- [ ] Få bedre domene
+
+**Status per 13.06.26:**
 
 | Domene                 | Status      | Pris       | Registrar            |
 | ------------------------| -------------| ------------| ----------------------|
@@ -599,6 +592,12 @@ Skjelett Prosjekt:
 | apeironlf.no + .online | **Ledig** ✅ | 99 kr /år  | Domeneshop           |
 
 Merk: Cloudflare Registrar støtter ikke .no-domener. For .org er Cloudflare billigst.
+
+**NTNU-alternativ (`apeiron.org.ntnu.no`):**
+- Adressen er gjenopplivet, men fungerer som en filserver (NTNU sitt mappesystem), ikke som et vanlig domene.
+- Forsøkt omdirigering med `.htaccess` (`RedirectMatch (.*) https://apeironlf.pages.dev/`) — fungerte ikke.
+- Tilgang: For tilgang via sftp, skriv `sftp://dittbrukernavn@login.stud.ntnu.no/home/groups/apeiron` i filutforskeren (Linux). Per nå er det kun sosialansvarlig Iver (25/26) som har tilgang.
+- Avventer svar fra NTNU om muligheten for videre hjelp.
 
 ## Lisens
 ---

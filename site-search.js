@@ -8,22 +8,23 @@
   /* ── Søkeindeks ── */
   var IDX = [
     /* Startside */
-    { t: 'Om oss', d: 'Apeiron er linjeforeningen for filosofi og etikk ved NTNU siden 1981 — et fellesskap uten faste grenser.', u: 'index.html#om', g: 'Startside' },
-    { t: 'Studiet', d: 'Studieretningene filosofi og etikk, grader og løp ved NTNU.', u: 'index.html#studiet', g: 'Startside' },
-    { t: 'Filosofi — studieretning', d: 'Grunnleggende spørsmål om mennesket, verden og kunnskap. FI1001, FI1101, FI1003, FI1004, FI1005.', u: 'index.html#studiet', g: 'Startside' },
-    { t: 'Etikk — studieretning', d: 'Hvordan vi bør handle og leve — som individer og fellesskap. FI1210, FI1211, FI1002, FI2211.', u: 'index.html#studiet', g: 'Startside' },
-    { t: 'Årsstudium i filosofi', d: '60 studiepoeng · 1 år · kan brukes som valgfrie emner i annen grad.', u: 'index.html#studiet', g: 'Startside' },
-    { t: 'Årsstudium i etikk', d: '60 studiepoeng · 1 år (også deltid). Særlig godt for videre- og tilleggsutdanning.', u: 'index.html#studiet', g: 'Startside' },
-    { t: 'Bachelor i filosofi og etikk', d: '180 studiepoeng · 3 år · to studieretninger · bacheloroppgave.', u: 'index.html#studiet', g: 'Startside' },
-    { t: 'Master i filosofi og etikk', d: '120 studiepoeng · 2 år · masteroppgave og forskningsseminar.', u: 'index.html#studiet', g: 'Startside' },
+    { t: 'Om oss', d: 'Apeiron er linjeforeningen for filosofi og etikk ved NTNU siden 1981 — et fellesskap uten faste grenser.', u: 'om-oss.html#om', g: 'Om oss' },
+    { t: 'Studiet', d: 'Studieretningene filosofi og etikk, grader og løp ved NTNU.', u: 'pensum.html', g: 'Startside' },
+    { t: 'Filosofi — studieretning', d: 'Grunnleggende spørsmål om mennesket, verden og kunnskap. FI1001, FI1101, FI1003, FI1004, FI1005.', u: 'pensum.html', g: 'Startside' },
+    { t: 'Etikk — studieretning', d: 'Hvordan vi bør handle og leve — som individer og fellesskap. FI1210, FI1211, FI1002, FI2211.', u: 'pensum.html', g: 'Startside' },
+    { t: 'Årsstudium i filosofi', d: '60 studiepoeng · 1 år · kan brukes som valgfrie emner i annen grad.', u: 'pensum.html', g: 'Startside' },
+    { t: 'Årsstudium i etikk', d: '60 studiepoeng · 1 år (også deltid). Særlig godt for videre- og tilleggsutdanning.', u: 'pensum.html', g: 'Startside' },
+    { t: 'Bachelor i filosofi og etikk', d: '180 studiepoeng · 3 år · to studieretninger · bacheloroppgave.', u: 'pensum.html', g: 'Startside' },
+    { t: 'Master i filosofi og etikk', d: '120 studiepoeng · 2 år · masteroppgave og forskningsseminar.', u: 'pensum.html', g: 'Startside' },
     { t: 'Arrangementer', d: 'Fagkvelder, symposion, lesesirkler og mer. Se hele semesterprogrammet.', u: 'index.html#arrangementer', g: 'Startside' },
     { t: 'Aporetisk Aften', d: 'Én kveld i måneden rundt ett filosofisk spørsmål — uten pensum og uten fasit. Åpent for alle.', u: 'index.html#aporetisk', g: 'Startside' },
     { t: 'Fadderuke', d: 'Studiestartens beste uker — bli kjent med faget, byen og medstudentene.', u: 'index.html#fadderuke', g: 'Startside' },
+    { t: 'Oppslagstavla', d: 'Plakatene for det som skjer i Apeiron — fagkvelder, fester, frister og kunngjøringer.', u: 'oppslagstavla.html', g: 'Startside' },
     { t: 'Styret 2025/26', d: 'Leder, nestleder, økonomi, sosialansvarlig, faddersjef, fagansvarlig og mer.', u: 'index.html#styret', g: 'Startside' },
     { t: 'S.A.K', d: 'Sosiale Arrangement Komité — lavterskel engasjement for alle studenter.', u: 'styret.html#sak', g: 'Styret' },
-    { t: 'Lesesalen', d: 'Filosofi- og etikkstudentenes eget tilfluktssted på Dragvoll — bibliotek, gratis kaffe for medlemmer og god plass.', u: 'index.html#lesesalen', g: 'Startside' },
+    { t: 'Lesesalen', d: 'Filosofi- og etikkstudentenes eget tilfluktssted på Dragvoll — bibliotek, gratis kaffe for medlemmer og god plass.', u: 'om-oss.html#lesesalen', g: 'Om oss' },
     { t: 'Galleri', d: 'Bilder fra fester, fagkvelder og fadderuker — automatisk hentet fra Google Drive.', u: 'galleri.html', g: 'Galleri' },
-    { t: 'Fellesskap & samarbeid', d: 'Unionen, søsterforeningen Dionysos og studenttidsskriftet Begrep.', u: 'index.html#samarbeid', g: 'Startside' },
+    { t: 'Fellesskap & samarbeid', d: 'Unionen, søsterforeningen Dionysos og studenttidsskriftet Begrep.', u: 'om-oss.html#samarbeid', g: 'Om oss' },
     { t: 'Bli medlem', d: 'Meld deg inn i Apeiron og få fullt utbytte av alt vi tilbyr.', u: 'index.html#bli-medlem', g: 'Startside' },
     { t: 'Kontakt', d: 'Ta kontakt med styret på e-post eller sosiale medier. apeironlinjeforening@gmail.com', u: 'index.html#kontakt', g: 'Startside' },
     /* Styret */
@@ -69,6 +70,9 @@
     { t: 'Bidra i Begrep', d: 'Skriv for tidsskriftet eller bli med i redaksjonen.', u: 'begrep.html#bidra', g: 'Begrep' },
     /* Om vervene */
     { t: 'Om vervene — Styret', d: 'Beskrivelse av alle styreverv i Apeiron: Leder, Nestleder, Økonomiansvarlig, Sosialansvarlig, PR-ansvarlig, Faddersjef, Fagansvarlig, Potet, PTV, ITV, S.A.K, H.I.V.', u: 'styret.html', g: 'Styret' },
+    /* Heder */
+    { t: 'Utmerkelser', d: 'Vi hedrer personer som har stått ut i studentmiljøet og det frivillige arbeidet — æresmedlemmer, ildsjeler og mer.', u: 'utmerkelser.html', g: 'Heder' },
+    { t: 'Oppnåelser', d: 'Premier, pokaler og resultater Apeiron har vunnet — volleyballcup-sølv, best oppmøte fra Dionysos og mer.', u: 'oppnaelser.html', g: 'Heder' },
   ];
 
   /* ── SVG-ikoner per gruppe ── */
@@ -79,8 +83,9 @@
     Merch:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>',
     Begrep:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h10M4 18h7"/></svg>',
     Galleri:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>',
+    Heder:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M8.2 12.5L7 22l5-3 5 3-1.2-9.5"/></svg>',
   };
-  var GROUP_ORDER = ['Startside', 'Styret', 'Pensum', 'Merch', 'Begrep', 'Galleri'];
+  var GROUP_ORDER = ['Startside', 'Styret', 'Heder', 'Pensum', 'Merch', 'Begrep', 'Galleri'];
 
   /* ── Hjelpere ── */
   function reEsc(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }

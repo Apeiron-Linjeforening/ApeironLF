@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <script src="theme.js"></script>
+<script>try{if(/[?&]preview\b/.test(location.search))document.documentElement.classList.add('is-preview');}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Hjelp & ressurser — Apeiron · NTNU</title>
 <meta name="description" content="Ressurser for filosofi- og etikkstudenter ved NTNU: Si fra!, studentdemokrati, psykisk og fysisk helse, og akutt hjelp med viktige nødnumre i Trondheim." />
@@ -350,6 +351,10 @@ html[data-mode="marine"] .akutt-card--life { background: #2e1c20; border-color: 
 <script>
 /* ── Render Hjelp-siden fra hjelp-content.js ── */
 (function () {
+  var IS_PREVIEW = false;
+  try { IS_PREVIEW = /[?&]preview\b/.test(location.search); } catch (e) {}
+
+  function renderHjelp() {
   var C = window.HJELP_CONTENT || {};
   var sv = window.paletteStyleVars || function () { return ''; };
   var STAGGER = ['', 'd1', 'd2', 'd3'];
@@ -360,7 +365,9 @@ html[data-mode="marine"] .akutt-card--life { background: #2e1c20; border-color: 
   }
   function setText(id, val) {
     var el = document.getElementById(id);
-    if (el && val != null && val !== '') el.textContent = val;
+    if (!el) return;
+    if (IS_PREVIEW) { el.textContent = (val == null ? '' : val); return; }
+    if (val != null && val !== '') el.textContent = val;
   }
   // desc -> avsnitt (tom linje skiller)
   function paragraphs(txt) {
@@ -458,6 +465,23 @@ html[data-mode="marine"] .akutt-card--life { background: #2e1c20; border-color: 
           + '<p class="akutt-card__when">' + esc(a.when) + '</p></div>';
       }).join('');
     }
+  }
+  } // /renderHjelp
+
+  renderHjelp();
+
+  /* ── Live forhåndsvisning fra hjelp-admin (hjelp.html?preview=1) ── */
+  if (IS_PREVIEW) {
+    window.addEventListener('message', function (e) {
+      var d = e.data;
+      if (!d || d.type !== 'apeiron-hjelp-preview') return;
+      if (d.content) window.HJELP_CONTENT = d.content;
+      renderHjelp();
+      document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+      try { parent.postMessage({ type: 'apeiron-hjelp-preview-height', height: document.documentElement.scrollHeight }, '*'); } catch (ev) {}
+    });
+    document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+    try { parent.postMessage({ type: 'apeiron-hjelp-preview-ready' }, '*'); } catch (ev) {}
   }
 })();
 </script>

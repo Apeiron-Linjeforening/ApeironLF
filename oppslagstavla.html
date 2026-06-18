@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8" />
+<script src="theme.js"></script>
+<script>try{if(/[?&]preview\b/.test(location.search)||(window.self!==window.top))document.documentElement.classList.add('is-preview');}catch(e){}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Oppslagstavla — Apeiron · NTNU</title>
+<meta name="description" content="Oppslagstavla til Apeiron — plakater for fagkvelder, fester, frister og kunngjøringer hos linjeforeningen for filosofi og etikk ved NTNU." />
+<meta property="og:title" content="Oppslagstavla — Apeiron · NTNU" />
+<meta property="og:description" content="Plakatene for det som skjer i Apeiron." />
+<meta property="og:image" content="assets/apeiron-logo.png" />
+<meta property="og:type" content="website" />
+<meta name="theme-color" content="#232740" />
+<link rel="icon" href="assets/apeiron-logo.png" type="image/png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<style>
+/* ── Subpage header ── */
+.subhero {
+  background:
+    radial-gradient(100% 80% at 90% 0%, rgba(212,175,55,.12), transparent 55%),
+    radial-gradient(70% 60% at 5% 100%, rgba(118,17,15,.28), transparent 60%),
+    var(--navy);
+  color: var(--paper);
+  padding: 148px 0 72px;
+  position: relative;
+  overflow: hidden;
+}
+.subhero__seal {
+  position: absolute; right: -4%; top: 50%; transform: translateY(-50%);
+  width: min(44vw, 540px); opacity: .09; pointer-events: none; z-index: 1;
+  filter: drop-shadow(0 0 1px rgba(212,175,55,.4));
+}
+.subhero__inner { position: relative; z-index: 2; max-width: var(--maxw); margin: 0 auto; padding: 0 28px; }
+.subhero h1 {
+  color: var(--paper);
+  font-size: clamp(3rem, 8vw, 6.5rem);
+  line-height: .95; letter-spacing: .01em; margin: .22em 0 .35em;
+}
+.subhero__lede { font-size: 1.18rem; color: rgba(244,236,217,.8); max-width: 56ch; line-height: 1.65; }
+.subhero__back {
+  display: flex; width: fit-content; align-items: center; gap: .5em;
+  font-size: .82rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+  color: rgba(244,236,217,.55); margin-bottom: .6em; transition: color .2s;
+}
+.subhero__back:hover { color: var(--gold); }
+.subhero__back::before { content: "←"; font-style: normal; }
+
+.board-section .board { margin-top: 2.4em; }
+
+/* ── Arkiverte / ferdig plakater ── */
+.poster--archived { opacity: .52; filter: grayscale(.45); }
+.board-section--archive { padding-top: 0; border-top: 1px solid rgba(35,39,64,.1); margin-top: 0; }
+.board-section--archive .h-section { font-size: clamp(1.5rem, 3.5vw, 2.4rem); color: var(--ink-soft); }
+</style>
+</head>
+<body data-mode="paper">
+
+<!-- ============ NAV ============ -->
+<div id="site-nav"></div>
+
+<!-- ============ SUBPAGE HEADER ============ -->
+<section class="subhero">
+  <img class="subhero__seal" src="assets/apeiron-logo.png" alt="" aria-hidden="true" />
+  <div class="subhero__inner">
+    <a class="subhero__back" href="index.html">Tilbake</a>
+    <h1 id="intro-heading">Oppslagstavla</h1>
+    <p class="subhero__lede" id="intro-lede"></p>
+  </div>
+</section>
+
+<!-- ============ OPPSLAGSTAVLA ============ -->
+<section class="section board-section" id="oppslagstavla">
+  <div class="wrap">
+    <div class="center" style="margin-bottom:8px">
+      <span class="eyebrow eyebrow--center" id="intro-eyebrow">Oppslagstavla</span>
+      <h2 class="h-section" id="grid-heading">Det som henger oppe nå</h2>
+    </div>
+    <div class="board">
+      <!-- Auto-fylt fra oppslag-content.js -->
+      <div class="board__grid" id="board-grid"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TIDLIGERE OPPSLAG ============ -->
+<section class="section board-section board-section--archive" id="tidligere-oppslag" style="display:none">
+  <div class="wrap">
+    <div class="center" style="margin-bottom:8px">
+      <span class="eyebrow eyebrow--center" style="opacity:.7">Arkiv</span>
+      <h2 class="h-section">Tidligere oppslag</h2>
+    </div>
+    <div class="board">
+      <div class="board__grid" id="archive-grid"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<div id="site-footer"></div>
+
+<script src="footer-icons.js"></script>
+<script src="site-content.js"></script>
+<script src="nav-content.js"></script>
+<script src="site-chrome.js"></script>
+
+<script src="palette.js"></script>
+<script src="oppslag-content.js"></script>
+<script>
+/* ── Render oppslagstavla fra oppslag-content.js ── */
+(function () {
+  var IS_PREVIEW = false;
+  try { IS_PREVIEW = /[?&]preview\b/.test(location.search) || (window.self !== window.top); } catch (e) {}
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function setText(id, val) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (IS_PREVIEW) { el.textContent = (val == null ? '' : val); return; }
+    if (val != null && val !== '') el.textContent = val;
+  }
+
+  function posterHtml(p, sv, isArchived) {
+    var accentStyle = p.accent ? sv(p.accent) : '';
+    var media;
+    if (p.img) {
+      media = '<div class="poster__media"><img src="' + esc(p.img) + '" alt="' + esc(p.title || 'Plakat') + '" loading="lazy" /></div>';
+    } else {
+      media = '<div class="poster__media"><div class="poster__ph">'
+        + '<span class="poster__ph-kick">Plakat</span>'
+        + '<span class="poster__ph-title">' + esc(p.title || 'Uten tittel') + '</span>'
+        + '<span class="poster__ph-hint">bilde kommer</span>'
+        + '</div></div>';
+    }
+    var date = p.date ? '<div class="poster__date">' + esc(p.date) + '</div>' : '';
+    var title = '<div class="poster__title">' + esc(p.title || 'Uten tittel') + '</div>';
+    var note = p.note ? '<div class="poster__note">' + esc(p.note) + '</div>' : '';
+    var link = '';
+    if (p.link) {
+      var ext = /^https?:/i.test(p.link);
+      link = '<a class="poster__link" href="' + esc(p.link) + '"'
+        + (ext ? ' target="_blank" rel="noopener"' : '') + '>'
+        + esc(p.linkLabel || 'Les mer') + ' →</a>';
+    }
+    return '<article class="poster' + (isArchived ? ' poster--archived' : '') + '" style="' + accentStyle + '">'
+      + '<span class="poster__pin" aria-hidden="true"></span>'
+      + media
+      + '<div class="poster__cap">' + date + title + note + link + '</div>'
+      + '</article>';
+  }
+
+  function renderBoard() {
+    var C = window.OPPSLAG_CONTENT || {};
+    if (C.intro) {
+      setText('intro-eyebrow', C.intro.eyebrow);
+      setText('intro-heading', C.intro.heading);
+      setText('intro-lede', C.intro.lede);
+    }
+    var grid = document.getElementById('board-grid');
+    if (!grid) return;
+    var sv = window.paletteStyleVars || function () { return ''; };
+    var allPosters = Array.isArray(C.posters) ? C.posters : [];
+    var active   = allPosters.filter(function (p) { return !p.done; });
+    var archived = allPosters.filter(function (p) { return  p.done; });
+
+    if (!active.length) {
+      grid.innerHTML = '<p class="board__empty">Ingen aktive plakater er hengt opp ennå.</p>';
+    } else {
+      grid.innerHTML = active.map(function (p) { return posterHtml(p, sv, false); }).join('');
+    }
+
+    var archSec  = document.getElementById('tidligere-oppslag');
+    var archGrid = document.getElementById('archive-grid');
+    if (archSec && archGrid) {
+      if (archived.length) {
+        archSec.style.display = '';
+        archGrid.innerHTML = archived.map(function (p) { return posterHtml(p, sv, true); }).join('');
+      } else {
+        archSec.style.display = 'none';
+      }
+    }
+  }
+
+  // Les admin-utkast frå localStorage i same nettlesarsesjon (berre ved direkte besøk)
+  if (!IS_PREVIEW) {
+    try {
+      var _ls = localStorage.getItem('apeiron-oppslag-v1');
+      if (_ls) { var _lsd = JSON.parse(_ls); if (_lsd && (_lsd.posters || _lsd.intro)) window.OPPSLAG_CONTENT = _lsd; }
+    } catch (_e) {}
+  }
+
+  renderBoard();
+
+  /* ── Live forhåndsvisning fra oppslagstavla-admin (oppslagstavla.html?preview=1) ──
+     Lytter etter innhold fra admin og re-renderer med ekte stil — previewen ER
+     den ekte siden, så den følger automatisk med på designendringer. */
+  if (IS_PREVIEW) {
+    var pvNotify = function () {
+      try { parent.postMessage({ type: 'apeiron-oppslag-preview-height', height: document.documentElement.scrollHeight }, '*'); } catch (e) {}
+    };
+    window.addEventListener('message', function (e) {
+      var d = e.data;
+      if (!d || d.type !== 'apeiron-oppslag-preview') return;
+      if (d.content) window.OPPSLAG_CONTENT = d.content;
+      renderBoard();
+      pvNotify();
+    });
+    try { parent.postMessage({ type: 'apeiron-oppslag-preview-ready' }, '*'); } catch (e) {}
+  }
+})();
+</script>
+<script src="report.js"></script>
+<script src="site-search.js"></script>
+</body>
+</html>

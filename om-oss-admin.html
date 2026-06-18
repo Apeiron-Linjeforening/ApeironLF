@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Om oss Admin — Apeiron</title>
+<link rel="icon" href="assets/apeiron-logo.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy: #232740; --gold: #d4af37; --gold-ink: #a07820;
+  --maroon: #76110f; --paper: #f4ecd9; --ink: #1a1d2e;
+  --ink-soft: rgba(26,29,46,.6); --border: rgba(35,39,64,.15);
+  --display: 'Cormorant Garamond', Georgia, serif;
+  --body: 'Spectral', Georgia, serif;
+}
+body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-height: 100vh; }
+
+#gate { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 40px; }
+#gate img { width: 72px; opacity: .85; }
+#gate h1 { font-family: var(--display); font-size: 2rem; color: var(--navy); }
+#gate p { color: var(--ink-soft); font-size: .88rem; }
+.gate-row { display: flex; gap: 8px; }
+#pw-input { padding: 9px 14px; border: 1.5px solid var(--border); border-radius: 4px; font-family: var(--body); font-size: .95rem; background: white; width: 200px; }
+#pw-input:focus { outline: none; border-color: var(--navy); }
+.btn-login { padding: 9px 18px; background: var(--navy); color: var(--paper); border: none; border-radius: 4px; font-family: var(--body); font-size: .95rem; cursor: pointer; }
+.btn-login:hover { background: #1a1d2e; }
+#pw-err { color: var(--maroon); font-size: .82rem; min-height: 1.1em; }
+
+#admin { display: none; }
+#admin.on { display: block; }
+.a-header {
+  background: var(--navy); color: var(--paper); padding: 14px 24px;
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 16px rgba(0,0,0,.22);
+}
+.a-header img { width: 32px; opacity: .85; }
+.a-header h1 { font-family: var(--display); font-size: 1.3rem; letter-spacing: .04em; margin-right: auto; }
+.a-header a { color: rgba(244,236,217,.65); font-size: .78rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; text-decoration: none; }
+.a-header a:hover { color: var(--paper); }
+.btn-export { padding: 7px 16px; background: var(--gold); color: var(--navy); border: none; border-radius: 4px; font-family: var(--body); font-size: .82rem; font-weight: 700; cursor: pointer; transition: filter .15s; }
+.btn-export:hover { filter: brightness(1.08); }
+
+.a-main { max-width: 880px; margin: 0 auto; padding: 28px 20px 90px; }
+
+.preview-top { margin-bottom: 28px; }
+.preview-top h3 { font-family: var(--display); font-size: 1.4rem; color: var(--navy); }
+.preview-top .pp-sub { font-size: .82rem; color: var(--ink-soft); margin: 2px 0 12px; line-height: 1.45; }
+.pv-board-wrap { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--paper); box-shadow: 0 4px 22px rgba(35,39,64,.07); }
+#pv-board { border: 0; display: block; background: var(--paper); transform-origin: top left; }
+.pv-jump { display: flex; gap: 6px; flex-wrap: wrap; margin: 10px 0 0; }
+.pv-jump button { font-family: var(--body); font-size: .74rem; color: var(--navy); background: white; border: 1px solid var(--border); border-radius: 999px; padding: 4px 12px; cursor: pointer; }
+.pv-jump button:hover { background: rgba(212,175,55,.16); border-color: rgba(212,175,55,.5); }
+
+.tip { background: white; border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: 4px; padding: 16px 20px; margin-bottom: 24px; font-size: .88rem; }
+.tip strong { color: var(--navy); font-size: .95rem; display: block; margin-bottom: 8px; }
+.tip ol { padding-left: 18px; }
+.tip li { margin: 5px 0; color: var(--ink-soft); line-height: 1.55; }
+.tip li b { color: var(--gold-ink); }
+.tip-note { margin-top: 10px; padding: 7px 11px; background: rgba(212,175,55,.08); border-radius: 3px; color: var(--gold-ink); font-size: .81rem; }
+.tip-reset { float: right; font-size: .76rem; color: var(--ink-soft); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; border: none; background: none; padding: 0; }
+.tip-reset:hover { color: var(--maroon); }
+
+.panel { background: white; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 22px; overflow: hidden; }
+.panel > h2 { font-family: var(--display); font-size: 1.5rem; color: var(--navy); padding: 15px 20px 13px; background: rgba(35,39,64,.03); border-bottom: 1px solid var(--border); display: flex; align-items: baseline; gap: 10px; }
+.panel > h2 small { font-family: var(--body); font-size: .76rem; font-weight: 400; color: var(--ink-soft); letter-spacing: 0; text-transform: none; }
+.panel-body { padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; }
+.sub-h { font-family: var(--display); font-size: 1.05rem; color: var(--navy); margin-top: 4px; padding-top: 12px; border-top: 1px dashed var(--border); }
+.sub-h:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+
+.frow { display: flex; gap: 12px; flex-wrap: wrap; }
+.fg { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 150px; }
+.fg.narrow { flex: 0 0 130px; min-width: 110px; }
+.fg label { font-size: .63rem; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; color: var(--ink-soft); }
+.fg input, .fg textarea, .fg select { font-family: var(--body); font-size: .9rem; color: var(--ink); border: 1px solid var(--border); border-radius: 4px; padding: 7px 10px; background: white; transition: border-color .12s; resize: vertical; width: 100%; }
+.fg input:focus, .fg textarea:focus, .fg select:focus { outline: none; border-color: var(--navy); }
+.fg textarea { min-height: 70px; line-height: 1.5; }
+.hint { font-size: .76rem; color: var(--ink-soft); font-style: italic; }
+
+.lst { display: flex; flex-direction: column; gap: 10px; }
+.lrow { background: rgba(35,39,64,.025); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; display: flex; gap: 10px; align-items: flex-start; }
+.lrow .drag-handle { cursor: grab; color: var(--ink-soft); font-size: 1rem; padding: 4px 2px; user-select: none; flex: 0 0 auto; }
+.lrow .lrow-fields { flex: 1; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.lrow .lrow-ctrls { display: flex; flex-direction: column; gap: 4px; flex: 0 0 auto; }
+.btn-mini { width: 28px; height: 28px; border: 1px solid var(--border); border-radius: 4px; background: white; cursor: pointer; font-size: .72rem; color: var(--ink-soft); display: flex; align-items: center; justify-content: center; }
+.btn-mini:hover { background: rgba(35,39,64,.06); color: var(--navy); }
+.btn-mini.x { color: var(--maroon); border-color: rgba(118,17,15,.25); }
+.btn-mini.x:hover { background: rgba(118,17,15,.06); }
+.btn-add { align-self: flex-start; padding: 6px 14px; background: rgba(212,175,55,.18); color: var(--gold-ink); border: 1px solid rgba(212,175,55,.5); border-radius: 4px; font-family: var(--body); font-size: .82rem; font-weight: 700; cursor: pointer; }
+.btn-add:hover { background: rgba(212,175,55,.3); }
+.drag-placeholder { background: rgba(212,175,55,.14); border: 1px dashed rgba(212,175,55,.6); border-radius: 6px; }
+.drag-active { box-shadow: 0 10px 30px rgba(35,39,64,.22); }
+
+.toast { position: fixed; bottom: 22px; right: 22px; background: var(--navy); color: var(--paper); padding: 8px 16px; border-radius: 4px; font-size: .8rem; opacity: 0; transition: opacity .25s; pointer-events: none; z-index: 200; }
+.toast.show { opacity: 1; }
+
+@media (max-width: 580px) { .a-header h1 { display: none; } }
+</style>
+<link rel="stylesheet" href="admin-common.css">
+</head>
+<body>
+
+<!-- ── GATE ── -->
+<div id="gate">
+  <img src="assets/apeiron-logo.png" alt="Apeiron">
+  <h1>Om oss Admin</h1>
+  <p>Logg inn for å redigere «Om oss»-siden</p>
+  <div class="gate-row">
+    <input type="password" id="pw-input" placeholder="Passord" autocomplete="off">
+    <button class="btn-login" id="pw-btn" type="button">Logg inn</button>
+  </div>
+  <p id="pw-err"></p>
+</div>
+
+<!-- ── ADMIN ── -->
+<div id="admin">
+  <header class="a-header">
+    <img src="assets/apeiron-logo.png" alt="">
+    <h1>Om oss Admin</h1>
+    <a href="om-oss.html" target="_blank">Se Om oss ↗</a>
+    <a href="index-admin.html">Hjem-admin →</a>
+    <button class="btn-export" id="export-btn" type="button">↓ Last ned om-content.js</button>
+  </header>
+
+  <main class="a-main">
+    <section class="preview-top">
+      <h3>Forhåndsvisning</h3>
+      <p class="pp-sub">Live fra den ekte «Om oss»-siden — endringene dine vises umiddelbart. Dette panelet styrer <b>«Hva er apeiron?»</b> og <b>FAQ-en</b>. (Samarbeid, Lesesalen, Møt styret og Bli medlem styres andre steder.)</p>
+      <div class="pv-board-wrap"><iframe id="pv-board" src="om-oss.html?preview=1" title="Forhåndsvisning av Om oss"></iframe></div>
+      <div class="pv-jump">
+        <button type="button" data-jump="#om">Om oss</button>
+        <button type="button" data-jump="#faq">FAQ</button>
+      </div>
+    </section>
+
+    <div class="tip">
+      <button class="tip-reset" id="reset-btn" type="button">Tilbakestill til siste publiserte versjon</button>
+      <strong>Slik oppdaterer du Om oss</strong>
+      <ol>
+        <li>Rediger tekstene nedenfor — endringer vises live i forhåndsvisningen</li>
+        <li>Klikk <b>Last ned om-content.js</b> — lagre filen fra nedlastingsmappen</li>
+        <li>Erstatt <code>om-content.js</code> i GitHub-repositoriet og push/commit</li>
+        <li>Cloudflare oppdaterer nettsiden automatisk innen et minutt</li>
+      </ol>
+      <div class="tip-note">💾 Endringer lagres automatisk i nettleseren din. Dette panelet styrer «Om oss»-teksten og hele FAQ-en. Hero/Kontakt på Hjem ligger i <a href="index-admin.html">Hjem-admin</a>.</div>
+    </div>
+
+    <!-- OM OSS -->
+    <div class="panel">
+      <h2>Om oss <small>«Hva er apeiron?»</small></h2>
+      <div class="panel-body">
+        <div class="frow">
+          <div class="fg narrow"><label>Eyebrow</label><input type="text" id="om-eyebrow"></div>
+          <div class="fg narrow"><label>Gresk ord</label><input type="text" id="om-greek"></div>
+          <div class="fg"><label>Uttale / undertekst</label><input type="text" id="om-greekSmall"></div>
+        </div>
+
+        <div class="sub-h">Avsnitt</div>
+        <div class="lst" id="lst-paras"></div>
+        <button class="btn-add" type="button" data-add="paras">+ Nytt avsnitt</button>
+
+        <div class="sub-h">Timeglass-kort</div>
+        <div class="fg"><label>Tittel</label><input type="text" id="om-card-title"></div>
+        <div class="fg"><label>Tekst</label><textarea id="om-card-body"></textarea></div>
+
+        <div class="sub-h">Samarbeids-teaser</div>
+        <div class="frow">
+          <div class="fg narrow"><label>Eyebrow</label><input type="text" id="om-teaser-eyebrow"></div>
+          <div class="fg"><label>Tittel</label><input type="text" id="om-teaser-title"></div>
+        </div>
+        <div class="fg"><label>Tekst</label><textarea id="om-teaser-body"></textarea></div>
+        <div class="frow">
+          <div class="fg"><label>Lenketekst</label><input type="text" id="om-teaser-linkLabel"></div>
+          <div class="fg narrow"><label>Lenke</label><input type="text" id="om-teaser-linkHref" placeholder="#samarbeid"></div>
+        </div>
+
+        <div class="sub-h">Nøkkeltall</div>
+        <div class="lst" id="lst-stats"></div>
+        <button class="btn-add" type="button" data-add="stats">+ Nytt tall</button>
+      </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="panel">
+      <h2>FAQ <small>ofte stilte spørsmål</small></h2>
+      <div class="panel-body">
+        <div class="frow">
+          <div class="fg narrow"><label>Eyebrow</label><input type="text" id="faq-eyebrow"></div>
+          <div class="fg"><label>Overskrift</label><input type="text" id="faq-heading"></div>
+        </div>
+        <div class="sub-h">Spørsmål &amp; svar</div>
+        <div class="lst" id="lst-faq"></div>
+        <button class="btn-add" type="button" data-add="faq">+ Nytt spørsmål</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast">Lagret i nettleseren</div>
+
+<script src="admin-common.js"></script>
+<script src="om-content.js"></script>
+<script>
+(function () {
+  const LS_KEY = 'apeiron-om-v1';
+  AdminCommon.setupAuth(init);
+
+  let data = {};
+  function clone(o) { return JSON.parse(JSON.stringify(o)); }
+
+  function fresh() {
+    const c = window.OM_CONTENT || {};
+    const d = clone(c);
+    d.om = d.om || {};
+    d.om.paras = Array.isArray(d.om.paras) ? d.om.paras : [];
+    d.om.card = d.om.card || { title: '', body: '' };
+    d.om.teaser = d.om.teaser || { eyebrow: '', title: '', body: '', linkLabel: '', linkHref: '' };
+    d.om.stats = Array.isArray(d.om.stats) ? d.om.stats : [];
+    d.faq = d.faq || {};
+    d.faq.items = Array.isArray(d.faq.items) ? d.faq.items : [];
+    return d;
+  }
+
+  function loadData() {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) { try { data = JSON.parse(raw); normalize(); return; } catch (_) {} }
+    data = fresh();
+  }
+  function normalize() {
+    const f = fresh();
+    data = Object.assign({}, f, data);
+    data.om = Object.assign({}, f.om, data.om);
+    data.om.card = Object.assign({}, f.om.card, data.om.card);
+    data.om.teaser = Object.assign({}, f.om.teaser, data.om.teaser);
+    if (!Array.isArray(data.om.paras)) data.om.paras = [];
+    if (!Array.isArray(data.om.stats)) data.om.stats = [];
+    data.faq = Object.assign({}, f.faq, data.faq);
+    if (!Array.isArray(data.faq.items)) data.faq.items = [];
+  }
+
+  function saveData() { localStorage.setItem(LS_KEY, JSON.stringify(data)); pushPreview(); }
+  let saveTimer = null;
+  function lazySave() { pushPreview(); clearTimeout(saveTimer); saveTimer = setTimeout(function () { saveData(); AdminCommon.toast('Lagret i nettleseren'); }, 300); }
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  const FIELD_MAP = {
+    'om-eyebrow': 'om.eyebrow',
+    'om-greek': 'om.greek',
+    'om-greekSmall': 'om.greekSmall',
+    'om-card-title': 'om.card.title',
+    'om-card-body': 'om.card.body',
+    'om-teaser-eyebrow': 'om.teaser.eyebrow',
+    'om-teaser-title': 'om.teaser.title',
+    'om-teaser-body': 'om.teaser.body',
+    'om-teaser-linkLabel': 'om.teaser.linkLabel',
+    'om-teaser-linkHref': 'om.teaser.linkHref',
+    'faq-eyebrow': 'faq.eyebrow',
+    'faq-heading': 'faq.heading'
+  };
+  function getPath(path) { return path.split('.').reduce(function (o, k) { return (o || {})[k]; }, data); }
+  function setPath(path, val) {
+    const parts = path.split('.');
+    let o = data;
+    for (let i = 0; i < parts.length - 1; i++) { if (o[parts[i]] == null) o[parts[i]] = {}; o = o[parts[i]]; }
+    o[parts[parts.length - 1]] = val;
+  }
+  function renderFields() {
+    Object.keys(FIELD_MAP).forEach(function (id) {
+      const el = document.getElementById(id);
+      if (el) el.value = getPath(FIELD_MAP[id]) || '';
+    });
+  }
+  function wireFields() {
+    Object.keys(FIELD_MAP).forEach(function (id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('input', function () { setPath(FIELD_MAP[id], el.value); lazySave(); });
+    });
+  }
+
+  // paras: array of strings
+  function renderParas() {
+    const host = document.getElementById('lst-paras');
+    host.innerHTML = '';
+    data.om.paras.forEach(function (txt, i) {
+      const row = document.createElement('div');
+      row.className = 'lrow'; row.setAttribute('data-id', 'p' + i);
+      row.innerHTML =
+        '<span class="drag-handle" title="Dra for å sortere">⠿</span>'
+        + '<div class="lrow-fields"><textarea placeholder="Avsnittstekst...">' + esc(txt) + '</textarea></div>'
+        + '<div class="lrow-ctrls">'
+          + '<button class="btn-mini up" type="button" title="Opp">↑</button>'
+          + '<button class="btn-mini dn" type="button" title="Ned">↓</button>'
+          + '<button class="btn-mini x" type="button" title="Slett">✕</button>'
+        + '</div>';
+      row.querySelector('textarea').addEventListener('input', function () { data.om.paras[i] = this.value; lazySave(); });
+      row.querySelector('.up').addEventListener('click', function () { moveArr(data.om.paras, i, -1); renderParas(); lazySave(); });
+      row.querySelector('.dn').addEventListener('click', function () { moveArr(data.om.paras, i, 1); renderParas(); lazySave(); });
+      row.querySelector('.x').addEventListener('click', function () { data.om.paras.splice(i, 1); renderParas(); lazySave(); });
+      host.appendChild(row);
+    });
+  }
+  // stats: array of {num, lbl}
+  function renderStats() {
+    const host = document.getElementById('lst-stats');
+    host.innerHTML = '';
+    data.om.stats.forEach(function (s, i) {
+      const row = document.createElement('div');
+      row.className = 'lrow'; row.setAttribute('data-id', 's' + i);
+      row.innerHTML =
+        '<span class="drag-handle" title="Dra for å sortere">⠿</span>'
+        + '<div class="lrow-fields"><div class="frow">'
+          + '<div class="fg narrow"><label>Tall</label><input type="text" data-k="num" value="' + esc(s.num) + '" placeholder="180+"></div>'
+          + '<div class="fg"><label>Etikett</label><input type="text" data-k="lbl" value="' + esc(s.lbl) + '" placeholder="Medlemmer"></div>'
+        + '</div></div>'
+        + '<div class="lrow-ctrls">'
+          + '<button class="btn-mini up" type="button" title="Opp">↑</button>'
+          + '<button class="btn-mini dn" type="button" title="Ned">↓</button>'
+          + '<button class="btn-mini x" type="button" title="Slett">✕</button>'
+        + '</div>';
+      row.querySelectorAll('[data-k]').forEach(function (inp) {
+        inp.addEventListener('input', function () { s[inp.getAttribute('data-k')] = inp.value; lazySave(); });
+      });
+      row.querySelector('.up').addEventListener('click', function () { moveArr(data.om.stats, i, -1); renderStats(); lazySave(); });
+      row.querySelector('.dn').addEventListener('click', function () { moveArr(data.om.stats, i, 1); renderStats(); lazySave(); });
+      row.querySelector('.x').addEventListener('click', function () { data.om.stats.splice(i, 1); renderStats(); lazySave(); });
+      host.appendChild(row);
+    });
+  }
+  // faq: array of {q, a}
+  function renderFaq() {
+    const host = document.getElementById('lst-faq');
+    host.innerHTML = '';
+    data.faq.items.forEach(function (it, i) {
+      const row = document.createElement('div');
+      row.className = 'lrow'; row.setAttribute('data-id', 'q' + i);
+      row.innerHTML =
+        '<span class="drag-handle" title="Dra for å sortere">⠿</span>'
+        + '<div class="lrow-fields">'
+          + '<div class="fg"><label>Spørsmål</label><input type="text" data-k="q" value="' + esc(it.q) + '" placeholder="Spørsmålet..."></div>'
+          + '<div class="fg"><label>Svar</label><textarea data-k="a" placeholder="Svaret...">' + esc(it.a) + '</textarea></div>'
+        + '</div>'
+        + '<div class="lrow-ctrls">'
+          + '<button class="btn-mini up" type="button" title="Opp">↑</button>'
+          + '<button class="btn-mini dn" type="button" title="Ned">↓</button>'
+          + '<button class="btn-mini x" type="button" title="Slett">✕</button>'
+        + '</div>';
+      row.querySelectorAll('[data-k]').forEach(function (inp) {
+        inp.addEventListener('input', function () { it[inp.getAttribute('data-k')] = inp.value; lazySave(); });
+      });
+      row.querySelector('.up').addEventListener('click', function () { moveArr(data.faq.items, i, -1); renderFaq(); lazySave(); });
+      row.querySelector('.dn').addEventListener('click', function () { moveArr(data.faq.items, i, 1); renderFaq(); lazySave(); });
+      row.querySelector('.x').addEventListener('click', function () {
+        if (confirm('Slett dette spørsmålet?')) { data.faq.items.splice(i, 1); renderFaq(); lazySave(); }
+      });
+      host.appendChild(row);
+    });
+  }
+
+  function moveArr(arr, i, dir) {
+    const j = i + dir; if (j < 0 || j >= arr.length) return;
+    const t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+  }
+
+  document.querySelectorAll('[data-add]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      const which = b.getAttribute('data-add');
+      if (which === 'paras') { data.om.paras.push(''); renderParas(); }
+      else if (which === 'stats') { data.om.stats.push({ num: '', lbl: '' }); renderStats(); }
+      else if (which === 'faq') { data.faq.items.push({ q: '', a: '' }); renderFaq(); }
+      lazySave();
+    });
+  });
+
+  function wireDrag(hostId, arrRef, rerender) {
+    AdminCommon.enableDragSort(document.getElementById(hostId), {
+      itemSelector: '.lrow', handleSelector: '.drag-handle',
+      onReorder: function (ids) {
+        const arr = arrRef();
+        const order = ids.map(function (id) { return parseInt(id.replace(/^\D+/, ''), 10); });
+        const next = order.map(function (idx) { return arr[idx]; });
+        arr.length = 0; Array.prototype.push.apply(arr, next);
+        rerender(); lazySave();
+      }
+    });
+  }
+
+  function renderAll() { renderFields(); renderParas(); renderStats(); renderFaq(); }
+
+  function exportFile() {
+    const out = { om: clone(data.om || {}), faq: clone(data.faq || {}) };
+    out.om.paras = (out.om.paras || []).filter(function (p) { return p && p.trim(); });
+    out.om.stats = (out.om.stats || []).filter(function (s) { return (s.num && s.num.trim()) || (s.lbl && s.lbl.trim()); });
+    out.faq.items = (out.faq.items || []).filter(function (it) { return (it.q && it.q.trim()) || (it.a && it.a.trim()); });
+    const content =
+      '/* Innhold for Om oss-siden (om-oss.html) — TEKST-delene som endres ofte.\n'
+      + '   Sist oppdatert: ' + new Date().toLocaleDateString('no-NO') + '\n'
+      + '   Rediger direkte her, eller åpne om-oss-admin.html for visuell redigering.\n'
+      + '     om  : «Hva er apeiron?» — gresk ord, avsnitt, timeglass-kort, samarbeids-teaser, nøkkeltall\n'
+      + '     faq : seksjonsoverskrift + ofte stilte spørsmål\n'
+      + '   Hero + Kontakt (Hjem) ligger i index-content.js (index-admin.html).\n'
+      + '*/\n\n'
+      + 'window.OM_CONTENT = ' + JSON.stringify(out, null, 2) + ';\n';
+    AdminCommon.downloadBlob('om-content.js', content);
+    AdminCommon.toast('Fil lastet ned — erstatt i GitHub og push!');
+  }
+  document.getElementById('export-btn').addEventListener('click', exportFile);
+
+  document.getElementById('reset-btn').addEventListener('click', function () {
+    if (!confirm('Dette sletter alle ueksporterte endringer og laster inn siste publiserte versjon. Fortsette?')) return;
+    localStorage.removeItem(LS_KEY); data = fresh(); renderAll(); AdminCommon.toast('Tilbakestilt til publisert versjon'); pushPreview();
+  });
+
+  const pvFrame = document.getElementById('pv-board');
+  function pushPreview() {
+    if (!pvFrame || !pvFrame.contentWindow) return;
+    try { pvFrame.contentWindow.postMessage({ type: 'apeiron-om-preview', content: data }, '*'); } catch (e) {}
+  }
+  window.addEventListener('message', function (e) {
+    if (e.data && e.data.type === 'apeiron-om-preview-ready') { pushPreview(); fitPreview(); }
+  });
+  function fitPreview() {
+    const wrap = document.querySelector('.pv-board-wrap');
+    if (!pvFrame || !wrap) return;
+    const W = wrap.clientWidth;
+    if (!W) return;
+    // Render hele desktop-bredden og skaler ned uniformt så den FITTER i bredden
+    // (samme proporsjoner som den vanlige siden). Høy boks viser mye av siden.
+    const contentW = 1180;
+    const scale = W / contentW;
+    const visibleH = Math.max(520, Math.min(960, Math.round(window.innerHeight * 0.82)));
+    pvFrame.style.width = contentW + 'px';
+    pvFrame.style.height = Math.round(visibleH / scale) + 'px';
+    pvFrame.style.transform = 'scale(' + scale + ')';
+    wrap.style.height = visibleH + 'px';
+  }
+  if (pvFrame) pvFrame.addEventListener('load', fitPreview);
+  window.addEventListener('resize', fitPreview);
+
+  document.querySelectorAll('[data-jump]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      const sel = b.getAttribute('data-jump');
+      try {
+        const doc = pvFrame.contentWindow.document;
+        const t = doc.querySelector(sel);
+        if (t) pvFrame.contentWindow.scrollTo({ top: t.offsetTop, behavior: 'smooth' });
+      } catch (e) {}
+    });
+  });
+
+  function init() {
+    loadData(); renderAll(); wireFields();
+    wireDrag('lst-paras', function () { return data.om.paras; }, renderParas);
+    wireDrag('lst-stats', function () { return data.om.stats; }, renderStats);
+    wireDrag('lst-faq', function () { return data.faq.items; }, renderFaq);
+    fitPreview(); setTimeout(fitPreview, 80);
+    pushPreview(); setTimeout(pushPreview, 150);
+  }
+})();
+</script>
+</body>
+</html>

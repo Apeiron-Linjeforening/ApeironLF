@@ -4,81 +4,117 @@
    mobilmenyen (skuffen) fra denne ene lista — på alle sider.
    Rediger via meny-admin.html (eller for hånd her).
 
-   ── Datamodell ──
-   window.SITE_NAV er en liste med toppnivå-oppføringer i den
-   rekkefølgen de skal vises (venstre→høyre i header, topp→bunn
-   i mobilmenyen). Hver oppføring:
-
-     {
-       label:   "Tekst som vises",
-       href:    "hvor lenken går",       // f.eks. "begrep.html"
-                                          // eller "index.html#kontakt"
-       children: [                        // VALGFRITT — gjør oppføringen
-         { label, href }, ...             // til en nedtrekksmeny (desktop)
-       ],                                 // og en sammenleggbar gruppe (mobil)
-       drawerOnly: true                   // VALGFRITT — vis KUN i mobilmenyen
-       desktopOnly: true                  // VALGFRITT — vis KUN i header-menyen
-     }
-
-   Tips: skriv hele «side.html#anker» i href — menyen forkorter
-   den automatisk til «#anker» på den siden den peker til, så
-   scroll blir mykt. Første barn i en nedtrekksmeny er som regel
-   selve landingslenken (samme href som forelderen).
+   Datamodell: window.SITE_NAV = liste med toppnivå-punkter.
+   Hvert punkt: { label, href, children?[{label,href}],
+   drawerOnly?  (kun mobil),  desktopOnly? (kun desktop) }.
+   Skriv hele «side.html#anker» i href — forkortes automatisk.
+   Sist oppdatert: 18.6.2026
    ============================================================ */
 window.SITE_NAV = [
   {
-    label: "Om oss",
-    href: "index.html#om",
-    children: [
-      { label: "Om oss", href: "index.html#om" },
-      { label: "Lesesalen", href: "index.html#lesesalen" },
-      { label: "Samarbeid", href: "index.html#samarbeid" }
+    "label": "Hjem",
+    "href": "index.html"
+  },
+  {
+    "label": "Hva skjer",
+    "href": "index.html#arrangementer",
+    "children": [
+      {
+        "label": "Arrangementer",
+        "href": "index.html#arrangementer"
+      },
+      {
+        "label": "Oppslagstavla",
+        "href": "oppslagstavla.html"
+      },
+      {
+        "label": "Aporetisk Aften",
+        "href": "index.html#aporetisk"
+      },
+      {
+        "label": "Fadderuke",
+        "href": "index.html#fadderuke"
+      },
+      {
+        "label": "Galleri",
+        "href": "galleri.html"
+      }
     ]
   },
   {
-    label: "Studiene",
-    href: "index.html#studiet",
-    children: [
-      { label: "Studiene", href: "index.html#studiet" },
-      { label: "Pensum", href: "pensum.html" }
+    "label": "Faglig",
+    "href": "pensum.html",
+    "children": [
+      {
+        "label": "Pensum & studieretninger",
+        "href": "pensum.html"
+      },
+      {
+        "label": "Grader & løp",
+        "href": "pensum.html#grader"
+      }
     ]
   },
   {
-    label: "Arrangementer",
-    href: "index.html#arrangementer",
-    children: [
-      { label: "Arrangementer", href: "index.html#arrangementer" },
-      { label: "Aporetisk Aften", href: "index.html#aporetisk" },
-      { label: "Fadderuke", href: "index.html#fadderuke" }
+    "label": "Foreningen",
+    "href": "om-oss.html",
+    "children": [
+      {
+        "label": "Om oss",
+        "href": "om-oss.html#om"
+      },
+      {
+        "label": "Styret & tillitsvalgte",
+        "href": "styret.html"
+      },
+      {
+        "label": "Verv",
+        "href": "styret.html#vervene"
+      },
+      {
+        "label": "Fellesskap & samarbeid",
+        "href": "om-oss.html#samarbeid"
+      },
+      {
+        "label": "Lesesalen",
+        "href": "om-oss.html#lesesalen"
+      },
+      {
+        "label": "Utmerkelser",
+        "href": "utmerkelser.html"
+      },
+      {
+        "label": "Oppnåelser",
+        "href": "oppnaelser.html"
+      }
     ]
   },
   {
-    label: "Styret",
-    href: "styret.html",
-    children: [
-      { label: "Apeiron styret", href: "styret.html" },
-      { label: "Tillitsvalgte", href: "styret.html#tillitsvalgte" },
-      { label: "S.A.K", href: "styret.html#sak" },
-      { label: "Verv", href: "styret.html#vervene" }
-    ]
+    "label": "Begrep",
+    "href": "begrep.html"
   },
-  { label: "Begrep", href: "begrep.html" },
-  { label: "Galleri", href: "galleri.html" },
-  { label: "Hjelp & støtte", href: "hjelp.html" },
   {
-    label: "Merch",
-    href: "merch.html",
-    children: [
-      { label: "Merch", href: "merch.html" },
-      { label: "Kjøp & bytte", href: "marked.html" }
+    "label": "Merch",
+    "href": "merch.html",
+    "children": [
+      {
+        "label": "Merch",
+        "href": "merch.html"
+      },
+      {
+        "label": "Kjøp & bytte",
+        "href": "marked.html"
+      }
     ]
   },
-  { label: "Kontakt", href: "index.html#kontakt" },
-  { label: "Bli medlem", href: "index.html#bli-medlem", drawerOnly: true }
+  {
+    "label": "Hjelp & støtte",
+    "href": "hjelp.html"
+  },
+  {
+    "label": "Bli medlem",
+    "href": "index.html#bli-medlem",
+    "drawerOnly": true
+  }
 ];
-
-/* ── Plassering på desktop-menylinja ──
-   align: 0 = venstrelent (lenkene hugger logoen), 50 = sentrert,
-   100 = høyrelent (lenkene skyves mot høyre, ved siden av søk/modus).
-   Mellomverdier (hakk på 5) finjusterer. Settes i meny-admin.html. */
 window.SITE_NAV_CONFIG = { align: 0 };

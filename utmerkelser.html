@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8" />
+<script src="theme.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Utmerkelser — Apeiron · NTNU</title>
+<meta name="description" content="Utmerkelser i Apeiron — vi hedrer personer som har stått ut i studentmiljøet og det frivillige arbeidet ved filosofi og etikk, NTNU." />
+<meta property="og:title" content="Utmerkelser — Apeiron · NTNU" />
+<meta property="og:description" content="Vi hedrer dem som har løftet fellesskapet i Apeiron." />
+<meta property="og:image" content="assets/apeiron-logo.png" />
+<meta property="og:type" content="website" />
+<meta name="theme-color" content="#232740" />
+<link rel="icon" href="assets/apeiron-logo.png" type="image/png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<style>
+/* ── Subpage header ── */
+.subhero {
+  background:
+    radial-gradient(100% 80% at 90% 0%, rgba(212,175,55,.12), transparent 55%),
+    radial-gradient(70% 60% at 5% 100%, rgba(118,17,15,.28), transparent 60%),
+    var(--navy);
+  color: var(--paper);
+  padding: 148px 0 72px;
+  position: relative;
+  overflow: hidden;
+}
+.subhero__seal {
+  position: absolute; right: -4%; top: 50%; transform: translateY(-50%);
+  width: min(44vw, 540px); opacity: .09; pointer-events: none; z-index: 1;
+  filter: drop-shadow(0 0 1px rgba(212,175,55,.4));
+}
+.subhero::after {
+  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background-image: radial-gradient(70% 50% at 50% -10%, rgba(212,175,55,.07), transparent 70%);
+  opacity: .7;
+}
+.subhero__inner { position: relative; z-index: 2; max-width: var(--maxw); margin: 0 auto; padding: 0 28px; }
+.subhero h1 {
+  color: var(--paper);
+  font-size: clamp(3rem, 8vw, 6.5rem);
+  line-height: .95; letter-spacing: .01em; margin: .22em 0 .35em;
+}
+.subhero__lede { font-size: 1.18rem; color: rgba(244,236,217,.8); max-width: 56ch; line-height: 1.65; }
+.subhero__back {
+  display: flex; width: fit-content; align-items: center; gap: .5em;
+  font-size: .82rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+  color: rgba(244,236,217,.55); margin-bottom: .6em; transition: color .2s;
+}
+.subhero__back:hover { color: var(--gold); }
+.subhero__back::before { content: "←"; font-style: normal; }
+
+/* ── Honor grid ── */
+.honor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 24px;
+  margin-top: 2.6em;
+}
+.honor-card {
+  background: var(--card, #f7f3ec);
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--c-l, var(--gold));
+  border-radius: 5px;
+  padding: 34px 28px 30px;
+  display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px;
+  transition: transform .22s ease, box-shadow .25s ease;
+}
+html[data-mode="marine"] .honor-card { border-top-color: var(--c-d, var(--gold)); }
+.honor-card:hover { transform: translateY(-4px); box-shadow: 0 22px 44px -28px rgba(35,39,64,.5); }
+
+.honor-card__ph {
+  width: 132px; height: 132px; border-radius: 50%; overflow: hidden;
+  border: 3px solid var(--c-l, var(--gold)); background: var(--navy);
+  position: relative; margin-bottom: 12px;
+}
+html[data-mode="marine"] .honor-card__ph { border-color: var(--c-d, var(--gold)); }
+.honor-card__ph image-slot { width: 100%; height: 100%; }
+.honor-card__ph image-slot::part(empty) { opacity: 0; }
+.honor-card__ph image-slot:not([data-editable]) { pointer-events: none; cursor: default; }
+.honor-card__initials {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-family: var(--display); font-size: 2.2rem; font-weight: 600; color: var(--gold);
+  letter-spacing: .03em; pointer-events: none;
+}
+.honor-card__ph:has(image-slot[data-filled]) .honor-card__initials { display: none; }
+
+.honor-card__year {
+  font-family: var(--body); font-size: .68rem; font-weight: 700;
+  letter-spacing: .26em; text-transform: uppercase; color: var(--accent-ink, var(--gold-ink));
+}
+.honor-card h3 { font-family: var(--display); font-size: 1.6rem; font-weight: 600; color: var(--ink); line-height: 1.08; margin: 0; }
+.honor-card__honor {
+  font-family: var(--display); font-style: italic; font-size: 1.12rem;
+  color: var(--c-l, var(--warm)); margin: 2px 0 8px;
+}
+html[data-mode="marine"] .honor-card__honor { color: var(--c-d, var(--gold)); }
+.honor-card__honor::before,
+.honor-card__honor::after { content: "·"; opacity: .5; margin: 0 .5em; }
+.honor-card p { font-size: .95rem; color: var(--ink-soft, #4a4d6a); line-height: 1.6; margin: 0; }
+
+.honor-empty {
+  grid-column: 1 / -1; text-align: center; padding: 60px 20px;
+  color: var(--ink-soft); font-style: italic; font-size: 1.05rem;
+}
+
+@media (max-width: 600px) { .honor-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body data-mode="paper">
+
+<!-- ============ NAV ============ -->
+<div id="site-nav"></div>
+
+<!-- ============ SUBPAGE HEADER ============ -->
+<section class="subhero">
+  <img class="subhero__seal" src="assets/apeiron-logo.png" alt="" aria-hidden="true" />
+  <div class="subhero__inner">
+    <a class="subhero__back" href="index.html">Tilbake</a>
+    <h1 id="intro-heading">Utmerkelser</h1>
+    <p class="subhero__lede" id="intro-lede"></p>
+  </div>
+</section>
+
+<!-- ============ UTMERKELSER ============ -->
+<section class="section" id="utmerkelser">
+  <div class="wrap">
+    <div class="center" style="margin-bottom:50px">
+      <span class="eyebrow eyebrow--center" id="intro-eyebrow">Heder &amp; ære</span>
+      <h2 class="h-section" id="grid-heading">De vi hedrer</h2>
+    </div>
+    <!-- Auto-fylt fra utmerkelser-content.js -->
+    <div class="honor-grid" id="honor-grid"></div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<div id="site-footer"></div>
+
+<script src="footer-icons.js"></script>
+<script src="site-content.js"></script>
+<script src="nav-content.js"></script>
+<script src="site-chrome.js"></script>
+
+<script src="image-slot.js"></script>
+<script src="palette.js"></script>
+<script src="utmerkelser-content.js"></script>
+<script>
+/* ── Render utmerkelser fra utmerkelser-content.js ── */
+(function () {
+  var C = window.UTMERKELSER_CONTENT || {};
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function setText(id, val) {
+    var el = document.getElementById(id);
+    if (el && val != null && val !== '') el.textContent = val;
+  }
+  var STAGGER = ['', 'd1', 'd2', 'd3'];
+
+  if (C.intro) {
+    setText('intro-eyebrow', C.intro.eyebrow);
+    setText('intro-heading', C.intro.heading);
+    setText('intro-lede', C.intro.lede);
+  }
+
+  var grid = document.getElementById('honor-grid');
+  if (grid && Array.isArray(C.people)) {
+    if (!C.people.length) {
+      grid.innerHTML = '<p class="honor-empty">Ingen utmerkelser er lagt til ennå.</p>';
+      return;
+    }
+    var sv = window.paletteStyleVars || function () { return ''; };
+    grid.innerHTML = C.people.map(function (p, i) {
+      var accentStyle = p.accent ? sv(p.accent) : '';
+      var honor = p.honor ? '<div class="honor-card__honor">' + esc(p.honor) + '</div>' : '';
+      var year = p.year ? '<div class="honor-card__year">' + esc(p.year) + '</div>' : '';
+      var desc = p.desc ? '<p>' + esc(p.desc) + '</p>' : '';
+      return '<div class="honor-card reveal ' + STAGGER[i % 4] + '" style="' + accentStyle + '">'
+        + '<div class="honor-card__ph"><span class="honor-card__initials">' + esc(p.initials) + '</span>'
+        + '<image-slot shape="circle" placeholder="Foto" src="' + esc(p.img || '') + '"></image-slot></div>'
+        + year
+        + '<h3>' + esc(p.name) + '</h3>'
+        + honor
+        + desc
+        + '</div>';
+    }).join('');
+  }
+})();
+</script>
+<script>
+(function () {
+  var reveals = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(function (el) { io.observe(el); });
+  } else {
+    reveals.forEach(function (el) { el.classList.add('in'); });
+  }
+})();
+</script>
+<script src="report.js"></script>
+<script src="site-search.js"></script>
+</body>
+</html>

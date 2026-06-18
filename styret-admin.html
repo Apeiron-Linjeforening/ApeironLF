@@ -48,6 +48,13 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
 
 .a-main { max-width: 880px; margin: 0 auto; padding: 28px 20px 80px; }
 
+/* ── Live forhåndsvisning (øverst — hele den ekte Styret-siden, nedskalert) ── */
+.preview-top { margin-bottom: 28px; }
+.preview-top h3 { font-family: var(--display); font-size: 1.4rem; color: var(--navy); }
+.preview-top .pp-sub { font-size: .82rem; color: var(--ink-soft); margin: 2px 0 12px; line-height: 1.45; }
+.pv-board-wrap { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--paper); box-shadow: 0 4px 22px rgba(35,39,64,.07); }
+#pv-board { border: 0; display: block; background: var(--paper); transform-origin: top left; }
+
 /* ── Instructions ── */
 .tip { background: white; border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: 4px; padding: 16px 20px; margin-bottom: 24px; font-size: .88rem; }
 .tip strong { color: var(--navy); font-size: .95rem; display: block; margin-bottom: 8px; }
@@ -174,6 +181,11 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
   </header>
 
   <main class="a-main">
+    <section class="preview-top">
+      <h3>Forhåndsvisning</h3>
+      <p class="pp-sub">Live fra den ekte Styret-siden — bla i ruta for å se hele siden (styremedlemmer øverst, «Hva gjør vi» under). Endringene dine vises umiddelbart.</p>
+      <div class="pv-board-wrap"><iframe id="pv-board" src="styret.html?preview=1" title="Forhåndsvisning av Styret-siden"></iframe></div>
+    </section>
     <div class="tip">
       <button class="tip-reset" id="reset-btn" type="button">Tilbakestill til siste publiserte versjon</button>
       <strong>Slik oppdaterer du Styret-siden</strong>
@@ -268,7 +280,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
     data.members.forEach(function (m) { if (!Array.isArray(m.tags)) m.tags = []; });
     data.roles.forEach(function (r) { if (!Array.isArray(r.resp)) r.resp = []; });
   }
-  function saveData() { localStorage.setItem(LS_KEY, JSON.stringify(data)); showToast('Lagret i nettleseren'); }
+  function saveData() { localStorage.setItem(LS_KEY, JSON.stringify(data)); showToast('Lagret i nettleseren'); pushPreview(); }
   let saveTimer = null;
   function lazySave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveData, 350); }
 
@@ -575,7 +587,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
   /* ─── RESET ─── */
   document.getElementById('reset-btn').addEventListener('click', function () {
     if (!confirm('Dette sletter alle ueksporterte endringer og laster inn siste publiserte versjon. Fortsette?')) return;
-    localStorage.removeItem(LS_KEY); data = fresh(); renderAll(); showToast('Tilbakestilt til publisert versjon');
+    localStorage.removeItem(LS_KEY); data = fresh(); renderAll(); showToast('Tilbakestilt til publisert versjon'); pushPreview();
   });
 
   /* ─── WIRE ─── */
@@ -595,7 +607,37 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
     });
   });
 
-  function init() { loadData(); renderAll(); }
+  /* ─── LIVE FORHÅNDSVISNING (gjenbruker ekte styret.html?preview=1) ─── */
+  var pvFrame = document.getElementById('pv-board');
+  function pushPreview() {
+    if (!pvFrame || !pvFrame.contentWindow) return;
+    try { pvFrame.contentWindow.postMessage({ type: 'apeiron-styret-preview', content: data }, '*'); } catch (e) {}
+  }
+  window.addEventListener('message', function (e) {
+    if (e.data && e.data.type === 'apeiron-styret-preview-ready') { pushPreview(); fitPreview(); }
+  });
+  // Skaler den ekte siden ned så previewen er lik eller mindre enn faktisk størrelse.
+  function fitPreview() {
+    var wrap = document.querySelector('.pv-board-wrap');
+    if (!pvFrame || !wrap) return;
+    var W = wrap.clientWidth;
+    if (!W) return;                          // skjult (gate) — kalles på nytt ved init
+    var contentW = 1180;                      // desktop-bredde å rendre siden på
+    var scale = Math.min(1, W / contentW);    // aldri større enn faktisk størrelse
+    var visibleH = Math.max(420, Math.min(680, Math.round(window.innerHeight * 0.66)));
+    pvFrame.style.width = contentW + 'px';
+    pvFrame.style.height = Math.round(visibleH / scale) + 'px';
+    pvFrame.style.transform = 'scale(' + scale + ')';
+    wrap.style.height = visibleH + 'px';
+  }
+  if (pvFrame) pvFrame.addEventListener('load', fitPreview);
+  window.addEventListener('resize', fitPreview);
+
+  function init() {
+    loadData(); renderAll();
+    fitPreview(); setTimeout(fitPreview, 80);
+    pushPreview(); setTimeout(pushPreview, 150);
+  }
 })();
 </script>
 </body>

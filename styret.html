@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <script src="theme.js"></script>
+<script>try{if(/[?&]preview\b/.test(location.search))document.documentElement.classList.add('is-preview');}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Apeiron styret — Apeiron · NTNU</title>
 <meta name="description" content="Styret i Apeiron 2025/26 og beskrivelse av alle styreverv: Leder, Nestleder, Økonomiansvarlig, Sosialansvarlig, PR-ansvarlig, Faddersjef, Fagansvarlig og mer." />
@@ -234,7 +235,7 @@ html[data-mode="marine"] .role-card { border-left-color: var(--c-d, var(--gold))
         <div class="role-card__eyebrow">Instituttnivå · IFR</div>
         <h3>ITV — Institutt-tillitsvalgt</h3>
         <p>ITV representerer alle studenter ved Institutt for filosofi og religionsvitenskap (IFR). De sitter i instituttets styrende organer, deltar i ansettelsesprosesser og tar opp saker som angår hele instituttet.</p>
-        <p class="role-card__contact">Kontakt: <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="dcb4baf1b5baae9cafa8a9b8b9b2a8aebdb8f2b2a8b2a9f2b2b3">[email&#160;protected]</a></strong></p>
+        <p class="role-card__contact">Kontakt: <strong>hf-ifr@studentrad.ntnu.no</strong></p>
         <ul class="role-card__resp">
           <li>Sitter i instituttstyret ved IFR</li>
           <li>Deltar i ansettelsesprosesser for vitenskapelige stillinger</li>
@@ -247,7 +248,7 @@ html[data-mode="marine"] .role-card { border-left-color: var(--c-d, var(--gold))
         <div class="role-card__eyebrow">Fakultetsnivå · HF</div>
         <h3>FTV — Fakultetstillitsvalgt</h3>
         <p>FTV representerer alle studentene ved Det humanistiske fakultet (HF) og jobber med saker som angår hele fakultetet. De sitter i fakultetsstyret og ulike komiteer, og er studentenes øverste talspersoner overfor HF-ledelsen.</p>
-        <p class="role-card__contact">Kontakt: <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b8decccef8d0de96d6ccd6cd96d6d7">[email&#160;protected]</a></strong></p>
+        <p class="role-card__contact">Kontakt: <strong>ftv@hf.ntnu.no</strong></p>
         <ul class="role-card__resp">
           <li>Sitter i fakultetsstyret ved HF</li>
           <li>Jobber med læringsmiljø, internasjonalisering og kommunikasjon på fakultetsnivå</li>
@@ -274,7 +275,7 @@ html[data-mode="marine"] .role-card { border-left-color: var(--c-d, var(--gold))
 <!-- ============ FOOTER ============ -->
 <div id="site-footer"></div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="footer-icons.js"></script>
+<script src="footer-icons.js"></script>
 <script src="site-content.js"></script>
 <script src="nav-content.js"></script>
 <script src="site-chrome.js"></script>
@@ -285,7 +286,8 @@ html[data-mode="marine"] .role-card { border-left-color: var(--c-d, var(--gold))
 <script>
 /* ── Render styret + verv fra styret-content.js ── */
 (function () {
-  var C = window.STYRET_CONTENT || {};
+  var IS_PREVIEW = false;
+  try { IS_PREVIEW = /[?&]preview\b/.test(location.search); } catch (e) {}
 
   function esc(s) {
     return String(s == null ? '' : s)
@@ -293,9 +295,15 @@ html[data-mode="marine"] .role-card { border-left-color: var(--c-d, var(--gold))
   }
   function setText(id, val) {
     var el = document.getElementById(id);
-    if (el && val != null && val !== '') el.textContent = val;
+    if (!el) return;
+    // I preview gjenspeiler vi nøyaktig det admin viser (også tomme felt).
+    if (IS_PREVIEW) { el.textContent = (val == null ? '' : val); return; }
+    if (val != null && val !== '') el.textContent = val;
   }
   var STAGGER = ['', 'd1', 'd2', 'd3'];
+
+  function renderStyret() {
+  var C = window.STYRET_CONTENT || {};
 
   // Overskrifter
   if (C.board) { setText('board-eyebrow', C.board.eyebrow); setText('board-heading', C.board.heading); setText('board-lede', C.board.lede); }
@@ -336,6 +344,29 @@ html[data-mode="marine"] .role-card { border-left-color: var(--c-d, var(--gold))
         + (resp ? '<ul class="role-card__resp">' + resp + '</ul>' : '')
         + '</div>';
     }).join('');
+  }
+  } // /renderStyret
+
+  renderStyret();
+
+  /* ── Live forhåndsvisning fra styret-admin (styret.html?preview=1) ──
+     Lytter etter innhold fra admin og re-renderer med ekte stil — previewen
+     ER den ekte siden, så den følger automatisk med på designendringer. */
+  if (IS_PREVIEW) {
+    var pvNotify = function () {
+      try { parent.postMessage({ type: 'apeiron-styret-preview-height', height: document.documentElement.scrollHeight }, '*'); } catch (e) {}
+    };
+    window.addEventListener('message', function (e) {
+      var d = e.data;
+      if (!d || d.type !== 'apeiron-styret-preview') return;
+      if (d.content) window.STYRET_CONTENT = d.content;
+      renderStyret();
+      // Vis alt umiddelbart i preview (ingen scroll-avsløring).
+      document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+      pvNotify();
+    });
+    document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+    try { parent.postMessage({ type: 'apeiron-styret-preview-ready' }, '*'); } catch (e) {}
   }
 })();
 </script>

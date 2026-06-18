@@ -156,6 +156,32 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
 #align-range::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: var(--gold); border: 2px solid var(--navy); }
 .align-scale { display: flex; justify-content: space-between; font-size: .7rem; color: var(--ink-soft); margin-top: 4px; }
 
+/* ── Adresse-felt med stedvelger ── */
+.addr-wrap { position: relative; display: flex; align-items: stretch; }
+.addr-wrap input { padding-right: 34px; }
+.btn-loc { position: absolute; right: 3px; top: 50%; transform: translateY(-50%); width: 26px; height: 26px; border: none; background: transparent; border-radius: 4px; cursor: pointer; font-size: .92rem; line-height: 1; display: flex; align-items: center; justify-content: center; opacity: .65; transition: opacity .12s, background .12s; }
+.btn-loc:hover { opacity: 1; background: rgba(212,175,55,.18); }
+
+/* ── Stedvelger-popover ── */
+.locpop { position: fixed; z-index: 300; width: 344px; max-width: calc(100vw - 24px); background: white; border: 1px solid var(--border); border-radius: 9px; box-shadow: 0 18px 48px rgba(35,39,64,.26); overflow: hidden; display: none; flex-direction: column; }
+.locpop__head { padding: 11px 12px 0; }
+.locpop__head .ttl { font-size: .63rem; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; color: var(--ink-soft); }
+.locpop__search { padding: 8px 12px 10px; border-bottom: 1px solid var(--border); }
+.locpop__search input { width: 100%; font-family: var(--body); font-size: .9rem; padding: 8px 11px; border: 1px solid var(--border); border-radius: 5px; background: #fbf7ec; color: var(--ink); }
+.locpop__search input:focus { outline: none; border-color: var(--navy); }
+.locpop__list { max-height: 322px; overflow-y: auto; padding: 6px; }
+.locpop__pg { margin: 9px 4px 3px; display: flex; align-items: baseline; gap: 9px; }
+.locpop__pg:first-child { margin-top: 2px; }
+.locpop__pg button { all: unset; cursor: pointer; font-family: var(--display); font-size: 1.02rem; font-weight: 700; color: var(--navy); border-radius: 4px; }
+.locpop__pg button:hover { color: var(--gold-ink); }
+.locpop__pg .file { font-size: .68rem; color: var(--ink-soft); font-family: var(--body); }
+.locpop__sec { display: block; width: 100%; text-align: left; border: none; background: transparent; font-family: var(--body); font-size: .87rem; color: var(--ink); padding: 7px 10px 7px 18px; border-radius: 5px; cursor: pointer; }
+.locpop__sec:hover { background: rgba(212,175,55,.16); }
+.locpop__sec .anch { color: var(--ink-soft); font-size: .76rem; }
+.locpop__sec.cur { color: var(--gold-ink); font-weight: 700; }
+.locpop__sec.cur::after { content: ' ✓'; color: var(--gold-ink); }
+.locpop__empty { padding: 18px; text-align: center; color: var(--ink-soft); font-size: .84rem; font-style: italic; }
+
 /* Save toast */
 .toast { position: fixed; bottom: 22px; right: 22px; background: var(--navy); color: var(--paper); padding: 8px 16px; border-radius: 4px; font-size: .8rem; opacity: 0; transition: opacity .25s; pointer-events: none; z-index: 200; }
 .toast.show { opacity: 1; }
@@ -215,7 +241,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
         <li>Klikk <b>Last ned nav-content.js</b> — lagre filen fra nedlastingsmappen</li>
         <li>Erstatt <code>nav-content.js</code> i GitHub-repoet og push/commit</li>
       </ol>
-      <div class="tip-note">💡 Skriv hele <code>side.html#anker</code> i adressen — menyen forkorter den automatisk til <code>#anker</code> på riktig side, så scroll blir mykt.</div>
+      <div class="tip-note">💡 Klikk <b>📍</b> ved et adressefelt for å velge side og seksjon fra en liste med lesbare navn — slipp å gjette ankre som <code>#bli-medlem</code>. (Du kan fortsatt skrive adressen for hånd.)</div>
     </div>
 
     <!-- PLASSERING PÅ LINJA -->
@@ -410,7 +436,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
     card.innerHTML =
       '<span class="drag-handle kid-handle" title="Dra for å sortere">⠿</span>'
       + '<div class="fg"><label data-help="Teksten som vises i nedtrekksmenyen / seksjonen.">Tekst</label><input type="text" data-f="label" placeholder="f.eks. Pensum"></div>'
-      + '<div class="fg"><label data-help="' + esc(HREF_HELP) + '">Adresse</label><input type="text" data-f="href" placeholder="pensum.html"></div>'
+      + '<div class="fg"><label data-help="' + esc(HREF_HELP) + '">Adresse</label><div class="addr-wrap"><input type="text" data-f="href" placeholder="pensum.html"><button class="btn-loc" type="button" title="Velg side og seksjon">📍</button></div></div>'
       + '<button class="btn-del-row" type="button" title="Fjern underpunkt">✕</button>';
     card.querySelector('[data-f="label"]').value = c.label;
     card.querySelector('[data-f="href"]').value = c.href;
@@ -421,6 +447,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
       it.children = it.children.filter(function (x) { return x !== c; });
       renderItems(); lazySave();
     });
+    wireLoc(card);
     AdminCommon.enhanceHelp(card);
     return card;
   }
@@ -435,7 +462,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
       '<div class="item-row">'
         + '<span class="drag-handle item-handle" title="Dra for å sortere">⠿</span>'
         + '<div class="fg"><label data-help="Teksten som vises i menyen.">Tekst</label><input type="text" data-f="label" placeholder="f.eks. Om oss"></div>'
-        + '<div class="fg"><label data-help="' + esc(hasKids ? PARENT_HELP : HREF_HELP) + '">Adresse</label><input type="text" data-f="href" placeholder="index.html#om"></div>'
+        + '<div class="fg"><label data-help="' + esc(hasKids ? PARENT_HELP : HREF_HELP) + '">Adresse</label><div class="addr-wrap"><input type="text" data-f="href" placeholder="index.html#om"><button class="btn-loc" type="button" title="Velg side og seksjon">📍</button></div></div>'
         + '<div class="fg narrow"><label data-help="' + esc(MODE_HELP) + '">Synlighet</label><select data-f="mode">'
           + '<option value="both">Begge</option>'
           + '<option value="drawer">Kun mobil</option>'
@@ -485,6 +512,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
       }
     });
 
+    wireLoc(card.querySelector('.item-row'));
     AdminCommon.enhanceHelp(card);
     return card;
   }
@@ -645,6 +673,183 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
     }
   });
 
+  /* ─────────────────────────────────────────────────────────
+     A5 · ADRESSE-VELGER (stedvelger)
+     Kuratert kart over sider og deres seksjoner med lesbare
+     navn. Berikes live fra de faktiske sidene når nettleseren
+     får hentet dem (så nye <section id> dukker opp av seg selv);
+     faller pent tilbake på lista under når fetch ikke er mulig
+     (f.eks. lokal fil:// -åpning).
+     ───────────────────────────────────────────────────────── */
+  const PAGE_SECTIONS = [
+    { file: 'index.html', name: 'Forsiden', sections: [
+      { anchor: 'arrangementer', name: 'Arrangementer' },
+      { anchor: 'oppslagstavla-teaser', name: 'Oppslagstavla' },
+      { anchor: 'aporetisk', name: 'Aporetisk Aften' },
+      { anchor: 'fadderuke', name: 'Fadderuke' },
+      { anchor: 'bli-medlem', name: 'Bli medlem' },
+      { anchor: 'kontakt', name: 'Kontakt' }
+    ]},
+    { file: 'om-oss.html', name: 'Om oss', sections: [
+      { anchor: 'om', name: 'Om oss' },
+      { anchor: 'samarbeid', name: 'Fellesskap & samarbeid' },
+      { anchor: 'lesesalen', name: 'Lesesalen' },
+      { anchor: 'mot-styret', name: 'Møt styret' },
+      { anchor: 'bli-medlem', name: 'Bli medlem' },
+      { anchor: 'faq', name: 'Ofte stilte spørsmål' }
+    ]},
+    { file: 'styret.html', name: 'Styret', sections: [
+      { anchor: 'styremedlemmer', name: 'Styremedlemmer' },
+      { anchor: 'tillitsvalgte', name: 'Tillitsvalgte' },
+      { anchor: 'sak', name: 'S.A.K' },
+      { anchor: 'vervene', name: 'Om vervene' }
+    ]},
+    { file: 'begrep.html', name: 'Begrep', sections: [
+      { anchor: 'om', name: 'Om Begrep' },
+      { anchor: 'utgavene', name: 'Tidsskriftet' },
+      { anchor: 'podkast', name: 'Podkasten' },
+      { anchor: 'film', name: 'Filmproduksjon' },
+      { anchor: 'julekalender', name: 'Hilbert Hotell (julekalender)' },
+      { anchor: 'kontakt', name: 'Bidra & kontakt' }
+    ]},
+    { file: 'hjelp.html', name: 'Hjelp & støtte', sections: [
+      { anchor: 'sifra', name: 'Si fra' },
+      { anchor: 'studier', name: 'Faglig hjelp' },
+      { anchor: 'helse', name: 'Psykisk helse' },
+      { anchor: 'fysisk', name: 'Fysisk helse' },
+      { anchor: 'akutt', name: 'Akutt hjelp' }
+    ]},
+    { file: 'galleri.html', name: 'Galleri', sections: [
+      { anchor: 'galleri', name: 'Bildegalleri' }
+    ]},
+    { file: 'pensum.html', name: 'Pensum', sections: [] },
+    { file: 'merch.html', name: 'Merch', sections: [
+      { anchor: 'butikk', name: 'Produkter' }
+    ]},
+    { file: 'marked.html', name: 'Kjøp & bytte', sections: [] }
+  ];
+
+  /* Berik live: hent hver side, finn <section id> som mangler i
+     lista og avled lesbart navn fra nærmeste overskrift. */
+  function enrichLive() {
+    PAGE_SECTIONS.forEach(function (p) {
+      fetch(p.file).then(function (r) { return r.ok ? r.text() : Promise.reject(); }).then(function (html) {
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        doc.querySelectorAll('section[id]').forEach(function (sec) {
+          const id = sec.id;
+          if (!id || id === 'top') return;
+          if (p.sections.some(function (s) { return s.anchor === id; })) return;
+          const h = sec.querySelector('h1, h2, h3');
+          let nm = h ? h.textContent.replace(/\s+/g, ' ').trim() : '';
+          if (nm.length > 42) nm = nm.slice(0, 40) + '…';
+          if (!nm) nm = '#' + id;
+          p.sections.push({ anchor: id, name: nm });
+        });
+        if (pop && pop.style.display !== 'none') renderLocList(pop._q || '');
+      }).catch(function () {});
+    });
+  }
+
+  /* ─── POPOVER ─── */
+  let pop = null;
+  function buildPicker() {
+    if (pop) return;
+    pop = document.createElement('div');
+    pop.className = 'locpop';
+    pop.innerHTML =
+      '<div class="locpop__head"><span class="ttl">Velg side eller seksjon</span></div>'
+      + '<div class="locpop__search"><input type="text" placeholder="Søk side eller seksjon…" aria-label="Søk"></div>'
+      + '<div class="locpop__list"></div>';
+    document.body.appendChild(pop);
+
+    const search = pop.querySelector('.locpop__search input');
+    search.addEventListener('input', function () { pop._q = search.value; renderLocList(search.value); positionPop(pop._target); });
+    search.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') { closePop(); return; }
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const first = pop.querySelector('.locpop__list [data-href]');
+        if (first) chooseLoc(first.getAttribute('data-href'));
+      }
+    });
+    document.addEventListener('click', function (e) {
+      if (!pop || pop.style.display === 'none') return;
+      if (pop.contains(e.target) || e.target.closest('.btn-loc')) return;
+      closePop();
+    });
+    window.addEventListener('resize', function () { if (pop && pop.style.display !== 'none') positionPop(pop._target); });
+    pop.querySelector('.locpop__list').addEventListener('scroll', function () {}, { passive: true });
+  }
+
+  function renderLocList(q) {
+    const list = pop.querySelector('.locpop__list');
+    const cur = pop._target ? pop._target.value.trim() : '';
+    q = (q || '').toLowerCase().trim();
+    let html = '', any = false;
+    PAGE_SECTIONS.forEach(function (p) {
+      const pageMatch = p.name.toLowerCase().indexOf(q) >= 0 || p.file.toLowerCase().indexOf(q) >= 0;
+      const secs = p.sections.filter(function (s) {
+        return pageMatch || s.name.toLowerCase().indexOf(q) >= 0 || ('#' + s.anchor).indexOf(q) >= 0;
+      });
+      if (!pageMatch && !secs.length) return;
+      any = true;
+      html += '<div class="locpop__pg"><button type="button" data-href="' + esc(p.file) + '">' + esc(p.name) + '</button><span class="file">' + esc(p.file) + '</span></div>';
+      secs.forEach(function (s) {
+        const href = p.file + '#' + s.anchor;
+        html += '<button type="button" class="locpop__sec' + (href === cur ? ' cur' : '') + '" data-href="' + esc(href) + '">' + esc(s.name) + ' <span class="anch">#' + esc(s.anchor) + '</span></button>';
+      });
+    });
+    if (!any) html = '<div class="locpop__empty">Ingen treff på «' + esc(q) + '»</div>';
+    list.innerHTML = html;
+    list.querySelectorAll('[data-href]').forEach(function (b) {
+      b.addEventListener('click', function () { chooseLoc(b.getAttribute('data-href')); });
+    });
+  }
+
+  function chooseLoc(href) {
+    const input = pop._target;
+    if (input) {
+      input.value = href;
+      input.dispatchEvent(new Event('input', { bubbles: true }));  // trigger eksisterende lagring
+    }
+    closePop();
+  }
+  function closePop() { if (pop) pop.style.display = 'none'; }
+
+  function positionPop(input) {
+    if (!pop || !input) return;
+    const r = input.getBoundingClientRect();
+    const pw = pop.offsetWidth || 344, ph = pop.offsetHeight || 360;
+    let left = r.left;
+    if (left + pw > window.innerWidth - 8) left = window.innerWidth - 8 - pw;
+    if (left < 8) left = 8;
+    let top = r.bottom + 6;
+    if (top + ph > window.innerHeight - 8) { top = r.top - 6 - ph; if (top < 8) top = 8; }
+    pop.style.left = left + 'px';
+    pop.style.top = top + 'px';
+  }
+
+  function openLocPicker(input) {
+    buildPicker();
+    if (pop.style.display !== 'none' && pop._target === input) { closePop(); return; }  // toggle
+    pop._target = input;
+    pop._q = '';
+    const s = pop.querySelector('.locpop__search input');
+    s.value = '';
+    renderLocList('');
+    pop.style.display = 'flex';
+    positionPop(input);
+    setTimeout(function () { s.focus(); }, 0);
+  }
+
+  function wireLoc(scope) {
+    if (!scope) return;
+    const btn = scope.querySelector('.btn-loc');
+    if (!btn) return;
+    const input = scope.querySelector('[data-f="href"]');
+    btn.addEventListener('click', function (e) { e.preventDefault(); openLocPicker(input); });
+  }
+
   function init() {
     loadData();
     loadAlign();
@@ -653,6 +858,8 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); min-hei
     renderPreview();
     measureLayout();
     pushHistory();
+    buildPicker();
+    enrichLive();
     AdminCommon.enhanceHelp(document);
   }
 })();
