@@ -519,6 +519,7 @@ Ting vi vet om, men er usikre på om det er verdt å gjøre noe med. Ført opp s
 Kritisk:
 - [ ] Sjekke at "Legg til fadderukeprogrammet i din kalender" fungerer: iCal og Google Kalender.
 - [ ] Revamp av Hero.
+- [ ] Ny måte å legge inn 'nyheter' / informasjon på. Google sheets er for treg. -> Redesign av hvordan nyhetene vises. -> Gamle nyheter må kunne fremdeles vises / gå til et arkiv e.l.
 
 Medium:
 - [ ] Be HF studentrådet om å oppdatere sidene deres og gi oss mer informasjon om hva de faktisk gjør. 
@@ -526,15 +527,20 @@ Medium:
       - [ ] Hvordan får vi kontakt med våre egne TVer?
 - [ ] Lage egen Admin for index. - Halvveis gjort.
 - [ ] Finne en bedre måte å vise arrangement og plakater på -> Måte å vise nyheter/informasjon på.
-- [ ] Mini-forhåndsvisning per panel (som footer-admin). Jeg gjenskaper kort-utseendet i admin. Mest kontroll, men litt arbeid per panel, og må holdes i synk hvis det offentlige utseendet endres.
+- [ ] Legge til side for møtereferat -> Kan tas i egen wiki, muligens.
+- [ ] Live forhåndsvisning i alle admin-paneler (som i `footer-admin.html`). Merch, Index, Meny, Begrep, Hjelp, og Styret er gjort -> Mangler Utmerkelser, Oppnåelser. Footer preview må oppdateres. 
+- [ ] Sammenlign med https://www.mfplacebo.no/
 
 Lav:
 - [ ] Fylle ut SAK / utvide den.
 - [ ] Sette opp et arkiv.
-- [ ] Sammenlign med https://www.mfplacebo.no/
-- [ ] Gjøre om admin filene til å gi nærest full kontroll over oppsett over sidene.
-- [ ] Legge til side for møtereferat -> Kan tas i egen wiki, muligens.
-- [ ] Live forhåndsvisning i alle admin-paneler (som i `footer-admin.html`). Merch, Index, Meny, Begrep, Hjelp, og Styret er gjort -> Mangler Utmerkelser, Oppnåelser. Footer preview må oppdateres. 
+- [ ] Full revamp av hvordan hele siden redigeres: mer square space aktig.
+        - [ ] Hva kan ikke gjøres per nå: 
+                - [ ] Endre av logo
+                - [ ] Flytte om på seksjoner
+                - [ ] Flytte seksjoner mellom sider
+                - [ ] Endre alt fra én admin side
+                - [ ] Visuell endring direkte i et preview
 
 Ønsker:
 - [ ] Snakke med IFR/NTNU om API for automatisk oppdatering av emner for studiene.
