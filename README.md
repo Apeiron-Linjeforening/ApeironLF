@@ -518,32 +518,23 @@ Ting vi vet om, men er usikre på om det er verdt å gjøre noe med. Ført opp s
 ## To do
 
 Kritisk:
-- [x] Endre "Hjelp" i menyen med noe annet som uttrykker mer direkte hva siden er om.
-- [x] Fikse menyen / NAV slik at den fungerer bedre på smalere skjermer og mobil.
-- [x] Legge til et informasjonsfelt for Fadderukene hvor man kan fylle inn generell info. *(Dekkes av nyhetsfunksjonen: bruk plassering `fadderuke` i Google Sheet «Nyheter».)*
 - [ ] Sjekke at "Legg til fadderukeprogrammet i din kalender" fungerer: iCal og Google Kalender.
-- [x] Måte for Apeiron å legge inn viktig informasjon som er tydelig på index. *(Google Sheet «Nyheter» → live på forsiden via `apeiron-news.js`; plasseringer topp/hovedoppslag/arrangement/aporetisk/fadderuke, hast-markering og dato-vindu. Se docs/apps-script-oppsett.md.)*
 
 Medium:
 - [ ] Be HF studentrådet om å oppdatere sidene deres og gi oss mer informasjon om hva de faktisk gjør. 
       - [ ] Hva gjør egentlig en PTV, ITV og FTV? 
       - [ ] Hvordan får vi kontakt med våre egne TVer?
-- [x] Legge til side for Utmerkelser for personer som har stått ut i studentmiljøet eller det frivillige under IFR.
-- [ ] Lage egen Admin for index.
-- [x] Legg til Logikk Panikk.
+- [ ] Lage egen Admin for index. - Halvveis gjort.
 - [ ] Finne en bedre måte å vise arrangement og plakater på -> Måte å vise nyheter/informasjon på.
-- [x] Se om vi kan få menyen til å være en og samme entitet over alle sidene -> for å slippe å oppdatere hver en meny for hver side. *(Menyen bygges nå ETT sted i `site-chrome.js` og injiseres på alle sider via `#site-nav`.)*
 - [ ] Mini-forhåndsvisning per panel (som footer-admin). Jeg gjenskaper kort-utseendet i admin. Mest kontroll, men litt arbeid per panel, og må holdes i synk hvis det offentlige utseendet endres.
 
 Lav:
-- [x] Side eller plassering for "Oppnåelser" (Premier vi har fått, som sølv i håndball og "best oppmøte" fra Dionysos)
 - [ ] Fylle ut SAK / utvide den.
 - [ ] Sette opp et arkiv.
 - [ ] Sammenlign med https://www.mfplacebo.no/
 - [ ] Gjøre om admin filene til å gi nærest full kontroll over oppsett over sidene.
 - [ ] Legge til side for møtereferat -> Kan tas i egen wiki, muligens.
-- [x] Header/meny-admin: GUI for å redigere menyen (dropdowns, undermenyer, ankerlenker, rekkefølge) - på linje med `footer-admin.html`, men mer omfattende pga. menyens struktur.
-- [ ] Live forhåndsvisning i alle admin-paneler (som i `footer-admin.html`). Tas inkrementelt per panel (merch-admin først), siden hvert panel lager ulikt innhold.
+- [ ] Live forhåndsvisning i alle admin-paneler (som i `footer-admin.html`). Merch, Index, Meny, Begrep, Hjelp, og Styret er gjort -> Mangler Utmerkelser, Oppnåelser. Footer preview må oppdateres. 
 - [ ] Opp Ned Side.
 
 Hadde vært kult:
