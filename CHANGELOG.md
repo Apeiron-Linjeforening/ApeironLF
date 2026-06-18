@@ -1,5 +1,8 @@
 ## Siste endringer
 
+**18.06.26 — Ryddet opp i README.md**
+- **laget HVORDAN.md** for å rydde opp i readme. La oss holde det ryddig slik at readme er det vi trenger å forholde oss til frem til vi kan ta det litt mer med ro.
+
 **18.06.26 — Ryddigere navigasjon (B) + kapittelskiller på forsiden (A)**
 - **Toppmenyen slanket fra 10 til 7 synlige valg** (`nav-content.js`), ordnet i fem «verdener»: **Hjem · Hva skjer ▾ · Begrep · Faglig ▾ · Foreningen ▾ · Merch ▾ · Hjelp & støtte** (+ «Bli medlem» i mobilmeny/hero). Ingenting fjernet — alt er omgruppert.
   - **Hva skjer:** Arrangementer · Oppslagstavla · Aporetisk Aften · Fadderuke · Galleri.
