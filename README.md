@@ -512,13 +512,13 @@ Ting vi vet om, men er usikre på om det er verdt å gjøre noe med. Ført opp s
 - **Footer/meny krever JavaScript.** Med JS avslått vises ikke meny/footer. Gjelder en svært liten andel besøkende; resten av siden bruker uansett JS (kalender, søk, kurv).
 - **README-seksjonen «Lagre admin-endringer rett til repo-fila» (over) er utdatert.** Den direkte-lagrings-funksjonen (File System Access) ble fjernet fordi den feilet på enkelte systemer; admin-panelene laster nå alltid ned fila. Avsnittet bør ryddes ved anledning.
 - **Bilder lagres som base64 i datafilene.** Mange/store produktbilder gjør `merch-products.js` stor. Admin skalerer ned til maks 900px webp, men mange bilder kan likevel bli tungt. Vurder eksterne bildefiler (`assets/merch/...`) hvis filene blir veldig store. Vil ikke å lagre de eksternt bare gjøre bildene større? -> lagre de i base64 i egen fil?
-- **Bytte navn til Merch til Butikk** Apeiron har ikke en butikk, men vi har merch... men man kjøper merch... i en butikk.
 
 ---
 ## To do
 
 Kritisk:
 - [ ] Sjekke at "Legg til fadderukeprogrammet i din kalender" fungerer: iCal og Google Kalender.
+- [ ] Revamp av Hero.
 
 Medium:
 - [ ] Be HF studentrådet om å oppdatere sidene deres og gi oss mer informasjon om hva de faktisk gjør. 
@@ -535,18 +535,12 @@ Lav:
 - [ ] Gjøre om admin filene til å gi nærest full kontroll over oppsett over sidene.
 - [ ] Legge til side for møtereferat -> Kan tas i egen wiki, muligens.
 - [ ] Live forhåndsvisning i alle admin-paneler (som i `footer-admin.html`). Merch, Index, Meny, Begrep, Hjelp, og Styret er gjort -> Mangler Utmerkelser, Oppnåelser. Footer preview må oppdateres. 
-- [ ] Opp Ned Side.
 
-Hadde vært kult:
+Ønsker:
 - [ ] Snakke med IFR/NTNU om API for automatisk oppdatering av emner for studiene.
-- [ ] Bygge KKI for Apeiron.
 - [ ] Burde det være en direkte måte for TVene ved IFR å legge ved oppdateringer på nettsiden vår?
-- [ ] Kunne trykke på emne under hvert studie og bli tatt til emnet i pensumlistene - kan bli et problem for admin filene.
-- [ ] Egen knapp på Begrep siden (ikke automatisk Mørk modus) som gir et spesielt tema.
+- [ ] Kunne trykke på emne under hvert studie og bli tatt til emnet i pensumlistene - kan bli slitsomt å oppdatere i admin.
 - [ ] Automatisk tema endring av sidene: Jul, 17. mai, påske, halloween, fadderukene, frigjøringsdagen, HMS bursdag (legge dette til i en admin fil, muligens... HMS er gammel) + mulighet til å skru de av, endre bilder, farger osv.
-
-Forslag:
-- [ ] Mer velkommen / koselig forside? Bilder av tidligere arrangement å index. Siden føles kanskje litt kald/som om den prøver å selge noe. -> Bilder fra galleri på forsiden eller på "om oss"?
 
 Må gjøres før vi slapper av med å bygge nettsiden:
 - [ ] Sjekke at alle admin sider fungerer.
@@ -559,12 +553,11 @@ Må gjøres før vi slapper av med å bygge nettsiden:
 
 Skjelett Prosjekt:
 - [ ] Gjøre om prosjektet til et nytt repo som kan klones og lett gjøres om til andre linjeforeninger.
-- [ ] Må lages en readme som sier hva man må gjøre for å starte,
+- [ ] Må lages en readme som sier hva man må gjøre for å starte.
 
 Domene:
-- [ ] Få bedre domene
-
-**Status per 13.06.26:**
+- [ ] Vurdere om vi skal få bedre domene.
+**NTNU-alternativ (`apeiron.org.ntnu.no`) viser nå til nettsiden**
 
 | Domene                 | Status      | Pris       | Registrar            |
 | ------------------------| -------------| ------------| ----------------------|
@@ -584,11 +577,7 @@ Domene:
 
 Merk: Cloudflare Registrar støtter ikke .no-domener. For .org er Cloudflare billigst.
 
-**NTNU-alternativ (`apeiron.org.ntnu.no`):**
-- Adressen er gjenopplivet, men fungerer som en filserver (NTNU sitt mappesystem), ikke som et vanlig domene.
-- Forsøkt omdirigering med `.htaccess` (`RedirectMatch (.*) https://apeironlf.pages.dev/`) — fungerte ikke.
-- Tilgang: For tilgang via sftp, skriv `sftp://dittbrukernavn@login.stud.ntnu.no/home/groups/apeiron` i filutforskeren (Linux). Per nå er det kun sosialansvarlig Iver (25/26) som har tilgang.
-- Avventer svar fra NTNU om muligheten for videre hjelp.
+
 
 ## Lisens
 ---
