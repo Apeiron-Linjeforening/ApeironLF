@@ -41,9 +41,6 @@
      toppkanten bak den gjennomsiktige nav-en forblir mørk. -->
 <div class="topnews-anchor">
 
-<!-- Nyheter: stripe under menyen (redigeres i Google Sheet «Nyheter», plassering «topp») -->
-<div id="news-topp" class="news-zone news-zone--strip" hidden></div>
-
 <!-- ============ HERO ============ -->
 <section class="hero" id="top" data-screen-label="Hero">
   <img class="hero__seal" src="assets/apeiron-logo.png" alt="" aria-hidden="true" />
@@ -60,12 +57,11 @@
         </div>
         <p class="hero__bridge"><a href="om-oss.html">Ny her? Bli kjent med Apeiron <span class="arr">→</span></a></p>
       </div>
-      <div class="hero__logo-card">
-        <img src="assets/apeiron-logo.png" alt="Apeiron sitt segl med timeglass og gresk inskripsjon" />
-      </div>
+      <!-- «Akkurat nå»-panel: hastebeskjeder, neste arrangement (auto fra kalenderen)
+           og siste kunngjøringer. Fylles av apeiron-news.js fra news-content.js.
+           Tomt for nyheter? Da viser apeiron-news.js seglet her i stedet. -->
+      <div class="hero__aside" id="news-panel"></div>
     </div>
-    <!-- Nyheter: hovedoppslag (plassering «hovedoppslag» i Google Sheet «Nyheter») -->
-    <div id="news-hovedoppslag" class="news-zone" hidden></div>
   </div>
   <div class="hero__scroll" aria-hidden="true"><span>Bla ned</span><span class="line"></span></div>
   <!-- ============ UNDER CONSTRUCTION — fjern denne linjen for å skjule banneret ============ -->
@@ -344,6 +340,7 @@ samtale &amp; vin
 <script src="aporetisk-cal.js"></script>
 <script src="apeiron-fadder.js"></script>
 <script src="news-config.js"></script>
+<script src="news-content.js"></script>
 <script src="apeiron-news.js"></script>
 <script src="palette.js"></script>
 <script src="oppslag-content.js"></script>

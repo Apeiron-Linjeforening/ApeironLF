@@ -1,6 +1,6 @@
 /* ============================================================
    membership-config.js — medlemskapspriser og innmeldingsinfo
-   Redigeres via medlemskap-admin.html (last ned og erstatt denne filen).
+   Redigeres via Admin-senteret → Medlemskap (last ned og erstatt denne filen).
    ============================================================ */
 window.MEMBERSHIP_CONFIG = {
   vippsNumber: "#551937",

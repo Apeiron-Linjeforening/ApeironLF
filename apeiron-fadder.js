@@ -121,6 +121,14 @@
         // Kalenderen er nådd, men tom → vis «datoer kommer»-tomtilstand (ikke plassholdere).
         if (!items.length) { renderEmpty(); return; }
         FADDER = groupIntoWeeks(items); IS_LIVE = true; render();
+        // Meld neste fadderuke-aktivitet til Akkurat nå-panelet (apeiron-news.js).
+        try {
+          if (window.apeironNewsNextEvent) {
+            var now = new Date();
+            var up = items.filter(function (e) { return e.start >= now; }).sort(function (a, b) { return a.start - b.start; });
+            window.apeironNewsNextEvent(up[0] || null, true, 'fadder');
+          }
+        } catch (_) {}
       })
       .catch(function () { useSample(); });
   }

@@ -52,41 +52,17 @@
      Bruker localStorage slik at innlogging på ett admin-panel gjelder alle de
      andre i samme nettleser (også i nye faner). Fikser bugen der man måtte logge
      inn på nytt for hver admin-side. */
+  /* ─── AUTH (fjernet) ───
+     Passordet er fjernet — admin-panelene er åpne. Endringer må uansett
+     eksporteres og committes til GitHub for å bli synlige på nettsiden, så
+     dette er ingen reell sikkerhetssvekkelse; det fjerner bare et friksjonssteg.
+     setupAuth(onUnlock) viser nå panelet med en gang og kaller onUnlock. */
   function setupAuth(onUnlock) {
     var gate    = document.getElementById('gate');
     var adminEl = document.getElementById('admin');
-    var pwInput = document.getElementById('pw-input');
-    var pwErr   = document.getElementById('pw-err');
-    var pwBtn   = document.getElementById('pw-btn');
-
-    // defer: kjør onUnlock på neste «tick». Viktig på auto-innlogging — da kalles
-    // setupAuth() før vertsskriptet har initialisert sine let/const-variabler
-    // (f.eks. «products»/«data»). Utsettelsen lar skriptet bli ferdig først.
-    function unlock(defer) {
-      if (gate) gate.style.display = 'none';
-      if (adminEl) adminEl.classList.add('on');
-      injectLogout(adminEl);
-      if (typeof onUnlock === 'function') {
-        if (defer) setTimeout(onUnlock, 0); else onUnlock();
-      }
-    }
-
-    function login(pw) {
-      if (pw === PASSWORD) {
-        try { localStorage.setItem(AUTH_KEY, '1'); } catch (_) {}
-        unlock(false);
-      } else if (pwErr) {
-        pwErr.textContent = 'Feil passord — prøv igjen';
-        if (pwInput) { pwInput.value = ''; pwInput.focus(); }
-      }
-    }
-
-    if (isAuthed()) {
-      unlock(true);
-    } else {
-      if (pwBtn)   pwBtn.addEventListener('click', function () { login(pwInput ? pwInput.value : ''); });
-      if (pwInput) pwInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') login(pwInput.value); });
-    }
+    if (gate) gate.style.display = 'none';
+    if (adminEl) adminEl.classList.add('on');
+    if (typeof onUnlock === 'function') setTimeout(onUnlock, 0);
   }
 
   /* ─── DRA-OG-SLIPP SORTERING ───
@@ -294,6 +270,37 @@
     return Promise.resolve('download');
   }
 
+  /* ─── DELT DATALAGER (for C-moduler) ───
+     createStore(lsKey, freshFn) gir et lite datalager som alle admin-moduler
+     deler oppførsel gjennom: utkast lagres automatisk i localStorage, og kan
+     tilbakestilles til den publiserte versjonen (freshFn() leser fra repo-globalen).
+       store.data       — det redigerbare objektet (les/skriv fritt)
+       store.save()      — lagre nå + «Lagret»-varsel
+       store.lazySave()  — lagre etter en kort pause (for input-felt)
+       store.reset()     — forkast utkast, last publisert versjon på nytt */
+  function createStore(lsKey, freshFn) {
+    var store = { data: null, key: lsKey };
+    function load() {
+      try { var raw = localStorage.getItem(lsKey); if (raw) { store.data = JSON.parse(raw); return; } } catch (_) {}
+      store.data = freshFn();
+    }
+    load();
+    var t = null;
+    store.save = function () {
+      try { localStorage.setItem(lsKey, JSON.stringify(store.data)); } catch (_) {}
+      toast('Lagret i nettleseren');
+    };
+    store.lazySave = function () { clearTimeout(t); t = setTimeout(store.save, 350); };
+    store.reset = function () { try { localStorage.removeItem(lsKey); } catch (_) {} load(); };
+    return store;
+  }
+
+  /* ─── ESCAPE ─── */
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
   window.AdminCommon = {
     PASSWORD: PASSWORD,
     setupAuth: setupAuth,
@@ -303,6 +310,18 @@
     enhanceHelp: enhanceHelp,
     saveFile: saveFile,
     downloadBlob: downloadBlob,
-    enableDragSort: enableDragSort
+    enableDragSort: enableDragSort,
+    createStore: createStore,
+    esc: esc
+  };
+
+  /* ─── PANEL-REGISTER (for C: skall + moduler) ───
+     Hver admin-modul registrerer seg med AdminPanels.define(id, def). Skallet
+     (admin.html) bygger menyen og mounter modulen i en beholder. Slik samler vi
+     alle editorene i ett skall uten å duplisere ramme/innlogging/eksport. */
+  window.AdminPanels = window.AdminPanels || {
+    _defs: {},
+    define: function (id, def) { this._defs[id] = def; },
+    get: function (id) { return this._defs[id]; }
   };
 })();

@@ -1753,8 +1753,8 @@ html[data-mode="marine"] .evcal-num{ color:rgba(244,236,217,.75); }
 }
 .board::before {
   content: ""; position: absolute; inset: 0; pointer-events: none;
-  opacity: .5; mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.09'/%3E%3C/svg%3E");
+  opacity: .22; mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.42' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
 }
 .board__grid {
   position: relative;
@@ -1835,3 +1835,92 @@ html[data-mode="marine"] .evcal-num{ color:rgba(244,236,217,.75); }
 }
 @media (max-width: 640px) { .board__grid { columns: 2 150px; } }
 @media (max-width: 430px) { .board__grid { columns: 1; } .poster { --rot: 0deg !important; } }
+
+/* ============================================================
+   NYHETER — «Akkurat nå»-panel i toppbildet + slank beskjed i seksjoner
+   (apeiron-news.js / news-content.js). Erstatter de gamle .news-zone-stripene.
+   ============================================================ */
+
+/* ---- Akkurat nå-panelet (høyre side av hero, alltid på navy) ---- */
+.hero__aside{ justify-self:center; width:100%; max-width:420px; }
+.now{
+  background:#f4ecd9; color:#232740; border-radius:9px; overflow:hidden;
+  border:1px solid rgba(212,175,55,.4);
+  box-shadow:0 30px 60px -28px rgba(0,0,0,.7);
+}
+.now__head{ display:flex; align-items:center; justify-content:space-between; padding:13px 18px; background:var(--navy); }
+.now__kick{
+  font-size:.7rem; letter-spacing:.24em; text-transform:uppercase; font-weight:700;
+  color:var(--gold); display:flex; align-items:center; gap:.6em;
+}
+.now__kick::before{
+  content:""; width:7px; height:7px; border-radius:50%; background:var(--gold);
+  animation:nowpulse 2.6s infinite;
+}
+@keyframes nowpulse{
+  0%{ box-shadow:0 0 0 0 rgba(212,175,55,.55); } 70%{ box-shadow:0 0 0 7px rgba(212,175,55,0); }
+  100%{ box-shadow:0 0 0 0 rgba(212,175,55,0); }
+}
+@media (prefers-reduced-motion: reduce){ .now__kick::before{ animation:none; } }
+.now__urgent{
+  display:flex; align-items:center; gap:.55em;
+  background:var(--maroon); color:var(--paper); padding:12px 18px;
+  font-size:.94rem; font-weight:600; line-height:1.4;
+}
+.now__urgent::before{ content:"▲"; font-size:.66rem; color:var(--gold); flex:0 0 auto; }
+a.now__urgent:hover{ background:var(--maroon-2); }
+.now__row{
+  display:flex; gap:13px; align-items:center; padding:14px 18px;
+  border-bottom:1px solid rgba(35,39,64,.1); color:inherit;
+}
+a.now__row{ transition:background .15s; }
+a.now__row:hover{ background:#efe5cd; }
+.now__date{
+  flex:0 0 auto; width:48px; height:48px; border-radius:7px; background:var(--navy);
+  color:#f4ecd9; display:flex; flex-direction:column; align-items:center; justify-content:center; line-height:1;
+}
+.now__date b{ font-family:var(--display); font-size:1.5rem; color:var(--gold); }
+.now__date span{ font-size:.55rem; letter-spacing:.14em; margin-top:2px; }
+.now__body{ display:flex; flex-direction:column; gap:2px; min-width:0; }
+.now__lbl{ font-size:.6rem; letter-spacing:.18em; text-transform:uppercase; color:#8a6d18; font-weight:700; }
+.now__ttl{ font-family:var(--display); font-size:1.16rem; color:#232740; line-height:1.16; }
+.now__meta{ font-size:.82rem; color:#4a4d63; }
+.now__arr{ margin-left:auto; color:#8a6d18; font-weight:700; flex:0 0 auto; }
+.now__all{
+  display:flex; align-items:center; justify-content:center; gap:.4em; padding:12px;
+  font-size:.82rem; font-weight:600; letter-spacing:.04em; color:#8a6d18;
+  background:#efe5cd; transition:color .15s, background .15s;
+}
+.now__all:hover{ color:var(--navy); background:#e8dcbd; }
+
+@media (max-width:860px){
+  .hero__aside{ max-width:none; }
+}
+
+/* ---- Slank beskjed øverst i en seksjon (arrangement/aporetisk/fadderuke) ---- */
+.beskjed{
+  display:flex; gap:14px; align-items:flex-start;
+  background:var(--card); border:1px solid var(--line); border-left:4px solid var(--gold);
+  border-radius:7px; padding:15px 19px;
+}
+.beskjed__tag{
+  flex:0 0 auto; margin-top:2px;
+  font-size:.6rem; letter-spacing:.16em; text-transform:uppercase; font-weight:700;
+  color:var(--gold-ink); border:1px solid rgba(212,175,55,.55); border-radius:20px;
+  padding:.34em .8em; background:rgba(212,175,55,.1); white-space:nowrap;
+}
+.beskjed__body{ font-size:1rem; line-height:1.55; color:var(--ink-soft); }
+.beskjed__body b, .beskjed__body strong{ color:var(--ink); font-weight:600; }
+.beskjed__body a{ color:var(--gold-ink); font-weight:600; text-decoration:none; border-bottom:1px solid currentColor; }
+.beskjed__body a:hover{ color:var(--warm); }
+.beskjed--urgent{ background:var(--maroon); border-color:var(--maroon-2); border-left-color:var(--gold); }
+.beskjed--urgent .beskjed__tag{ color:var(--gold); border-color:var(--gold); background:rgba(212,175,55,.15); }
+.beskjed--urgent .beskjed__body{ color:rgba(244,236,217,.9); }
+.beskjed--urgent .beskjed__body b, .beskjed--urgent .beskjed__body strong{ color:var(--paper); }
+.beskjed--urgent .beskjed__body a{ color:var(--gold); }
+/* I den navy Arrangementer-seksjonen blir «maroon» gull (designsystemet) — da
+   trenger urgent-beskjeden mørk tekst for kontrast. */
+.events .beskjed--urgent .beskjed__body{ color:rgba(35,39,64,.86); }
+.events .beskjed--urgent .beskjed__body b, .events .beskjed--urgent .beskjed__body strong,
+.events .beskjed--urgent .beskjed__body a{ color:var(--navy); }
+.events .beskjed--urgent .beskjed__tag{ color:var(--navy); border-color:rgba(35,39,64,.5); background:rgba(35,39,64,.08); }

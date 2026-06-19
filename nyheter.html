@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8" />
+<script src="theme.js"></script>
+<script>try{if(/[?&]preview\b/.test(location.search)||(window.self!==window.top))document.documentElement.classList.add('is-preview');}catch(e){}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Nyheter — Apeiron · NTNU</title>
+<meta name="description" content="Nyheter, kunngjøringer og beskjeder fra Apeiron — linjeforeningen for filosofi og etikk ved NTNU. Med arkiv over tidligere oppslag." />
+<meta property="og:title" content="Nyheter — Apeiron · NTNU" />
+<meta property="og:description" content="Kunngjøringer og beskjeder fra Apeiron, med arkiv." />
+<meta property="og:image" content="assets/apeiron-logo.png" />
+<meta name="theme-color" content="#232740" />
+<link rel="icon" href="assets/apeiron-logo.png" type="image/png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<style>
+/* ── Subpage header (samme uttrykk som oppslagstavla.html) ── */
+.subhero{
+  background:
+    radial-gradient(100% 80% at 90% 0%, rgba(212,175,55,.12), transparent 55%),
+    radial-gradient(70% 60% at 5% 100%, rgba(118,17,15,.28), transparent 60%),
+    var(--navy);
+  color:var(--paper); padding:148px 0 72px; position:relative; overflow:hidden;
+}
+.subhero__seal{ position:absolute; right:-4%; top:50%; transform:translateY(-50%); width:min(44vw,540px); opacity:.09; pointer-events:none; z-index:1; }
+.subhero__inner{ position:relative; z-index:2; max-width:var(--maxw); margin:0 auto; padding:0 28px; }
+.subhero h1{ color:var(--paper); font-size:clamp(3rem,8vw,6.5rem); line-height:.95; letter-spacing:.01em; margin:.22em 0 .35em; }
+.subhero__lede{ font-size:1.18rem; color:rgba(244,236,217,.8); max-width:56ch; line-height:1.65; }
+.subhero__back{ display:flex; width:fit-content; align-items:center; gap:.5em; font-size:.82rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:rgba(244,236,217,.55); margin-bottom:.6em; transition:color .2s; }
+.subhero__back:hover{ color:var(--gold); }
+.subhero__back::before{ content:"←"; font-style:normal; }
+
+/* ── Nyhetsliste ── */
+.newslist{ display:flex; flex-direction:column; gap:16px; max-width:760px; margin:2.2em auto 0; }
+.newscard{
+  background:var(--card); border:1px solid var(--line); border-left:4px solid var(--gold);
+  border-radius:8px; padding:20px 24px;
+}
+.newscard__meta{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:.4em; }
+.newscard__place{ font-size:.6rem; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:var(--gold-ink); border:1px solid rgba(212,175,55,.5); border-radius:20px; padding:.3em .8em; background:rgba(212,175,55,.1); }
+.newscard__date{ font-size:.84rem; color:var(--ink-soft); font-style:italic; }
+.newscard__posted{ font-size:.74rem; color:var(--ink-soft); opacity:.85; }
+.newscard.is-urgent .newscard__posted{ color:rgba(244,236,217,.65); }
+.newscard__flag{ font-size:.6rem; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:var(--maroon); display:inline-flex; align-items:center; gap:.45em; }
+.newscard__flag::before{ content:"▲"; font-size:.6rem; }
+.newscard__title{ font-family:var(--display); font-size:1.55rem; color:var(--ink); line-height:1.14; margin:0 0 .25em; }
+.newscard__text{ font-size:1.02rem; line-height:1.6; color:var(--ink-soft); }
+.newscard__text a{ color:var(--gold-ink); font-weight:600; }
+.newscard__link{ display:inline-block; margin-top:.7em; font-size:.92rem; font-weight:600; color:var(--gold-ink); border-bottom:1px solid currentColor; }
+.newscard__link:hover{ color:var(--warm); }
+.newscard.is-urgent{ background:var(--maroon); border-color:var(--maroon-2); border-left-color:var(--gold); }
+.newscard.is-urgent .newscard__title{ color:var(--paper); }
+.newscard.is-urgent .newscard__text{ color:rgba(244,236,217,.88); }
+.newscard.is-urgent .newscard__text a,
+.newscard.is-urgent .newscard__link{ color:var(--gold); }
+.newscard.is-urgent .newscard__place{ color:var(--gold); border-color:var(--gold); background:rgba(212,175,55,.15); }
+.newscard.is-urgent .newscard__date{ color:rgba(244,236,217,.7); }
+.newscard--archived{ opacity:.62; border-left-color:var(--line-2); }
+.news-empty{ text-align:center; color:var(--ink-soft); font-style:italic; padding:40px 20px; font-size:1.05rem; }
+
+.archive-section{ border-top:1px solid var(--line); }
+.archive-section .h-section{ color:var(--ink-soft); font-size:clamp(1.5rem,3.5vw,2.4rem); }
+</style>
+</head>
+<body data-mode="paper">
+
+<div id="site-nav"></div>
+
+<section class="subhero">
+  <img class="subhero__seal" src="assets/apeiron-logo.png" alt="" aria-hidden="true" />
+  <div class="subhero__inner">
+    <a class="subhero__back" href="index.html">Tilbake</a>
+    <h1>Nyheter</h1>
+    <p class="subhero__lede">Kunngjøringer og beskjeder fra Apeiron — det som er aktuelt nå øverst, og et arkiv over tidligere oppslag lenger ned.</p>
+  </div>
+</section>
+
+<section class="section" id="naa">
+  <div class="wrap">
+    <div class="center" style="margin-bottom:6px">
+      <span class="eyebrow eyebrow--center">Aktuelt nå</span>
+      <h2 class="h-section">Siste nytt</h2>
+    </div>
+    <div class="newslist" id="news-current"></div>
+  </div>
+</section>
+
+<section class="section archive-section" id="arkiv" style="display:none">
+  <div class="wrap">
+    <div class="center" style="margin-bottom:6px">
+      <span class="eyebrow eyebrow--center" style="opacity:.7">Arkiv</span>
+      <h2 class="h-section">Tidligere</h2>
+    </div>
+    <div class="newslist" id="news-archive"></div>
+  </div>
+</section>
+
+<div id="site-footer"></div>
+
+<script src="footer-icons.js"></script>
+<script src="site-content.js"></script>
+<script src="nav-content.js"></script>
+<script src="site-chrome.js"></script>
+
+<script src="news-content.js"></script>
+<script>
+/* ── Render nyhetssiden fra news-content.js (med arkiv) ── */
+(function () {
+  var PLACE_LABEL = {
+    panel: 'Forsiden', arrangement: 'Arrangementer',
+    aporetisk: 'Aporetisk Aften', fadderuke: 'Fadderukene'
+  };
+  function esc(s){ var d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
+  function safeUrl(u){ u=String(u||'').trim(); return /^(https?:\/\/|mailto:|\/|#|[a-z0-9._-]+\.[a-z]{2,})/i.test(u)?u.replace(/"/g,'%22'):''; }
+  function fmtPosted(iso){ if(!iso) return ''; var d=new Date(iso+'T00:00:00'); return isNaN(d.getTime())?iso:d.toLocaleDateString('no-NO',{day:'numeric',month:'long',year:'numeric'}); }
+  function markup(t){
+    var s=esc(t);
+    s=s.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g,function(m,l,u){var v=safeUrl(u);return v?'<a href="'+v+'" target="_blank" rel="noopener">'+l+'</a>':l;});
+    s=s.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/\*([^*]+)\*/g,'<em>$1</em>').replace(/_([^_]+)_/g,'<u>$1</u>');
+    return s.replace(/\r?\n/g,'<br>');
+  }
+  function card(n, archived){
+    var safe = n.link ? safeUrl(n.link) : '';
+    var ext = /^https?:/i.test(safe);
+    var h = '<article class="newscard'+(n.urgent?' is-urgent':'')+(archived?' newscard--archived':'')+'">';
+    h += '<div class="newscard__meta">';
+    if (n.urgent) h += '<span class="newscard__flag">Viktig</span>';
+    if (PLACE_LABEL[n.place]) h += '<span class="newscard__place">'+esc(PLACE_LABEL[n.place])+'</span>';
+    if (n.date) h += '<span class="newscard__date">'+esc(n.date)+'</span>';
+    if (n.posted) h += '<span class="newscard__posted">Lagt ut '+esc(fmtPosted(n.posted))+'</span>';
+    h += '</div>';
+    if (n.title) h += '<h3 class="newscard__title">'+esc(n.title)+'</h3>';
+    if (n.text) h += '<div class="newscard__text">'+markup(n.text)+'</div>';
+    if (safe) h += '<a class="newscard__link" href="'+safe+'"'+(ext?' target="_blank" rel="noopener"':'')+'>'+esc(n.linkLabel||'Les mer')+' →</a>';
+    return h + '</article>';
+  }
+  function getItems(){
+    var base = (window.NEWS_CONTENT && Array.isArray(window.NEWS_CONTENT.items)) ? window.NEWS_CONTENT.items : [];
+    try { var raw=localStorage.getItem('apeiron-news-v1'); if(raw){var d=JSON.parse(raw); if(d&&Array.isArray(d.items)) return d.items;} } catch(_){}
+    return base;
+  }
+  var items = getItems();
+  var current = items.filter(function(n){ return n && !n.done; });
+  var archived = items.filter(function(n){ return n && n.done; });
+  var cur = document.getElementById('news-current');
+  cur.innerHTML = current.length ? current.map(function(n){return card(n,false);}).join('')
+    : '<p class="news-empty">Ingen aktuelle nyheter akkurat nå.</p>';
+  if (archived.length) {
+    document.getElementById('arkiv').style.display = '';
+    document.getElementById('news-archive').innerHTML = archived.map(function(n){return card(n,true);}).join('');
+  }
+})();
+</script>
+<script src="report.js"></script>
+<script src="site-search.js"></script>
+</body>
+</html>

@@ -5,6 +5,7 @@ Statisk nettside (HTML/CSS/JS). Ingen byggesteg, ingen avhengigheter å installe
 **Vibrasjonskoding har aldri vært så effektivt!**
 
 Se [HVORDAN.md](/HVORDAN.md) for hvordan man kan redigere og bruke nettsiden, samt meget rotete informasjon om den.
+
 Se [CHANGELOG.md](/CHANGELOG.md) for hva som har blitt gjort.
 
 # OBS!: 
@@ -38,7 +39,7 @@ Medium:
 - [ ] Legge til side for møtereferat -> Kan tas i egen wiki, muligens.
 - [ ] Live forhåndsvisning i alle admin-paneler (som i `footer-admin.html`). Merch, Index, Meny, Begrep, Hjelp, og Styret er gjort -> Mangler Utmerkelser, Oppnåelser. Footer preview må oppdateres. 
 - [ ] Sammenlign med https://www.mfplacebo.no/
-- [ ] Oppslagstavla på index er i liten oppløsning og ser litt grumsete ut.
+- [x] Oppslagstavla på index er i liten oppløsning og ser litt grumsete ut.
 
 Lav:
 - [ ] Fylle ut SAK / utvide den.

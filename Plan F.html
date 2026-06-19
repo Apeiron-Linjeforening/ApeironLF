@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Veikart — Apeiron CMS (handoff)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --navy:#232740; --navy-2:#1a1d33; --gold:#d4af37; --gold-ink:#8a6d18;
+  --maroon:#76110f; --paper:#f4ecd9; --paper-2:#efe5cd; --card:#fbf7ec;
+  --ink:#232740; --ink-soft:#4a4d63; --line:rgba(35,39,64,.14); --line-2:rgba(35,39,64,.26);
+  --display:"Cormorant Garamond",Georgia,serif; --body:"Spectral",Georgia,serif;
+  --maxw:980px;
+  --green:#1f6f4a; --green-bg:rgba(31,111,74,.1);
+  --amber:#9a6a00; --amber-bg:rgba(212,175,55,.15);
+  --grey:#6a6d7e; --grey-bg:rgba(106,109,126,.1);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;scroll-padding-top:84px;}
+body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.62;font-size:17px;-webkit-font-smoothing:antialiased;}
+body::before{
+  content:"";position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:.5;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;line-height:1.06;letter-spacing:-.01em;}
+a{color:inherit;}
+code{background:rgba(35,39,64,.08);padding:1px 6px;border-radius:3px;font-size:.86em;}
+
+/* ── Header ── */
+.masthead{
+  background:
+    radial-gradient(120% 90% at 80% 0%, rgba(212,175,55,.16), transparent 55%),
+    radial-gradient(80% 70% at 0% 100%, rgba(118,17,15,.32), transparent 60%),
+    var(--navy);
+  color:var(--paper);padding:72px 28px 60px;text-align:center;position:relative;overflow:hidden;
+}
+.masthead__eyebrow{font-size:.72rem;font-weight:600;letter-spacing:.34em;text-transform:uppercase;color:var(--gold);}
+.masthead h1{font-size:clamp(2.6rem,6vw,4.4rem);color:var(--paper);margin:.3em 0 .15em;}
+.masthead__sub{font-family:var(--display);font-style:italic;font-size:clamp(1.1rem,2.4vw,1.5rem);color:var(--gold);}
+.masthead__meta{font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(244,236,217,.6);margin-top:1.6em;}
+
+/* ── Layout ── */
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px;}
+.section{padding:64px 0;}
+.section + .section{border-top:1px solid var(--line);}
+.eyebrow{font-size:.72rem;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--gold-ink);display:inline-flex;align-items:center;gap:.7em;}
+.eyebrow::before{content:"";width:28px;height:1px;background:currentColor;opacity:.6;}
+.h-section{font-size:clamp(2rem,4.5vw,3rem);margin:.3em 0 .2em;}
+.lede{font-size:1.16rem;color:var(--ink-soft);max-width:64ch;}
+.rule{border:0;border-top:1px solid var(--ink);opacity:.2;margin:0;}
+
+/* ── State block ── */
+.state{background:var(--navy);color:var(--paper);border-radius:5px;padding:30px 32px;margin-top:1.6em;}
+.state h3{color:var(--gold);font-size:1.45rem;margin-bottom:.5em;}
+.state p{color:rgba(244,236,217,.85);font-size:1rem;}
+.state p + p{margin-top:.7em;}
+.state code{background:rgba(244,236,217,.12);color:var(--paper);}
+.state strong{color:var(--paper);font-weight:600;}
+.state ul{margin:.7em 0 0;padding-left:1.2em;color:rgba(244,236,217,.85);}
+.state li{margin:.34em 0;}
+
+/* ── Cluster ── */
+.cluster__head{display:flex;align-items:baseline;gap:.7em;flex-wrap:wrap;}
+.cluster__tag{font-family:var(--display);font-size:2.4rem;font-weight:700;color:var(--gold);line-height:1;}
+
+/* ── Task card ── */
+.tasks{display:flex;flex-direction:column;gap:18px;margin-top:2em;}
+.task{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--grey);border-radius:3px;padding:22px 26px;}
+.task--done{border-left-color:var(--green);}
+.task--now{border-left-color:var(--gold);}
+.task--soon{border-left-color:var(--maroon);}
+.task--later{border-left-color:var(--grey);}
+.task__top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.task__id{font-family:var(--body);font-weight:700;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-ink);}
+.task__title{font-size:1.45rem;margin:.15em 0 .1em;}
+.task__badges{display:flex;gap:8px;flex-wrap:wrap;flex-shrink:0;}
+.badge{font-size:.64rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:.42em .8em;border-radius:2px;white-space:nowrap;border:1px solid transparent;}
+.badge--done{background:var(--green-bg);color:var(--green);border-color:rgba(31,111,74,.3);}
+.badge--now{background:var(--amber-bg);color:var(--amber);border-color:rgba(212,175,55,.4);}
+.badge--soon{background:rgba(118,17,15,.1);color:var(--maroon);border-color:rgba(118,17,15,.3);}
+.badge--later{background:var(--grey-bg);color:var(--grey);border-color:rgba(106,109,126,.3);}
+.badge--size{background:transparent;color:var(--ink-soft);border-color:var(--line-2);}
+.task__body{margin-top:.7em;color:var(--ink-soft);font-size:1.02rem;}
+.task__body p + p{margin-top:.7em;}
+.task__body strong{color:var(--ink);font-weight:600;}
+.task__rec{margin-top:1em;padding:.9em 1.1em;background:rgba(212,175,55,.08);border:1px dashed rgba(212,175,55,.5);border-radius:3px;font-size:.94rem;}
+.task__rec b{font-family:var(--body);text-transform:uppercase;letter-spacing:.12em;font-size:.7rem;color:var(--gold-ink);display:block;margin-bottom:.3em;}
+.task__list{margin:.7em 0 0;padding-left:1.2em;}
+.task__list li{margin:.35em 0;}
+.q{color:var(--maroon);font-style:italic;}
+
+/* ── Roadmap ── */
+.road{counter-reset:step;margin-top:1.6em;display:flex;flex-direction:column;gap:2px;}
+.road__item{display:flex;gap:18px;align-items:flex-start;padding:16px 0;border-bottom:1px solid var(--line);}
+.road__num{font-family:var(--display);font-size:1.6rem;font-weight:700;color:var(--gold);min-width:1.6em;line-height:1;}
+.road__txt strong{font-size:1.08rem;}
+.road__txt p{font-size:.92rem;color:var(--ink-soft);margin-top:.2em;}
+.road__item--done{opacity:.62;}
+.road__item--done .road__num{color:var(--green);}
+
+/* ── Callout ── */
+.callout{background:var(--navy);color:var(--paper);border-radius:4px;padding:28px 30px;margin-top:1.6em;}
+.callout h3{color:var(--gold);font-size:1.4rem;margin-bottom:.4em;}
+.callout p{color:rgba(244,236,217,.85);font-size:1rem;}
+.callout p + p{margin-top:.7em;}
+.callout a{color:var(--gold);}
+
+.note{font-size:.86rem;color:var(--ink-soft);font-style:italic;margin-top:1em;}
+
+footer.foot{background:var(--navy-2);color:rgba(244,236,217,.7);text-align:center;padding:40px 28px;font-size:.82rem;letter-spacing:.04em;}
+footer.foot .gold{color:var(--gold);}
+
+@media(max-width:640px){
+  body{font-size:16px;}
+  .task__top{flex-direction:column;}
+  .section{padding:48px 0;}
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead__eyebrow">Apeiron · Filosofi &amp; Etikk · NTNU</div>
+  <h1>Veikart — Apeiron CMS</h1>
+  <div class="masthead__sub">Handoff: hvor vi står, og hva som er neste steg</div>
+  <div class="masthead__meta">Sist oppdatert 19.06.2026 · plukk opp hvor som helst</div>
+</header>
+
+<!-- ============ HVOR VI STÅR ============ -->
+<section class="section">
+  <div class="wrap">
+    <span class="eyebrow">Les dette først</span>
+    <h2 class="h-section">Hvor vi står nå</h2>
+    <p class="lede">Sluttmålet: en <strong>klonbar mal</strong> der hvilken som helst linjeforening kan klone
+      repoet og bygge sin egen nettside <em>kun gjennom admin</em> — gratis, uten server. Squarespace-følelse
+      på statisk git-hosting. Fundamentet for dette er nå på plass.</p>
+
+    <div class="state">
+      <h3>✓ Ferdig: samlet Admin-senter (Klynge C)</h3>
+      <p>All innholdsredigering bor nå i <strong>ett</strong> sted: <code>admin.html</code> (Admin-senteret).
+        Det er et <strong>skall + moduler</strong>: skallet gir meny, oversikt og en modul-vert; hver editor
+        er en tynn modul i <code>admin-modules/&lt;id&gt;.js</code>.</p>
+      <p>Alle <strong>13</strong> tidligere frittstående <code>*-admin.html</code>-sidene er migrert og slettet:
+        medlemskap, footer, hjelp, oppnåelser, utmerkelser, om-oss, forsiden (index), styret, begrep, oppslag,
+        nyheter, meny, merch.</p>
+      <p><strong>Slik henger det sammen (viktig for å fortsette):</strong></p>
+      <ul>
+        <li><code>admin.html</code> — skallet. Registeret <code>PANELS[]</code> lister hver modul; «↓ Last ned»
+          + «Se siden» er kontekst-knapper i headeren som kaller den aktive modulens <code>export()</code>.</li>
+        <li><code>admin-common.js</code> — delt: <code>createStore(lsKey, freshFn)</code> (utkast-lager:
+          <code>save</code>/<code>lazySave</code>/<code>reset</code>), <code>esc</code>, <code>enhanceHelp</code>,
+          <code>enableDragSort</code>, <code>saveFile</code>, <code>toast</code>, og registeret
+          <code>AdminPanels.define(id, {title, see, exportName, mount(host, AC)})</code>.</li>
+        <li>En modul sin <code>mount(host, AC)</code> bygger editoren i <code>host</code> og returnerer
+          <code>{ export, destroy }</code>. <code>destroy</code> rydder lyttere/modaler ved panelbytte.</li>
+        <li><code>admin-modules.css</code> — per-modul CSS, klasse-scopet (<code>.mod-meny</code>,
+          <code>.mod-merch</code> …).</li>
+        <li>Full arkitekturbeskrivelse: <code>docs/admin-arkitektur.md</code>.</li>
+      </ul>
+      <p><strong>Redigeringsløkka i dag:</strong> rediger i admin → «↓ Last ned» data-fil → commit/push til
+        GitHub → Cloudflare bygger (~1 min). Det er <em>denne</em> nedlasting+commit-følelsen de neste to
+        stegene (G1) fjerner.</p>
+    </div>
+
+    <p class="note">Krav som styrer alt under: <strong>gratis og uten server.</strong> Ingen løpende kostnad,
+      ingen database. Alt skal kunne kjøre som statisk git-hosting (Cloudflare Pages).</p>
+  </div>
+</section>
+
+<hr class="rule" />
+
+<!-- ============ NESTE: NORDSTJERNEN ============ -->
+<section class="section">
+  <div class="wrap">
+    <div class="cluster__head">
+      <span class="cluster__tag">G</span>
+      <div>
+        <span class="eyebrow">Nordstjernen — det vi bygger mot nå</span>
+        <h2 class="h-section">Git-CMS &amp; klonbar mal</h2>
+      </div>
+    </div>
+
+    <div class="tasks">
+
+      <article class="task task--now">
+        <div class="task__top">
+          <div>
+            <span class="task__id">G1 · Git-basert CMS-følelse</span>
+            <h3 class="task__title">«Lagre» = commit. Ingen nedlasting, ingen manuell push.</h3>
+          </div>
+          <div class="task__badges">
+            <span class="badge badge--now">Neste store steg</span>
+            <span class="badge badge--size">Stor</span>
+          </div>
+        </div>
+        <div class="task__body">
+          <p>Smerten i dag: «lagre» betyr last-ned-fil + commit + push. Det føles ikke som Squarespace.
+            G1 lar admin <strong>committe data-filene direkte til GitHub</strong> via GitHubs API +
+            OAuth-innlogging — fortsatt 100 % statisk, fortsatt gratis. Redaktøren ser bare
+            «Lagre → live om et minutt».</p>
+          <div class="task__rec">
+            <b>Konkret fremgangsmåte</b>
+            <ul class="task__list">
+              <li>Vurder ferdig mønster: <strong>Decap CMS</strong> (tidl. Netlify CMS) eller
+                <strong>TinaCMS</strong> sin git-backend — begge er gratis og server-løse. Alternativt et
+                tynt eget lag mot GitHub Contents API.</li>
+              <li>OAuth uten egen server: GitHub OAuth krever normalt en liten token-exchange. Gratis-veier:
+                Cloudflare Pages Functions (samme hosting), eller Decaps innebygde GitHub-backend med en
+                gratis OAuth-proxy.</li>
+              <li>Behold modulenes <code>export()</code> som fallback; legg til en <code>commit()</code>-vei
+                i skallet som skriver samme data-fil via API i stedet for nedlasting.</li>
+              <li>Datamodellen er allerede fil-per-område (<code>*-content.js</code> / <code>*-config.js</code>)
+                — det passer git-CMS godt. Vurder om noen bør bli <code>.json</code> for renere commits.</li>
+            </ul>
+          </div>
+          <p class="q">Avklar først: er styret ok med GitHub-innlogging (OAuth) for redaktører, eller skal
+            innlogging være helt skjult bak noe enklere? Dette avgjør backend-valget.</p>
+        </div>
+      </article>
+
+      <article class="task task--later">
+        <div class="task__top">
+          <div>
+            <span class="task__id">G2 · Klonbar mal</span>
+            <h3 class="task__title">Enhver forening kloner repoet og bygger sin egen side via admin</h3>
+          </div>
+          <div class="task__badges">
+            <span class="badge badge--later">Sluttmål</span>
+            <span class="badge badge--size">Stor</span>
+          </div>
+        </div>
+        <div class="task__body">
+          <p>Når innhold, seksjoner og tema alle er data-drevne og redigerbare (F1–F4 under), kan en hvilken
+            som helst forening: <strong>klon repo → åpne admin → bygg sin side → publiser.</strong></p>
+          <div class="task__rec">
+            <b>Forutsetninger (rekkefølge)</b>
+            <ul class="task__list">
+              <li>F1 — all tekst som data (ikke hardkodet i HTML).</li>
+              <li>F2 + F3 — seksjoner av/på og sortering som data → admin kan «+ Ny seksjon».</li>
+              <li>F4 — tema (farger/font/logo) redigerbart i admin (bygger på at sidene allerede bruker
+                CSS-variabler).</li>
+              <li>G1 — «lagre = commit» så ikke-tekniske styrer slipper GitHub helt.</li>
+              <li>Til slutt: en <strong>oppsett-veiviser</strong> ved første klon (foreningsnavn, farger,
+                logo) som fyller startdataene.</li>
+            </ul>
+          </div>
+          <p>Hvert F-steg gir verdi for Apeiron alene <em>og</em> bygger mot det klonbare produktet — ingen
+            bortkastet innsats.</p>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<hr class="rule" />
+
+<!-- ============ BYGGEKLOSSENE (F) ============ -->
+<section class="section">
+  <div class="wrap">
+    <div class="cluster__head">
+      <span class="cluster__tag">F</span>
+      <div>
+        <span class="eyebrow">Byggeklossene mot klonbar mal — innholdsarbeid</span>
+        <h2 class="h-section">Fire trinn</h2>
+      </div>
+    </div>
+
+    <div class="tasks">
+
+      <article class="task task--now">
+        <div class="task__top">
+          <div>
+            <span class="task__id">F1 · Resterende statisk tekst</span>
+            <h3 class="task__title">Gjør all tekst redigerbar — ikke bare det som endres ofte</h3>
+          </div>
+          <div class="task__badges">
+            <span class="badge badge--now">Lavest terskel</span>
+            <span class="badge badge--size">Middels</span>
+          </div>
+        </div>
+        <div class="task__body">
+          <p>Tekst som fortsatt er hardkodet i HTML: hero-tittel «Apeiron» og ingress, overskriften «Hva er
+            apeiron?», «Bli medlem»-fordeler, teksten i Fellesskap &amp; samarbeid, Lesesalen, og
+            seksjonsoverskrifter på tvers av sidene.</p>
+          <div class="task__rec">
+            <b>Fremgangsmåte (ingen ny infrastruktur)</b>
+            Samme mønster som er brukt overalt: flytt teksten ut i content-fila for siden, les den inn ved
+            sideopplasting, og legg feltene til riktig <strong>modul</strong> i <code>admin-modules/</code>.
+            Bruk <code>createStore</code> + modulens <code>export()</code> — alt fundamentet finnes.
+          </div>
+          <p class="q">Avgjør først: hvilke tekster er viktigst å få redigerbare i første runde?</p>
+        </div>
+      </article>
+
+      <article class="task task--later">
+        <div class="task__top">
+          <div>
+            <span class="task__id">F2 · Legg til og fjern seksjoner</span>
+            <h3 class="task__title">Styre hvilke seksjoner som vises på en side</h3>
+          </div>
+          <div class="task__badges">
+            <span class="badge badge--later">Etter F1</span>
+            <span class="badge badge--size">Stor</span>
+          </div>
+        </div>
+        <div class="task__body">
+          <p>I dag er antallet seksjoner per side fastlåst i HTML. F2 gjør det mulig å <strong>slå seksjoner
+            av/på</strong> fra admin — og er det arkitektur-steget som låser opp den klonbare malen (G2).</p>
+          <div class="task__rec">
+            <b>Teknisk kjerne</b>
+            Hver seksjon registreres i en side-content-fil med et <code>enabled</code>-flagg (og etter hvert
+            en <code>type</code>), og siden rendrer fra den lista i stedet for fast HTML. Dette er det
+            største enkeltsteget — planlegg datamodellen grundig før koding.
+          </div>
+        </div>
+      </article>
+
+      <article class="task task--later">
+        <div class="task__top">
+          <div>
+            <span class="task__id">F3 · Sorter og flytt seksjoner</span>
+            <h3 class="task__title">Dra for å endre rekkefølgen på seksjoner</h3>
+          </div>
+          <div class="task__badges">
+            <span class="badge badge--later">Etter F2</span>
+            <span class="badge badge--size">Liten</span>
+          </div>
+        </div>
+        <div class="task__body">
+          <p>Når F2 gir en seksjonsliste i admin, legger F3 til drag-sortering med <code>AdminCommon.enableDragSort</code>
+            — nøyaktig samme mønster modulene allerede bruker for menypunkter, oppslag og styremedlemmer.
+            Rekkefølgen lagres i content-fila.</p>
+        </div>
+      </article>
+
+      <article class="task task--later">
+        <div class="task__top">
+          <div>
+            <span class="task__id">F4 · Global designkontroll (tema)</span>
+            <h3 class="task__title">Farger, fonter, logo og spacing fra admin</h3>
+          </div>
+          <div class="task__badges">
+            <span class="badge badge--later">Muliggjør kloning</span>
+            <span class="badge badge--size">Stor</span>
+          </div>
+        </div>
+        <div class="task__body">
+          <p>En egen <strong>Tema</strong>-modul: primær-/aksentfarger, fontvalg, logo, avrundinger og
+            spacing-skala. Lagres som CSS-variabler i en egen fil (<code>theme-overrides.css</code> eller
+            <code>theme-config.js</code>) og leses av alle sider. Dette er det som gjør at en annen forening
+            kan få <em>sitt</em> uttrykk uten å røre <code>styles.css</code>.</p>
+          <div class="task__rec">
+            <b>Forutsetning finnes allerede</b>
+            Sidene bruker i stor grad CSS-variabler (<code>--navy</code>, <code>--gold</code>, <code>--paper</code> …)
+            og fontvariabler. F4 handler om å eksponere disse som redigerbare tokens — gjenbruk gjerne
+            fargekontrollen i <code>palette.js</code> som modulene allerede bruker.
+          </div>
+          <p class="q">Avklar: ønsker Apeiron faktisk å endre eget uttrykk fra år til år, eller er tema-modulen
+            primært for den klonbare malen?</p>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<hr class="rule" />
+
+<!-- ============ ROADMAP ============ -->
+<section class="section">
+  <div class="wrap">
+    <span class="eyebrow">Foreslått rekkefølge</span>
+    <h2 class="h-section">Veikartet</h2>
+    <p class="lede">Hvert trinn gir verdi alene og bygger mot den klonbare malen. Planlegg grundig før hvert steg.</p>
+
+    <div class="road">
+      <div class="road__item road__item--done"><span class="road__num">✓</span><div class="road__txt"><strong>Samlet Admin-senter (Klynge C)</strong><p>Skall + moduler i <code>admin.html</code>. Alle 13 paneler migrert. Dette dekket og overgikk det gamle «F5 — samlet dashbord».</p></div></div>
+      <div class="road__item"><span class="road__num">1</span><div class="road__txt"><strong>F1 — Resterende statisk tekst redigerbar</strong><p>Lavest terskel, ingen ny infrastruktur. Flytt hardkodet tekst ut i content-filer, legg feltene til modulene.</p></div></div>
+      <div class="road__item"><span class="road__num">2</span><div class="road__txt"><strong>G1 — Git-CMS: «lagre = commit»</strong><p>Kan tas parallelt med F1. Fjerner nedlasting+push. Decap/Tina eller eget GitHub-API-lag. Server-løst.</p></div></div>
+      <div class="road__item"><span class="road__num">3</span><div class="road__txt"><strong>F2 — Seksjoner av/på</strong><p>Største arkitektursteg. Seksjoner som data m/ <code>enabled</code>-flagg. Låser opp kloning.</p></div></div>
+      <div class="road__item"><span class="road__num">4</span><div class="road__txt"><strong>F3 — Seksjonsortering</strong><p>Liten: drag-sort på seksjonslista fra F2.</p></div></div>
+      <div class="road__item"><span class="road__num">5</span><div class="road__txt"><strong>F4 — Tema-modul</strong><p>Farger/font/logo som tokens i admin. Gjenbruk <code>palette.js</code>.</p></div></div>
+      <div class="road__item"><span class="road__num">6</span><div class="road__txt"><strong>G2 — Klonbar mal + oppsett-veiviser</strong><p>Sluttmål. Forutsetter F1–F4 + G1. Klon → admin → bygg → publiser.</p></div></div>
+    </div>
+
+    <div class="callout">
+      <h3>Avgjørelser som trengs før du fortsetter</h3>
+      <p><strong>G1 — innlogging:</strong> er GitHub OAuth greit for redaktører, eller må innlogging skjules bak noe enklere? (Avgjør backend-valg: Decap vs. Tina vs. eget lag.)</p>
+      <p><strong>F1 — hvilke tekster først?</strong> Pek ut de viktigste hardkodede tekstene for første runde.</p>
+      <p><strong>F4 — designbehov:</strong> skal Apeiron kunne endre eget uttrykk årlig, eller er tema-modulen mest for malen?</p>
+    </div>
+
+    <p class="note">Filer å kjenne for å fortsette: <code>admin.html</code> (skall + <code>PANELS[]</code>),
+      <code>admin-common.js</code> (<code>createStore</code>, <code>AdminPanels</code>),
+      <code>admin-modules/*.js</code> (én editor hver), <code>admin-modules.css</code> (scopet stil),
+      <code>docs/admin-arkitektur.md</code> (full forklaring). Statuslogg: <code>STATUS.md</code> +
+      <code>CHANGELOG.md</code>.</p>
+  </div>
+</section>
+
+<footer class="foot">
+  <span class="gold">APEIRON</span> · Linjeforening for filosofi og etikk · NTNU<br />
+  Veikart — Apeiron CMS · git-CMS &amp; klonbar mal
+</footer>
+
+</body>
+</html>

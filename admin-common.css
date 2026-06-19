@@ -103,3 +103,8 @@
   opacity: 1;
   visibility: visible;
 }
+
+/* Passordet er fjernet — innloggings-gaten skal aldri vises.
+   Denne regelen lastes i <head> (render-blocking) så «Logg inn»-skjermen
+   aldri blinker til før admin-common.js rekker å skjule den. */
+#gate { display: none !important; }

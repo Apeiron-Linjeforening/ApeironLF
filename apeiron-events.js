@@ -122,6 +122,19 @@
     if (statusEl) { statusEl.innerHTML = ''; statusEl.style.display = 'none'; }
     buildFilters();
     render();
+    emitNextEvent();
+  }
+
+  // Send «neste kommende arrangement» til Akkurat nå-panelet (apeiron-news.js).
+  // Helt valgfritt: gjør ingenting hvis panelet/kroken ikke finnes.
+  function emitNextEvent() {
+    try {
+      if (typeof window.apeironNewsNextEvent !== 'function') return;
+      var now = new Date();
+      var up = (state.events || []).filter(function (e) { return e.start >= now; })
+        .sort(function (a, b) { return a.start - b.start; });
+      window.apeironNewsNextEvent(up[0] || null, !!state.live, 'activity');
+    } catch (_) {}
   }
 
   function buildFilters() {

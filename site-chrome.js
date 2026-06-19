@@ -141,6 +141,7 @@
         '<div class="footer__fine">' + esc(f.fine || '') + '</div>' +
         (social ? '<div class="footer__social">' + social + '</div>' : '') +
         (rep.email ? '<div class="footer__report"><a href="' + mailto + '">' + esc(rep.label || 'Rapporter en feil') + '</a></div>' : '') +
+        '<div class="footer__admin" style="margin-top:16px"><a href="admin.html" style="font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;opacity:.38;color:inherit;transition:opacity .2s" onmouseover="this.style.opacity=.85" onmouseout="this.style.opacity=.38">Admin</a></div>' +
       '</div>' +
     '</footer>';
   }

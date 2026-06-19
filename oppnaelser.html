@@ -75,13 +75,12 @@ html[data-mode="marine"] .award-card { border-left-color: var(--c-d, var(--gold)
   position: relative; width: 100%; aspect-ratio: 16 / 10;
   background: var(--navy); border-bottom: 1px solid var(--line);
 }
-.award-card__img image-slot { width: 100%; height: 100%; display: block; }
-.award-card__img image-slot:not([data-editable]) { pointer-events: none; cursor: default; }
+.award-card__img img { width: 100%; height: 100%; display: block; object-fit: cover; }
 .award-card__img-fallback {
   position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
   font-family: var(--display); font-size: 2.6rem; color: rgba(212,175,55,.4); pointer-events: none;
 }
-.award-card__img:has(image-slot[data-filled]) .award-card__img-fallback { display: none; }
+.award-card__img:has(img) .award-card__img-fallback { display: none; }
 
 .award-card__medal {
   position: absolute; top: 12px; left: 12px; z-index: 3;
@@ -145,7 +144,6 @@ html[data-mode="marine"] .award-card { border-left-color: var(--c-d, var(--gold)
 <script src="nav-content.js"></script>
 <script src="site-chrome.js"></script>
 
-<script src="image-slot.js"></script>
 <script src="palette.js"></script>
 <script src="oppnaelser-content.js"></script>
 <script>
@@ -188,7 +186,7 @@ html[data-mode="marine"] .award-card { border-left-color: var(--c-d, var(--gold)
       return '<div class="award-card reveal ' + STAGGER[i % 4] + '" style="' + accentStyle + '">'
         + '<div class="award-card__img">' + medal
         + '<span class="award-card__img-fallback">' + esc(fallback) + '</span>'
-        + '<image-slot shape="rect" fit="cover" placeholder="Plakat / diplom" src="' + esc(a.img || '') + '"></image-slot></div>'
+        + (a.img ? '<img src="' + esc(a.img) + '" alt="' + esc(a.title || '') + '" loading="lazy">' : '') + '</div>'
         + '<div class="award-card__body">'
         + '<h3>' + esc(a.title) + '</h3>'
         + meta

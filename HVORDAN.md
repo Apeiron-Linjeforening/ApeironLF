@@ -69,7 +69,7 @@ Admin-panelene kan skrive den oppdaterte datafila (f.eks. `merch-products.js`) *
 Dette krever at admin åpnes via en **lokal server** (nettleserens fil-skrive-API virker ikke når siden åpnes som `file://`):
 
 1. I terminalen, stå i repo-mappa og kjør: `python3 -m http.server`
-2. Åpne f.eks. `http://localhost:8000/merch-admin.html`
+2. Åpne `http://localhost:8000/admin.html` (Admin-senteret)
 3. Klikk «Last ned …» → **velg datafila i repoet din én gang** → godkjenn skrivetilgang
 4. Heretter lagres endringene rett til den lokale fila (toast: «Lagret direkte … ✓»). Filvalget huskes mellom økter.
 
@@ -78,6 +78,14 @@ Endringen ligger nå **kun lokalt** — den er ikke på GitHub/nettsiden før du
 ---
 
 ## Hva kan du redigere, og hvor?
+
+> **🛠️ Alt innhold redigeres ett sted: Admin-senteret.** Legg til `/admin.html`
+> i nettadressen (https://apeironlf.pages.dev/admin.html) — eller kjør lokalt.
+> Der finner du **alle** editorene (Nyheter, Meny, Merch, Styret, Begrep,
+> Medlemskap, Footer, Oppslagstavla m.fl.) i én bla-bar meny, hver med **live
+> forhåndsvisning** og en egen «↓ Last ned»-knapp. Ingen innlogging. De gamle
+> frittstående `*-admin.html`-sidene er borte — alt er nå moduler i `admin.html`.
+> (Arrangementer/Fadderuke styres fortsatt i Google Kalender, se under.)
 
 ### 📅 Arrangementer
 **Ingen kodeendring nødvendig.**
@@ -96,10 +104,9 @@ Skriv type med kolon: `Grill: Bli-kjent-kveld`
 ### 👥 Styret
 Styremedlemmene og vervbeskrivelsene styres via filen `styret-content.js` — **ikke** direkte i `styret.html` eller `index.html`. Begge sidene leser fra samme fil, så du oppdaterer alt ett sted.
 
-#### Enklest: bruk admin-panelet (`styret-admin.html`)
+#### Enklest: bruk Admin-senteret → Styret
 
-Åpne `styret-admin.html` i nettleseren (lokalt eller på nettsiden ved å legge til `/styret-admin.html` i adressefeltet).
-Du logger inn med passordet — spør styret.
+Åpne **Admin-senteret** (`admin.html`) og velg **Styret** i menyen. Ingen innlogging. (Alt innhold redigeres nå ett sted — de gamle frittstående `styret-admin.html`-sidene finnes ikke lenger.)
 
 I admin-panelet kan du:
 - Legge til, endre og slette styremedlemmer og verv («Hva gjør vi»)
@@ -125,10 +132,9 @@ Vi skal snakke med instituttet for å se om det er mulig å få en API til NTNU 
 ### 🛍️ Merch
 Merch-produkter styres via filen `merch-products.js` — **ikke** direkte i `merch.html`.
 
-#### Enklest: bruk admin-panelet (`merch-admin.html`)
+#### Enklest: bruk Admin-senteret → Merch
 
-Åpne `merch-admin.html` i nettleseren (lokalt eller på nettsiden). Dette gjør du ved å legge til `/merch-admin.html` på slutten av nettadressen (https://apeironlf.pages.dev/merch-admin.html).
-Du logger inn med passordet — spør sosialansvarlig eller sjekk med styret.
+Åpne **Admin-senteret** ved å legge til `/admin.html` på slutten av nettadressen (https://apeironlf.pages.dev/admin.html) og velg **Merch** i menyen. Ingen innlogging.
 
 I admin-panelet kan du:
 - Legge til, endre og slette produkter
@@ -168,15 +174,14 @@ Merch bestilles via en **handlekurv** på `merch.html`: kunden velger variant/an
 **Bilder (tre alternativer):**
 1. **Ingen bilde** (`img: null`) — viser Apeiron-seglet som watermark
 2. **Bilde fra repoet** — legg bildefilen i `assets/merch/` og sett `img: "assets/merch/filnavn.jpg"`
-3. **Innebygd bilde via admin** — last opp i `merch-admin.html`, eksporter JS-filen; bildet er da lagret direkte i `merch-products.js` (ingen ekstern fil nødvendig)
+3. **Innebygd bilde via admin** — last opp i Admin-senteret → Merch, eksporter JS-filen; bildet er da lagret direkte i `merch-products.js` (ingen ekstern fil nødvendig)
 
 ### 📰 Begrep
 Innholdet på Begrep-siden styres via `begrep-content.js` — **ikke** direkte i `begrep.html`.
 
-#### Enklest: bruk admin-panelet (`begrep-admin.html`)
+#### Enklest: bruk Admin-senteret → Begrep
 
-Åpne `begrep-admin.html` i nettleseren (lokalt eller på nettsiden ved å legge til `/begrep-admin.html` i adressefeltet).
-Du logger inn med passordet — spør styret.
+Åpne **Admin-senteret** (`admin.html`) og velg **Begrep** i menyen. Ingen innlogging. (Alt innhold redigeres nå ett sted — de gamle frittstående `begrep-admin.html`-sidene finnes ikke lenger.)
 
 I admin-panelet kan du:
 - Legge til, endre og slette utgaver, podkast-sesonger, filmer og julekalender-innslag
@@ -194,10 +199,9 @@ Bilder kan være `null` (viser plassholder), `"assets/begrep/filnavn.png"` (fra 
 ### 🆘 Hjelp & ressurser
 Innholdet på Hjelp-siden styres via `hjelp-content.js` — **ikke** direkte i `hjelp.html`.
 
-#### Enklest: bruk admin-panelet (`hjelp-admin.html`)
+#### Enklest: bruk Admin-senteret → Hjelp
 
-Åpne `hjelp-admin.html` i nettleseren (lokalt eller på nettsiden ved å legge til `/hjelp-admin.html` i adressefeltet).
-Du logger inn med passordet — spør styret.
+Åpne **Admin-senteret** (`admin.html`) og velg **Hjelp** i menyen. Ingen innlogging. (Alt innhold redigeres nå ett sted — de gamle frittstående `hjelp-admin.html`-sidene finnes ikke lenger.)
 
 I admin-panelet kan du:
 - Redigere topptekst og hurtignav-kortene øverst på siden
@@ -286,27 +290,83 @@ Gi det ønskede bildet navn `lesesal1.jpg` (overskriv eller slett det gamle).
 
 > **Støttede formater:** `.jpg` / `.jpeg`. Bruk rimelig komprimerte bilder (under 1–2 MB per fil) for at siden skal laste raskt.
 
-### 📰 Nyheter / hastebeskjeder på forsiden
-Du kan legge ut generelle nyheter og hastebeskjeder på forsiden **uten å røre koden** —
-du skriver dem i et Google Sheet «Nyheter» fra mobil eller PC, og de dukker opp på
-siden innen noen få minutter.
+### 📰 Nyheter / kunngjøringer / beskjeder
+Nyheter ligger nå i repoet (som styret, merch og oppslagstavla) og lastes
+**umiddelbart** — det gamle, trege Google Sheet-systemet er borte. Redigeres
+visuelt i **Admin-senteret → Nyheter** (`admin.html`), eller direkte i `news-content.js`.
 
-- **Plasseringer:** `topp` (tynn stripe rett under menyen), `hovedoppslag` (boks i
-  forsidebildet), `arrangement`, `aporetisk` og `fadderuke`. Du velger per nyhet i arket.
-- **Hastegrad:** velg `Hast` i rullegardinen for en tydelig vinrød markering, `Normal` gir vanlig gull-stil.
-- **Tidsvindu:** valgfrie `Fra`- og `Til`-datoer på formen `åå.mm.dd` (år.måned.dag,
-  altså året først, f.eks. `26.01.31`). Tom `Til` = blir stående til du fjerner den;
-  `Til` i fortid = forsvinner av seg selv; fjern avhukingen i `Synlig` = skjules uten å slette.
-- **Formatering i teksten:** `**fet**`, `*kursiv*`, `_understrek_`,
-  `[lenketekst](https://...)` og linjeskift.
+#### Enklest: bruk Admin-senteret → Nyheter
 
-Nyhetene ligger i et **eget regneark** («Apeiron Nyheter») med sitt **eget, separate
-Apps Script**, helt adskilt fra merch, så det er lett å finne og vanskelig å glemme.
-Oppsett (eget regneark + eget skript, gjøres én gang) er beskrevet i
-[docs/apps-script-oppsett.md](docs/apps-script-oppsett.md), seksjonen «Nyheter».
-URL settes i `news-config.js` (la den stå tom for å slå funksjonen av). Der ligger
-også et valgfritt `NEWS_TOKEN`, et lite bot-filter (ikke sikkerhet, se docs), som
-må være samme streng som i Apps Script.
+Åpne **Admin-senteret** (`admin.html`) og velg **Nyheter** i menyen. Ingen
+innlogging. Panelet viser nyhetene med **live forhåndsvisning** av forsiden
+mens du skriver.
+
+Per nyhet velger du:
+
+- **Vises på:** `Forsiden` (Akkurat nå-kortet i toppbildet), `Arrangementer`,
+  `Aporetisk Aften` eller `Fadderukene` (slank beskjed øverst i seksjonen).
+- **⚑ Viktig:** tydelig vinrød hastemarkering. Av = rolig gull.
+- **Tittel**, valgfri **tekst** (`**fet**`, `*kursiv*`, `_understrek_`,
+  `[lenketekst](https://…)`, linjeskift), valgfri **dato** (fritekst) og **lenke**.
+- **● Aktiv / ✓ Arkivert:** arkiver gamle nyheter i stedet for å slette dem —
+  da flyttes de til arkivet nederst på `nyheter.html`.
+
+Trykk **↓ Last ned news-content.js**, erstatt fila i GitHub og push. Siden
+oppdateres innen et minutt.
+
+> **Neste arrangement** i Akkurat nå-kortet hentes **automatisk** fra
+> arrangementskalenderen — det legger du ikke inn som nyhet.
+
+#### Lett mobilvei for hastebeskjeder (valgfri, live uten commit)
+
+Skal en hastebeskjed ut **med en gang fra mobil** uten å committe kode, finnes en
+egen liten side: **`hastebeskjed.html`** — én tekstboks, «Viktig»-bryter og
+«Publiser nå». Dette krever at styret setter opp et lite Apps Script **én gang**
+(samme prinsipp som merch-bestilling) og limer `…/exec`-URL-en inn i
+`window.NEWS_ENDPOINT` i `news-config.js`. La den stå **tom** for å bruke bare
+repo-nyhetene (standard). `NEWS_TOKEN` er et valgfritt bot-filter — samme streng
+her og i skriptet.
+
+<details>
+<summary><b>Apps Script for hastebeskjed (klikk for å vise)</b></summary>
+
+Lagrer ÉN aktiv hastebeskjed i skriptets egne egenskaper — ingen regneark nødvendig.
+**Utvidelser → Apps Script** på et hvilket som helst Google-dokument, lim inn, og
+**Distribuer → Web-app** («Kjør som: meg», «Tilgang: alle»). Kopier `…/exec`-URL-en.
+
+```javascript
+var NEWS_TOKEN = 'EN_HEMMELIG_TILFELDIG_STRENG'; // = window.NEWS_TOKEN i news-config.js
+var PROP = 'apeiron_flash';
+
+function doGet(e) {
+  if (NEWS_TOKEN && (!e.parameter || e.parameter.token !== NEWS_TOKEN)) return out([]);
+  var raw = PropertiesService.getScriptProperties().getProperty(PROP);
+  return out(raw ? [JSON.parse(raw)] : []);
+}
+function doPost(e) {
+  var d = {};
+  try { d = JSON.parse(e.postData.contents); } catch (err) {}
+  if (NEWS_TOKEN && d.token !== NEWS_TOKEN) return out({ ok: false });
+  if (d.hp) return out({ ok: false });               // honeypot
+  var props = PropertiesService.getScriptProperties();
+  if (d.action === 'clear') { props.deleteProperty(PROP); return out({ ok: true }); }
+  props.setProperty(PROP, JSON.stringify({
+    place: d.place || 'panel', urgent: !!d.urgent, title: d.title || '',
+    text: d.text || '', link: d.link || '', linkLabel: d.linkLabel || 'Les mer'
+  }));
+  return out({ ok: true });
+}
+function out(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+}
+```
+
+</details>
+
+#### Manuelt: rediger `news-content.js` direkte
+
+Filen inneholder `window.NEWS_CONTENT = { items: [...] }`. Feltene er forklart
+øverst i fila (`place`, `urgent`, `title`, `text`, `date`, `link`, `linkLabel`, `done`).
 
 ### 📖 Om oss / øvrig tekst
 All annen tekst (om oss, studiene, FAQ, kontakt osv.) redigeres direkte i `index.html`.
@@ -442,14 +502,17 @@ function doPost(e) {
 | `index.html`                  | Forsiden (hoveddelen av nettsiden)                                               |
 | `pensum.html`                 | Pensum-oversikt                                                                  |
 | `merch.html`                  | Merch-side (produkter hentes fra `merch-products.js`)                            |
-| `merch-admin.html`            | 'Passordbeskyttet' admin-panel for å redigere merch                              |
-| `merch-products.js`           | Produktdata for merch (redigeres via admin-panel)                                |
+| `merch-products.js`           | Produktdata for merch (redigeres via Admin-senteret → Merch)                     |
 | `merch-cart.js`               | Handlekurv + bestilling på merch-siden                                           |
 | `merch-config.js`             | Innstillinger for merch-bestilling (Apps Script-URL, Vipps, bot-filter-token)    |
-| `apeiron-news.js`             | Henter «trådløse» nyheter til forsiden fra «Apeiron Nyheter» (Apps Script)       |
-| `news-config.js`              | Innstillinger for nyheter (eget Apps Script-URL + bot-filter-token)              |
-| `medlemskap-admin.html`       | 'Passordbeskyttet' admin-panel for medlemskapspriser                             |
-| `membership-config.js`        | Medlemskapsdata (priser/Vipps/steg — redigeres via admin-panel)                  |
+| `apeiron-news.js`             | Nyheter på forsiden: «Akkurat nå»-kortet + beskjeder (leser `news-content.js`)  |
+| `news-content.js`             | Nyheter/kunngjøringer/beskjeder (redigeres via Admin-senteret → Nyheter)         |
+| `nyheter.html`                | Nyhetsside med arkiv over tidligere oppslag                                      |
+| `hastebeskjed.html`           | Lett mobilside for å legge ut én hastebeskjed live (valgfri Apps Script)         |
+| `news-config.js`              | Valgfri live-kanal for hastebeskjed (Apps Script-URL + bot-filter-token)         |
+| `admin.html`                  | **Admin-senter** — én inngang for ALL redigering; oversikt + bla-bar meny; mounter editor-modulene |
+| `admin-modules/`              | Én fil per editor (medlemskap, meny, merch, styret, nyheter …) som skallet mounter |
+| `membership-config.js`        | Medlemskapsdata (priser/Vipps/steg — redigeres via Admin-senteret → Medlemskap)  |
 | `membership.js`               | Fyller «Bli medlem»-kortet på forsiden fra `membership-config.js`                |
 | `admin-common.js`             | Delt admin-logikk: innlogging, «logg ut», varsler, hjelpebobler, fillagring      |
 | `admin-common.css`            | Delt stil for admin-panelene                                                     |
@@ -457,14 +520,11 @@ function doPost(e) {
 | `galleri.html`                | Bildegalleri (henter automatisk fra Google Drive)                                |
 | `marked.html`                 | Kjøp & bytte (pensum-marked)                                                     |
 | `begrep.html`                 | Side for Begrep-tidsskriftet (utgaver, podkast, film, julekalender)              |
-| `begrep-admin.html`           | 'Passordbeskyttet' admin-panel for å redigere Begrep-innhold                     |
-| `begrep-content.js`           | Innholdsdata for Begrep-siden (redigeres via admin-panel)                        |
+| `begrep-content.js`           | Innholdsdata for Begrep-siden (redigeres via Admin-senteret → Begrep)            |
 | `hjelp.html`                  | Hjelp & ressurser (leser fra `hjelp-content.js`)                                 |
-| `hjelp-admin.html`            | 'Passordbeskyttet' admin-panel for å redigere Hjelp-siden                        |
-| `hjelp-content.js`            | Innholdsdata for Hjelp-siden (redigeres via admin-panel)                         |
+| `hjelp-content.js`            | Innholdsdata for Hjelp-siden (redigeres via Admin-senteret → Hjelp)              |
 | `styret.html`                 | Styret og beskrivelse av alle styreverv (leser fra `styret-content.js`)          |
-| `styret-admin.html`           | 'Passordbeskyttet' admin-panel for å redigere styret og verv                     |
-| `styret-content.js`           | Innholdsdata for styret-siden (redigeres via admin-panel)                        |
+| `styret-content.js`           | Innholdsdata for styret-siden (redigeres via Admin-senteret → Styret)            |
 | `styles.css`                  | All styling                                                                      |
 | `app.js`                      | Meny, scroll-animasjoner og generell funksjonalitet                              |
 | `theme.js`                    | Lys/mørk-modus: setter `data-mode` på `<html>` før første paint og binder toggle |

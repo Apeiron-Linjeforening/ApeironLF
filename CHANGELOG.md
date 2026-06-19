@@ -1,5 +1,19 @@
 ## Siste endringer
 
+**19.06.26 — Samlet Admin-senter: alle 13 paneler er nå moduler (Klynge C ferdig)**
+- **Én inngang for all redigering:** `admin.html` er nå et skall som mounter editor-moduler inline. De **13** tidligere frittstående `*-admin.html`-sidene er migrert til `admin-modules/<id>.js` og **slettet**: medlemskap, footer, hjelp, oppnåelser, utmerkelser, om-oss, forsiden (index), styret, begrep, oppslag, nyheter, meny, merch.
+- **Felles fundament i `admin-common.js`:** nytt datalager `createStore(lsKey, freshFn)` (auto-lagre utkast i localStorage, `save`/`lazySave`/`reset`), `esc`-hjelper, og panel-registeret `AdminPanels.define(id, {title, see, exportName, mount(host, AC)})`. Hver modul returnerer `{ export, destroy }`; `destroy` rydder lyttere/modaler ved panelbytte (ingen leaks).
+- **Per-modul CSS** samlet i `admin-modules.css`, klasse-scopet (`.mod-meny`, `.mod-merch` …). Skallet gir kontekst-knappene «↓ Last ned» + «Se siden» i headeren per modul.
+- **Bevart full funksjonalitet:** meny beholder dobbel live-preview (desktop nav + mobil-skuff via srcdoc med ekte `site-chrome.js`), angre/gjør-om og 📍-stedvelger; merch beholder bildegalleri m/ crop/zoom/rotasjon, farge-bilde-kobling, badges og fargekontroller + live butikk-preview; nyheter beholder per-sone-beskjeder + arkiv.
+- **Flash-bug fikset:** «Logg inn»-gaten (død markup) blinket ved sidebytte — nå nøytralisert ved kilden (`#gate { display:none }`) i alle filer, uavhengig av cache/lasterekkefølge.
+- **Ny doc `docs/admin-arkitektur.md`:** beskriver skall+modul-mønsteret og veikartet videre — git-basert CMS-følelse (lagre = commit, ingen nedlasting) → klonbar mal der enhver linjeforening kan klone repoet og bygge sin egen side gjennom admin (gratis, uten server).
+- **`HVORDAN.md` / `STATUS.md` oppdatert** til å peke på Admin-senteret i stedet for de gamle panelene.
+
+
+**18.06.26 — Oppslagstavla: skarpere plakater, mindre grumsete tavle**
+- **Filt-tavla mindre «grumsete»:** støytekstur-overlegget på `.board` (`styles.css`) dempet kraftig — `opacity` .5 → .22, `mix-blend-mode` overlay → soft-light, og grovere/roligere korn (`baseFrequency` 0.9 → 0.42). Tidligere lignet det høyfrekvente kornet kompresjonsstøy / lav oppløsning; nå er det en diskré filt-tekstur. Gjelder både forsidens teaser og `oppslagstavla.html`.
+- **Skarpere bildeopplasting i admin:** `oppslagstavla-admin.html` lagrer nå plakater i høyere kvalitet — maks 1200 → 1600 px, webp-kvalitet 0.85 → 0.92, og `imageSmoothingQuality:'high'` på all nedskalering/rotering/beskjæring. Tekstbunge plakater holder seg lesbare.
+
 **18.06.26 — Ryddet opp i README.md**
 - **laget HVORDAN.md** for å rydde opp i readme. La oss holde det ryddig slik at readme er det vi trenger å forholde oss til frem til vi kan ta det litt mer med ro.
 
