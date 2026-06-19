@@ -7,7 +7,7 @@
 - **Bevart full funksjonalitet:** meny beholder dobbel live-preview (desktop nav + mobil-skuff via srcdoc med ekte `site-chrome.js`), angre/gjør-om og 📍-stedvelger; merch beholder bildegalleri m/ crop/zoom/rotasjon, farge-bilde-kobling, badges og fargekontroller + live butikk-preview; nyheter beholder per-sone-beskjeder + arkiv.
 - **Flash-bug fikset:** «Logg inn»-gaten (død markup) blinket ved sidebytte — nå nøytralisert ved kilden (`#gate { display:none }`) i alle filer, uavhengig av cache/lasterekkefølge.
 - **Ny doc `docs/admin-arkitektur.md`:** beskriver skall+modul-mønsteret og veikartet videre — git-basert CMS-følelse (lagre = commit, ingen nedlasting) → klonbar mal der enhver linjeforening kan klone repoet og bygge sin egen side gjennom admin (gratis, uten server).
-- **`HVORDAN.md` / `STATUS.md` oppdatert** til å peke på Admin-senteret i stedet for de gamle panelene.
+- **`HVORDAN.md`** oppdatert til å peke på Admin-senteret i stedet for de gamle panelene.
 
 
 **18.06.26 — Oppslagstavla: skarpere plakater, mindre grumsete tavle**

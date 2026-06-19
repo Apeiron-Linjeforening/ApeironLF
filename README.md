@@ -8,6 +8,23 @@ Se [HVORDAN.md](/HVORDAN.md) for hvordan man kan redigere og bruke nettsiden, sa
 
 Se [CHANGELOG.md](/CHANGELOG.md) for hva som har blitt gjort.
 
+Se [Plan F.html](/Plan%20F.html) for veikartet videre (git-CMS → klonbar mal) og en handoff av hvor vi står.
+
+---
+## Slik er nettsiden bygd (kort)
+
+Statisk side (HTML/CSS/JS), ingen byggesteg. Meny og footer bygges sentralt fra
+`nav-content.js` / `site-content.js` via `site-chrome.js` og injiseres på alle sider.
+Sideinnhold ligger i data-filer (`*-content.js` / `*-config.js`), ikke hardkodet i HTML.
+
+**All redigering skjer i ett samlet Admin-senter (`admin.html`):** et skall som
+mounter tynne editor-moduler fra `admin-modules/<område>.js`. Modulene deler
+`admin-common.js` (datalager `createStore`, drag-sortering, hjelpebobler, `saveFile`,
+panel-registeret `AdminPanels`) og `admin-modules.css` (klasse-scopet stil per modul).
+Hver modul har live forhåndsvisning og en «↓ Last ned»-knapp; redigeringsløkka er
+*rediger → last ned data-fil → commit/push → Cloudflare bygger (~1 min)*.
+Full arkitekturforklaring: [docs/admin-arkitektur.md](/docs/admin-arkitektur.md).
+
 # OBS!: 
 **Nettsiden er under oppbygging. Det som står på siden burde tas kun som plassholdere.**
 
