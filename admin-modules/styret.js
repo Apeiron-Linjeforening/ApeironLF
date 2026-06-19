@@ -12,6 +12,21 @@
     see: { href: 'styret.html', label: 'Se Styret-siden ↗' },
     exportName: 'styret-content.js',
 
+    searchEntries: function () {
+      var d = window.AdminCommon.readDraftOr('apeiron-styret-v1', 'STYRET_CONTENT') || {};
+      var out = [];
+      (d.members || []).forEach(function (m) {
+        if (!m || !m.name) return;
+        var tags = (m.tags || []).map(function (t) { return t && t.label; }).filter(Boolean);
+        var desc = (m.role || '') + ' · Apeiron 2025/26';
+        if (tags.length) desc += ' · ' + tags.join(', ');
+        out.push({ t: m.name, d: desc, u: 'index.html#styret', g: 'Styret' });
+      });
+      var roles = (d.roles || []).map(function (r) { return r && r.name; }).filter(Boolean);
+      if (roles.length) out.push({ t: 'Om vervene — Styret', d: 'Beskrivelse av styrevervene i Apeiron: ' + roles.join(', ') + '.', u: 'styret.html', g: 'Styret' });
+      return out;
+    },
+
     mount: function (host, AC) {
       host.innerHTML =
         '<section class="preview-top">'
@@ -26,7 +41,7 @@
             + '<li>Rediger innholdet nedenfor — klikk på et felt for å redigere det</li>'
             + '<li>Last opp portrett ved å <b>klikke på bildefeltet</b> eller dra et bilde inn</li>'
             + '<li>Legg til tilleggsverv (chips) på et medlem med <b>+ verv</b>, og punkter på en rolle med <b>+ punkt</b></li>'
-            + '<li>Klikk <b>↓ Last ned</b> oppe til høyre</li>'
+            + '<li>Klikk <b>↓ Last ned alle endrede</b> oppe til høyre</li>'
             + '<li>Erstatt <code>styret-content.js</code> i GitHub-repositoriet og push/commit</li>'
           + '</ol>'
           + '<div class="tip-note">💾 Endringer lagres automatisk i nettleseren din. Hovedvervet (Rolle) vises stort; chips vises diskré under navnet.</div>'
@@ -100,6 +115,7 @@
             canvas.width = w; canvas.height = h;
             canvas.getContext('2d').drawImage(img, 0, 0, w, h);
             var url = canvas.toDataURL('image/webp', 0.82);
+            AC.checkImageSize(url);
             var m = find('members', tgt.id);
             if (m) m.img = url;
             var zone = host.querySelector('[data-id="' + tgt.id + '"] .img-zone');
@@ -312,7 +328,7 @@
         var wrap = host.querySelector('.pv-board-wrap');
         if (!pvFrame || !wrap) return;
         var W = wrap.clientWidth; if (!W) return;
-        var contentW = 1180;
+        var contentW = (window.AdminCommon && AdminCommon.getPreviewWidth) ? AdminCommon.getPreviewWidth() : 1180;
         var scale = Math.min(1, W / contentW);
         var visibleH = Math.max(420, Math.min(680, Math.round(window.innerHeight * 0.66)));
         pvFrame.style.width = contentW + 'px';

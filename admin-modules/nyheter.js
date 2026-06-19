@@ -8,8 +8,22 @@
 
   AdminPanels.define('nyheter', {
     title: 'Nyheter',
-    see: { href: 'nyheter.html', label: 'Se siden ↗' },
+    see: { href: 'nyheter.html', label: 'Se nyheter ↗' },
     exportName: 'news-content.js',
+
+    searchEntries: function () {
+      var d = window.AdminCommon.readDraftOr('apeiron-news-v1', 'NEWS_CONTENT') || {};
+      function stripMd(s) {
+        return String(s || '')
+          .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+          .replace(/[*_]{1,3}/g, '')
+          .replace(/\s+/g, ' ').trim();
+      }
+      return (d.items || []).map(function (it) {
+        if (!it || !it.title) return null;
+        return { t: (it.urgent ? 'Viktig · ' : '') + it.title, d: stripMd(it.text || ''), u: 'nyheter.html', g: 'Nyheter' };
+      }).filter(Boolean);
+    },
 
     mount: function (host, AC) {
       host.innerHTML =
@@ -25,7 +39,7 @@
             + '<li>Trykk <b>+ Ny nyhet</b> og velg <b>hvor</b> den skal vises (Forsiden, Arrangementer, Aporetisk eller Fadderuke)</li>'
             + '<li>Skriv en kort <b>tittel</b> — og evt. litt brødtekst og en lenke (påmelding, skjema …)</li>'
             + '<li>Sett <b>⚑ Viktig</b> for tydelig vinrød hastemarkering</li>'
-            + '<li>Trykk <b>↓ Last ned</b> oppe til høyre, erstatt fila i GitHub og push — siden oppdateres innen et minutt</li>'
+            + '<li>Trykk <b>↓ Last ned alle endrede</b> oppe til høyre, erstatt fila i GitHub og push — siden oppdateres innen et minutt</li>'
           + '</ol>'
           + '<div class="tip-note">💾 Lagres automatisk i nettleseren mens du jobber. Nyeste øverst — dra i ⠿ for å sortere. Gamle nyheter: trykk <b>● Aktiv → ✓ Arkivert</b> i stedet for å slette — da flyttes de til arkivet på nyhetssiden. «Neste arrangement» i panelet hentes automatisk fra kalenderen; det legger du ikke inn her.</div>'
         + '</div>'
@@ -75,7 +89,7 @@
             + '<div class="fg"><label>Tittel</label><input type="text" data-f="title" value="' + esc(n.title) + '" placeholder="Kort og tydelig"></div>'
             + '<div class="fg"><label data-help="Valgfri brødtekst. **fet**  *kursiv*  _understrek_  [lenketekst](https://…)">Tekst (valgfri)</label><textarea data-f="text" placeholder="Litt mer om nyheten …">' + esc(n.text) + '</textarea></div>'
             + '<div class="frow">'
-              + '<div class="fg"><label data-help="Side og anker (f.eks. index.html#arrangementer) eller en https-lenke. Tom = ingen lenke.">Lenke (valgfri)</label><input type="text" data-f="link" value="' + esc(n.link) + '" placeholder="index.html#arrangementer"></div>'
+              + '<div class="fg"><label data-help="Side og anker (f.eks. index.html#arrangementer) eller en https-lenke. Tom = ingen lenke.">Lenke (valgfri)</label><div class="addr-wrap"><input type="text" data-f="link" value="' + esc(n.link) + '" placeholder="index.html#arrangementer"><button class="btn-loc" type="button" title="Velg side og seksjon">📍</button></div><div class="lnk-warn"></div></div>'
               + '<div class="fg narrow"><label>Lenketekst</label><input type="text" data-f="linkLabel" value="' + esc(n.linkLabel) + '" placeholder="Les mer"></div>'
             + '</div>'
             + '<div class="posted-note">' + (n.posted ? 'Lagt ut ' + esc(fmtPosted(n.posted)) : 'Legges ut i dag') + '</div>'
@@ -99,6 +113,7 @@
         card.querySelector('.btn-up').addEventListener('click', function () { move(n.id, -1); });
         card.querySelector('.btn-dn').addEventListener('click', function () { move(n.id, 1); });
         card.querySelector('.btn-del').addEventListener('click', function () { if (confirm('Slett «' + (n.title || 'denne nyheten') + '»? (Vurder «Arkivert» i stedet.)')) del(n.id); });
+        AC.wireHrefField(card, { sel: '[data-f="link"]' });
         return card;
       }
 
@@ -154,9 +169,9 @@
         var wrap = host.querySelector('.pv-wrap');
         if (!pvFrame || !wrap) return;
         var W = wrap.clientWidth; if (!W) return;
-        var contentW = 1180;
+        var contentW = (window.AdminCommon && AdminCommon.getPreviewWidth) ? AdminCommon.getPreviewWidth() : 1180;
         var scale = Math.min(1, W / contentW);
-        var visibleH = Math.max(440, Math.min(680, Math.round(window.innerHeight * 0.62)));
+        var visibleH = Math.max(420, Math.min(680, Math.round(window.innerHeight * 0.66)));
         pvFrame.style.width = contentW + 'px';
         pvFrame.style.height = Math.round(visibleH / scale) + 'px';
         pvFrame.style.transform = 'scale(' + scale + ')';

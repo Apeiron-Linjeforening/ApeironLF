@@ -12,6 +12,14 @@
     see: { href: 'begrep.html', label: 'Se Begrep-siden ↗' },
     exportName: 'begrep-content.js',
 
+    searchEntries: function () {
+      var d = window.AdminCommon.readDraftOr('apeiron-begrep-v1', 'BEGREP_CONTENT') || {};
+      return (d.podcasts || []).map(function (p) {
+        if (!p || !p.title) return null;
+        return { t: p.title, d: (p.tag ? p.tag + ' · ' : '') + String(p.desc || '').trim(), u: 'begrep.html#podkast', g: 'Begrep' };
+      }).filter(Boolean);
+    },
+
     mount: function (host, AC) {
       host.innerHTML =
         '<section class="preview-top">'
@@ -25,7 +33,7 @@
           + '<ol>'
             + '<li>Rediger innholdet nedenfor — klikk på et felt for å redigere det</li>'
             + '<li>Last opp omslag/plakat ved å <b>klikke på bildefeltet</b> eller dra et bilde inn</li>'
-            + '<li>Klikk <b>↓ Last ned</b> oppe til høyre</li>'
+            + '<li>Klikk <b>↓ Last ned alle endrede</b> oppe til høyre</li>'
             + '<li>Erstatt <code>begrep-content.js</code> i GitHub-repositoriet og push/commit</li>'
             + '<li>Cloudflare oppdaterer nettsiden automatisk innen et minutt</li>'
           + '</ol>'
@@ -118,6 +126,7 @@
             canvas.width = w; canvas.height = h;
             canvas.getContext('2d').drawImage(img, 0, 0, w, h);
             var url = canvas.toDataURL('image/webp', 0.82);
+            AC.checkImageSize(url);
             var field = SCHEMAS[tgt.list].img;
             setField(tgt.list, tgt.id, field, url);
             var zone = host.querySelector('[data-id="' + tgt.id + '"] .img-zone');
@@ -290,7 +299,7 @@
         var wrap = host.querySelector('.pv-page-wrap');
         if (!pvFrame || !wrap) return;
         var W = wrap.clientWidth; if (!W) return;
-        var contentW = 1180;
+        var contentW = (window.AdminCommon && AdminCommon.getPreviewWidth) ? AdminCommon.getPreviewWidth() : 1180;
         var scale = Math.min(1, W / contentW);
         var visibleH = Math.max(420, Math.min(680, Math.round(window.innerHeight * 0.66)));
         pvFrame.style.width = contentW + 'px';

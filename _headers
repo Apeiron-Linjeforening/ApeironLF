@@ -1,4 +1,18 @@
+# Cloudflare Pages — HTTP-sikkerhetsheadere
+# Trygg basisversjon (uten Content-Security-Policy).
+# CSP er bevisst utelatt: den må skreddersys etter Google Calendar/Drive/Fonts
+# og inline-skriptene siden bruker, ellers blokkeres egen funksjonalitet.
+# Disse headerne er trygge å sette uten testing.
+
 /*
+  # Hindrer clickjacking. SAMEORIGIN (ikke DENY) fordi Admin-senteret
+  # viser de offentlige sidene i egne <iframe>-forhåndsvisninger.
   X-Frame-Options: SAMEORIGIN
+  # Nettleseren må respektere oppgitt filtype (hindrer MIME-sniffing).
   X-Content-Type-Options: nosniff
+  # Begrenser hvor mye av adressen som lekker til eksterne lenker.
   Referrer-Policy: strict-origin-when-cross-origin
+  # Tvinger HTTPS i ett år (Cloudflare serverer alltid over HTTPS).
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  # Slår av nettleserfunksjoner siden ikke bruker.
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()

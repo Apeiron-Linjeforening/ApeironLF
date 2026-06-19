@@ -14,6 +14,18 @@
     see: { href: 'merch.html', label: 'Se merch-siden ↗' },
     exportName: 'merch-products.js',
 
+    searchEntries: function () {
+      var d = window.AdminCommon.readDraftOr('apeiron-merch-v1', 'MERCH_PRODUCTS');
+      var arr = Array.isArray(d) ? d : ((d && d.products) || []);
+      return arr.map(function (p) {
+        if (!p || !p.name) return null;
+        var desc = String(p.desc || '').split('\n')[0].trim();
+        var price = (p.price == null) ? 'Kommer snart'
+          : (p.price + ',–' + ((p.memberPrice != null) ? (' (' + p.memberPrice + ',– for medlemmer)') : ''));
+        return { t: p.name, d: (desc ? desc + ' · ' : '') + price, u: 'merch.html#butikk', g: 'Merch' };
+      }).filter(Boolean);
+    },
+
     mount: function (host, AC) {
       host.innerHTML =
         '<section class="preview-top">'
@@ -29,7 +41,7 @@
               + '<li>Rediger produktene nedenfor — klikk på et felt for å redigere det</li>'
               + '<li>Last opp bilder ved å <b>klikke på bildefeltet</b> eller dra bilder inn på det (du kan velge flere)</li>'
               + '<li><b>Koble farger til bilder:</b> har produktet farger, kan du på hvert bilde velge hvilken farge det hører til — da byttes hovedbildet i butikken når kunden velger den fargen</li>'
-              + '<li>Klikk <b>↓ Last ned</b> oppe til høyre, erstatt <code>merch-products.js</code> i GitHub og push</li>'
+              + '<li>Klikk <b>↓ Last ned alle endrede</b> oppe til høyre, erstatt <code>merch-products.js</code> i GitHub og push</li>'
             + '</ol>'
             + '<div class="tip-note">🖼️ <b>Bilder pr. produkt:</b> Det <b>første</b> bildet er hovedbildet («Hoved»). På hver miniatyr: <b>⠿</b> dra rekkefølge · <b>⛶</b> beskjær/zoom · <b>↻</b> roter · <b>✕</b> slett. Har produktet farger, kan du koble et bilde til en farge.</div>'
             + '<div class="tip-note">💾 Endringer lagres automatisk i nettleseren din. Last ned filen for å publisere.</div>'
@@ -95,7 +107,9 @@
               var canvas = document.createElement('canvas');
               canvas.width = w; canvas.height = h;
               canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-              resolve(canvas.toDataURL('image/webp', 0.82));
+              var _u = canvas.toDataURL('image/webp', 0.82);
+              if (window.AdminCommon) AdminCommon.checkImageSize(_u);
+              resolve(_u);
             };
             img.onerror = reject; img.src = e.target.result;
           };
@@ -444,7 +458,7 @@
         var wrap = host.querySelector('.pv-shop-wrap');
         if (!pvFrame || !wrap) return;
         var W = wrap.clientWidth; if (!W) return;
-        var contentW = 1180;
+        var contentW = (window.AdminCommon && AdminCommon.getPreviewWidth) ? AdminCommon.getPreviewWidth() : 1180;
         var scale = Math.min(1, W / contentW);
         var visibleH = Math.max(420, Math.min(680, Math.round(window.innerHeight * 0.66)));
         pvFrame.style.width = contentW + 'px';

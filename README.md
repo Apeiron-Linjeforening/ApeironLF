@@ -4,11 +4,14 @@ Nettsiden for Apeiron, linjeforeningen for filosofi og etikk ved NTNU.
 Statisk nettside (HTML/CSS/JS). Ingen byggesteg, ingen avhengigheter å installere.
 **Vibrasjonskoding har aldri vært så effektivt!**
 
+# OBS!: 
+**Nettsiden er under oppbygging. Det som står på siden burde tas kun som plassholdere.**
+
 Se [HVORDAN.md](/HVORDAN.md) for hvordan man kan redigere og bruke nettsiden, samt meget rotete informasjon om den.
 
 Se [CHANGELOG.md](/CHANGELOG.md) for hva som har blitt gjort.
 
-Se [Plan F.html](/Plan%20F.html) for veikartet videre (git-CMS → klonbar mal) og en handoff av hvor vi står.
+Se `Plan F.html` for veikartet videre (git-CMS → klonbar mal) og en handoff av hvor vi står. (Denne fila er gitignorert — den ligger lokalt, men følger ikke med en fersk klone av repoet.)
 
 ---
 ## Slik er nettsiden bygd (kort)
@@ -25,9 +28,6 @@ Hver modul har live forhåndsvisning og en «↓ Last ned»-knapp; redigeringsl�
 *rediger → last ned data-fil → commit/push → Cloudflare bygger (~1 min)*.
 Full arkitekturforklaring: [docs/admin-arkitektur.md](/docs/admin-arkitektur.md).
 
-# OBS!: 
-**Nettsiden er under oppbygging. Det som står på siden burde tas kun som plassholdere.**
-
 ---
 ## Kjente begrensninger og usikkerheter
 
@@ -36,7 +36,7 @@ Ting vi vet om, men er usikre på om det er verdt å gjøre noe med. Ført opp s
 - **Merch: én farge kan bare kobles til ett bilde.** Har du to bilder av samme farge (f.eks. for- og bakside av samme genser), kan bare det ene knyttes til fargen. Velger man samme farge på bilde nummer to, flyttes koblingen dit. Lite problem i praksis (kunden ser uansett hele galleriet via miniatyrstripa). Å støtte flere bilder pr. farge ville kreve en mer kompleks datamodell.
 - **Meny og footer vises et lite øyeblikk etter at siden lastes.** De bygges av `site-chrome.js` i nettleseren (for å slippe byggesteg og holde alt i én fil). På treg forbindelse kan man så vidt se at de «popper inn». Menyen er fast posisjonert, så selve innholdet hopper ikke. Alternativet (byggesteg) ble vurdert og valgt bort, se diskusjon i commit-historikk.
 - **Footer/meny krever JavaScript.** Med JS avslått vises ikke meny/footer. Gjelder en svært liten andel besøkende; resten av siden bruker uansett JS (kalender, søk, kurv).
-- **README-seksjonen «Lagre admin-endringer rett til repo-fila» (over) er utdatert.** Den direkte-lagrings-funksjonen (File System Access) ble fjernet fordi den feilet på enkelte systemer; admin-panelene laster nå alltid ned fila. Avsnittet bør ryddes ved anledning.
+- **`_headers` har ingen Content-Security-Policy (CSP).** Fila er gjenopprettet med en trygg basisversjon (X-Frame-Options, nosniff, Referrer-Policy, HSTS, Permissions-Policy), men *uten* CSP. En CSP må skreddersys etter Google Calendar/Drive/Fonts og inline-skriptene siden bruker, ellers blokkeres egen funksjonalitet. Kan legges til senere ved behov (krever testing).
 - **Bilder lagres som base64 i datafilene.** Mange/store produktbilder gjør `merch-products.js` stor. Admin skalerer ned til maks 900px webp, men mange bilder kan likevel bli tungt. Vurder eksterne bildefiler (`assets/merch/...`) hvis filene blir veldig store. Vil ikke å lagre de eksternt bare gjøre bildene større? -> lagre de i base64 i egen fil?
 
 ---
@@ -44,19 +44,14 @@ Ting vi vet om, men er usikre på om det er verdt å gjøre noe med. Ført opp s
 
 Kritisk:
 - [ ] Sjekke at "Legg til fadderukeprogrammet i din kalender" fungerer: iCal og Google Kalender.
-- [ ] Revamp av Hero.
-- [ ] Ny måte å legge inn 'nyheter' / informasjon på. Google sheets er for treg. -> Redesign av hvordan nyhetene vises. -> Gamle nyheter må kunne fremdeles vises / gå til et arkiv e.l.
+- [ ] Revamp av Hero. - ish gjort.
 
 Medium:
 - [ ] Be HF studentrådet om å oppdatere sidene deres og gi oss mer informasjon om hva de faktisk gjør. 
       - [ ] Hva gjør egentlig en PTV, ITV og FTV? 
       - [ ] Hvordan får vi kontakt med våre egne TVer?
-- [ ] Lage egen Admin for index. - Halvveis gjort.
-- [ ] Finne en bedre måte å vise arrangement og plakater på -> Måte å vise nyheter/informasjon på.
 - [ ] Legge til side for møtereferat -> Kan tas i egen wiki, muligens.
-- [ ] Live forhåndsvisning i alle admin-paneler (som i `footer-admin.html`). Merch, Index, Meny, Begrep, Hjelp, og Styret er gjort -> Mangler Utmerkelser, Oppnåelser. Footer preview må oppdateres. 
 - [ ] Sammenlign med https://www.mfplacebo.no/
-- [x] Oppslagstavla på index er i liten oppløsning og ser litt grumsete ut.
 
 Lav:
 - [ ] Fylle ut SAK / utvide den.
@@ -77,7 +72,7 @@ Må gjøres før vi slapper av med å bygge nettsiden:
 - [ ] Fjern WIP banneret.
 - [ ] Lage en ordentlig How-To.
 - [ ] Rydde opp i Readme og sette inn i Readme hva som er gjort og hvordan alt fungerer
-- [ ] Oppdater søkeindex
+- [x] Oppdater søkeindex — *gjøres nå automatisk ved «Publiser» (search-index.js genereres fra innholdet).*
 
 Skjelett Prosjekt:
 - [ ] Gjøre om prosjektet til et nytt repo som kan klones og lett gjøres om til andre linjeforeninger.

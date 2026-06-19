@@ -11,15 +11,32 @@
     see: { href: 'utmerkelser.html', label: 'Se Utmerkelser-siden ↗' },
     exportName: 'utmerkelser-content.js',
 
+    searchEntries: function () {
+      var d = window.AdminCommon.readDraftOr('apeiron-utmerkelser-v1', 'UTMERKELSER_CONTENT') || {};
+      var out = [];
+      if (d.intro && d.intro.heading) out.push({ t: d.intro.heading, d: String(d.intro.lede || '').trim(), u: 'utmerkelser.html', g: 'Heder' });
+      (d.people || []).forEach(function (pp) {
+        if (!pp || !pp.name || /Fornavn\s+Etternavn/i.test(pp.name)) return;
+        var meta = [pp.honor, pp.year].filter(Boolean).join(' · ');
+        out.push({ t: pp.name, d: meta + (pp.desc ? ' — ' + pp.desc : ''), u: 'utmerkelser.html', g: 'Heder' });
+      });
+      return out;
+    },
+
     mount: function (host, AC) {
       host.innerHTML =
-        '<div class="tip">'
+        '<section class="preview-top">'
+          + '<h3>Forhåndsvisning</h3>'
+          + '<p class="pp-sub">Live fra den ekte Utmerkelser-siden — endringene dine vises umiddelbart.</p>'
+          + '<div class="pv-frame-wrap"><iframe id="pv-frame" src="utmerkelser.html?preview=1" title="Forhåndsvisning av Utmerkelser-siden"></iframe></div>'
+        + '</section>'
+        + '<div class="tip">'
           + '<button class="tip-reset" data-reset type="button">Tilbakestill til siste publiserte versjon</button>'
           + '<strong>Slik oppdaterer du Utmerkelser-siden</strong>'
           + '<ol>'
             + '<li>Rediger innholdet nedenfor — klikk på et felt for å redigere det</li>'
             + '<li>Last opp portrett ved å <b>klikke på bildefeltet</b> eller dra et bilde inn</li>'
-            + '<li>Klikk <b>↓ Last ned</b> oppe til høyre</li>'
+            + '<li>Klikk <b>↓ Last ned alle endrede</b> oppe til høyre</li>'
             + '<li>Erstatt <code>utmerkelser-content.js</code> i GitHub-repositoriet og push/commit</li>'
             + '<li>Cloudflare oppdaterer nettsiden automatisk innen et minutt</li>'
           + '</ol>'
@@ -52,7 +69,7 @@
         if (raw) { try { data = JSON.parse(raw); normalize(); return; } catch (_) {} }
         data = fresh(); normalize();
       }
-      function saveData() { localStorage.setItem(LS_KEY, JSON.stringify(data)); AC.toast('Lagret i nettleseren'); }
+      function saveData() { localStorage.setItem(LS_KEY, JSON.stringify(data)); AC.toast('Lagret i nettleseren'); pushPreview(); }
       var saveTimer = null;
       function lazySave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveData, 350); }
       function uid(pfx) { return pfx + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
@@ -79,6 +96,7 @@
             canvas.width = w; canvas.height = h;
             canvas.getContext('2d').drawImage(img, 0, 0, w, h);
             var url = canvas.toDataURL('image/webp', 0.82);
+            AC.checkImageSize(url);
             var m = find(tgt.id);
             if (m) m.img = url;
             var zone = host.querySelector('[data-id="' + tgt.id + '"] .img-zone');
@@ -200,7 +218,7 @@
 
       host.querySelector('[data-reset]').addEventListener('click', function () {
         if (!confirm('Dette sletter alle ueksporterte endringer og laster inn siste publiserte versjon. Fortsette?')) return;
-        localStorage.removeItem(LS_KEY); data = fresh(); renderAll(); AC.toast('Tilbakestilt til publisert versjon');
+        localStorage.removeItem(LS_KEY); data = fresh(); renderAll(); AC.toast('Tilbakestilt til publisert versjon'); pushPreview();
       });
       host.querySelector('[data-add]').addEventListener('click', add);
 
@@ -210,7 +228,33 @@
       });
 
       loadData(); renderAll();
-      return { export: exportFile };
+
+      /* ── live forhåndsvisning (utmerkelser.html?preview=1) ── */
+      var pvFrame = host.querySelector('#pv-frame');
+      function pushPreview() { if (!pvFrame || !pvFrame.contentWindow) return; try { pvFrame.contentWindow.postMessage({ type: 'apeiron-utmerkelser-preview', content: data }, '*'); } catch (e) {} }
+      function onPreviewMsg(e) { if (e.data && e.data.type === 'apeiron-utmerkelser-preview-ready') { pushPreview(); fitPreview(); } }
+      function fitPreview() {
+        var wrap = host.querySelector('.pv-frame-wrap');
+        if (!pvFrame || !wrap) return;
+        var W = wrap.clientWidth; if (!W) return;
+        var contentW = (window.AdminCommon && AdminCommon.getPreviewWidth) ? AdminCommon.getPreviewWidth() : 1180;
+        var scale = Math.min(1, W / contentW);
+        var visibleH = Math.max(420, Math.min(680, Math.round(window.innerHeight * 0.66)));
+        pvFrame.style.width = contentW + 'px';
+        pvFrame.style.height = Math.round(visibleH / scale) + 'px';
+        pvFrame.style.transform = 'scale(' + scale + ')';
+        wrap.style.height = visibleH + 'px';
+      }
+      window.addEventListener('message', onPreviewMsg);
+      window.addEventListener('resize', fitPreview);
+      if (pvFrame) pvFrame.addEventListener('load', function () { fitPreview(); pushPreview(); });
+      fitPreview(); setTimeout(fitPreview, 80);
+      pushPreview(); setTimeout(pushPreview, 200);
+
+      return {
+        export: exportFile,
+        destroy: function () { window.removeEventListener('message', onPreviewMsg); window.removeEventListener('resize', fitPreview); }
+      };
     }
   });
 })();

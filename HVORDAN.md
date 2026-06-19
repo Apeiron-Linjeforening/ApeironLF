@@ -62,18 +62,11 @@ For større endringer anbefaler vi å jobbe lokalt på egen PC. Vi anbefaler **G
 
 Åpne `index.html` direkte i nettleseren — enten via filutforskeren, eller lim inn stien i adressefeltet: `file:///[mappe]/ApeironLF/index.html`
 
-**Lagre admin-endringer rett til repo-fila (lokalt, anbefalt):**
+**Se admin-endringen lokalt før du pusher:**
 
-Admin-panelene kan skrive den oppdaterte datafila (f.eks. `merch-products.js`) **direkte til den lokale repo-fila** i stedet for å havne i nedlastingsmappa. Da kan du se og teste endringen lokalt med en gang, og selv velge når du vil committe/pushe til GitHub.
+Admin-panelene laster alltid **ned** den oppdaterte datafila (f.eks. `merch-products.js`) til nedlastingsmappa. Vil du teste lokalt før du pusher: legg den nedlastede fila over den tilsvarende fila i din lokale klone av repoet og oppdater nettleseren. Da ser du endringen med en gang, og velger selv når du committer/pusher til GitHub.
 
-Dette krever at admin åpnes via en **lokal server** (nettleserens fil-skrive-API virker ikke når siden åpnes som `file://`):
-
-1. I terminalen, stå i repo-mappa og kjør: `python3 -m http.server`
-2. Åpne `http://localhost:8000/admin.html` (Admin-senteret)
-3. Klikk «Last ned …» → **velg datafila i repoet din én gang** → godkjenn skrivetilgang
-4. Heretter lagres endringene rett til den lokale fila (toast: «Lagret direkte … ✓»). Filvalget huskes mellom økter.
-
-Endringen ligger nå **kun lokalt** — den er ikke på GitHub/nettsiden før du committer og pusher. Slik kan du teste i fred først. Åpnes admin uten lokal server (eller i en nettleser uten støtte), faller den automatisk tilbake til vanlig nedlasting.
+> Tidligere fantes en «skriv rett til repo-fila»-funksjon (File System Access), men den ble fjernet fordi den feilet på enkelte systemer. Admin laster nå **alltid** ned fila.
 
 ---
 
@@ -81,8 +74,9 @@ Endringen ligger nå **kun lokalt** — den er ikke på GitHub/nettsiden før du
 
 > **🛠️ Alt innhold redigeres ett sted: Admin-senteret.** Legg til `/admin.html`
 > i nettadressen (https://apeironlf.pages.dev/admin.html) — eller kjør lokalt.
-> Der finner du **alle** editorene (Nyheter, Meny, Merch, Styret, Begrep,
-> Medlemskap, Footer, Oppslagstavla m.fl.) i én bla-bar meny, hver med **live
+> Der finner du **alle** editorene (Nyheter, Oppslagstavla, Forsiden, Om oss,
+> Styret, Merch, Begrep, Medlemskap, Hjelp, Meny, Footer, Oppnåelser,
+> Utmerkelser) i én bla-bar meny, hver med **live
 > forhåndsvisning** og en egen «↓ Last ned»-knapp. Ingen innlogging. De gamle
 > frittstående `*-admin.html`-sidene er borte — alt er nå moduler i `admin.html`.
 > (Arrangementer/Fadderuke styres fortsatt i Google Kalender, se under.)
@@ -368,9 +362,72 @@ function out(obj) {
 Filen inneholder `window.NEWS_CONTENT = { items: [...] }`. Feltene er forklart
 øverst i fila (`place`, `urgent`, `title`, `text`, `date`, `link`, `linkLabel`, `done`).
 
-### 📖 Om oss / øvrig tekst
-All annen tekst (om oss, studiene, FAQ, kontakt osv.) redigeres direkte i `index.html`.
-Finn riktig seksjon ved hjelp av kommentarene: `<!-- ============ OM OSS ============ -->` osv.
+### 🏛️ Forsiden og 📖 Om oss
+Tekstene på forsiden (toppbildet, om-seksjon, FAQ og kontakt) redigeres i **Admin-senteret → Forsiden** (`index-content.js`). Innholdet på «Om oss»-siden redigeres i **Admin-senteret → Om oss** (`om-content.js`). Begge har live forhåndsvisning.
+
+Pensum/studiene redigeres fortsatt direkte i `pensum.html` (se over).
+
+---
+
+## 🔍 Slik fungerer søket (og hvordan det holder seg oppdatert)
+
+Søket (forstørrelsesglasset i menyen, eller **Ctrl/Cmd + K**) leter gjennom en
+**søkeindeks** — en liste over alt som skal kunne finnes på nettstedet. Du
+trenger **normalt ikke gjøre noe** for å holde den oppdatert: den regenereres
+automatisk når du publiserer fra Admin-senteret.
+
+**Tre filer er involvert:**
+
+| Fil | Hva den er | Redigeres |
+| --- | --- | --- |
+| `site-search.js` | Selve søke-funksjonen (overlay, tastatur, scoring). | Sjelden — kun ved endring av *oppførsel*. |
+| `search-index.js` | **Auto-generert** liste over alle søketreff. Lastes på alle sider. | **Aldri for hånd** — genereres ved «Publiser». |
+| `search-base.js` | Statiske treff som *ikke* kommer fra en admin-modul: sider, seksjoner og emner/pensum. | For hånd, ved behov (se under). |
+
+**Hvor treffene kommer fra:**
+
+- **Dynamiske treff** lages automatisk fra innholdet ditt. Hver admin-modul som
+  har søkbart innhold har en liten `searchEntries()`-funksjon som plukker ut
+  treff fra dataene sine: **styremedlemmer**, **merch-produkter**, **Begrep-podkast**,
+  **oppnåelser**, **utmerkelser** og **nyheter/kunngjøringer**. Endrer du noe i
+  disse panelene, oppdateres søket automatisk.
+- **Statiske treff** (sider som Forsiden/Om oss/Galleri, seksjoner, og
+  emnene/pensum) ligger i `search-base.js`, fordi de ikke har en egen
+  admin-modul å hente fra.
+
+**Slik oppdateres indeksen (automatisk):**
+
+1. Rediger innhold som vanlig i Admin-senteret.
+2. Last ned — enten med panelets egen **«↓ Last ned»** eller med **«Last ned alle
+   endrede»**. Uansett hvilken du bruker, lastes `search-index.js` ned i tillegg
+   **hvis** søkeinnholdet faktisk har endret seg.
+3. Erstatt fila(e) i GitHub og push — akkurat som de andre filene. Ferdig.
+
+> 💡 Du merker dette bare ved at det av og til ligger en `search-index.js` blant
+> filene du laster ned. Legg den ved committen, så er søket i synk.
+
+**Når må du redigere `search-base.js` for hånd?**
+
+Bare hvis du legger til/endrer noe som *ikke* finnes i en admin-modul — f.eks. en
+**ny side**, en **ny seksjon**, eller et **nytt emne** i pensum. Da legger du til
+en linje i lista i `search-base.js`:
+
+```js
+{ t: 'Tittel som vises', d: 'Kort beskrivelse (søkbar).', u: 'side.html#anker', g: 'Pensum' }
+```
+
+- `t` = tittel, `d` = beskrivelse, `u` = lenken treffet åpner, `g` = gruppe.
+- `g` må være en av gruppene søket kjenner: `Startside`, `Nyheter`, `Om oss`,
+  `Styret`, `Heder`, `Pensum`, `Merch`, `Begrep`, `Galleri`. (Skal du ha en helt
+  ny gruppe, må den også legges til i `ICONS` og `GROUP_ORDER` øverst i
+  `site-search.js`.)
+
+Neste gang du publiserer, fletter admin inn den nye statiske linja sammen med de
+dynamiske treffene.
+
+> ⚠️ **Rediger aldri `search-index.js` direkte** — den blir overskrevet ved neste
+> publisering. Statiske treff hører hjemme i `search-base.js`; alt annet kommer
+> fra admin-modulene.
 
 ---
 
@@ -497,47 +554,104 @@ function doPost(e) {
 <details>
 <summary><b>Hele filstrukturen og kort forklaring av hva filene er (klikk for å vise)</b></summary>
 
-| Fil                           | Hva det er                                                                       |
-| -------------------------------| ----------------------------------------------------------------------------------|
-| `index.html`                  | Forsiden (hoveddelen av nettsiden)                                               |
-| `pensum.html`                 | Pensum-oversikt                                                                  |
-| `merch.html`                  | Merch-side (produkter hentes fra `merch-products.js`)                            |
-| `merch-products.js`           | Produktdata for merch (redigeres via Admin-senteret → Merch)                     |
-| `merch-cart.js`               | Handlekurv + bestilling på merch-siden                                           |
-| `merch-config.js`             | Innstillinger for merch-bestilling (Apps Script-URL, Vipps, bot-filter-token)    |
-| `apeiron-news.js`             | Nyheter på forsiden: «Akkurat nå»-kortet + beskjeder (leser `news-content.js`)  |
-| `news-content.js`             | Nyheter/kunngjøringer/beskjeder (redigeres via Admin-senteret → Nyheter)         |
-| `nyheter.html`                | Nyhetsside med arkiv over tidligere oppslag                                      |
-| `hastebeskjed.html`           | Lett mobilside for å legge ut én hastebeskjed live (valgfri Apps Script)         |
-| `news-config.js`              | Valgfri live-kanal for hastebeskjed (Apps Script-URL + bot-filter-token)         |
-| `admin.html`                  | **Admin-senter** — én inngang for ALL redigering; oversikt + bla-bar meny; mounter editor-modulene |
-| `admin-modules/`              | Én fil per editor (medlemskap, meny, merch, styret, nyheter …) som skallet mounter |
-| `membership-config.js`        | Medlemskapsdata (priser/Vipps/steg — redigeres via Admin-senteret → Medlemskap)  |
-| `membership.js`               | Fyller «Bli medlem»-kortet på forsiden fra `membership-config.js`                |
-| `admin-common.js`             | Delt admin-logikk: innlogging, «logg ut», varsler, hjelpebobler, fillagring      |
-| `admin-common.css`            | Delt stil for admin-panelene                                                     |
-| `docs/apps-script-oppsett.md` | Steg-for-steg-guide for Google Sheet + Apps Script (merch-bestilling + nyheter)  |
-| `galleri.html`                | Bildegalleri (henter automatisk fra Google Drive)                                |
-| `marked.html`                 | Kjøp & bytte (pensum-marked)                                                     |
-| `begrep.html`                 | Side for Begrep-tidsskriftet (utgaver, podkast, film, julekalender)              |
-| `begrep-content.js`           | Innholdsdata for Begrep-siden (redigeres via Admin-senteret → Begrep)            |
-| `hjelp.html`                  | Hjelp & ressurser (leser fra `hjelp-content.js`)                                 |
-| `hjelp-content.js`            | Innholdsdata for Hjelp-siden (redigeres via Admin-senteret → Hjelp)              |
-| `styret.html`                 | Styret og beskrivelse av alle styreverv (leser fra `styret-content.js`)          |
-| `styret-content.js`           | Innholdsdata for styret-siden (redigeres via Admin-senteret → Styret)            |
-| `styles.css`                  | All styling                                                                      |
-| `app.js`                      | Meny, scroll-animasjoner og generell funksjonalitet                              |
-| `theme.js`                    | Lys/mørk-modus: setter `data-mode` på `<html>` før første paint og binder toggle |
-| `apeiron-events.js`           | Henter arrangementer fra Google Kalender                                         |
-| `apeiron-fadder.js`           | Henter fadderuke-program fra Google Kalender                                     |
-| `aporetisk-cal.js`            | Kalender for Aporetisk Aften                                                     |
-| `site-search.js`              | Søkefunksjon                                                                     |
-| `image-slot.js`               | Gjenbrukbar bildekomponent (`<image-slot>`), bl.a. for styrebilder               |
-| `assets/merch/`               | Bilder for merch-produkter (alternativ til base64)                               |
-| `assets/begrep/`              | Bilder for Begrep-utgaver og -innhold                                            |
-| `assets/Styremedlemmer/`      | Portrettbilder av styremedlemmer (alternativ til base64)                         |
-| `assets/`                     | Logo og andre bilder                                                             |
-| `_headers`                    | Cloudflare Pages — HTTP-sikkerhetsheadere                                        |
+**Sider (HTML)**
+
+| Fil | Hva det er |
+| --- | --- |
+| `index.html` | Forsiden «Hjem» — toppbilde, om, FAQ, kontakt (tekst fra `index-content.js`) |
+| `om-oss.html` | «Om oss»-siden — hva er Apeiron, fellesskap, lesesalen, FAQ, bli medlem (fra `om-content.js`) |
+| `nyheter.html` | Nyhetsside med arkiv over tidligere oppslag |
+| `oppslagstavla.html` | Oppslagstavla — plakater (fra `oppslag-content.js`) |
+| `pensum.html` | Pensum-oversikt |
+| `styret.html` | Styret og beskrivelse av alle styreverv (fra `styret-content.js`) |
+| `begrep.html` | Begrep-tidsskriftet — utgaver, podkast, film, julekalender (fra `begrep-content.js`) |
+| `merch.html` | Merch-butikk (produkter fra `merch-products.js`) |
+| `marked.html` | Kjøp & bytte (pensum-marked) |
+| `galleri.html` | Bildegalleri (henter automatisk fra Google Drive) |
+| `hjelp.html` | Hjelp & ressurser (fra `hjelp-content.js`) |
+| `oppnaelser.html` | Oppnåelser / milepæler (fra `oppnaelser-content.js`) |
+| `utmerkelser.html` | Utmerkelser / priser (fra `utmerkelser-content.js`) |
+| `hastebeskjed.html` | Lett mobilside for å legge ut én hastebeskjed live (valgfri Apps Script) |
+| `admin.html` | **Admin-senter** — én inngang for ALL redigering; mounter editor-modulene |
+
+**Innholds- og innstillingsfiler (redigeres via Admin-senteret)**
+
+| Fil | Hva det er |
+| --- | --- |
+| `index-content.js` | Forsidens tekster (Admin → Forsiden) |
+| `om-content.js` | Om oss-innhold (Admin → Om oss) |
+| `news-content.js` | Nyheter/kunngjøringer/beskjeder (Admin → Nyheter) |
+| `oppslag-content.js` | Oppslagstavla-plakater (Admin → Oppslagstavla) |
+| `styret-content.js` | Styremedlemmer og verv (Admin → Styret) |
+| `begrep-content.js` | Begrep-siden (Admin → Begrep) |
+| `hjelp-content.js` | Hjelp-siden (Admin → Hjelp) |
+| `oppnaelser-content.js` | Oppnåelser (Admin → Oppnåelser) |
+| `utmerkelser-content.js` | Utmerkelser (Admin → Utmerkelser) |
+| `merch-products.js` | Merch-produkter (Admin → Merch) |
+| `membership-config.js` | Medlemskap: priser/Vipps/steg (Admin → Medlemskap) |
+| `nav-content.js` | Lenkene i hovedmenyen (Admin → Meny) |
+| `site-content.js` | Bunntekst/footer-lenker og sosiale ikoner (Admin → Footer) |
+| `merch-config.js` | Merch-bestilling: Apps Script-URL, Vipps, bot-filter-token |
+| `news-config.js` | Valgfri live-kanal for hastebeskjed (Apps Script-URL + token) |
+| `api-config.js` | Lokal stub for Google-API-nøkkel (gitignorert; genereres i prod av Cloudflare) |
+
+**Renderere og funksjonalitet (røres normalt ikke)**
+
+| Fil | Hva det er |
+| --- | --- |
+| `site-chrome.js` | Bygger meny + footer på alle sider (fra `nav-content.js` / `site-content.js`) |
+| `apeiron-index.js` | Rendrer forsiden fra `index-content.js` |
+| `apeiron-om.js` | Rendrer Om oss-siden fra `om-content.js` |
+| `apeiron-news.js` | «Akkurat nå»-kort + beskjeder (leser `news-content.js`) |
+| `apeiron-events.js` | Henter arrangementer fra Google Kalender |
+| `apeiron-fadder.js` | Henter fadderuke-program fra Google Kalender |
+| `aporetisk-cal.js` | Kalender for Aporetisk Aften |
+| `membership.js` | Fyller «Bli medlem»-kortet fra `membership-config.js` |
+| `merch-cart.js` | Handlekurv + bestilling på merch-siden |
+| `report.js` | «Rapporter en feil»-boksen (alle sider) |
+| `app.js` | Forside-interaksjoner: FAQ, scroll-reveal, statistikk-teller |
+| `theme.js` | Lys/mørk-modus: setter `data-mode` på `<html>` før første paint |
+| `palette.js` | Felles fargesystem (lys/mørk-variant per navngitt farge) |
+| `footer-icons.js` | Delt ikonsett for footeren |
+| `image-slot.js` | Gjenbrukbar bildekomponent (`<image-slot>`) |
+| `site-search.js` | Søkefunksjon (overlay + scoring) |
+| `search-base.js` | Statiske søketreff (sider/seksjoner/emner) — input til indeksen |
+| `search-index.js` | Auto-generert søkeindeks (lages ved «Publiser» — rediger aldri for hånd) |
+| `styles.css` | All styling for de offentlige sidene |
+
+**Admin (Admin-senteret)**
+
+| Fil | Hva det er |
+| --- | --- |
+| `admin-common.js` | Delt admin-logikk: datalager (`createStore`), drag-sortering, hjelpebobler, nedlasting, panel-registeret `AdminPanels` |
+| `admin-common.css` | Delt stil for admin-skallet |
+| `admin-modules.css` | Per-modul admin-stil (klasse-scopet, f.eks. `.mod-merch`) |
+| `admin-modules/` | Én fil per editor (13 moduler: nyheter, oppslag, forsiden, om-oss, styret, merch, begrep, medlemskap, hjelp, meny, footer, oppnaelser, utmerkelser) |
+
+**Dokumentasjon og oppsett**
+
+| Fil | Hva det er |
+| --- | --- |
+| `README.md` | Kort oversikt, to-do og domene-status |
+| `HVORDAN.md` | Denne fila — hvordan redigere og publisere |
+| `CHANGELOG.md` | Logg over hva som er gjort |
+| `docs/admin-arkitektur.md` | Skall+modul-arkitekturen for Admin-senteret |
+| `docs/apps-script-oppsett.md` | Google Sheet + Apps Script-guide (merch + nyheter) |
+| `.gitignore` | Hva git skal hoppe over (bl.a. `api-config.js`, `Plan F.html`) |
+| `.github/dependabot.yml` | Ukentlig sjekk av GitHub Actions-avhengigheter |
+| `_headers` | Cloudflare Pages — HTTP-sikkerhetsheadere (trygg basis, uten CSP) |
+
+**Bilder**
+
+| Mappe | Hva det er |
+| --- | --- |
+| `assets/Styremedlemmer/` | Portrettbilder av styremedlemmer (alternativ til base64) |
+| `assets/begrep/` | Bilder for Begrep-utgaver og -innhold |
+| `assets/merch/` | Bilder for merch-produkter (alternativ til base64) |
+| `assets/lesesalen/` | Lesesal-bildene på forsiden (`lesesal1.jpg`, `lesesal2.jpg` …) |
+| `assets/logikk-panikk/` | Plakatbilder brukt på oppslagstavla |
+| `assets/oppnaelser/` | Bilder for oppnåelser-siden |
+| `assets/apeiron-logo.png` | Logoen |
 </details>
 
 

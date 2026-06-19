@@ -318,13 +318,13 @@ h1,h2,h3{ font-family:var(--display); font-weight:600; line-height:1.04; letter-
 @keyframes floaty{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)} }
 
 .hero__scroll{
-  position:absolute; z-index:2; bottom:26px; left:50%; transform:translateX(-50%);
+  position:absolute; z-index:11; bottom:26px; left:50%; transform:translateX(-50%);
   font-size:.7rem; letter-spacing:.3em; text-transform:uppercase; color:rgba(244,236,217,.6);
   display:flex; flex-direction:column; align-items:center; gap:8px;
   white-space:nowrap;
 }
 
-.hero__scroll .line{ width:1px; height:34px; background:linear-gradient(var(--gold),transparent); }
+.hero__scroll .line{ width:2px; height:34px; background:linear-gradient(var(--gold),transparent); }
 
 /* Greek-key marquee strip under hero */
 .frieze{

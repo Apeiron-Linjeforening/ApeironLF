@@ -33,12 +33,30 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 .a-header a { color: rgba(244,236,217,.7); font-size: .76rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; text-decoration: none; }
 .a-header a:hover { color: var(--gold); }
 
+.tabbar-shell { position: relative; flex: 0 0 auto; display: flex; align-items: stretch; background: #1c1f33; box-shadow: inset 0 -1px 0 rgba(244,236,217,.1); }
 .tabbar {
-  display: flex; gap: 2px; flex: 0 0 auto; background: #1c1f33; padding: 0 10px;
-  overflow-x: auto; scrollbar-width: thin; box-shadow: inset 0 -1px 0 rgba(244,236,217,.1);
+  display: flex; gap: 2px; flex: 1 1 auto; min-width: 0; background: #1c1f33; padding: 0 10px 12px;
+  overflow-x: auto; cursor: grab;
+  scrollbar-width: none;
 }
-.tabbar::-webkit-scrollbar { height: 6px; }
-.tabbar::-webkit-scrollbar-thumb { background: rgba(244,236,217,.25); border-radius: 3px; }
+.tabbar::-webkit-scrollbar { display: none; }
+.tabbar.dragging { cursor: grabbing; user-select: none; }
+/* Egendefinert, alltid-synlig rullefelt (det native overlay-feltet skjuler seg av seg selv) */
+.tab-scrollbar { position: absolute; left: 14px; right: 14px; bottom: 3px; height: 9px; border-radius: 5px; background: rgba(0,0,0,.32); z-index: 4; display: none; }
+.tabbar-shell.scrollable .tab-scrollbar { display: block; }
+.tab-scrollbar__thumb { position: absolute; top: 0; bottom: 0; left: 0; min-width: 30px; border-radius: 5px; background: rgba(244,236,217,.5); cursor: grab; }
+.tab-scrollbar__thumb:hover { background: rgba(244,236,217,.72); }
+.tab-scrollbar__thumb.dragging { cursor: grabbing; background: var(--gold); }
+/* Bla-knapper + fade-kanter — vises bare når fanene flyter over bredden */
+.tab-scroll { flex: 0 0 auto; width: 36px; border: 0; background: #1c1f33; color: rgba(244,236,217,.7); font-size: 1.5rem; line-height: 1; cursor: pointer; display: none; align-items: center; justify-content: center; position: relative; z-index: 6; }
+.tab-scroll:hover { color: var(--gold); }
+.tabbar-shell.can-l .tab-scroll--l { display: flex; }
+.tabbar-shell.can-r .tab-scroll--r { display: flex; }
+.tabbar-shell::before, .tabbar-shell::after { content: ""; position: absolute; top: 0; bottom: 0; width: 40px; pointer-events: none; z-index: 5; opacity: 0; transition: opacity .18s; }
+.tabbar-shell::before { left: 36px; background: linear-gradient(90deg, #1c1f33, rgba(28,31,51,0)); }
+.tabbar-shell::after { right: 36px; background: linear-gradient(270deg, #1c1f33, rgba(28,31,51,0)); }
+.tabbar-shell.can-l::before { opacity: 1; }
+.tabbar-shell.can-r::after { opacity: 1; }
 .tab {
   flex: 0 0 auto; padding: 13px 16px; background: none; border: 0; border-bottom: 2px solid transparent;
   color: rgba(244,236,217,.62); font-family: var(--body); font-size: .9rem; font-weight: 600;
@@ -67,6 +85,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 .info-card { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
 .info-card.is-flow { border-left: 3px solid var(--gold); }
 .info-card h3 { font-family: var(--display); font-size: 1.3rem; color: var(--navy); margin-bottom: 8px; }
+.flow-intro { font-size: .9rem; color: var(--ink-soft); line-height: 1.5; margin-bottom: 12px; }
 .flow-steps { list-style: none; counter-reset: s; display: flex; flex-direction: column; gap: 7px; }
 .flow-steps li { counter-increment: s; position: relative; padding-left: 30px; font-size: .9rem; color: var(--ink-soft); line-height: 1.45; }
 .flow-steps li::before {
@@ -108,16 +127,162 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 #admin-frame { width: 100%; height: 100%; border: 0; display: block; }
 .loading { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--ink-soft); font-style: italic; pointer-events: none; }
 
-/* ── Kontekst-knapper i header (vises for inline-moduler) ── */
-.ctx { display: none; align-items: center; gap: 12px; }
+/* ── Kontekst-område i header: «Se siden» + samlet publiser-knapp ── */
+.ctx { display: none; align-items: center; gap: 14px; }
 .ctx.show { display: flex; }
-.btn-export { padding: 7px 15px; background: var(--gold); color: var(--navy); border: none; border-radius: 4px; font-family: var(--body); font-size: .82rem; font-weight: 700; cursor: pointer; transition: filter .15s; }
-.btn-export:hover { filter: brightness(1.08); }
+.ctx .pub-count { font-size: .8rem; color: rgba(244,236,217,.78); white-space: nowrap; }
+.ctx .pub-btn { padding: 7px 15px; background: var(--gold); color: var(--navy); border: none; border-radius: 4px; font-family: var(--body); font-size: .82rem; font-weight: 700; cursor: pointer; transition: filter .15s; white-space: nowrap; }
+.ctx .pub-btn:hover { filter: brightness(1.08); }
+.ctx .pub-btn:disabled { opacity: .6; cursor: progress; }
 
 /* ── Modul-vert (C: paneler som mountes inline i skallet) ── */
 .panel-host { position: absolute; inset: 0; overflow-y: auto; padding: 28px 22px 80px; display: none; }
 .panel-host.show { display: block; }
 .ph-wrap { max-width: 820px; margin: 0 auto; }
+
+/* ── Live-preview øverst, full bredde (god plassbruk). Verktøy: 🖥/📱, ⛶, 📌 Fest. ── */
+.panel-host .preview-top { position: relative; margin-bottom: 28px; }
+.ph-wrap.pv-split { max-width: 1180px; }
+.ph-wrap.pv-split > .pv-editor { min-width: 0; }
+.ph-wrap.pv-split.pv-sticky:not(.pv-mobile) > .preview-top {
+  position: sticky; top: 0; z-index: 3;
+  background: #e4dcc8; padding-bottom: 12px; margin-bottom: 8px;
+  box-shadow: 0 12px 18px -14px rgba(35,39,64,.55);
+}
+/* Festet topp-preview holdes kompakt så editoren får plass. */
+.ph-wrap.pv-split.pv-sticky:not(.pv-mobile) > .preview-top .pv-box { max-height: 42vh !important; overflow: hidden; }
+
+/* Forhåndsvisnings-meta (overskrift + beskrivelse + verktøy): heading til venstre,
+   verktøy til høyre, beskrivelse på full bredde under. */
+.pv-meta { display: grid; grid-template-columns: 1fr auto; align-items: start; gap: 4px 14px; margin-bottom: 14px; }
+.pv-meta > h3 { grid-column: 1; grid-row: 1; }
+.pv-meta > .pv-tools { grid-column: 2; grid-row: 1; justify-self: end; }
+.pv-meta > .pp-sub, .pv-meta > .pv-jump { grid-column: 1 / -1; }
+
+/* ── Mobil-modus: ekte telefon-proporsjoner til venstre (alltid synlig mens du
+   scroller), «Forhåndsvisning»-info + editor til høyre. ── */
+.ph-wrap.pv-mobile.pv-split:not(.pv-full) {
+  max-width: 1240px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 38px;
+  align-items: start;
+}
+.ph-wrap.pv-mobile.pv-split:not(.pv-full) > .preview-top { display: contents; }
+.ph-wrap.pv-mobile:not(.pv-full) .pv-meta { grid-column: 2; grid-row: 1; margin-bottom: 18px; }
+.ph-wrap.pv-mobile:not(.pv-full) > .pv-editor { grid-column: 2; grid-row: 2; min-width: 0; }
+.ph-wrap.pv-mobile:not(.pv-full) .pv-box {
+  grid-column: 1; grid-row: 1 / span 2;
+  position: sticky; top: 16px; align-self: start;
+  box-sizing: content-box;
+  width: 390px;
+  height: min(812px, calc(100vh - 116px)) !important;
+  max-height: none !important;
+  border: 11px solid #14172a; border-radius: 38px;
+  box-shadow: 0 28px 64px -24px rgba(14,16,28,.62), 0 0 0 1px rgba(0,0,0,.25) inset;
+  overflow: hidden; background: #14172a;
+}
+.ph-wrap.pv-mobile:not(.pv-full) .pv-box iframe {
+  width: 390px !important; display: block; margin: 0;
+  height: min(812px, calc(100vh - 116px)) !important;
+  border-radius: 27px;
+}
+/* Smalt vindu: stable telefon over editoren igjen. */
+@media (max-width: 900px) {
+  .ph-wrap.pv-mobile.pv-split:not(.pv-full) { display: block; max-width: 880px; }
+  .ph-wrap.pv-mobile.pv-split:not(.pv-full) > .preview-top { display: block; }
+  .ph-wrap.pv-mobile:not(.pv-full) .pv-box { position: static; margin: 0 auto 22px; }
+}
+/* Full størrelse: forhåndsvisningen legger seg over hele innholdsflaten.
+   Flex-kolonne: meta (overskrift + verktøy) øverst, iframen fyller resten og
+   scroller internt slik at hele siden er synlig. */
+.ph-wrap.pv-full > .preview-top {
+  position: fixed; inset: 18px; z-index: 220; margin: 0;
+  display: flex; flex-direction: column;
+  background: #ece4d2; border: 1px solid var(--border); border-radius: 14px;
+  box-shadow: 0 40px 90px -30px rgba(20,20,35,.7); padding: 18px 22px; overflow: hidden;
+}
+.ph-wrap.pv-full::before { content: ""; position: fixed; inset: 0; z-index: 219; background: rgba(18,18,28,.55); }
+.ph-wrap.pv-full > .pv-editor { filter: blur(1px); }
+/* «Fest» og «full størrelse»-knappen gir ikke mening i full visning. */
+.ph-wrap.pv-full .pv-stick, .ph-wrap.pv-full .pv-tool-btn { display: none; }
+.ph-wrap.pv-full .pv-meta { flex: 0 0 auto; padding-right: 104px; margin-bottom: 12px; }
+/* Iframen fyller resten av overlayet. */
+.ph-wrap.pv-full .pv-box {
+  flex: 1 1 auto; min-height: 0; height: auto !important; max-height: none !important;
+  overflow: hidden; border-radius: 10px;
+}
+.ph-wrap.pv-full .pv-box iframe { height: 100% !important; transform: none !important; }
+.ph-wrap.pv-full:not(.pv-mobile) .pv-box { width: 100% !important; border: none; box-shadow: 0 2px 14px rgba(20,20,35,.12); }
+.ph-wrap.pv-full:not(.pv-mobile) .pv-box iframe { width: 100% !important; border-radius: 10px; }
+/* Mobil + full: sentrert telefon som fyller høyden. */
+.ph-wrap.pv-full.pv-mobile .pv-box {
+  width: 390px !important; box-sizing: content-box; margin: 0 auto;
+  border: 11px solid #14172a; border-radius: 38px; background: #14172a;
+}
+.ph-wrap.pv-full.pv-mobile .pv-box iframe { width: 390px !important; border-radius: 27px; }
+.pv-full-close {
+  display: none; position: absolute; top: 16px; right: 18px; z-index: 6;
+  padding: 6px 13px; background: var(--navy); color: var(--paper); border: none; border-radius: 999px;
+  font-family: var(--body); font-size: .8rem; font-weight: 700; cursor: pointer;
+}
+.ph-wrap.pv-full > .preview-top .pv-full-close { display: inline-block; }
+
+/* Verktøylinje (enhets-veksler, full størrelse, fest) */
+.pv-tools { display: inline-flex; align-items: center; gap: 7px; }
+.pv-seg { display: inline-flex; border: 1px solid var(--border); border-radius: 999px; overflow: hidden; background: white; }
+.pv-seg-btn { border: none; background: none; cursor: pointer; font-size: .76rem; font-weight: 600; line-height: 1; padding: 5px 12px; color: var(--ink-soft); display: inline-flex; align-items: center; gap: 6px; }
+.pv-seg-btn + .pv-seg-btn { border-left: 1px solid var(--border); }
+.pv-seg-btn .pv-seg-ico { font-size: .9rem; }
+.pv-seg-btn.on { background: var(--navy); color: var(--paper); }
+.pv-tool-btn { width: 26px; height: 25px; border: 1px solid var(--border); border-radius: 6px; background: white; cursor: pointer; font-size: .8rem; color: var(--ink-soft); display: inline-flex; align-items: center; justify-content: center; }
+.pv-tool-btn:hover { border-color: rgba(212,175,55,.6); color: var(--navy); }
+.pv-stick {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: .72rem; font-weight: 600; color: var(--ink-soft); white-space: nowrap;
+  background: white; border: 1px solid var(--border); border-radius: 999px;
+  padding: 4px 11px 4px 9px; cursor: pointer; user-select: none;
+}
+.pv-stick:hover { border-color: rgba(212,175,55,.6); color: var(--navy); }
+.pv-stick input { accent-color: var(--gold-ink); cursor: pointer; margin: 0; }
+.ph-wrap.pv-sticky .pv-stick { color: var(--gold-ink); border-color: rgba(212,175,55,.6); background: rgba(212,175,55,.12); }
+/* I mobilmodus er telefonen alltid festet — skjul «Fest»-bryteren (irrelevant der). */
+.ph-wrap.pv-mobile .pv-stick { display: none; }
+
+/* Endret-prikk på faner og kort */
+.tab-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); display: none; margin-left: 2px; flex: 0 0 auto; }
+.tab.has-changes .tab-dot { display: inline-block; }
+.panel-card { position: relative; }
+.pc-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--gold); display: none; margin-left: auto; box-shadow: 0 0 0 3px rgba(212,175,55,.16); }
+.panel-card.has-changes .pc-dot { display: inline-block; }
+.panel-card.has-changes { border-color: rgba(212,175,55,.55); }
+
+/* ── Slank verktøylinje der «Slik oppdaterer du …» nå ligger bak en «?» ── */
+.panel-host .tip.tip--slim { background: none; border: none; border-radius: 0; padding: 0; margin: 2px 0 18px; display: flex; align-items: center; gap: 14px; font-size: .88rem; }
+.panel-host .tip.tip--slim .tip-reset { float: none; margin-left: auto; }
+.tip-help { position: relative; display: inline-flex; align-items: center; gap: 7px; cursor: help; color: var(--ink-soft); font-size: .8rem; }
+.tip-help__q { display: inline-flex; align-items: center; justify-content: center; width: 17px; height: 17px; border-radius: 50%; background: var(--ink-soft); color: #fff; font-size: .72rem; font-weight: 700; flex: 0 0 auto; }
+.tip-help__lab { text-decoration: underline; text-underline-offset: 2px; }
+.tip-help:hover .tip-help__q, .tip-help:focus .tip-help__q, .tip-help:focus-within .tip-help__q { background: var(--gold-ink); }
+.tip-help:hover .tip-help__lab, .tip-help:focus-within .tip-help__lab { color: var(--navy); }
+.panel-host .tip-help__bubble {
+  position: absolute; top: calc(100% + 9px); left: 0; width: 340px; max-width: 84vw;
+  background: var(--navy); color: #f4ecd9; padding: 13px 15px; border-radius: 8px;
+  box-shadow: 0 18px 44px -14px rgba(0,0,0,.55);
+  font-size: .79rem; font-weight: 400; line-height: 1.5; text-align: left;
+  opacity: 0; visibility: hidden; transform: translateY(-4px); transition: opacity .15s, visibility .15s, transform .15s;
+  z-index: 320; pointer-events: none;
+}
+.tip-help:hover .tip-help__bubble, .tip-help:focus .tip-help__bubble, .tip-help:focus-within .tip-help__bubble { opacity: 1; visibility: visible; transform: translateY(0); }
+.panel-host .tip-help__bubble .hb-t { display: block; color: #fff; font-size: .85rem; margin-bottom: 6px; }
+.panel-host .tip--slim .tip-help__bubble ol { padding-left: 17px; margin: 0; color: #f4ecd9; }
+.panel-host .tip--slim .tip-help__bubble li { margin: 4px 0; color: #f4ecd9; line-height: 1.5; }
+.panel-host .tip--slim .tip-help__bubble li b { color: var(--gold); }
+.panel-host .tip--slim .tip-help__bubble code { background: rgba(255,255,255,.12); padding: 1px 5px; border-radius: 3px; font-size: .92em; color: #f4ecd9; }
+.panel-host .tip-help__bubble .hb-note { margin-top: 9px; padding-top: 9px; border-top: 1px solid rgba(244,236,217,.18); color: rgba(244,236,217,.82); }
+.panel-host .tip-help__bubble .hb-note b { color: var(--gold); }
+
+/* Eldre, alltid-synlig .tip (kun fallback hvis tidyTip ikke har kjørt) */
 .panel-host .tip { background: white; border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: 6px; padding: 16px 20px; margin-bottom: 22px; font-size: .88rem; }
 .panel-host .tip strong { color: var(--navy); font-size: .95rem; display: block; margin-bottom: 8px; }
 .panel-host .tip ol { padding-left: 18px; }
@@ -150,7 +315,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 
 @media (max-width: 720px) {
   .info-panel { grid-template-columns: 1fr; }
-  .a-header h1 { display: none; } .a-header .hint { display: none; }
+  .a-header h1 { display: none; } .a-header .hint { display: none; } .ctx .pub-count { display: none; }
 }
 </style>
 <link rel="stylesheet" href="admin-common.css">
@@ -162,42 +327,49 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
   <header class="a-header">
     <img src="assets/apeiron-logo.png" alt="">
     <h1>Admin-senter</h1>
-    <span class="hint" id="hint">Ingen innlogging — endringer er lokale til du laster ned og pusher</span>
+    <span class="hint" id="hint">Endringer er lokale til du laster ned og pusher</span>
     <div class="ctx" id="ctx">
-      <a id="ctx-see" href="#" target="_top">Se siden ↗</a>
-      <button class="btn-export" id="ctx-export" type="button">↓ Last ned</button>
+      <a id="ctx-see" href="#" target="_blank" rel="noopener" data-keep-token>Se siden ↗</a>
+      <span class="pub-count" id="pub-count"></span>
+      <button class="pub-btn" id="pub-btn" type="button">↓ Last ned alle endrede</button>
     </div>
-    <a href="index.html" target="_top">Se nettsiden ↗</a>
+    <a href="index.html" target="_blank" rel="noopener" data-keep-token>Se nettsiden ↗</a>
   </header>
 
-  <nav class="tabbar" id="tabbar" aria-label="Velg admin-panel"></nav>
+  <div class="tabbar-shell">
+    <button type="button" class="tab-scroll tab-scroll--l" aria-label="Bla fanene til venstre">‹</button>
+    <nav class="tabbar" id="tabbar" aria-label="Velg admin-panel"></nav>
+    <button type="button" class="tab-scroll tab-scroll--r" aria-label="Bla fanene til høyre">›</button>
+    <div class="tab-scrollbar"><div class="tab-scrollbar__thumb"></div></div>
+  </div>
 
   <div class="content">
     <div id="dashboard">
       <div class="dash-wrap">
         <div class="dash-hero">
           <h2>Velkommen til admin-senteret</h2>
-          <p>Her redigerer du alt innhold på nettsiden. Velg et område nedenfor, eller bla i menyen øverst. Hvert panel har <b>live forhåndsvisning</b> og sin egen «Last ned …»-knapp.</p>
+          <p>Herfra styrer du alt innholdet på nettsiden — tekst, bilder, nyheter, styret, merch og resten. Velg et område under <b>«Rediger innhold»</b> nedenfor, eller bla i menyen øverst. Alt du endrer dukker opp med en gang i en <b>live forhåndsvisning</b> ved siden av, så du ser nøyaktig hvordan det blir — lenge før noe legges ut.</p>
         </div>
 
         <div class="info-panel">
           <div class="info-card is-flow">
             <h3>Slik publiserer du</h3>
+            <p class="flow-intro">Det du endrer her lever først bare i din egen nettleser. Først når du publiserer, blir det synlig for andre. Slik gjør du det:</p>
             <ol class="flow-steps">
-              <li>Rediger i panelet — endringene lagres automatisk i nettleseren din</li>
-              <li>Trykk <b>↓ Last ned …</b> (egen knapp i hvert panel)</li>
-              <li>Erstatt fila i GitHub-repoet og <b>commit / push</b></li>
-              <li>Cloudflare oppdaterer nettsiden automatisk innen ett minutt</li>
+              <li><b>Rediger</b> i et panel. Det du skriver lagres automatisk i din egen nettleser — ingenting er sendt videre ennå.</li>
+              <li>Når du er fornøyd, trykk <b>↓ Last ned alle endrede</b> oppe til høyre. De endrede filene lastes da ned til maskinen din.</li>
+              <li>Legg filene inn i <b>GitHub</b> (der nettsiden «bor») og bekreft — kalt <b>commit / push</b>. Usikker? Følg <a href="HVORDAN.md" target="_blank" rel="noopener" data-keep-token>veiledningen</a> steg for steg.</li>
+              <li>Ferdig! Nettsiden oppdaterer seg selv automatisk innen ett minutt.</li>
             </ol>
-            <div class="info-note">💡 Ingenting blir synlig på nettsiden før du har lastet ned fila og pushet den til GitHub. Du kan trygt eksperimentere — endringene er kun lokale til da.</div>
+            <div class="info-note">💡 Ingenting blir synlig for andre før steg 3. Du kan trygt prøve deg fram og forhåndsvise så mye du vil — alt er privat til du laster ned og pusher.</div>
           </div>
           <div class="info-card">
             <h3>Snarveier</h3>
             <div class="quick-links">
-              <a href="index.html" target="_top"><span class="ql-ico">🌐</span> Se nettsiden <span class="ql-sub">forsiden</span></a>
-              <a href="nyheter.html" target="_top"><span class="ql-ico">📰</span> Nyhetssiden <span class="ql-sub">med arkiv</span></a>
-              <a href="hastebeskjed.html" target="_top"><span class="ql-ico">⚡</span> Hastebeskjed <span class="ql-sub">mobil</span></a>
-              <a href="HVORDAN.md" target="_top"><span class="ql-ico">📘</span> Veiledning <span class="ql-sub">HVORDAN.md</span></a>
+              <a href="index.html" target="_blank" rel="noopener" data-keep-token><span class="ql-ico">🌐</span> Se nettsiden <span class="ql-sub">forsiden</span></a>
+              <a href="nyheter.html" target="_blank" rel="noopener" data-keep-token><span class="ql-ico">📰</span> Nyhetssiden <span class="ql-sub">med arkiv</span></a>
+              <a href="hastebeskjed.html" target="_blank" rel="noopener" data-keep-token><span class="ql-ico">⚡</span> Hastebeskjed <span class="ql-sub">mobil</span></a>
+              <a href="HVORDAN.md" target="_blank" rel="noopener" data-keep-token><span class="ql-ico">📘</span> Veiledning <span class="ql-sub">HVORDAN.md</span></a>
             </div>
           </div>
         </div>
@@ -217,6 +389,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 </div>
 
 <div class="toast" id="toast"></div>
+<div id="bulk-host" class="ph-wrap" aria-hidden="true" style="position:fixed;left:-10000px;top:0;width:880px;height:1px;overflow:hidden;opacity:0;pointer-events:none;"></div>
 
 <script src="admin-common.js"></script>
 <!-- C-moduler: paneler som mountes inline i skallet (erstatter frittstående *-admin.html etter hvert) -->
@@ -248,25 +421,75 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 <script src="admin-modules/nyheter.js"></script>
 <script src="admin-modules/meny.js"></script>
 <script src="admin-modules/merch.js"></script>
+<!-- Søk: statiske treff (input) + auto-generert indeks (sammenligningsgrunnlag) -->
+<script src="search-base.js"></script>
+<script src="search-index.js"></script>
 <script>
 (function () {
   // module:true  → mountes inline via AdminPanels (admin-modules/<id>.js)
   // file:'…'      → eldre panel, lastes midlertidig i iframe til det er migrert
   var PANELS = [
-    { id: 'nyheter',      ico: '📰', label: 'Nyheter',       module: true,                     desc: 'Kunngjøringer og beskjeder på forsiden, med arkiv.' },
-    { id: 'oppslag',      ico: '📌', label: 'Oppslagstavla', module: true,                     desc: 'Plakatene på oppslagstavla og forside-teaseren.' },
-    { id: 'forsiden',     ico: '🏛️', label: 'Forsiden',      module: true,                     desc: 'Tekster i toppbildet, om-seksjon, FAQ og kontakt.' },
-    { id: 'om-oss',       ico: '📖', label: 'Om oss',        module: true,                     desc: 'Innholdet på Om oss-siden.' },
-    { id: 'styret',       ico: '👥', label: 'Styret',        module: true,                     desc: 'Styremedlemmer, bilder og vervbeskrivelser.' },
-    { id: 'merch',        ico: '🛍️', label: 'Merch',         module: true,                     desc: 'Produktene i nettbutikken.' },
-    { id: 'begrep',       ico: '📓', label: 'Begrep',        module: true,                     desc: 'Utgaver, podkast, film og julekalender.' },
-    { id: 'medlemskap',   ico: '🎟️', label: 'Medlemskap',    module: true,                     desc: 'Priser og innmeldingssteg.' },
-    { id: 'hjelp',        ico: '🆘', label: 'Hjelp',         module: true,                     desc: 'Ressurser og kontakter på Hjelp-siden.' },
-    { id: 'meny',         ico: '🧭', label: 'Meny',          module: true,                     desc: 'Lenkene i hovedmenyen.' },
-    { id: 'footer',       ico: '👣', label: 'Footer',        module: true,                     desc: 'Bunntekst, lenker og sosiale ikoner.' },
-    { id: 'oppnaelser',   ico: '🏆', label: 'Oppnåelser',    module: true,                     desc: 'Milepæler og oppnåelser.' },
-    { id: 'utmerkelser',  ico: '🎖️', label: 'Utmerkelser',   module: true,                     desc: 'Priser og utmerkelser.' }
+    { id: 'forsiden',     ico: '🏛️', label: 'Forsiden',      module: true, ls: ['apeiron-index-v1'],                     desc: 'Tekster i toppbildet, om-seksjon, FAQ og kontakt.' },
+    { id: 'nyheter',      ico: '📰', label: 'Nyheter',       module: true, ls: ['apeiron-news-v1'],                      desc: 'Kunngjøringer og beskjeder på forsiden, med arkiv.' },
+    { id: 'oppslag',      ico: '📌', label: 'Oppslagstavla', module: true, ls: ['apeiron-oppslag-v1'],                   desc: 'Plakatene på oppslagstavla og forside-teaseren.' },
+    { id: 'om-oss',       ico: '📖', label: 'Om oss',        module: true, ls: ['apeiron-om-v1'],                        desc: 'Innholdet på Om oss-siden.' },
+    { id: 'styret',       ico: '👥', label: 'Styret',        module: true, ls: ['apeiron-styret-v1'],                    desc: 'Styremedlemmer, bilder og vervbeskrivelser.' },
+    { id: 'oppnaelser',   ico: '🏆', label: 'Oppnåelser',    module: true, ls: ['apeiron-oppnaelser-v1'],                desc: 'Milepæler og oppnåelser.' },
+    { id: 'utmerkelser',  ico: '🎖️', label: 'Utmerkelser',   module: true, ls: ['apeiron-utmerkelser-v1'],               desc: 'Priser og utmerkelser.' },
+    { id: 'begrep',       ico: '📓', label: 'Begrep',        module: true, ls: ['apeiron-begrep-v1'],                    desc: 'Utgaver, podkast, film og julekalender.' },
+    { id: 'merch',        ico: '🛍️', label: 'Merch',         module: true, ls: ['apeiron-merch-v1', 'apeiron-merch-info-v1'], desc: 'Produktene i nettbutikken.' },
+    { id: 'medlemskap',   ico: '🎟️', label: 'Medlemskap',    module: true, ls: ['apeiron-membership-v1'],               desc: 'Priser og innmeldingssteg.' },
+    { id: 'hjelp',        ico: '🆘', label: 'Hjelp',         module: true, ls: ['apeiron-hjelp-v1'],                     desc: 'Ressurser og kontakter på Hjelp-siden.' },
+    { id: 'meny',         ico: '🧭', label: 'Meny',          module: true, ls: ['apeiron-nav-v1', 'apeiron-nav-align-v1'], desc: 'Lenkene i hovedmenyen.' },
+    { id: 'footer',       ico: '👣', label: 'Footer',        module: true, ls: ['apeiron-footer-v1'],                    desc: 'Bunntekst, lenker og sosiale ikoner.' }
   ];
+
+  /* ─── SØKEINDEKS ───────────────────────────────────────────────
+     Bygges fra search-base.js (statiske treff) + hver moduls
+     searchEntries() (dynamiske treff fra publisert/utkast-data).
+     Regenereres som del av «Publiser» — lastes ned bare hvis den
+     faktisk har endret seg, så vanlige publiseringer ikke lager støy. */
+  function _clampDesc(s, n) { s = String(s || '').trim(); return s.length > n ? s.slice(0, n - 1).trim() + '…' : s; }
+  function buildSearchIndex() {
+    var list = (window.SEARCH_STATIC || []).slice();
+    PANELS.forEach(function (p) {
+      var def = window.AdminPanels && window.AdminPanels.get(p.id);
+      if (!def || typeof def.searchEntries !== 'function') return;
+      try { var e = def.searchEntries(); if (Array.isArray(e)) list = list.concat(e); } catch (_) {}
+    });
+    var seen = {}, out = [];
+    list.forEach(function (it) {
+      if (!it || !it.t) return;
+      var k = it.t + '|' + (it.u || '');
+      if (seen[k]) return; seen[k] = 1;
+      out.push({ t: it.t, d: _clampDesc(it.d, 180), u: it.u || '', g: it.g || 'Startside' });
+    });
+    return out;
+  }
+  function searchIndexFile(list) {
+    return '/* ============================================================\n'
+      + '   search-index.js — AUTO-GENERERT. IKKE rediger for hånd.\n'
+      + '   Bygges av admin.html ved «Publiser»: statiske treff fra\n'
+      + '   search-base.js + dynamiske fra modulenes searchEntries().\n'
+      + '   Leses av site-search.js på alle sider (faller tilbake til\n'
+      + '   den innebygde IDX-lista hvis denne mangler).\n'
+      + '   ============================================================ */\n\n'
+      + 'window.SEARCH_INDEX = ' + JSON.stringify(list, null, 2) + ';\n';
+  }
+  function searchIndexChanged(list) {
+    try { return JSON.stringify(window.SEARCH_INDEX || []) !== JSON.stringify(list); } catch (_) { return true; }
+  }
+  // Regenererer + laster ned search-index.js hvis innholdet har endret seg.
+  // Returnerer true hvis en fil ble lastet ned.
+  function publishSearchIndex() {
+    try {
+      var idx = buildSearchIndex();
+      if (!searchIndexChanged(idx)) return false;
+      window.AdminCommon.saveFile('search-index.js', searchIndexFile(idx));
+      window.SEARCH_INDEX = idx; // oppdater sammenligningsgrunnlaget
+      return true;
+    } catch (_) { return false; }
+  }
 
   AdminCommon.setupAuth(init);
 
@@ -280,18 +503,210 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
   var grid = document.getElementById('card-grid');
   var ctx = document.getElementById('ctx');
   var ctxSee = document.getElementById('ctx-see');
-  var ctxExport = document.getElementById('ctx-export');
   var hint = document.getElementById('hint');
   var homeBtn = null;
   var current = null;
   var activeCtrl = null;
 
+  var STICKY_KEY = 'apeiron-admin-preview-sticky';
+  function previewSticky() { try { return localStorage.getItem(STICKY_KEY) === '1'; } catch (_) { return false; } }
+  function kickResize() { try { window.dispatchEvent(new Event('resize')); } catch (_) {} }
+
+  // Plasser live-forhåndsvisningen (.preview-top) øverst i full bredde og legg til
+  // en verktøylinje: enhets-veksler (🖥/📱), full størrelse (⛶) og «📌 Fest» (sticky).
+  // Generisk — gjelder alle moduler med en .preview-top, uten at modulene endres.
+  function applyPreviewLayout(wrap) {
+    if (!wrap) return;
+    var pv = wrap.querySelector(':scope > .preview-top');
+    if (!pv || wrap.classList.contains('pv-split')) return;
+    var ed = document.createElement('div');
+    ed.className = 'pv-editor';
+    Array.prototype.slice.call(wrap.children).forEach(function (k) { if (k !== pv) ed.appendChild(k); });
+    wrap.appendChild(ed);
+    wrap.classList.add('pv-split');
+    wrap.classList.toggle('pv-sticky', previewSticky());
+
+    if (!pv.querySelector('.pv-tools')) {
+      var iframe = pv.querySelector('iframe');
+      var box = iframe ? iframe.parentElement : pv.querySelector('.fpreview');
+      if (box) box.classList.add('pv-box');
+      var hasFrame = !!iframe;
+
+      // Samle overskrift/beskrivelse/hopp-knapper i .pv-meta så de kan flyttes til
+      // høyre for telefonen i mobilmodus (og ikke stjele høyde fra selve telefonen).
+      var meta = document.createElement('div');
+      meta.className = 'pv-meta';
+      Array.prototype.slice.call(pv.children).forEach(function (k) { if (k !== box) meta.appendChild(k); });
+
+      var tools = document.createElement('div');
+      tools.className = 'pv-tools';
+
+      if (hasFrame) {
+        var seg = document.createElement('div'); seg.className = 'pv-seg';
+        var dBtn = document.createElement('button'); dBtn.type = 'button'; dBtn.className = 'pv-seg-btn'; dBtn.title = 'Vis i desktop-bredde'; dBtn.innerHTML = '<span class="pv-seg-ico">🖥</span><span class="pv-seg-lab">Desktop</span>';
+        var mBtn = document.createElement('button'); mBtn.type = 'button'; mBtn.className = 'pv-seg-btn'; mBtn.title = 'Vis i mobil-bredde'; mBtn.innerHTML = '<span class="pv-seg-ico">📱</span><span class="pv-seg-lab">Mobil</span>';
+        var syncSeg = function () {
+          var mob = window.AdminCommon.previewDevice() === 'mobile';
+          dBtn.classList.toggle('on', !mob); mBtn.classList.toggle('on', mob);
+          wrap.classList.toggle('pv-mobile', mob);
+        };
+        dBtn.addEventListener('click', function () { window.AdminCommon.setPreviewDevice('desktop'); syncSeg(); kickResize(); });
+        mBtn.addEventListener('click', function () { window.AdminCommon.setPreviewDevice('mobile'); syncSeg(); kickResize(); });
+        seg.appendChild(dBtn); seg.appendChild(mBtn);
+        tools.appendChild(seg);
+        syncSeg();
+
+        var fullBtn = document.createElement('button');
+        fullBtn.type = 'button'; fullBtn.className = 'pv-tool-btn'; fullBtn.title = 'Vis i full størrelse'; fullBtn.textContent = '⛶';
+        fullBtn.addEventListener('click', function () { wrap.classList.add('pv-full'); kickResize(); setTimeout(kickResize, 60); });
+        tools.appendChild(fullBtn);
+      }
+
+      var lbl = document.createElement('label');
+      lbl.className = 'pv-stick';
+      lbl.title = 'Fest forhåndsvisningen slik at den følger med når du scroller';
+      var cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = previewSticky();
+      var span = document.createElement('span'); span.textContent = '📌 Fest';
+      lbl.appendChild(cb); lbl.appendChild(span);
+      cb.addEventListener('change', function () {
+        try { localStorage.setItem(STICKY_KEY, cb.checked ? '1' : '0'); } catch (_) {}
+        wrap.classList.toggle('pv-sticky', cb.checked);
+      });
+      tools.appendChild(lbl);
+
+      meta.insertBefore(tools, meta.firstChild);
+      pv.insertBefore(meta, box || null);
+
+      if (hasFrame) {
+        var closeFull = document.createElement('button');
+        closeFull.type = 'button'; closeFull.className = 'pv-full-close'; closeFull.title = 'Lukk full størrelse (Esc)'; closeFull.textContent = '✕ Lukk';
+        closeFull.addEventListener('click', function () { wrap.classList.remove('pv-full'); kickResize(); });
+        pv.appendChild(closeFull);
+      }
+    }
+    tidyTip(wrap);
+    kickResize();
+    setTimeout(kickResize, 90);
+  }
+
+  // Fjern den alltid-synlige «Slik oppdaterer du …»-boksen og flytt innholdet inn i
+  // en «?»-hjelpeboble ved siden av «Tilbakestill». Generisk for alle moduler.
+  function tidyTip(wrap) {
+    var tip = wrap.querySelector('.tip');
+    if (!tip || tip.getAttribute('data-tidied')) return;
+    tip.setAttribute('data-tidied', '1');
+    var reset = tip.querySelector('.tip-reset');
+    var strong = tip.querySelector('strong');
+    var ol = tip.querySelector('ol');
+    var note = tip.querySelector('.tip-note');
+    var bubble = '';
+    if (strong) bubble += '<b class="hb-t">' + strong.innerHTML + '</b>';
+    if (ol) bubble += '<ol>' + ol.innerHTML + '</ol>';
+    if (note) bubble += '<div class="hb-note">' + note.innerHTML + '</div>';
+    if (reset && reset.parentNode === tip) tip.removeChild(reset);
+    tip.innerHTML = '';
+    tip.classList.add('tip--slim');
+    if (bubble) {
+      var help = document.createElement('span');
+      help.className = 'tip-help';
+      help.tabIndex = 0;
+      help.setAttribute('role', 'note');
+      help.innerHTML = '<span class="tip-help__q">?</span><span class="tip-help__lab">Hvordan publisere denne siden</span><span class="tip-help__bubble">' + bubble + '</span>';
+      tip.appendChild(help);
+    }
+    if (reset) tip.appendChild(reset);
+  }
+
+  /* ─── PUBLISERINGSSTATUS + SAMLET NEDLASTING (F1) ───
+     «Endret» = panelet har et lokalt utkast i localStorage (skrives ved redigering,
+     fjernes ved «Tilbakestill»). Viser gul prikk på fane + kort, og en linje med
+     «Last ned alle endrede». Samlet nedlasting mounter hvert endret panel skjult,
+     kaller dets ekte eksport, og rydder opp — så filene blir 100 % korrekte. */
+  var tabBtns = {}, cardEls = {};
+  var pubBtn = null, pubCount = null, panelOn = false;
+
+  // Samordner header-området: «Se siden» (når et panel er åpent) og den samlede
+  // publiser-knappen + telleren (når minst étt panel har upubliserte endringer).
+  // Knappen vises uavhengig av om man er på oversikten eller inne i et panel.
+  function syncHeader() {
+    var showPub = changedPanels().length > 0;
+    if (pubCount) pubCount.style.display = showPub ? '' : 'none';
+    if (pubBtn) pubBtn.style.display = showPub ? '' : 'none';
+    var on = panelOn || showPub;
+    ctx.classList.toggle('show', on);
+    if (hint) hint.style.display = on ? 'none' : '';
+  }
+
+  function panelChanged(p) {
+    return (p.ls || []).some(function (k) { try { return localStorage.getItem(k) != null; } catch (_) { return false; } });
+  }
+  function changedPanels() { return PANELS.filter(panelChanged); }
+  function refreshStatus() {
+    PANELS.forEach(function (p) {
+      var on = panelChanged(p);
+      if (tabBtns[p.id]) tabBtns[p.id].classList.toggle('has-changes', on);
+      if (cardEls[p.id]) cardEls[p.id].classList.toggle('has-changes', on);
+    });
+    var n = changedPanels().length;
+    if (pubCount) pubCount.textContent = n === 0 ? '' : (n === 1 ? '1 upublisert endring' : n + ' upubliserte endringer');
+    if (pubBtn) pubBtn.textContent = '↓ Last ned alle endrede (' + n + ')';
+    syncHeader();
+  }
+
+  var bulkBusy = false;
+  function bulkExport() {
+    if (bulkBusy) return;
+    var list = changedPanels();
+    if (!list.length) return;
+    if (!confirm('Last ned ' + list.length + (list.length === 1 ? ' endret fil' : ' endrede filer')
+      + ' nå?\n\n' + list.map(function (p) { return '• ' + p.label; }).join('\n')
+      + '\n• Søkeindeks (oppdateres automatisk hvis nødvendig)'
+      + '\n\nHusk å erstatte hver fil i GitHub og pushe for at endringene skal bli synlige.')) return;
+    bulkBusy = true;
+    if (pubBtn) pubBtn.disabled = true;
+    var hostDiv = document.getElementById('bulk-host');
+    var i = 0;
+    function step() {
+      if (i >= list.length) {
+        var idxDownloaded = publishSearchIndex();
+        var total = list.length + (idxDownloaded ? 1 : 0);
+        bulkBusy = false; if (pubBtn) pubBtn.disabled = false;
+        if (hostDiv) hostDiv.innerHTML = '';
+        window.AdminCommon.toast('Lastet ned ' + total + (total === 1 ? ' fil' : ' filer')
+          + (idxDownloaded ? ' (inkl. søkeindeks)' : '') + ' — husk å pushe til GitHub');
+        return;
+      }
+      var p = list[i++];
+      var def = window.AdminPanels && window.AdminPanels.get(p.id);
+      if (!def || !def.mount || !hostDiv) { step(); return; }
+      hostDiv.innerHTML = ''; hostDiv.className = 'ph-wrap mod-' + p.id;
+      var ctrl;
+      try { ctrl = def.mount(hostDiv, window.AdminCommon) || {}; } catch (e) { ctrl = {}; }
+      setTimeout(function () {
+        try { if (ctrl.export) ctrl.export(); } catch (e) {}
+        try { if (ctrl.destroy) ctrl.destroy(); } catch (e) {}
+        if (hostDiv) hostDiv.innerHTML = '';
+        setTimeout(step, 420);
+      }, 90);
+    }
+    step();
+  }
+
+  // Oppdater status hver gang noe lagres (alle moduler kaller toast ved lagring).
+  var _origToast = window.AdminCommon.toast;
+  window.AdminCommon.toast = function (m) {
+    try { _origToast.call(window.AdminCommon, m); } catch (_) {}
+    try { refreshStatus(); } catch (_) {}
+  };
+
   function setActive(btn) {
     Array.prototype.forEach.call(bar.children, function (b) { b.classList.toggle('is-active', b === btn); });
+    ensureTabVisible(btn);
   }
   function showCtx(on) {
-    ctx.classList.toggle('show', !!on);
-    if (hint) hint.style.display = on ? 'none' : '';
+    panelOn = !!on;
+    if (!on && ctxSee) ctxSee.style.display = 'none';
+    syncHeader();
   }
 
   function showHome() {
@@ -331,9 +746,9 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
       if (!def) { panelHostInner.innerHTML = '<p style="padding:40px;color:#888">Fant ikke modulen «' + panel.id + '».</p>'; showCtx(false); return; }
       var ctrl = def.mount(panelHostInner, window.AdminCommon) || {};
       activeCtrl = ctrl;
+      applyPreviewLayout(panelHostInner);
       if (def.see) { ctxSee.href = def.see.href; ctxSee.textContent = def.see.label; ctxSee.style.display = ''; }
       else ctxSee.style.display = 'none';
-      ctxExport.style.display = ctrl.export ? '' : 'none';
       showCtx(true);
       panelHost.scrollTop = 0;
     } else {
@@ -345,8 +760,6 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
       frame.src = panel.file;
     }
   }
-
-  ctxExport.addEventListener('click', function () { if (activeCtrl && activeCtrl.export) activeCtrl.export(); });
 
   frame.addEventListener('load', function () {
     loading.style.display = 'none';
@@ -361,6 +774,72 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
     } catch (_) {}
   });
 
+  // ── Fane-rad: bla-knapper, fade-kanter, dra-for-å-panorere og hjul-scroll ──
+  function syncTabThumb() {
+    var shell = document.querySelector('.tabbar-shell'); if (!shell || !bar) return;
+    var track = shell.querySelector('.tab-scrollbar'), thumb = shell.querySelector('.tab-scrollbar__thumb');
+    if (!track || !thumb) return;
+    var sw = bar.scrollWidth, cw = bar.clientWidth, tw = track.clientWidth;
+    var thumbW = Math.max(30, Math.round(tw * (cw / sw)));
+    thumb.style.width = thumbW + 'px';
+    var maxScroll = sw - cw, maxThumb = tw - thumbW;
+    thumb.style.left = (maxScroll > 0 ? Math.round((bar.scrollLeft / maxScroll) * maxThumb) : 0) + 'px';
+  }
+  function updTabScroll() {
+    var shell = document.querySelector('.tabbar-shell'); if (!shell || !bar) return;
+    var max = bar.scrollWidth - bar.clientWidth - 1;
+    shell.classList.toggle('can-l', bar.scrollLeft > 1);
+    shell.classList.toggle('can-r', bar.scrollLeft < max);
+    shell.classList.toggle('scrollable', bar.scrollWidth > bar.clientWidth + 1);
+    syncTabThumb();
+  }
+  function ensureTabVisible(btn) {
+    if (!btn || !bar) return;
+    var br = btn.getBoundingClientRect(), cr = bar.getBoundingClientRect(), pad = 48;
+    if (br.left < cr.left + pad) bar.scrollBy({ left: br.left - cr.left - pad, behavior: 'smooth' });
+    else if (br.right > cr.right - pad) bar.scrollBy({ left: br.right - cr.right + pad, behavior: 'smooth' });
+  }
+  function initTabScroll() {
+    var shell = document.querySelector('.tabbar-shell'); if (!shell || !bar) return;
+    var L = shell.querySelector('.tab-scroll--l'), R = shell.querySelector('.tab-scroll--r');
+    function step() { return Math.max(160, Math.round(bar.clientWidth * 0.7)); }
+    if (L) L.addEventListener('click', function () { bar.scrollBy({ left: -step(), behavior: 'smooth' }); });
+    if (R) R.addEventListener('click', function () { bar.scrollBy({ left: step(), behavior: 'smooth' }); });
+    bar.addEventListener('scroll', updTabScroll, { passive: true });
+    window.addEventListener('resize', updTabScroll);
+    bar.addEventListener('wheel', function (e) {
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) { bar.scrollLeft += e.deltaY; e.preventDefault(); }
+    }, { passive: false });
+    var down = false, sx = 0, sl = 0, moved = false;
+    bar.addEventListener('pointerdown', function (e) {
+      if (e.button !== 0) return; down = true; moved = false; sx = e.clientX; sl = bar.scrollLeft;
+    });
+    window.addEventListener('pointermove', function (e) {
+      if (!down) return; var dx = e.clientX - sx;
+      if (!moved && Math.abs(dx) > 5) { moved = true; bar.classList.add('dragging'); }
+      if (moved) bar.scrollLeft = sl - dx;
+    });
+    window.addEventListener('pointerup', function () {
+      if (!down) return; down = false;
+      if (moved) setTimeout(function () { bar.classList.remove('dragging'); }, 0);
+    });
+    bar.addEventListener('click', function (e) {
+      if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; }
+    }, true);
+    var track = shell.querySelector('.tab-scrollbar'), thumb = shell.querySelector('.tab-scrollbar__thumb');
+    if (thumb && track) {
+      var td = false, tsx = 0, tsl = 0;
+      thumb.addEventListener('pointerdown', function (e) { td = true; tsx = e.clientX; tsl = bar.scrollLeft; thumb.classList.add('dragging'); e.preventDefault(); e.stopPropagation(); });
+      window.addEventListener('pointermove', function (e) {
+        if (!td) return;
+        var tw = track.clientWidth, thumbW = thumb.clientWidth, maxThumb = tw - thumbW, maxScroll = bar.scrollWidth - bar.clientWidth;
+        bar.scrollLeft = tsl + (maxThumb > 0 ? ((e.clientX - tsx) / maxThumb) * maxScroll : 0);
+      });
+      window.addEventListener('pointerup', function () { if (td) { td = false; thumb.classList.remove('dragging'); } });
+    }
+    updTabScroll(); setTimeout(updTabScroll, 250);
+  }
+
   function build() {
     // Hjem-fane
     homeBtn = document.createElement('button');
@@ -369,11 +848,12 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
     homeBtn.addEventListener('click', showHome);
     bar.appendChild(homeBtn);
 
-    var btns = {};
+    tabBtns = {}; cardEls = {};
+    var btns = tabBtns;
     PANELS.forEach(function (p) {
       var b = document.createElement('button');
       b.type = 'button'; b.className = 'tab';
-      b.innerHTML = '<span class="ico">' + p.ico + '</span>' + p.label;
+      b.innerHTML = '<span class="ico">' + p.ico + '</span>' + p.label + '<span class="tab-dot" title="Ulagrede endringer"></span>';
       b.addEventListener('click', function () { select(p, b); });
       bar.appendChild(b);
       btns[p.id] = b;
@@ -382,11 +862,12 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
       var card = document.createElement('button');
       card.type = 'button'; card.className = 'panel-card';
       card.innerHTML =
-        '<div class="pc-head"><span class="pc-ico">' + p.ico + '</span><span class="pc-name">' + p.label + '</span></div>'
+        '<div class="pc-head"><span class="pc-ico">' + p.ico + '</span><span class="pc-name">' + p.label + '</span><span class="pc-dot" title="Ulagrede endringer"></span></div>'
         + '<div class="pc-desc">' + p.desc + '</div>'
         + '<div class="pc-open">Åpne →</div>';
       card.addEventListener('click', function () { select(p, btns[p.id]); });
       grid.appendChild(card);
+      cardEls[p.id] = card;
     });
 
     // Dyp-lenke (#merch osv.) åpner panelet direkte; ellers oversikt.
@@ -396,7 +877,33 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
     else showHome();
   }
 
-  function init() { build(); }
+  function init() {
+    // «Se siden»-lenker: åpne i ny fane og ta med ev. forhåndsvisnings-token (?t=…)
+    // slik at de fungerer både i editor-forhåndsvisningen og på den publiserte siden
+    // (der token-strengen er tom, så lenken blir bare den vanlige relative URL-en).
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a[data-keep-token]');
+      if (!a) return;
+      e.preventDefault();
+      var href = a.getAttribute('href') || '';
+      var hash = '', hi = href.indexOf('#');
+      if (hi >= 0) { hash = href.slice(hi); href = href.slice(0, hi); }
+      var tok = '';
+      try { var p = new URLSearchParams(location.search); if (p.get('t')) tok = p.get('t'); } catch (_) {}
+      var url = href + (tok ? ((href.indexOf('?') >= 0 ? '&' : '?') + 't=' + encodeURIComponent(tok)) : '') + hash;
+      window.open(url, '_blank', 'noopener');
+    });
+  pubBtn = document.getElementById('pub-btn');
+    pubCount = document.getElementById('pub-count');
+    if (pubBtn) pubBtn.addEventListener('click', bulkExport);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') { var f = document.querySelector('.ph-wrap.pv-full'); if (f) { f.classList.remove('pv-full'); kickResize(); } }
+    });
+    build();
+    initTabScroll();
+    refreshStatus();
+    setInterval(refreshStatus, 2500);
+  }
 })();
 </script>
 </body>

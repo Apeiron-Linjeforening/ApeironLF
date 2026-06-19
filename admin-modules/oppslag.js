@@ -27,7 +27,7 @@
           + '<ol>'
             + '<li>Rediger plakatene nedenfor — klikk på et felt for å redigere det</li>'
             + '<li>Last opp plakatbildet ved å <b>klikke på bildefeltet</b> eller dra et bilde inn — hover over bildet for å <b>↻ rotere</b> eller <b>⛶ beskjære/zoome</b></li>'
-            + '<li>Klikk <b>↓ Last ned</b> oppe til høyre</li>'
+            + '<li>Klikk <b>↓ Last ned alle endrede</b> oppe til høyre</li>'
             + '<li>Erstatt <code>oppslag-content.js</code> i GitHub-repositoriet og push/commit</li>'
             + '<li>Cloudflare oppdaterer nettsiden automatisk innen et minutt</li>'
           + '</ol>'
@@ -88,6 +88,7 @@
             _ctx.imageSmoothingEnabled = true; _ctx.imageSmoothingQuality = 'high';
             _ctx.drawImage(img, 0, 0, w, h);
             var url = canvas.toDataURL('image/webp', 0.92);
+            AC.checkImageSize(url);
             var a = find(tgt.id);
             if (a) a.img = url;
             var zone = host.querySelector('[data-id="' + tgt.id + '"] .img-zone');
@@ -237,9 +238,9 @@
         var wrap = host.querySelector('.pv-board-wrap');
         if (!pvFrame || !wrap) return;
         var W = wrap.clientWidth; if (!W) return;
-        var contentW = 1180;
+        var contentW = (window.AdminCommon && AdminCommon.getPreviewWidth) ? AdminCommon.getPreviewWidth() : 1180;
         var scale = Math.min(1, W / contentW);
-        var visibleH = Math.max(440, Math.min(720, Math.round(window.innerHeight * 0.7)));
+        var visibleH = Math.max(420, Math.min(680, Math.round(window.innerHeight * 0.66)));
         pvFrame.style.width = contentW + 'px';
         pvFrame.style.height = Math.round(visibleH / scale) + 'px';
         pvFrame.style.transform = 'scale(' + scale + ')';

@@ -10,8 +10,22 @@
 .panel-host .sec { margin-bottom: 30px; }
 .panel-host .sec-desc { font-size: .82rem; color: var(--ink-soft); margin-bottom: 14px; line-height: 1.5; }
 
+/* ── generisk live-preview (alle moduler med .preview-top) ──
+   Skallet (admin.html) plasserer .preview-top ved siden av editoren på desktop. */
+.panel-host .preview-top h3 { font-family: var(--display); font-size: 1.4rem; color: var(--navy); }
+.panel-host .preview-top .pp-sub { font-size: .82rem; color: var(--ink-soft); margin: 2px 0 12px; line-height: 1.45; }
+.panel-host .pv-frame-wrap { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--paper); box-shadow: 0 4px 22px rgba(35,39,64,.07); }
+.panel-host .pv-frame-wrap iframe { border: 0; display: block; background: var(--paper); transform-origin: top left; }
+
+/* ── generisk adressefelt: 📍-velger + lenkevarsel (footer/nyheter m.fl.) ── */
+.panel-host .addr-wrap { position: relative; display: flex; align-items: stretch; }
+.panel-host .addr-wrap input { padding-right: 34px; }
+.panel-host .btn-loc { position: absolute; right: 3px; top: 50%; transform: translateY(-50%); width: 26px; height: 26px; border: none; background: transparent; border-radius: 4px; cursor: pointer; font-size: .92rem; opacity: .7; display: flex; align-items: center; justify-content: center; }
+.panel-host .btn-loc:hover { opacity: 1; background: rgba(212,175,55,.18); }
+.panel-host .lnk-warn { display: none; margin-top: 4px; font-size: .73rem; line-height: 1.35; color: #9a6a00; }
+.panel-host .lnk-warn.show { display: block; }
+
 /* ── delt: live-preview-boks (styret/begrep) ── */
-.mod-styret .preview-top, .mod-begrep .preview-top { margin-bottom: 28px; }
 .mod-styret .preview-top h3, .mod-begrep .preview-top h3 { font-family: var(--display); font-size: 1.4rem; color: var(--navy); }
 .mod-styret .preview-top .pp-sub, .mod-begrep .preview-top .pp-sub { font-size: .82rem; color: var(--ink-soft); margin: 2px 0 12px; line-height: 1.45; }
 .mod-styret .pv-board-wrap, .mod-begrep .pv-page-wrap { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--paper); box-shadow: 0 4px 22px rgba(35,39,64,.07); }
@@ -82,6 +96,8 @@
 .mod-footer .row-card .fg.narrow { flex: 0 0 130px; min-width: 110px; }
 .mod-footer .btn-del-row { align-self: center; flex: 0 0 auto; width: 30px; height: 32px; border: 1px solid rgba(118,17,15,.25); border-radius: 4px; background: transparent; color: var(--maroon); font-size: .9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 .mod-footer .btn-del-row:hover { background: rgba(118,17,15,.06); }
+.mod-footer .fpv-wrap { margin-top: 8px; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; background: var(--navy); }
+.mod-footer #pv-foot { width: 100%; border: 0; display: block; }
 .mod-footer .fpreview { margin-top: 8px; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
 .mod-footer .fpreview .lbl { font-size: .63rem; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; color: var(--ink-soft); padding: 8px 12px; background: rgba(35,39,64,.03); border-bottom: 1px solid var(--border); }
 .mod-footer .fp-foot { background: #232740; color: rgba(244,236,217,.7); padding: 36px 16px 26px; text-align: center; }
@@ -100,7 +116,6 @@
 .mod-footer .fp-report a { font-size: .72rem; opacity: .45; color: rgba(244,236,217,.7); text-decoration: none; }
 
 /* ════════ HJELP ════════ */
-.mod-hjelp .preview-top { margin-bottom: 28px; }
 .mod-hjelp .preview-top h3 { font-family: var(--display); font-size: 1.4rem; color: var(--navy); }
 .mod-hjelp .preview-top .pp-sub { font-size: .82rem; color: var(--ink-soft); margin: 2px 0 12px; line-height: 1.45; }
 .mod-hjelp .pv-page-wrap { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--paper); box-shadow: 0 4px 22px rgba(35,39,64,.07); }
@@ -165,14 +180,10 @@
 }
 
 /* ════════ OM OSS (postMessage-preview + listeredigerere) ════════ */
-.mod-om-oss .preview-top { margin-bottom: 28px; }
 .mod-om-oss .preview-top h3 { font-family: var(--display); font-size: 1.4rem; color: var(--navy); }
 .mod-om-oss .preview-top .pp-sub { font-size: .82rem; color: var(--ink-soft); margin: 2px 0 12px; line-height: 1.45; }
 .mod-om-oss .pv-board-wrap { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--paper); box-shadow: 0 4px 22px rgba(35,39,64,.07); }
 .mod-om-oss #pv-board { border: 0; display: block; background: var(--paper); transform-origin: top left; }
-.mod-om-oss .pv-jump { display: flex; gap: 6px; flex-wrap: wrap; margin: 10px 0 0; }
-.mod-om-oss .pv-jump button { font-family: var(--body); font-size: .74rem; color: var(--navy); background: white; border: 1px solid var(--border); border-radius: 999px; padding: 4px 12px; cursor: pointer; }
-.mod-om-oss .pv-jump button:hover { background: rgba(212,175,55,.16); border-color: rgba(212,175,55,.5); }
 .mod-om-oss .panel { background: white; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 22px; overflow: hidden; }
 .mod-om-oss .panel > h2 { font-family: var(--display); font-size: 1.5rem; color: var(--navy); padding: 15px 20px 13px; background: rgba(35,39,64,.03); border-bottom: 1px solid var(--border); display: flex; align-items: baseline; gap: 10px; }
 .mod-om-oss .panel > h2 small { font-family: var(--body); font-size: .76rem; font-weight: 400; color: var(--ink-soft); letter-spacing: 0; text-transform: none; }
@@ -200,14 +211,10 @@
 .mod-om-oss .btn-add:hover { background: rgba(212,175,55,.3); }
 
 /* ════════ FORSIDEN (Hjem — samme chrome som Om oss) ════════ */
-.mod-forsiden .preview-top { margin-bottom: 28px; }
 .mod-forsiden .preview-top h3 { font-family: var(--display); font-size: 1.4rem; color: var(--navy); }
 .mod-forsiden .preview-top .pp-sub { font-size: .82rem; color: var(--ink-soft); margin: 2px 0 12px; line-height: 1.45; }
 .mod-forsiden .pv-board-wrap { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--paper); box-shadow: 0 4px 22px rgba(35,39,64,.07); }
 .mod-forsiden #pv-board { border: 0; display: block; background: var(--paper); transform-origin: top left; }
-.mod-forsiden .pv-jump { display: flex; gap: 6px; flex-wrap: wrap; margin: 10px 0 0; }
-.mod-forsiden .pv-jump button { font-family: var(--body); font-size: .74rem; color: var(--navy); background: white; border: 1px solid var(--border); border-radius: 999px; padding: 4px 12px; cursor: pointer; }
-.mod-forsiden .pv-jump button:hover { background: rgba(212,175,55,.16); border-color: rgba(212,175,55,.5); }
 .mod-forsiden .panel { background: white; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 22px; overflow: hidden; }
 .mod-forsiden .panel > h2 { font-family: var(--display); font-size: 1.5rem; color: var(--navy); padding: 15px 20px 13px; background: rgba(35,39,64,.03); border-bottom: 1px solid var(--border); display: flex; align-items: baseline; gap: 10px; }
 .mod-forsiden .panel > h2 small { font-family: var(--body); font-size: .76rem; font-weight: 400; color: var(--ink-soft); letter-spacing: 0; text-transform: none; }
@@ -247,7 +254,6 @@
 
 
 /* ════════ OPPSLAGSTAVLA (preview + bildeopplasting + crop + arkiv) ════════ */
-.mod-oppslag .preview-top { margin-bottom: 28px; }
 .mod-oppslag .preview-top h3 { font-family: var(--display); font-size: 1.4rem; color: var(--navy); }
 .mod-oppslag .preview-top .pp-sub { font-size: .82rem; color: var(--ink-soft); margin: 2px 0 12px; line-height: 1.45; }
 .mod-oppslag .pv-board-wrap { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--paper); box-shadow: 0 4px 22px rgba(35,39,64,.07); }
@@ -327,7 +333,6 @@
 
 
 /* ════════ NYHETER (card-liste + live forsidepreview) ════════ */
-.mod-nyheter .preview-top { margin-bottom: 24px; }
 .mod-nyheter .preview-top h3 { font-family: var(--display); font-size: 1.4rem; color: var(--navy); }
 .mod-nyheter .preview-top .pp-sub { font-size: .82rem; color: var(--ink-soft); margin: 2px 0 12px; line-height: 1.45; }
 .mod-nyheter .pv-wrap { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--navy); box-shadow: 0 4px 22px rgba(35,39,64,.07); }
@@ -393,8 +398,8 @@
 .mod-meny #pv-desk { width: 100%; height: var(--nav-h, 76px); border: 0; display: block; border-radius: 7px; position: relative; z-index: 1; transition: height .16s ease; }
 .mod-meny .desk-preview-bar:hover { z-index: 70; }
 .mod-meny .desk-preview-bar:hover #pv-desk { height: var(--nav-h-open, 330px); z-index: 40; }
-.mod-meny .np-mob-wrap { width: 300px; height: 470px; margin: 0 auto; overflow: hidden; border: 1px solid var(--border); border-radius: 14px; background: var(--navy); }
-.mod-meny #pv-mob { width: 390px; height: 611px; border: 0; transform: scale(.769); transform-origin: top left; display: block; }
+.mod-meny .np-mob-wrap { width: 330px; height: 600px; margin: 0 auto; overflow: hidden; border: 1px solid var(--border); border-radius: 12px; background: var(--navy); }
+.mod-meny #pv-mob { width: 390px; height: 709px; border: 0; transform: scale(.846); transform-origin: top left; display: block; }
 .mod-meny .align-sec { background: white; border: 1px solid var(--border); border-radius: 7px; padding: 16px 20px; margin-bottom: 24px; }
 .mod-meny .align-sec h2 { font-family: var(--display); font-size: 1.3rem; color: var(--navy); }
 .mod-meny .align-presets { display: flex; gap: 10px; margin: 4px 0 20px; flex-wrap: wrap; }
@@ -419,11 +424,12 @@
 }
 
 
-/* merch + meny trenger bredere arbeidsflate enn standard .ph-wrap (820px) */
-.ph-wrap.mod-merch, .ph-wrap.mod-meny { max-width: 1180px; }
+/* meny bruker egen grid-layout (ikke .pv-split) og trenger samme brede
+   arbeidsflate som de andre modulene. Standard .pv-split-moduler settes til
+   1180px i admin.html, så merch trenger ikke lenger egen regel her. */
+.ph-wrap.mod-meny { max-width: 1180px; }
 
 /* ════════ MERCH (produkter: galleri + varianter + badge + farger + preview) ════════ */
-.mod-merch .preview-top { margin-bottom: 30px; }
 .mod-merch .preview-top h3 { font-family: var(--display); font-size: 1.4rem; color: var(--navy); }
 .mod-merch .preview-top .pp-sub { font-size: .82rem; color: var(--ink-soft); margin: 2px 0 12px; line-height: 1.45; }
 .mod-merch .pv-shop-wrap { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--paper); box-shadow: 0 4px 22px rgba(35,39,64,.07); }

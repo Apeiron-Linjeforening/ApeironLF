@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <script src="theme.js"></script>
+<script>try{if(/[?&]preview\b/.test(location.search))document.documentElement.classList.add('is-preview');}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Oppnåelser — Apeiron · NTNU</title>
 <meta name="description" content="Oppnåelser i Apeiron — premier, pokaler og resultater linjeforeningen for filosofi og etikk ved NTNU har vunnet." />
@@ -149,25 +150,29 @@ html[data-mode="marine"] .award-card { border-left-color: var(--c-d, var(--gold)
 <script>
 /* ── Render oppnåelser fra oppnaelser-content.js ── */
 (function () {
-  var C = window.OPPNAELSER_CONTENT || {};
+  var IS_PREVIEW = false;
+  try { IS_PREVIEW = /[?&]preview\b/.test(location.search); } catch (e) {}
   function esc(s) {
     return String(s == null ? '' : s)
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
   function setText(id, val) {
     var el = document.getElementById(id);
-    if (el && val != null && val !== '') el.textContent = val;
+    if (!el) return;
+    if (IS_PREVIEW) { el.textContent = (val == null ? '' : val); return; }
+    if (val != null && val !== '') el.textContent = val;
   }
   var STAGGER = ['', 'd1', 'd2', 'd3'];
 
-  if (C.intro) {
-    setText('intro-eyebrow', C.intro.eyebrow);
-    setText('intro-heading', C.intro.heading);
-    setText('intro-lede', C.intro.lede);
-  }
-
-  var grid = document.getElementById('award-grid');
-  if (grid && Array.isArray(C.awards)) {
+  function renderOppnaelser() {
+    var C = window.OPPNAELSER_CONTENT || {};
+    if (C.intro) {
+      setText('intro-eyebrow', C.intro.eyebrow);
+      setText('intro-heading', C.intro.heading);
+      setText('intro-lede', C.intro.lede);
+    }
+    var grid = document.getElementById('award-grid');
+    if (!grid || !Array.isArray(C.awards)) return;
     if (!C.awards.length) {
       grid.innerHTML = '<p class="award-empty">Ingen oppnåelser er lagt til ennå.</p>';
       return;
@@ -195,6 +200,25 @@ html[data-mode="marine"] .award-card { border-left-color: var(--c-d, var(--gold)
         + '</div>';
     }).join('');
   }
+
+  renderOppnaelser();
+
+  /* ── Live forhåndsvisning fra admin (oppnaelser.html?preview=1) ── */
+  if (IS_PREVIEW) {
+    var pvNotify = function () {
+      try { parent.postMessage({ type: 'apeiron-oppnaelser-preview-height', height: document.documentElement.scrollHeight }, '*'); } catch (e) {}
+    };
+    window.addEventListener('message', function (e) {
+      var d = e.data;
+      if (!d || d.type !== 'apeiron-oppnaelser-preview') return;
+      if (d.content) window.OPPNAELSER_CONTENT = d.content;
+      renderOppnaelser();
+      document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+      pvNotify();
+    });
+    document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+    try { parent.postMessage({ type: 'apeiron-oppnaelser-preview-ready' }, '*'); } catch (e) {}
+  }
 })();
 </script>
 <script>
@@ -213,6 +237,7 @@ html[data-mode="marine"] .award-card { border-left-color: var(--c-d, var(--gold)
 })();
 </script>
 <script src="report.js"></script>
+<script src="search-index.js"></script>
 <script src="site-search.js"></script>
 </body>
 </html>

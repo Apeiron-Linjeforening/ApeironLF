@@ -10,3 +10,6 @@
 
 # API-nøkkel for lokal testing (genereres automatisk av Cloudflare Pages i prod)
 api-config.js
+
+# Arbeidsdokument (ikke publisert)
+Plan F.html

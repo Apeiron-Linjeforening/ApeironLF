@@ -28,7 +28,7 @@
             + '<li>Rediger innholdet nedenfor — klikk på et felt for å redigere det</li>'
             + '<li>Legg til kort med <b>+ Nytt kort</b>, og punkter eller kontaktlinjer med <b>+ punkt</b> / <b>+ kontaktlinje</b></li>'
             + '<li>I tekstfelt for kontaktlinjer og «Si fra»-kort kan du bruke HTML, f.eks. <code>&lt;strong&gt;...&lt;/strong&gt;</code> eller en lenke</li>'
-            + '<li>Klikk <b>↓ Last ned</b> oppe til høyre</li>'
+            + '<li>Klikk <b>↓ Last ned alle endrede</b> oppe til høyre</li>'
             + '<li>Erstatt <code>hjelp-content.js</code> i GitHub-repositoriet og push/commit</li>'
             + '<li>Cloudflare oppdaterer nettsiden automatisk innen et minutt</li>'
           + '</ol>'
@@ -350,7 +350,7 @@
         var wrap = host.querySelector('.pv-page-wrap');
         if (!pvFrame || !wrap) return;
         var W = wrap.clientWidth; if (!W) return;
-        var contentW = 1180;
+        var contentW = (window.AdminCommon && AdminCommon.getPreviewWidth) ? AdminCommon.getPreviewWidth() : 1180;
         var scale = Math.min(1, W / contentW);
         var visibleH = Math.max(420, Math.min(680, Math.round(window.innerHeight * 0.66)));
         pvFrame.style.width = contentW + 'px';

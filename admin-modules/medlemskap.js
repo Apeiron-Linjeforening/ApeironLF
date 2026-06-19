@@ -33,11 +33,16 @@
       function uid() { return 't' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
 
       host.innerHTML =
-        '<div class="tip">'
+        '<section class="preview-top">'
+          + '<h3>Forhåndsvisning</h3>'
+          + '<p class="pp-sub">Live fra forsiden — «Bli medlem»-kortet (priser og innmeldingssteg) oppdateres mens du skriver.</p>'
+          + '<div class="pv-frame-wrap"><iframe id="pv-frame" src="index.html?preview=1#bli-medlem" title="Forhåndsvisning av Bli medlem"></iframe></div>'
+        + '</section>'
+        + '<div class="tip">'
           + '<button class="tip-reset" data-reset type="button">Tilbakestill til siste publiserte versjon</button>'
           + '<strong>Slik oppdaterer du medlemskapsprisene</strong>'
           + '<ol><li>Rediger Vipps-info, prisnivåer og innmeldingsstegene nedenfor</li>'
-          + '<li>Klikk <b>↓ Last ned …</b> oppe til høyre</li>'
+          + '<li>Klikk <b>↓ Last ned alle endrede</b> oppe til høyre</li>'
           + '<li>Erstatt <code>membership-config.js</code> i GitHub-repoet og commit/push</li>'
           + '<li>Cloudflare oppdaterer nettsiden automatisk innen et minutt</li></ol>'
           + '<div class="tip-note">💾 Endringer lagres automatisk i nettleseren. Last ned filen for å publisere.</div>'
@@ -161,7 +166,34 @@
         AC.toast('Lastet ned membership-config.js');
       }
 
-      return { export: exportFile };
+      /* ── live forhåndsvisning (index.html?preview=1#bli-medlem) ── */
+      var pvFrame = host.querySelector('#pv-frame');
+      function pushPreview() { if (!pvFrame || !pvFrame.contentWindow) return; try { pvFrame.contentWindow.postMessage({ type: 'apeiron-membership-preview', content: store.data }, '*'); } catch (e) {} }
+      var origSave = store.save;
+      store.save = function () { origSave(); pushPreview(); };
+      function onPreviewMsg(e) { if (e.data && e.data.type === 'apeiron-membership-preview-ready') { pushPreview(); fitPreview(); } }
+      function fitPreview() {
+        var wrap = host.querySelector('.pv-frame-wrap');
+        if (!pvFrame || !wrap) return;
+        var W = wrap.clientWidth; if (!W) return;
+        var contentW = (window.AdminCommon && AdminCommon.getPreviewWidth) ? AdminCommon.getPreviewWidth() : 1180;
+        var scale = Math.min(1, W / contentW);
+        var visibleH = Math.max(420, Math.min(680, Math.round(window.innerHeight * 0.66)));
+        pvFrame.style.width = contentW + 'px';
+        pvFrame.style.height = Math.round(visibleH / scale) + 'px';
+        pvFrame.style.transform = 'scale(' + scale + ')';
+        wrap.style.height = visibleH + 'px';
+      }
+      window.addEventListener('message', onPreviewMsg);
+      window.addEventListener('resize', fitPreview);
+      if (pvFrame) pvFrame.addEventListener('load', function () { fitPreview(); pushPreview(); });
+      fitPreview(); setTimeout(fitPreview, 80);
+      pushPreview(); setTimeout(pushPreview, 200);
+
+      return {
+        export: exportFile,
+        destroy: function () { window.removeEventListener('message', onPreviewMsg); window.removeEventListener('resize', fitPreview); }
+      };
     }
   });
 })();

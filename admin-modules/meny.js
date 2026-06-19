@@ -28,7 +28,7 @@
               + '<li>Rediger punktene nedenfor — forhåndsvisningen oppdateres med nettstedets <b>ekte</b> meny-utseende</li>'
               + '<li>Legg til underpunkter for å lage en nedtrekksmeny, dra i <b>⠿</b> for å sortere</li>'
               + '<li>Velg <b>synlighet</b> per punkt: begge, kun mobil eller kun desktop</li>'
-              + '<li>Klikk <b>↓ Last ned</b> oppe til høyre, erstatt <code>nav-content.js</code> i GitHub og push</li>'
+              + '<li>Klikk <b>↓ Last ned alle endrede</b> oppe til høyre, erstatt <code>nav-content.js</code> i GitHub og push</li>'
             + '</ol>'
             + '<div class="tip-note">💡 Klikk <b>📍</b> ved et adressefelt for å velge side og seksjon fra en liste med lesbare navn. (Du kan fortsatt skrive adressen for hånd.) Angre/gjør-om med knappene over eller Ctrl/Cmd+Z.</div>'
           + '</div>'

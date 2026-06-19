@@ -17,14 +17,13 @@
           + '<h3>Forhåndsvisning</h3>'
           + '<p class="pp-sub">Live fra den ekte «Om oss»-siden — endringene dine vises umiddelbart. Dette panelet styrer <b>«Hva er apeiron?»</b> og <b>FAQ-en</b>. (Samarbeid, Lesesalen, Møt styret og Bli medlem styres andre steder.)</p>'
           + '<div class="pv-board-wrap"><iframe id="pv-board" src="om-oss.html?preview=1" title="Forhåndsvisning av Om oss"></iframe></div>'
-          + '<div class="pv-jump"><button type="button" data-jump="#om">Om oss</button><button type="button" data-jump="#faq">FAQ</button></div>'
         + '</section>'
         + '<div class="tip">'
           + '<button class="tip-reset" id="reset-btn" type="button">Tilbakestill til siste publiserte versjon</button>'
           + '<strong>Slik oppdaterer du Om oss</strong>'
           + '<ol>'
             + '<li>Rediger tekstene nedenfor — endringer vises live i forhåndsvisningen</li>'
-            + '<li>Klikk <b>↓ Last ned</b> oppe til høyre</li>'
+            + '<li>Klikk <b>↓ Last ned alle endrede</b> oppe til høyre</li>'
             + '<li>Erstatt <code>om-content.js</code> i GitHub-repositoriet og push/commit</li>'
             + '<li>Cloudflare oppdaterer nettsiden automatisk innen et minutt</li>'
           + '</ol>'
@@ -220,9 +219,9 @@
         var wrap = host.querySelector('.pv-board-wrap');
         if (!pvFrame || !wrap) return;
         var W = wrap.clientWidth; if (!W) return;
-        var contentW = 1180;
-        var scale = W / contentW;
-        var visibleH = Math.max(520, Math.min(960, Math.round(window.innerHeight * 0.82)));
+        var contentW = (window.AdminCommon && AdminCommon.getPreviewWidth) ? AdminCommon.getPreviewWidth() : 1180;
+        var scale = Math.min(1, W / contentW);
+        var visibleH = Math.max(420, Math.min(680, Math.round(window.innerHeight * 0.66)));
         pvFrame.style.width = contentW + 'px';
         pvFrame.style.height = Math.round(visibleH / scale) + 'px';
         pvFrame.style.transform = 'scale(' + scale + ')';
@@ -231,13 +230,6 @@
       window.addEventListener('message', onPreviewMsg);
       window.addEventListener('resize', fitPreview);
       if (pvFrame) pvFrame.addEventListener('load', fitPreview);
-
-      host.querySelectorAll('[data-jump]').forEach(function (b) {
-        b.addEventListener('click', function () {
-          var sel = b.getAttribute('data-jump');
-          try { var doc = pvFrame.contentWindow.document; var t = doc.querySelector(sel); if (t) pvFrame.contentWindow.scrollTo({ top: t.offsetTop, behavior: 'smooth' }); } catch (e) {}
-        });
-      });
 
       loadData(); renderAll(); wireFields();
       wireDrag('lst-paras', function () { return data.om.paras; }, renderParas);

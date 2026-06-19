@@ -370,6 +370,68 @@ footer.foot .gold{color:var(--gold);}
 
 <hr class="rule" />
 
+<!-- ============ SØK (S) ============ -->
+<section class="section">
+  <div class="wrap">
+    <div class="cluster__head">
+      <span class="cluster__tag">S</span>
+      <div>
+        <span class="eyebrow">Valgfri kvalitetsheving — uavhengig av malen</span>
+        <h2 class="h-section">Søk</h2>
+      </div>
+    </div>
+
+    <div class="state">
+      <h3>✓ I dag: auto-generert søkeindeks</h3>
+      <p>Søketreffene genereres fra det <strong>faktiske innholdet</strong> ved «Publiser»: statiske
+        side-/emne-treff i <code>search-base.js</code> + dynamiske treff fra modulenes
+        <code>searchEntries()</code> (styret, merch, begrep, nyheter, heder). Resultatet skrives til
+        <code>search-index.js</code>, som <code>site-search.js</code> leser på alle sider. Ingen håndredigert
+        liste som råtner ved styrebytte.</p>
+      <p>Selve <em>matchingen</em> er enkel delstreng-scoring i <code>site-search.js</code> — helt
+        tilstrekkelig for ~60 oppføringer. Å bygge en «ordentlig» søkemotor nå ville vært overengineering.</p>
+    </div>
+
+    <div class="tasks">
+      <article class="task task--later">
+        <div class="task__top">
+          <div>
+            <span class="task__id">S1 · Oppgradert søkemotor</span>
+            <h3 class="task__title">Bytt match-algoritmen når innholdet vokser — ikke før</h3>
+          </div>
+          <div class="task__badges">
+            <span class="badge badge--later">Når som helst</span>
+            <span class="badge badge--size">Middels</span>
+          </div>
+        </div>
+        <div class="task__body">
+          <p>Dagens delstreng-match har ingen stemming, fuzzy-treff eller norsk bøyning — «søke» finner ikke
+            «søk», og en skrivefeil gir null treff. Det merkes ikke nå, men hvis nettstedet vokser til mange
+            eller lange tekster, eller dere vil ha skrivefeil-toleranse og bedre relevans, bytter dere
+            <strong>selve motoren</strong>.</p>
+          <div class="task__rec">
+            <b>Konkret fremgangsmåte</b>
+            <ul class="task__list">
+              <li>Behold <strong>genererings- og auto-oppdaterings-mønsteret</strong> uendret
+                (<code>search-base.js</code> + <code>searchEntries()</code> → <code>search-index.js</code>).
+                Det er motoren som byttes, ikke datakilden.</li>
+              <li>Bygg indeksen for et lett, server-løst bibliotek som <strong>MiniSearch</strong> eller
+                <strong>Lunr</strong> (begge gratis, statiske) — med stemming, fuzzy-treff og feiltoleranse
+                innebygd. Norsk stopp-ord/stemming kan konfigureres.</li>
+              <li><code>site-search.js</code> bytter ut <code>score()</code>/<code>doSearch()</code> mot
+                bibliotekets spørringer; overlay, tastaturnavigasjon og gruppering beholdes som de er.</li>
+            </ul>
+          </div>
+          <p>Uavhengig av F- og G-stegene — kan tas når som helst, og er <strong>ikke</strong> en forutsetning
+            for den klonbare malen. Lav prioritet til innholdsmengden faktisk krever det.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<hr class="rule" />
+
 <!-- ============ ROADMAP ============ -->
 <section class="section">
   <div class="wrap">
@@ -385,6 +447,7 @@ footer.foot .gold{color:var(--gold);}
       <div class="road__item"><span class="road__num">4</span><div class="road__txt"><strong>F3 — Seksjonsortering</strong><p>Liten: drag-sort på seksjonslista fra F2.</p></div></div>
       <div class="road__item"><span class="road__num">5</span><div class="road__txt"><strong>F4 — Tema-modul</strong><p>Farger/font/logo som tokens i admin. Gjenbruk <code>palette.js</code>.</p></div></div>
       <div class="road__item"><span class="road__num">6</span><div class="road__txt"><strong>G2 — Klonbar mal + oppsett-veiviser</strong><p>Sluttmål. Forutsetter F1–F4 + G1. Klon → admin → bygg → publiser.</p></div></div>
+      <div class="road__item"><span class="road__num">S</span><div class="road__txt"><strong>S1 — Oppgradert søkemotor (valgfritt)</strong><p>Uavhengig av malen, kan tas når som helst. Bytt match-algoritmen (MiniSearch/Lunr) når innholdet vokser — samme auto-genererte indeks. Lav prioritet.</p></div></div>
     </div>
 
     <div class="callout">

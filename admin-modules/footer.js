@@ -14,13 +14,18 @@
 
     mount: function (host, AC) {
       host.innerHTML =
-        '<div class="tip">'
+        '<section class="preview-top">'
+          + '<h3>Forhåndsvisning</h3>'
+          + '<p class="pp-sub">Slik ser footeren ut nederst på alle sider — bytt mellom 🖥 og 📱 for desktop- og mobilbredde. Oppdateres mens du skriver.</p>'
+          + '<div class="fpv-wrap"><iframe id="pv-foot" title="Forhåndsvisning av footeren" scrolling="no"></iframe></div>'
+        + '</section>'
+        + '<div class="tip">'
           + '<button class="tip-reset" id="reset-btn" type="button">Tilbakestill til siste publiserte versjon</button>'
           + '<strong>Slik oppdaterer du footeren</strong>'
           + '<ol>'
             + '<li>Rediger feltene nedenfor — endringene vises i forhåndsvisningen og lagres i nettleseren</li>'
             + '<li>Legg til, fjern eller dra for å sortere lenker</li>'
-            + '<li>Klikk <b>↓ Last ned</b> oppe til høyre</li>'
+            + '<li>Klikk <b>↓ Last ned alle endrede</b> oppe til høyre</li>'
             + '<li>Erstatt <code>site-content.js</code> i GitHub-repoet og push/commit</li>'
             + '<li>Cloudflare oppdaterer alle sider automatisk innen et minutt</li>'
           + '</ol>'
@@ -51,8 +56,7 @@
           + '<div class="sec-head"><h2>Sosiale lenker</h2><span class="count" id="count-social"></span><button class="btn-add" type="button" id="add-social">+ Ny sosial lenke</button></div>'
           + '<p class="sec-desc">Vises med ikon nederst i footeren. Velg ikon for kjente tjenester.</p>'
           + '<div class="list" id="list-social"></div>'
-        + '</div>'
-        + '<div class="fpreview"><div class="lbl">Forhåndsvisning</div><div class="fp-foot" id="preview"></div></div>';
+        + '</div>';
 
       var q = function (id) { return host.querySelector('#' + id); };
 
@@ -99,7 +103,7 @@
         card.innerHTML =
           '<span class="drag-handle" title="Dra for å sortere">⠿</span>'
           + '<div class="fg"><label data-help="Teksten som vises for lenken i footeren.">Tekst</label><input type="text" data-f="label" placeholder="f.eks. Pensum"></div>'
-          + '<div class="fg"><label data-help="' + esc(HREF_HELP) + '">Adresse</label><input type="text" data-f="href" placeholder="pensum.html eller index.html#kontakt"></div>'
+          + '<div class="fg"><label data-help="' + esc(HREF_HELP) + '">Adresse</label><div class="addr-wrap"><input type="text" data-f="href" placeholder="pensum.html eller index.html#kontakt"><button class="btn-loc" type="button" title="Velg side og seksjon">📍</button></div><div class="lnk-warn"></div></div>'
           + '<button class="btn-del-row" type="button" title="Fjern">✕</button>';
         card.querySelector('[data-f="label"]').value = l.label;
         card.querySelector('[data-f="href"]').value = l.href;
@@ -110,6 +114,7 @@
           data.links = data.links.filter(function (x) { return x !== l; }); renderLinks(); lazySave();
         });
         AC.enhanceHelp(card);
+        AC.wireHrefField(card);
         return card;
       }
       function iconOptions(selected) {
@@ -126,7 +131,7 @@
           '<span class="drag-handle" title="Dra for å sortere">⠿</span>'
           + '<div class="fg narrow"><label data-help="Ikonet ved siden av teksten. «(ingen)» = kun tekst.">Ikon</label><select data-f="icon">' + iconOptions(s.icon || '') + '</select></div>'
           + '<div class="fg narrow"><label data-help="Teksten ved siden av ikonet, f.eks. «Instagram».">Tekst</label><input type="text" data-f="label" placeholder="f.eks. Instagram"></div>'
-          + '<div class="fg"><label data-help="Full nettadresse. Åpnes i ny fane.">URL</label><input type="text" data-f="href" placeholder="https://..."></div>'
+          + '<div class="fg"><label data-help="Full nettadresse. Åpnes i ny fane.">URL</label><input type="text" data-f="href" placeholder="https://..."><div class="lnk-warn"></div></div>'
           + '<button class="btn-del-row" type="button" title="Fjern">✕</button>';
         card.querySelector('[data-f="label"]').value = s.label;
         card.querySelector('[data-f="href"]').value = s.href;
@@ -138,6 +143,7 @@
           data.social = data.social.filter(function (x) { return x !== s; }); renderSocial(); lazySave();
         });
         AC.enhanceHelp(card);
+        AC.wireHrefField(card);
         return card;
       }
       function renderLinks() {
@@ -155,22 +161,43 @@
         q('m-name').value = data.name; q('m-tagline').value = data.tagline; q('m-fine').value = data.fine;
         q('m-rep-label').value = data.report.label; q('m-rep-email').value = data.report.email; q('m-rep-subject').value = data.report.subject;
       }
-      function renderPreview() {
-        var p = q('preview');
-        var links = data.links.map(function (l) { return '<a href="' + esc(l.href) + '" onclick="return false">' + esc(l.label) + '</a>'; }).join('');
-        var social = data.social.map(function (s) {
-          var ic = ICONS[(s.icon || '').toLowerCase()] || '';
-          return '<a href="' + esc(s.href) + '" onclick="return false">' + ic + ' ' + esc(s.label) + '</a>';
-        }).join('');
-        p.innerHTML =
-          '<img src="assets/apeiron-logo.png" alt="">'
-          + '<div class="fp-name">' + esc(data.name) + '</div>'
-          + '<div class="fp-tag">' + esc(data.tagline) + '</div>'
-          + '<div class="fp-links">' + links + '</div>'
-          + '<div class="fp-fine">' + esc(data.fine) + '</div>'
-          + (social ? '<div class="fp-social">' + social + '</div>' : '')
-          + (data.report.email ? '<div class="fp-report"><a href="#" onclick="return false">' + esc(data.report.label || 'Rapporter en feil') + '</a></div>' : '');
+      function previewData() {
+        return {
+          name: data.name, tagline: data.tagline, fine: data.fine,
+          links: data.links.map(function (l) { return { label: l.label, href: l.href }; }),
+          social: data.social.map(function (s) { return { label: s.label, href: s.href, icon: s.icon }; }),
+          report: { label: data.report.label, email: data.report.email, subject: data.report.subject }
+        };
       }
+      // Forhåndsvisningen er den EKTE footeren: vi laster styles.css + site-chrome.js
+      // i en iframe med utkastet injisert, slik at den ser nøyaktig ut som på sidene
+      // — og får samme 🖥/📱-veksler (telefon-ramme i mobilmodus) som de andre panelene.
+      function frameDoc() {
+        return '<!DOCTYPE html><html lang="no"><head><meta charset="utf-8">'
+          + '<link rel="preconnect" href="https://fonts.googleapis.com">'
+          + '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
+          + '<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">'
+          + '<link rel="stylesheet" href="styles.css">'
+          + '<style>html,body{margin:0;background:transparent;}.footer{margin:0;}</style>'
+          + '</head><body data-mode="paper"><div id="site-footer"></div>'
+          + '<scr' + 'ipt>window.SITE_FOOTER=' + JSON.stringify(previewData()) + ';</scr' + 'ipt>'
+          + '<scr' + 'ipt src="footer-icons.js"></scr' + 'ipt>'
+          + '<scr' + 'ipt src="site-chrome.js"></scr' + 'ipt>'
+          + '</body></html>';
+      }
+      function fitFoot() {
+        var fr = q('pv-foot'); if (!fr) return;
+        try {
+          var ft = fr.contentDocument && fr.contentDocument.querySelector('.footer');
+          if (ft) fr.style.height = Math.max(160, ft.offsetHeight) + 'px';
+        } catch (e) {}
+      }
+      function renderPreview() {
+        var fr = q('pv-foot'); if (!fr) return;
+        fr.onload = fitFoot;
+        fr.srcdoc = frameDoc();
+      }
+      window.addEventListener('resize', fitFoot);
       function exportFile() {
         var out = {
           name: data.name, tagline: data.tagline,
@@ -218,7 +245,7 @@
       bind('m-rep-subject', function (v) { data.report.subject = v; });
       renderAll();
 
-      return { export: exportFile };
+      return { export: exportFile, destroy: function () { window.removeEventListener('resize', fitFoot); } };
     }
   });
 })();
