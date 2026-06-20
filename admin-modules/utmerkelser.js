@@ -76,51 +76,27 @@
       function initialsFrom(name) { return String(name || '').split(/\s+/).filter(Boolean).map(function (w) { return w[0]; }).join('').toUpperCase().slice(0, 4); }
       function find(id) { return data.people.find(function (x) { return x.id === id; }); }
 
-      var imgTarget = null;
-      var fileInput = host.querySelector('[data-file]');
-      fileInput.addEventListener('change', function () {
-        var f = fileInput.files && fileInput.files[0];
-        if (f && imgTarget) processImage(f, imgTarget);
-        fileInput.value = '';
-      });
-      function openPicker(id) { imgTarget = { id: id }; fileInput.click(); }
-
-      function processImage(file, tgt) {
-        var reader = new FileReader();
-        reader.onload = function (e) {
-          var img = new Image();
-          img.onload = function () {
-            var MAX = 600, w = img.width, h = img.height;
-            if (Math.max(w, h) > MAX) { var s = MAX / Math.max(w, h); w = Math.round(w * s); h = Math.round(h * s); }
-            var canvas = document.createElement('canvas');
-            canvas.width = w; canvas.height = h;
-            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-            var url = canvas.toDataURL('image/webp', 0.82);
-            AC.checkImageSize(url);
-            var m = find(tgt.id);
-            if (m) m.img = url;
-            var zone = host.querySelector('[data-id="' + tgt.id + '"] .img-zone');
-            if (zone) refreshImgZone(zone, url);
-            lazySave();
-          };
-          img.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-      }
-      function refreshImgZone(zone, url) {
-        var preview = zone.querySelector('.img-preview');
-        var ph = zone.querySelector('.img-ph');
-        var clrBtn = zone.querySelector('.btn-clr-img');
-        var overlay = zone.querySelector('.img-overlay');
-        if (url) {
-          if (!preview) { preview = document.createElement('img'); preview.className = 'img-preview'; preview.alt = ''; zone.appendChild(preview); }
-          preview.style.display = 'block'; preview.src = url;
-          ph.style.display = 'none'; clrBtn.style.display = 'flex'; overlay.textContent = '↺ Bytt bilde';
-        } else {
-          if (preview) { preview.style.display = 'none'; preview.src = ''; }
-          ph.style.display = 'flex'; clrBtn.style.display = 'none'; overlay.textContent = '📷 Last opp';
+      // Bygger <option>-liste for årskull (studieår), f.eks. 2025/2026. Eldre/ukjente
+      // verdier (f.eks. bare «2026») bevares som eget valg så ingenting går tapt.
+      function arskullOptions(current) {
+        var now = new Date();
+        var startYear = now.getMonth() >= 6 ? now.getFullYear() : now.getFullYear() - 1; // studieår starter i august
+        var top = startYear + 1; // tillat neste kull
+        var cur = String(current == null ? '' : current).trim();
+        var found = false;
+        var opts = '<option value=""' + (cur ? '' : ' selected') + '>Velg årskull…</option>';
+        for (var y = top; y >= 2014; y--) {
+          var a = y + '/' + (y + 1);
+          var sel = (a === cur) ? ' selected' : '';
+          if (sel) found = true;
+          opts += '<option value="' + a + '"' + sel + '>' + a + '</option>';
         }
+        if (cur && !found) opts += '<option value="' + esc(cur) + '" selected>' + esc(cur) + ' (eldre format)</option>';
+        return opts;
       }
+
+      // bildefelt håndteres av AdminCommon.wireImageField (delt) i personCard
+
 
       function personCard(p) {
         var card = document.createElement('div');
@@ -131,7 +107,7 @@
             + '<div class="order-btns"><button class="btn-ord btn-up" type="button" title="Opp">↑</button><button class="btn-ord btn-dn" type="button" title="Ned">↓</button></div>'
             + '<button class="btn-del" type="button">Slett</button></div>'
           + '<div class="card-body">'
-            + '<div class="img-zone"><div class="img-ph"><img src="assets/apeiron-logo.png" alt=""><span>Klikk eller dra inn bilde</span></div><div class="img-overlay">📷 Last opp</div><button class="btn-clr-img" type="button" title="Fjern">✕</button></div>'
+            + AC.imgFieldHtml('', 'Klikk eller dra inn bilde')
             + '<div class="fields">'
               + '<div class="frow">'
                 + '<div class="fg"><label>Navn</label><input type="text" data-f="name" value="' + esc(p.name) + '" placeholder="Fullt navn"></div>'
@@ -139,21 +115,21 @@
               + '</div>'
               + '<div class="frow">'
                 + '<div class="fg"><label data-help="Selve utmerkelsen, vises stort, f.eks. «Æresmedlem».">Utmerkelse</label><input type="text" data-f="honor" value="' + esc(p.honor) + '" placeholder="f.eks. Æresmedlem"></div>'
-                + '<div class="fg narrow"><label>År</label><input type="text" data-f="year" value="' + esc(p.year) + '" placeholder="f.eks. 2026"></div>'
+                + '<div class="fg narrow"><label data-help="Studieåret personen hedres for. Brukes til å filtrere etter årskull på den publiserte siden.">Årskull</label><select data-f="year">' + arskullOptions(p.year) + '</select></div>'
               + '</div>'
               + '<div class="fg"><label>Fargestripe</label><div data-accent-host></div></div>'
               + '<div class="fg"><label>Beskrivelse</label><textarea data-f="desc" placeholder="Kort om hvorfor personen hedres...">' + esc(p.desc) + '</textarea></div>'
             + '</div>'
           + '</div>';
 
-        var zone = card.querySelector('.img-zone');
-        if (p.img) refreshImgZone(zone, p.img);
-        zone.addEventListener('click', function () { openPicker(p.id); });
-        zone.addEventListener('dragenter', function (e) { e.preventDefault(); zone.setAttribute('data-over', ''); });
-        zone.addEventListener('dragover', function (e) { e.preventDefault(); });
-        zone.addEventListener('dragleave', function () { zone.removeAttribute('data-over'); });
-        zone.addEventListener('drop', function (e) { e.preventDefault(); zone.removeAttribute('data-over'); var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if (f) processImage(f, { id: p.id }); });
-        card.querySelector('.btn-clr-img').addEventListener('click', function (e) { e.stopPropagation(); p.img = null; refreshImgZone(zone, null); lazySave(); });
+        AC.wireImageField({
+          zone: card.querySelector('.img-zone'),
+          get: function () { return p.img || ''; },
+          set: function (url) { p.img = url || null; },
+          aspect: 1, outSize: 700, quality: 0.85,
+          title: 'Rediger bilde — ' + (p.name || 'person'),
+          afterChange: lazySave
+        });
 
         card.querySelectorAll('[data-f]').forEach(function (el) {
           var field = el.getAttribute('data-f');
@@ -171,7 +147,7 @@
         if (accentHost && window.createColorControl) accentHost.appendChild(window.createColorControl({ value: p.accent || '', emptyLabel: 'Gull (standard)', onChange: function (v) { p.accent = v; lazySave(); } }));
         card.querySelector('.btn-up').addEventListener('click', function () { move(p.id, -1); });
         card.querySelector('.btn-dn').addEventListener('click', function () { move(p.id, 1); });
-        card.querySelector('.btn-del').addEventListener('click', function () { if (confirm('Slett «' + (p.name || 'denne utmerkelsen') + '»?')) del(p.id); });
+        card.querySelector('.btn-del').addEventListener('click', function () { del(p.id); });
         return card;
       }
 
@@ -194,7 +170,7 @@
         renderList(); lazySave();
         setTimeout(function () { var last = host.querySelector('[data-list] .card:last-child'); if (last) last.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60);
       }
-      function del(id) { data.people = data.people.filter(function (x) { return x.id !== id; }); renderList(); lazySave(); }
+      function del(id) { var i = data.people.findIndex(function (x) { return x.id === id; }); if (i < 0) return; AC.undoDelete(data.people, i, '«' + (data.people[i].name || 'Utmerkelse') + '» slettet', renderList, lazySave); }
       function move(id, dir) {
         var arr = data.people, i = arr.findIndex(function (x) { return x.id === id; });
         if (i < 0) return; var j = i + dir; if (j < 0 || j >= arr.length) return;
@@ -228,6 +204,7 @@
       });
 
       loadData(); renderAll();
+      AC.viewSwitch({ list: host.querySelector('[data-list]'), key: 'apeiron-utmerkelser-view-v1', help: 'Velg hvordan utmerkelses-kortene vises mens du redigerer her i admin. Påvirker bare redigeringsvisningen, ikke den publiserte siden.' });
 
       /* ── live forhåndsvisning (utmerkelser.html?preview=1) ── */
       var pvFrame = host.querySelector('#pv-frame');

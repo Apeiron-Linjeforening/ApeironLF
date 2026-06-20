@@ -75,51 +75,8 @@
       function uid(pfx) { return pfx + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
       function find(id) { return data.awards.find(function (x) { return x.id === id; }); }
 
-      var imgTarget = null;
-      var fileInput = host.querySelector('[data-file]');
-      fileInput.addEventListener('change', function () {
-        var f = fileInput.files && fileInput.files[0];
-        if (f && imgTarget) processImage(f, imgTarget);
-        fileInput.value = '';
-      });
-      function openPicker(id) { imgTarget = { id: id }; fileInput.click(); }
+      // bildefelt håndteres av AdminCommon.wireImageField (delt) i awardCard
 
-      function processImage(file, tgt) {
-        var reader = new FileReader();
-        reader.onload = function (e) {
-          var img = new Image();
-          img.onload = function () {
-            var MAX = 1000, w = img.width, h = img.height;
-            if (Math.max(w, h) > MAX) { var s = MAX / Math.max(w, h); w = Math.round(w * s); h = Math.round(h * s); }
-            var canvas = document.createElement('canvas');
-            canvas.width = w; canvas.height = h;
-            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-            var url = canvas.toDataURL('image/webp', 0.85);
-            AC.checkImageSize(url);
-            var a = find(tgt.id);
-            if (a) a.img = url;
-            var zone = host.querySelector('[data-id="' + tgt.id + '"] .img-zone');
-            if (zone) refreshImgZone(zone, url);
-            lazySave();
-          };
-          img.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-      }
-      function refreshImgZone(zone, url) {
-        var preview = zone.querySelector('.img-preview');
-        var ph = zone.querySelector('.img-ph');
-        var clrBtn = zone.querySelector('.btn-clr-img');
-        var overlay = zone.querySelector('.img-overlay');
-        if (url) {
-          if (!preview) { preview = document.createElement('img'); preview.className = 'img-preview'; preview.alt = ''; zone.appendChild(preview); }
-          preview.style.display = 'block'; preview.src = url;
-          ph.style.display = 'none'; clrBtn.style.display = 'flex'; overlay.textContent = '↺ Bytt bilde';
-        } else {
-          if (preview) { preview.style.display = 'none'; preview.src = ''; }
-          ph.style.display = 'flex'; clrBtn.style.display = 'none'; overlay.textContent = '📷 Last opp';
-        }
-      }
 
       function awardCard(a) {
         var card = document.createElement('div');
@@ -130,7 +87,7 @@
             + '<div class="order-btns"><button class="btn-ord btn-up" type="button" title="Opp">↑</button><button class="btn-ord btn-dn" type="button" title="Ned">↓</button></div>'
             + '<button class="btn-del" type="button">Slett</button></div>'
           + '<div class="card-body">'
-            + '<div class="img-zone"><div class="img-ph"><img src="assets/apeiron-logo.png" alt=""><span>Klikk eller dra inn plakat / diplom</span></div><div class="img-overlay">📷 Last opp</div><button class="btn-clr-img" type="button" title="Fjern">✕</button></div>'
+            + AC.imgFieldHtml('', 'Klikk eller dra inn plakat / diplom')
             + '<div class="fields">'
               + '<div class="fg"><label>Tittel</label><input type="text" data-f="title" value="' + esc(a.title) + '" placeholder="f.eks. Volleyballcup 2026"></div>'
               + '<div class="frow">'
@@ -143,14 +100,14 @@
             + '</div>'
           + '</div>';
 
-        var zone = card.querySelector('.img-zone');
-        if (a.img) refreshImgZone(zone, a.img);
-        zone.addEventListener('click', function () { openPicker(a.id); });
-        zone.addEventListener('dragenter', function (e) { e.preventDefault(); zone.setAttribute('data-over', ''); });
-        zone.addEventListener('dragover', function (e) { e.preventDefault(); });
-        zone.addEventListener('dragleave', function () { zone.removeAttribute('data-over'); });
-        zone.addEventListener('drop', function (e) { e.preventDefault(); zone.removeAttribute('data-over'); var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if (f) processImage(f, { id: a.id }); });
-        card.querySelector('.btn-clr-img').addEventListener('click', function (e) { e.stopPropagation(); a.img = null; refreshImgZone(zone, null); lazySave(); });
+        AC.wireImageField({
+          zone: card.querySelector('.img-zone'),
+          get: function () { return a.img || ''; },
+          set: function (url) { a.img = url || null; },
+          aspect: 16 / 10, outSize: 1100, quality: 0.85,
+          title: 'Rediger bilde — ' + (a.title || 'oppnåelse'),
+          afterChange: lazySave
+        });
 
         card.querySelectorAll('[data-f]').forEach(function (el) {
           var field = el.getAttribute('data-f');
@@ -160,7 +117,7 @@
         if (accentHost && window.createColorControl) accentHost.appendChild(window.createColorControl({ value: a.accent || '', emptyLabel: 'Gull (standard)', onChange: function (v) { a.accent = v; lazySave(); } }));
         card.querySelector('.btn-up').addEventListener('click', function () { move(a.id, -1); });
         card.querySelector('.btn-dn').addEventListener('click', function () { move(a.id, 1); });
-        card.querySelector('.btn-del').addEventListener('click', function () { if (confirm('Slett «' + (a.title || 'denne oppnåelsen') + '»?')) del(a.id); });
+        card.querySelector('.btn-del').addEventListener('click', function () { del(a.id); });
         return card;
       }
 
@@ -183,7 +140,7 @@
         renderList(); lazySave();
         setTimeout(function () { var last = host.querySelector('[data-list] .card:last-child'); if (last) last.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60);
       }
-      function del(id) { data.awards = data.awards.filter(function (x) { return x.id !== id; }); renderList(); lazySave(); }
+      function del(id) { var i = data.awards.findIndex(function (x) { return x.id === id; }); if (i < 0) return; AC.undoDelete(data.awards, i, '«' + (data.awards[i].title || 'Oppnåelse') + '» slettet', renderList, lazySave); }
       function move(id, dir) {
         var arr = data.awards, i = arr.findIndex(function (x) { return x.id === id; });
         if (i < 0) return; var j = i + dir; if (j < 0 || j >= arr.length) return;
@@ -218,6 +175,7 @@
       });
 
       loadData(); renderAll();
+      AC.viewSwitch({ list: host.querySelector('[data-list]'), key: 'apeiron-oppnaelser-view-v1', help: 'Velg hvordan oppnåelses-kortene vises mens du redigerer her i admin. Påvirker bare redigeringsvisningen, ikke den publiserte siden.' });
 
       /* ── live forhåndsvisning (oppnaelser.html?preview=1) ── */
       var pvFrame = host.querySelector('#pv-frame');

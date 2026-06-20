@@ -108,9 +108,15 @@
         'k-web': 'kontakt.web', 'k-webHref': 'kontakt.webHref', 'k-faqHeading': 'kontakt.faqHeading'
       };
       function getPath(path) { return path.split('.').reduce(function (o, k) { return (o || {})[k]; }, data); }
+      function isUnsafeKey(k) { return k === '__proto__' || k === 'prototype' || k === 'constructor'; }
       function setPath(path, val) {
         var parts = path.split('.'), o = data;
-        for (var i = 0; i < parts.length - 1; i++) { if (o[parts[i]] == null) o[parts[i]] = {}; o = o[parts[i]]; }
+        for (var p = 0; p < parts.length; p++) { if (isUnsafeKey(parts[p])) return; }
+        for (var i = 0; i < parts.length - 1; i++) {
+          var key = parts[i];
+          if (!Object.prototype.hasOwnProperty.call(o, key) || o[key] == null || typeof o[key] !== 'object') o[key] = {};
+          o = o[key];
+        }
         o[parts[parts.length - 1]] = val;
       }
       function renderFields() {
@@ -140,7 +146,7 @@
           row.querySelectorAll('[data-k]').forEach(function (inp) { var ev = inp.tagName === 'SELECT' ? 'change' : 'input'; inp.addEventListener(ev, function () { s[inp.getAttribute('data-k')] = inp.value; lazySave(); }); });
           row.querySelector('.up').addEventListener('click', function () { moveArr(data.kontakt.socials, i, -1); renderSocials(); lazySave(); });
           row.querySelector('.dn').addEventListener('click', function () { moveArr(data.kontakt.socials, i, 1); renderSocials(); lazySave(); });
-          row.querySelector('.x').addEventListener('click', function () { data.kontakt.socials.splice(i, 1); renderSocials(); lazySave(); });
+          row.querySelector('.x').addEventListener('click', function () { AC.undoDelete(data.kontakt.socials, i, '«' + (s.label || 'Sosial lenke') + '» fjernet', renderSocials, lazySave); });
           hostEl.appendChild(row);
         });
       }
@@ -159,7 +165,7 @@
           row.querySelectorAll('[data-k]').forEach(function (inp) { inp.addEventListener('input', function () { it[inp.getAttribute('data-k')] = inp.value; lazySave(); }); });
           row.querySelector('.up').addEventListener('click', function () { moveArr(data.kontakt.faq, i, -1); renderHjemFaq(); lazySave(); });
           row.querySelector('.dn').addEventListener('click', function () { moveArr(data.kontakt.faq, i, 1); renderHjemFaq(); lazySave(); });
-          row.querySelector('.x').addEventListener('click', function () { if (confirm('Slett dette spørsmålet?')) { data.kontakt.faq.splice(i, 1); renderHjemFaq(); lazySave(); } });
+          row.querySelector('.x').addEventListener('click', function () { AC.undoDelete(data.kontakt.faq, i, 'Spørsmål fjernet', renderHjemFaq, lazySave); });
           hostEl.appendChild(row);
         });
       }
@@ -229,6 +235,8 @@
       loadData(); renderAll(); wireFields();
       wireDrag('lst-socials', function () { return data.kontakt.socials; }, renderSocials);
       wireDrag('lst-hjemfaq', function () { return data.kontakt.faq; }, renderHjemFaq);
+      AC.viewSwitch({ list: q('lst-socials'), key: 'apeiron-forsiden-socials-view-v1', help: 'Velg hvordan lenke-radene vises mens du redigerer her i admin. Påvirker bare redigeringsvisningen, ikke nettsiden.' });
+      AC.viewSwitch({ list: q('lst-hjemfaq'), key: 'apeiron-forsiden-faq-view-v1', help: 'Velg hvordan FAQ-radene vises mens du redigerer her i admin. Påvirker bare redigeringsvisningen, ikke nettsiden.' });
       fitPreview(); setTimeout(fitPreview, 80);
       pushPreview(); setTimeout(pushPreview, 150);
 

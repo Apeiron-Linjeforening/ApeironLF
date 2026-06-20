@@ -97,7 +97,7 @@
           card.querySelector('[data-up]').addEventListener('click', function () { move(store.data.tiers, i, -1); renderTiers(); store.lazySave(); });
           card.querySelector('[data-dn]').addEventListener('click', function () { move(store.data.tiers, i, 1); renderTiers(); store.lazySave(); });
           card.querySelector('.btn-del').addEventListener('click', function () {
-            if (confirm('Slett «' + (t.label || 'dette nivået') + '»?')) { store.data.tiers.splice(i, 1); renderTiers(); store.lazySave(); }
+            AC.undoDelete(store.data.tiers, i, '«' + (t.label || 'Nivå') + '» slettet', renderTiers, store.lazySave);
           });
           tierList.appendChild(card);
         });
@@ -119,7 +119,7 @@
           card.querySelector('[data-f]').addEventListener('input', function (e) { store.data.steps[i] = e.target.value; store.lazySave(); });
           card.querySelector('[data-up]').addEventListener('click', function () { move(store.data.steps, i, -1); renderSteps(); store.lazySave(); });
           card.querySelector('[data-dn]').addEventListener('click', function () { move(store.data.steps, i, 1); renderSteps(); store.lazySave(); });
-          card.querySelector('.btn-del').addEventListener('click', function () { store.data.steps.splice(i, 1); renderSteps(); store.lazySave(); });
+          card.querySelector('.btn-del').addEventListener('click', function () { AC.undoDelete(store.data.steps, i, 'Steg slettet', renderSteps, store.lazySave); });
           stepList.appendChild(card);
         });
       }
@@ -146,6 +146,8 @@
         itemSelector: '.card', handleSelector: '.drag-handle',
         onReorder: function (ids) { var snap = store.data.steps.slice(); store.data.steps = ids.map(function (o) { return snap[Number(o)]; }); renderSteps(); store.lazySave(); }
       });
+      AC.viewSwitch({ list: tierList, key: 'apeiron-medlemskap-tiers-view-v1', help: 'Velg hvordan prisnivå-kortene vises mens du redigerer her i admin. Påvirker bare redigeringsvisningen, ikke nettsiden.' });
+      AC.viewSwitch({ list: stepList, key: 'apeiron-medlemskap-steps-view-v1', help: 'Velg hvordan innmeldingsstegene vises mens du redigerer her i admin. Påvirker bare redigeringsvisningen, ikke nettsiden.' });
 
       // Skallet kaller denne når brukeren trykker «Last ned …».
       function exportFile() {

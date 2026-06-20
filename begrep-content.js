@@ -1,6 +1,6 @@
 /* Innhold for Begrep-siden (begrep.html).
    Sist oppdatert: 12.06.2026
-   Rediger direkte her, eller åpne begrep-admin.html for visuell redigering.
+   Rediger direkte her, eller åpne Admin-senteret → Begrep for visuell redigering.
 
    img: "assets/begrep/filnavn.png" for bilder i repoet,
         base64-bilde fra admin, eller null (viser plassholder).

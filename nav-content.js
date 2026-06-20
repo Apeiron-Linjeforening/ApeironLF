@@ -2,7 +2,7 @@
    nav-content.js — redigerbar meny for hele nettstedet
    Leses av site-chrome.js, som bygger BÅDE header-menyen og
    mobilmenyen (skuffen) fra denne ene lista — på alle sider.
-   Rediger via meny-admin.html (eller for hånd her).
+   Rediger via Admin-senteret → Meny (eller for hånd her).
 
    Datamodell: window.SITE_NAV = liste med toppnivå-punkter.
    Hvert punkt: { label, href, children?[{label,href}],
@@ -19,6 +19,10 @@ window.SITE_NAV = [
     "label": "Hva skjer",
     "href": "index.html#arrangementer",
     "children": [
+      {
+        "label": "Nyheter",
+        "href": "nyheter.html"
+      },
       {
         "label": "Arrangementer",
         "href": "index.html#arrangementer"
@@ -61,11 +65,15 @@ window.SITE_NAV = [
     "children": [
       {
         "label": "Om oss",
-        "href": "om-oss.html#om"
+        "href": "om-oss.html"
       },
       {
         "label": "Styret & tillitsvalgte",
         "href": "styret.html"
+      },
+      {
+        "label": "Tidligere styrer",
+        "href": "styret-arkiv.html"
       },
       {
         "label": "Verv",

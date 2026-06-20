@@ -1,7 +1,7 @@
 /* ============================================================
    site-content.js — redigerbart innhold for delt footer
    Leses av site-chrome.js, som bygger footeren på alle sider.
-   Rediger denne via footer-admin.html (eller for hånd her).
+   Rediger denne via Admin-senteret → Footer (eller for hånd her).
 
    window.SITE_FOOTER:
      name     — stor tittel i footeren

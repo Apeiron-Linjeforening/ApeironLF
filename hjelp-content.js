@@ -1,6 +1,6 @@
 /* Innhold for Hjelp & ressurser-siden (hjelp.html).
    Sist oppdatert: 13.6.2026
-   Rediger direkte her, eller åpne hjelp-admin.html for visuell redigering.
+   Rediger direkte her, eller åpne Admin-senteret → Hjelp for visuell redigering.
 
    STRUKTUR
    hero.nav[]        : hurtignav-kortene øverst. {title, desc, target, akutt}

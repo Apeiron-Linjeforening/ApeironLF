@@ -102,9 +102,15 @@
         'faq-eyebrow': 'faq.eyebrow', 'faq-heading': 'faq.heading'
       };
       function getPath(path) { return path.split('.').reduce(function (o, k) { return (o || {})[k]; }, data); }
+      function isUnsafeKey(k) { return k === '__proto__' || k === 'prototype' || k === 'constructor'; }
       function setPath(path, val) {
         var parts = path.split('.'), o = data;
-        for (var i = 0; i < parts.length - 1; i++) { if (o[parts[i]] == null) o[parts[i]] = {}; o = o[parts[i]]; }
+        for (var p = 0; p < parts.length; p++) { if (isUnsafeKey(parts[p])) return; }
+        for (var i = 0; i < parts.length - 1; i++) {
+          var key = parts[i];
+          if (!Object.prototype.hasOwnProperty.call(o, key) || o[key] == null || typeof o[key] !== 'object') o[key] = {};
+          o = o[key];
+        }
         o[parts[parts.length - 1]] = val;
       }
       function renderFields() { Object.keys(FIELD_MAP).forEach(function (id) { var el = q(id); if (el) el.value = getPath(FIELD_MAP[id]) || ''; }); }
@@ -122,7 +128,7 @@
           row.querySelector('textarea').addEventListener('input', function () { data.om.paras[i] = this.value; lazySave(); });
           row.querySelector('.up').addEventListener('click', function () { moveArr(data.om.paras, i, -1); renderParas(); lazySave(); });
           row.querySelector('.dn').addEventListener('click', function () { moveArr(data.om.paras, i, 1); renderParas(); lazySave(); });
-          row.querySelector('.x').addEventListener('click', function () { data.om.paras.splice(i, 1); renderParas(); lazySave(); });
+          row.querySelector('.x').addEventListener('click', function () { AC.undoDelete(data.om.paras, i, 'Avsnitt fjernet', renderParas, lazySave); });
           hostEl.appendChild(row);
         });
       }
@@ -141,7 +147,7 @@
           row.querySelectorAll('[data-k]').forEach(function (inp) { inp.addEventListener('input', function () { s[inp.getAttribute('data-k')] = inp.value; lazySave(); }); });
           row.querySelector('.up').addEventListener('click', function () { moveArr(data.om.stats, i, -1); renderStats(); lazySave(); });
           row.querySelector('.dn').addEventListener('click', function () { moveArr(data.om.stats, i, 1); renderStats(); lazySave(); });
-          row.querySelector('.x').addEventListener('click', function () { data.om.stats.splice(i, 1); renderStats(); lazySave(); });
+          row.querySelector('.x').addEventListener('click', function () { AC.undoDelete(data.om.stats, i, 'Tall fjernet', renderStats, lazySave); });
           hostEl.appendChild(row);
         });
       }
@@ -160,7 +166,7 @@
           row.querySelectorAll('[data-k]').forEach(function (inp) { inp.addEventListener('input', function () { it[inp.getAttribute('data-k')] = inp.value; lazySave(); }); });
           row.querySelector('.up').addEventListener('click', function () { moveArr(data.faq.items, i, -1); renderFaq(); lazySave(); });
           row.querySelector('.dn').addEventListener('click', function () { moveArr(data.faq.items, i, 1); renderFaq(); lazySave(); });
-          row.querySelector('.x').addEventListener('click', function () { if (confirm('Slett dette spørsmålet?')) { data.faq.items.splice(i, 1); renderFaq(); lazySave(); } });
+          row.querySelector('.x').addEventListener('click', function () { AC.undoDelete(data.faq.items, i, 'Spørsmål fjernet', renderFaq, lazySave); });
           hostEl.appendChild(row);
         });
       }
@@ -235,6 +241,8 @@
       wireDrag('lst-paras', function () { return data.om.paras; }, renderParas);
       wireDrag('lst-stats', function () { return data.om.stats; }, renderStats);
       wireDrag('lst-faq', function () { return data.faq.items; }, renderFaq);
+      AC.viewSwitch({ list: q('lst-stats'), key: 'apeiron-omoss-stats-view-v1', help: 'Velg hvordan nøkkeltall-radene vises mens du redigerer her i admin. Påvirker bare redigeringsvisningen, ikke nettsiden.' });
+      AC.viewSwitch({ list: q('lst-faq'), key: 'apeiron-omoss-faq-view-v1', help: 'Velg hvordan spørsmål & svar vises mens du redigerer her i admin. Påvirker bare redigeringsvisningen, ikke nettsiden.' });
       fitPreview(); setTimeout(fitPreview, 80);
       pushPreview(); setTimeout(pushPreview, 150);
 

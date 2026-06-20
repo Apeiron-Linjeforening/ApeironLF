@@ -123,7 +123,7 @@ samtale &amp; vin
       <p class="lede">Fra dyptpløyende fagkvelder til legendariske symposion. Se hele semesterprogrammet som liste, rutenett eller helhetlig oversikt — og legg det rett inn i din egen kalender.</p>
     </div>
 
-    <!-- Nyheter: arrangementer (plassering «arrangement» i Google Sheet «Nyheter») -->
+    <!-- Nyheter: arrangementer (plassering «arrangement» i news-content.js / Admin → Nyheter) -->
     <div id="news-arrangement" class="news-zone" hidden></div>
 
     <div class="ev-toolbar reveal">
@@ -164,7 +164,7 @@ samtale &amp; vin
           <span class="apo__meta-item" id="apoWhere"><b>Hvor</b><span>—</span></span>
           <span class="apo__meta-item"><b>For hvem</b>Åpent for alle</span>
         </div>
-        <!-- Nyheter: Aporetisk Aften (plassering «aporetisk» i Google Sheet «Nyheter») -->
+        <!-- Nyheter: Aporetisk Aften (plassering «aporetisk» i news-content.js / Admin → Nyheter) -->
         <div id="news-aporetisk" class="news-zone" hidden></div>
         <div class="apo__about" id="apoAbout" hidden>
           <h3 class="apo__about-title">Om aftenen</h3>
@@ -192,7 +192,7 @@ samtale &amp; vin
       <p class="lede">Studiestartens beste uker — bli kjent med faget, byen og hverandre. Velg en dag for å se programmet.</p>
       <span class="fadder__dates"><span class="fadder__dates-lbl">Datoer</span><span id="fadderDates">[ datoer kommer ]</span></span>
       <p class="fadder__placeholder" id="fadderPlaceholder">⚠ Programmet under er plassholdere — kobles automatisk til fadderuke-kalenderen så snart den er satt opp.</p>
-      <!-- Nyheter: fadderuke (plassering «fadderuke» i Google Sheet «Nyheter») -->
+      <!-- Nyheter: fadderuke (plassering «fadderuke» i news-content.js / Admin → Nyheter) -->
       <div id="news-fadderuke" class="news-zone" hidden></div>
     </div>
 
@@ -339,7 +339,6 @@ samtale &amp; vin
 <script src="apeiron-events.js"></script>
 <script src="aporetisk-cal.js"></script>
 <script src="apeiron-fadder.js"></script>
-<script src="news-config.js"></script>
 <script src="news-content.js"></script>
 <script src="apeiron-news.js"></script>
 <script src="palette.js"></script>
@@ -400,6 +399,39 @@ samtale &amp; vin
       + '<div class="poster__cap">' + date + title + note + link + '</div>'
       + '</article>';
   }).join('');
+})();
+</script>
+<script>
+/* ── Re-scroll til anker etter at async-innhold (arrangementer, kalendere,
+   nyheter) er ferdig lastet. Uten dette hopper nettleseren til f.eks.
+   #bli-medlem eller #kontakt FØR seksjonene over fyller seg ut, og blir
+   stående for høyt (på Fadderukene / Bli medlem). Vi re-justerer noen
+   ganger mens layouten setter seg. ───────────────────────────────────── */
+(function () {
+  function targetFromHash() {
+    var h = location.hash;
+    if (!h || h.length < 2) return null;
+    try { return document.getElementById(decodeURIComponent(h.slice(1))); }
+    catch (e) { return document.getElementById(h.slice(1)); }
+  }
+  function realign() {
+    var el = targetFromHash();
+    if (!el) return;
+    var navH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 72;
+    var y = el.getBoundingClientRect().top + window.pageYOffset - navH;
+    window.scrollTo(0, Math.max(0, y));
+  }
+  if (targetFromHash()) {
+    var cancelled = false;
+    function cancel() { cancelled = true; }
+    ['wheel', 'touchmove', 'keydown'].forEach(function (ev) {
+      window.addEventListener(ev, cancel, { passive: true, once: true });
+    });
+    function guarded() { if (!cancelled) realign(); }
+    // Flere passeringer mens bilder/moduler endrer høyden over ankeret.
+    [60, 220, 500, 900, 1500].forEach(function (t) { setTimeout(guarded, t); });
+    window.addEventListener('load', guarded);
+  }
 })();
 </script>
 <script src="report.js"></script>

@@ -142,16 +142,35 @@
     try { var raw=localStorage.getItem('apeiron-news-v1'); if(raw){var d=JSON.parse(raw); if(d&&Array.isArray(d.items)) return d.items;} } catch(_){}
     return base;
   }
-  var items = getItems();
-  var current = items.filter(function(n){ return n && !n.done; });
-  var archived = items.filter(function(n){ return n && n.done; });
-  var cur = document.getElementById('news-current');
-  cur.innerHTML = current.length ? current.map(function(n){return card(n,false);}).join('')
-    : '<p class="news-empty">Ingen aktuelle nyheter akkurat nå.</p>';
-  if (archived.length) {
-    document.getElementById('arkiv').style.display = '';
-    document.getElementById('news-archive').innerHTML = archived.map(function(n){return card(n,true);}).join('');
+  function render(items){
+    items = items || getItems();
+    var current = items.filter(function(n){ return n && !n.done; });
+    var archived = items.filter(function(n){ return n && n.done; });
+    var cur = document.getElementById('news-current');
+    if (cur) cur.innerHTML = current.length ? current.map(function(n){return card(n,false);}).join('')
+      : '<p class="news-empty">Ingen aktuelle nyheter akkurat nå.</p>';
+    var arkSec = document.getElementById('arkiv');
+    var arkList = document.getElementById('news-archive');
+    if (archived.length) {
+      if (arkSec) arkSec.style.display = '';
+      if (arkList) arkList.innerHTML = archived.map(function(n){return card(n,true);}).join('');
+    } else {
+      if (arkSec) arkSec.style.display = 'none';
+      if (arkList) arkList.innerHTML = '';
+    }
   }
+  render();
+
+  /* ── Live forhåndsvisning fra admin (nyheter.html?preview=1) ── */
+  (function(){
+    var IS=false; try{ IS=/[?&]preview\b/.test(location.search)||(window.self!==window.top); }catch(e){}
+    if(!IS) return;
+    window.addEventListener('message', function(e){
+      var d=e.data; if(!d||d.type!=='apeiron-news-preview')return;
+      if(Array.isArray(d.items)) render(d.items);
+    });
+    try{ parent.postMessage({type:'apeiron-news-preview-ready'},'*'); }catch(_){}
+  })();
 })();
 </script>
 <script src="report.js"></script>

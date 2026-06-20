@@ -4,6 +4,8 @@
    Redigeres i Admin-senteret → Nyheter, eller rett her.
 
    place: "panel" (Akkurat nå-kortet) | "arrangement" | "aporetisk" | "fadderuke"
+   kicker: merkelapp på «Akkurat nå»-kortet ("" = ingen, da får tittelen plassen).
+   date: liten tidsstempel-tekst øverst til høyre (tom = «lagt ut»-dato brukes).
    urgent: true = vinrød «Viktig». text: **fet** *kursiv* _understrek_ [tekst](url).
    done: true = arkivert (vises i arkivet på nyheter.html, ikke på forsiden).
    ============================================================ */
@@ -17,6 +19,7 @@ window.NEWS_CONTENT = {
       "title": "God sommer!",
       "text": "Vi håper dere har en finfin sommer og at dere har noen artige planer!\nHilsen Apeiron",
       "date": "",
+      "kicker": "Kunngjøring",
       "link": "index.html#arrangementer",
       "linkLabel": "Meld deg på",
       "done": false,

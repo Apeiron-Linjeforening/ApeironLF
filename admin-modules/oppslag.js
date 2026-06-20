@@ -67,56 +67,10 @@
       function uid(pfx) { return pfx + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
       function find(id) { return data.posters.find(function (x) { return x.id === id; }); }
 
-      var imgTarget = null;
-      var fileInput = host.querySelector('[data-file]');
-      fileInput.addEventListener('change', function () {
-        var f = fileInput.files && fileInput.files[0];
-        if (f && imgTarget) processImage(f, imgTarget);
-        fileInput.value = '';
-      });
-      function openPicker(id) { imgTarget = { id: id }; fileInput.click(); }
-      function processImage(file, tgt) {
-        var reader = new FileReader();
-        reader.onload = function (e) {
-          var img = new Image();
-          img.onload = function () {
-            var MAX = 1600, w = img.width, h = img.height;
-            if (Math.max(w, h) > MAX) { var s = MAX / Math.max(w, h); w = Math.round(w * s); h = Math.round(h * s); }
-            var canvas = document.createElement('canvas');
-            canvas.width = w; canvas.height = h;
-            var _ctx = canvas.getContext('2d');
-            _ctx.imageSmoothingEnabled = true; _ctx.imageSmoothingQuality = 'high';
-            _ctx.drawImage(img, 0, 0, w, h);
-            var url = canvas.toDataURL('image/webp', 0.92);
-            AC.checkImageSize(url);
-            var a = find(tgt.id);
-            if (a) a.img = url;
-            var zone = host.querySelector('[data-id="' + tgt.id + '"] .img-zone');
-            if (zone) refreshImgZone(zone, url);
-            lazySave();
-          };
-          img.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-      }
-      function refreshImgZone(zone, url) {
-        var preview = zone.querySelector('.img-preview');
-        var ph = zone.querySelector('.img-ph');
-        var clrBtn = zone.querySelector('.btn-clr-img');
-        var rotBtn = zone.querySelector('.btn-rot-img');
-        var cropBtn = zone.querySelector('.btn-crop-img');
-        var overlay = zone.querySelector('.img-overlay');
-        if (url) {
-          if (!preview) { preview = document.createElement('img'); preview.className = 'img-preview'; preview.alt = ''; zone.appendChild(preview); }
-          preview.style.display = 'block'; preview.src = url;
-          ph.style.display = 'none'; clrBtn.style.display = 'flex'; overlay.textContent = '↺ Bytt bilde';
-          if (rotBtn) rotBtn.style.display = ''; if (cropBtn) cropBtn.style.display = '';
-        } else {
-          if (preview) { preview.style.display = 'none'; preview.src = ''; }
-          ph.style.display = 'flex'; clrBtn.style.display = 'none'; overlay.textContent = '📷 Last opp';
-          if (rotBtn) rotBtn.style.display = 'none'; if (cropBtn) cropBtn.style.display = 'none';
-        }
-      }
+      // opplasting + redigering håndteres av AdminCommon.wireImageField (delt) i posterCard
+
+      // bildefelt (last opp / rediger / fjern + ANGRE) håndteres av
+      // AdminCommon.wireImageField (delt) i posterCard — samme som de andre panelene.
 
       function posterCard(p) {
         var card = document.createElement('div');
@@ -128,7 +82,7 @@
             + '<button class="btn-status btn-status--' + (p.done ? 'done' : 'active') + '" type="button" title="Klikk for å veksle status">' + (p.done ? '✓ Ferdig' : '● Aktiv') + '</button>'
             + '<button class="btn-del" type="button">Slett</button></div>'
           + '<div class="card-body">'
-            + '<div class="img-zone"><div class="img-ph"><img src="assets/apeiron-logo.png" alt=""><span>Klikk eller dra inn plakat</span></div><div class="img-overlay">📷 Last opp</div><button class="btn-rot-img" type="button" title="Roter 90°">↻</button><button class="btn-crop-img" type="button" title="Beskrivær / zoom">⛶</button><button class="btn-clr-img" type="button" title="Fjern">✕</button></div>'
+            + AC.imgFieldHtml('', 'Klikk eller dra inn plakat')
             + '<div class="fields">'
               + '<div class="fg"><label>Tittel</label><input type="text" data-f="title" value="' + esc(p.title) + '" placeholder="f.eks. Aporetisk Aften"></div>'
               + '<div class="frow">'
@@ -143,14 +97,14 @@
             + '</div>'
           + '</div>';
 
-        var zone = card.querySelector('.img-zone');
-        if (p.img) refreshImgZone(zone, p.img);
-        zone.addEventListener('click', function () { openPicker(p.id); });
-        zone.addEventListener('dragenter', function (e) { e.preventDefault(); zone.setAttribute('data-over', ''); });
-        zone.addEventListener('dragover', function (e) { e.preventDefault(); });
-        zone.addEventListener('dragleave', function () { zone.removeAttribute('data-over'); });
-        zone.addEventListener('drop', function (e) { e.preventDefault(); zone.removeAttribute('data-over'); var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if (f) processImage(f, { id: p.id }); });
-        card.querySelector('.btn-clr-img').addEventListener('click', function (e) { e.stopPropagation(); p.img = null; refreshImgZone(zone, null); lazySave(); });
+        AC.wireImageField({
+          zone: card.querySelector('.img-zone'),
+          get: function () { return p.img || ''; },
+          set: function (url) { p.img = url || null; },
+          aspect: 3 / 4, aspects: [0.75, 1, 1.3333], outSize: 1400, quality: 0.9,
+          title: 'Rediger plakat — ' + (p.title || ''),
+          afterChange: lazySave
+        });
 
         card.querySelectorAll('[data-f]').forEach(function (el) {
           var field = el.getAttribute('data-f');
@@ -160,11 +114,7 @@
         if (accentHost && window.createColorControl) accentHost.appendChild(window.createColorControl({ value: p.accent || '', emptyLabel: 'Gull (standard)', onChange: function (v) { p.accent = v; lazySave(); } }));
         card.querySelector('.btn-up').addEventListener('click', function () { move(p.id, -1); });
         card.querySelector('.btn-dn').addEventListener('click', function () { move(p.id, 1); });
-        card.querySelector('.btn-del').addEventListener('click', function () { if (confirm('Slett «' + (p.title || 'denne plakaten') + '»?')) del(p.id); });
-        var rotBtn = card.querySelector('.btn-rot-img');
-        var cropBtn = card.querySelector('.btn-crop-img');
-        if (rotBtn) rotBtn.addEventListener('click', function (e) { e.stopPropagation(); rotateImage(p.id); });
-        if (cropBtn) cropBtn.addEventListener('click', function (e) { e.stopPropagation(); openCrop(p.id); });
+        card.querySelector('.btn-del').addEventListener('click', function () { del(p.id); });
         var statusBtn = card.querySelector('.btn-status');
         statusBtn.addEventListener('click', function () {
           p.done = !p.done;
@@ -193,7 +143,7 @@
         renderList(); lazySave();
         setTimeout(function () { var first = host.querySelector('#list-posters .card:first-child'); if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60);
       }
-      function del(id) { data.posters = data.posters.filter(function (x) { return x.id !== id; }); renderList(); lazySave(); }
+      function del(id) { var i = data.posters.findIndex(function (x) { return x.id === id; }); if (i < 0) return; AC.undoDelete(data.posters, i, '«' + (data.posters[i].title || 'Plakat') + '» slettet', renderList, lazySave); }
       function move(id, dir) {
         var arr = data.posters, i = arr.findIndex(function (x) { return x.id === id; });
         if (i < 0) return; var j = i + dir; if (j < 0 || j >= arr.length) return;
@@ -249,119 +199,6 @@
       window.addEventListener('message', onPreviewMsg);
       window.addEventListener('resize', fitPreview);
       if (pvFrame) pvFrame.addEventListener('load', fitPreview);
-
-      /* ── bilderediger: roter ── */
-      function rotateImage(id) {
-        var p = find(id); if (!p || !p.img) return;
-        var im = new Image();
-        im.onload = function () {
-          var canvas = document.createElement('canvas');
-          canvas.width = im.height; canvas.height = im.width;
-          var ctx = canvas.getContext('2d');
-          ctx.translate(canvas.width / 2, canvas.height / 2);
-          ctx.rotate(Math.PI / 2);
-          ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
-          ctx.drawImage(im, -im.width / 2, -im.height / 2);
-          p.img = canvas.toDataURL('image/webp', 0.92);
-          var zone = host.querySelector('[data-id="' + id + '"] .img-zone');
-          if (zone) refreshImgZone(zone, p.img);
-          lazySave();
-        };
-        im.src = p.img;
-      }
-
-      /* ── bilderediger: crop/zoom (modal på document.body) ── */
-      var cropState = null, cropEls = null;
-      function cropKeydown(e) { if (e.key === 'Escape' && cropState) closeCrop(); }
-      function buildCropModal() {
-        if (cropEls) return cropEls;
-        var ov = document.createElement('div');
-        ov.className = 'crop-ov';
-        ov.innerHTML =
-          '<div class="crop-box"><h3>Beskrivær / zoom</h3>'
-            + '<div class="crop-view"><img alt=""></div>'
-            + '<div class="crop-row"><span>Zoom</span><input type="range" class="crop-zoom" min="1" max="4" step="0.01" value="1"></div>'
-            + '<p class="crop-hint">Dra bildet for å flytte. Zoom med glidebryteren eller scrollhjulet. «Bruk» beskriværer til et kvadrat.</p>'
-            + '<div class="crop-actions"><button type="button" class="crop-cancel">Avbryt</button><button type="button" class="crop-apply">Bruk</button></div>'
-          + '</div>';
-        document.body.appendChild(ov);
-        var view = ov.querySelector('.crop-view');
-        var cimg = ov.querySelector('.crop-view img');
-        var zoom = ov.querySelector('.crop-zoom');
-        cropEls = { ov: ov, view: view, img: cimg, zoom: zoom };
-        ov.addEventListener('click', function (e) { if (e.target === ov) closeCrop(); });
-        ov.querySelector('.crop-cancel').addEventListener('click', closeCrop);
-        ov.querySelector('.crop-apply').addEventListener('click', applyCrop);
-        zoom.addEventListener('input', function () { setCropZoom(parseFloat(zoom.value)); });
-        var dragging = false, lastX = 0, lastY = 0;
-        view.addEventListener('pointerdown', function (e) { if (!cropState) return; dragging = true; lastX = e.clientX; lastY = e.clientY; try { view.setPointerCapture(e.pointerId); } catch (_) {} e.preventDefault(); });
-        view.addEventListener('pointermove', function (e) { if (!dragging || !cropState) return; cropState.x += e.clientX - lastX; cropState.y += e.clientY - lastY; lastX = e.clientX; lastY = e.clientY; clampCrop(); applyCropView(); });
-        function endDrag(e) { dragging = false; try { view.releasePointerCapture(e.pointerId); } catch (_) {} }
-        view.addEventListener('pointerup', endDrag);
-        view.addEventListener('pointercancel', endDrag);
-        view.addEventListener('wheel', function (e) {
-          if (!cropState) return; e.preventDefault();
-          var rect = view.getBoundingClientRect();
-          var z = (cropState.s / cropState.base) * (e.deltaY < 0 ? 1.1 : 1 / 1.1);
-          z = Math.max(1, Math.min(4, z));
-          cropZoomAt(cropState.base * z, e.clientX - rect.left, e.clientY - rect.top);
-        }, { passive: false });
-        document.addEventListener('keydown', cropKeydown);
-        return cropEls;
-      }
-      function openCrop(id) {
-        var p = find(id); if (!p || !p.img) return;
-        var els = buildCropModal();
-        els.ov.classList.add('on'); els.img.src = p.img;
-        var image = new Image();
-        image.onload = function () {
-          var V = els.view.clientWidth || 320;
-          var base = V / Math.min(image.naturalWidth, image.naturalHeight);
-          cropState = { posterId: id, img: image, V: V, base: base, s: base, x: 0, y: 0 };
-          cropState.x = (V - image.naturalWidth * cropState.s) / 2;
-          cropState.y = (V - image.naturalHeight * cropState.s) / 2;
-          els.zoom.value = '1'; clampCrop(); applyCropView();
-        };
-        image.src = p.img;
-      }
-      function setCropZoom(z) { if (!cropState) return; cropZoomAt(cropState.base * z, cropState.V / 2, cropState.V / 2); }
-      function cropZoomAt(newS, px, py) {
-        if (!cropState) return;
-        var ix = (px - cropState.x) / cropState.s, iy = (py - cropState.y) / cropState.s;
-        cropState.s = newS;
-        cropState.x = px - ix * cropState.s; cropState.y = py - iy * cropState.s;
-        clampCrop(); applyCropView();
-        if (cropEls) cropEls.zoom.value = String(Math.max(1, Math.min(4, cropState.s / cropState.base)));
-      }
-      function clampCrop() {
-        if (!cropState) return;
-        var V = cropState.V;
-        var w = cropState.img.naturalWidth * cropState.s, h = cropState.img.naturalHeight * cropState.s;
-        cropState.x = w <= V ? (V - w) / 2 : Math.max(V - w, Math.min(0, cropState.x));
-        cropState.y = h <= V ? (V - h) / 2 : Math.max(V - h, Math.min(0, cropState.y));
-      }
-      function applyCropView() {
-        if (!cropEls || !cropState) return;
-        cropEls.img.style.width = (cropState.img.naturalWidth * cropState.s) + 'px';
-        cropEls.img.style.height = (cropState.img.naturalHeight * cropState.s) + 'px';
-        cropEls.img.style.left = cropState.x + 'px'; cropEls.img.style.top = cropState.y + 'px';
-      }
-      function closeCrop() { if (cropEls) cropEls.ov.classList.remove('on'); cropState = null; }
-      function applyCrop() {
-        if (!cropState) return;
-        var s = cropState.s, V = cropState.V;
-        var sx = -cropState.x / s, sy = -cropState.y / s, sw = V / s, sh = V / s;
-        var OUT = Math.min(1600, Math.max(1, Math.round(sw)));
-        var canvas = document.createElement('canvas');
-        canvas.width = OUT; canvas.height = OUT;
-        var _cctx = canvas.getContext('2d');
-        _cctx.imageSmoothingEnabled = true; _cctx.imageSmoothingQuality = 'high';
-        _cctx.drawImage(cropState.img, sx, sy, sw, sh, 0, 0, OUT, OUT);
-        var url = canvas.toDataURL('image/webp', 0.92);
-        var p = find(cropState.posterId);
-        if (p) { p.img = url; var zone = host.querySelector('[data-id="' + cropState.posterId + '"] .img-zone'); if (zone) refreshImgZone(zone, url); lazySave(); }
-        closeCrop();
-      }
 
       /* ── stedvelger (for lenke-feltet) — popover på document.body ── */
       var PAGE_SECTIONS = [
@@ -448,6 +285,7 @@
       }
 
       loadData(); renderAll();
+      AC.viewSwitch({ list: q('list-posters'), key: 'apeiron-oppslag-view-v1', help: 'Velg hvordan plakatkortene vises mens du redigerer her i admin. Påvirker bare redigeringsvisningen, ikke den publiserte siden.' });
       fitPreview(); setTimeout(fitPreview, 80);
       pushPreview(); setTimeout(pushPreview, 150);
 

@@ -72,6 +72,165 @@
   .mod-styret .card-body, .mod-begrep .card-body { grid-template-columns: 1fr; }
   .mod-styret .img-zone, .mod-begrep .img-zone { width: 100%; aspect-ratio: 16/10; border-right: none; border-bottom: 1px solid rgba(35,39,64,.09); }
 }
+/* ── styret: valgbar visning av styremedlemmer (kun i admin-editoren) ── */
+/* ── visningsvelger — delt på tvers av paneler (.panel-host dekker alle .mod-*) ── */
+.panel-host .lay-switch { display: flex; align-items: center; gap: 13px; margin: 0 0 16px; padding: 9px 13px; background: rgba(35,39,64,.03); border: 1px solid var(--border); border-radius: 6px; flex-wrap: wrap; }
+.panel-host .lay-switch__lbl { font-size: .63rem; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; color: var(--ink-soft); display: inline-flex; align-items: center; gap: 6px; }
+.panel-host .lay-switch__btns { display: flex; gap: 6px; flex-wrap: wrap; }
+.panel-host .lay-switch__btns button { display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px; border: 1px solid var(--border); border-radius: 5px; background: white; font-family: var(--body); font-size: .82rem; color: var(--ink-soft); cursor: pointer; transition: background .12s, border-color .12s, color .12s; }
+.panel-host .lay-switch__btns button:hover { border-color: var(--gold); color: var(--navy); }
+.panel-host .lay-switch__btns button.active { background: var(--navy); color: var(--paper); border-color: var(--navy); }
+.panel-host .lay-ic { display: inline-grid; gap: 2px; width: 15px; height: 12px; }
+.panel-host .lay-ic i { background: currentColor; border-radius: 1px; opacity: .5; }
+.panel-host .lay-switch__btns button.active .lay-ic i { opacity: .9; }
+.mod-styret .ic-stack { grid-template-rows: 1fr 1fr; }
+.mod-styret .ic-rows { grid-template-rows: repeat(3, 1fr); }
+.mod-styret .ic-one { grid-template-rows: 1fr; }
+.mod-styret .ic-b1 { grid-template-columns: 1fr 1fr; }
+.mod-styret .ic-b2 { grid-template-columns: 1fr 1fr 1fr; }
+.mod-styret .ic-b3 { grid-template-rows: 1.5fr 1fr; }
+.mod-styret .ic-b3 i:first-child { opacity: .85; }
+
+/* ── generiske kolonne-visninger for kortlister (nyheter, oppslag, oppnåelser,
+   utmerkelser, begrep …). Settes på .list av AdminCommon.viewSwitch. ── */
+.panel-host .list.lay-cols-1 { display: flex; flex-direction: column; gap: 14px; }
+.panel-host .list.lay-cols-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }
+.panel-host .list.lay-cols-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 13px; align-items: start; }
+/* 3 i bredden er trangt for sidestilt bilde — legg bildet på toppen i stedet */
+.panel-host .list.lay-cols-3 .card-body { grid-template-columns: 1fr !important; }
+.panel-host .list.lay-cols-3 .img-zone { width: 100% !important; aspect-ratio: 16/9 !important; border-right: none !important; border-bottom: 1px solid rgba(35,39,64,.09); }
+@media (max-width: 900px) {
+  .panel-host .list.lay-cols-3 { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 620px) {
+  .panel-host .list.lay-cols-2, .panel-host .list.lay-cols-3 { grid-template-columns: 1fr; }
+}
+/* samme for rad-lister (.lst) i Om oss / Forsiden */
+.panel-host .lst.lay-cols-1 { display: flex; flex-direction: column; gap: 10px; }
+.panel-host .lst.lay-cols-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: start; }
+.panel-host .lst.lay-cols-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; align-items: start; }
+@media (max-width: 760px) { .panel-host .lst.lay-cols-2, .panel-host .lst.lay-cols-3 { grid-template-columns: 1fr; } }
+
+/* visning: stablet (som før) — flex-kolonne, fullt kort */
+.mod-styret #list-members.lay-stack { display: flex; flex-direction: column; gap: 14px; }
+
+/* visning B1: to i bredden, polert */
+.mod-styret #list-members.lay-b1 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }
+.mod-styret #list-members.lay-b1 .card-body { grid-template-columns: 108px 1fr; }
+.mod-styret #list-members.lay-b1 .img-zone { width: 100%; }
+
+/* visning B2: tre i bredden, kompakt (liten avatar inline med navn) */
+.mod-styret #list-members.lay-b2 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 13px; align-items: start; }
+.mod-styret #list-members.lay-b2 .card-body { display: flex; flex-direction: column; gap: 11px; padding: 13px 14px; }
+.mod-styret #list-members.lay-b2 .b2-top { display: flex; gap: 11px; align-items: center; }
+.mod-styret #list-members.lay-b2 .b2-top .img-zone { width: 56px; height: 56px; aspect-ratio: 1/1; border-radius: 7px; border-right: none; flex: 0 0 auto; }
+.mod-styret #list-members.lay-b2 .fg { margin-bottom: 0; min-width: 0; }
+.mod-styret #list-members.lay-b2 .b2-top .fg { flex: 1; }
+.mod-styret #list-members.lay-b2 .subed-row { flex-wrap: wrap; }
+
+/* visning B3: portrettkort i galleri (bilde øverst, kontroller i bunn) */
+.mod-styret #list-members.lay-b3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; align-items: start; }
+.mod-styret #list-members.lay-b3 .card { display: flex; flex-direction: column; }
+.mod-styret #list-members.lay-b3 .b3-img .img-zone { width: 100%; aspect-ratio: 4/3; border-right: none; border-bottom: 1px solid rgba(35,39,64,.09); }
+.mod-styret #list-members.lay-b3 .fields { padding: 14px 15px; display: flex; flex-direction: column; gap: 11px; }
+.mod-styret #list-members.lay-b3 .fg { margin-bottom: 0; min-width: 0; }
+.mod-styret #list-members.lay-b3 .subed-row { flex-wrap: wrap; }
+.mod-styret #list-members.lay-b3 .b3-foot { margin-top: auto; display: flex; align-items: center; gap: 9px; padding: 9px 13px; border-top: 1px solid rgba(35,39,64,.07); background: rgba(35,39,64,.02); }
+.mod-styret #list-members.lay-b3 .b3-foot .order-btns { margin-left: auto; }
+
+@media (max-width: 900px) {
+  .mod-styret #list-members.lay-b2, .mod-styret #list-members.lay-b3 { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 620px) {
+  .mod-styret #list-members.lay-b1, .mod-styret #list-members.lay-b2, .mod-styret #list-members.lay-b3 { grid-template-columns: 1fr; }
+}
+
+/* ── delt: bilde-verktøylinje UNDER bildet (Merch-stil — dekker ikke bildet) ── */
+.panel-host .img-col { display: flex; flex-direction: column; align-items: center; gap: 7px; min-width: 0; }
+.panel-host .img-col .img-zone { border-right: none; }
+.panel-host .img-bar { display: flex; align-items: center; justify-content: center; gap: 5px; flex-wrap: wrap; }
+.panel-host .img-bar .ibtn { position: static; width: 30px; height: 28px; border: 1px solid var(--border); border-radius: 5px; background: #fff; color: var(--ink-soft); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: .82rem; }
+.panel-host .img-bar .ibtn:hover { background: rgba(212,175,55,.16); border-color: rgba(212,175,55,.55); color: var(--navy); }
+.panel-host .img-bar .ibtn.btn-clr-img { color: var(--maroon); border-color: rgba(118,17,15,.25); }
+.panel-host .img-bar .ibtn.btn-clr-img:hover { background: rgba(118,17,15,.07); }
+
+/* ── styret: runde portretter i alle visninger ── */
+.mod-styret #list-members .img-col { padding: 12px 10px 0; }
+.mod-styret #list-members .img-col .img-zone { width: 100%; max-width: 132px; aspect-ratio: 1/1; border-radius: 50%; border-right: none; border-bottom: none; }
+.mod-styret #list-members.lay-b2 .b2-top .img-col { padding: 0; flex: 0 0 auto; }
+.mod-styret #list-members.lay-b2 .b2-top .img-col .img-zone { width: 56px; max-width: 56px; height: 56px; }
+.mod-styret #list-members.lay-b3 .b3-img { padding: 10px 0 2px; }
+.mod-styret #list-members.lay-b3 .b3-img .img-col .img-zone { max-width: 150px; }
+.mod-styret .arch-mem .img-col { flex: 0 0 auto; align-items: center; }
+.mod-styret .arch-mem .img-col .img-zone { width: 84px; max-width: 84px; height: 84px; aspect-ratio: 1/1; border-radius: 50%; border-right: none; }
+@media (max-width: 620px) {
+  .mod-styret .arch-mem .img-col .img-zone { width: 84px; aspect-ratio: 1/1; }
+}
+
+/* ── styret: knapper ── */
+.mod-styret .btn-add--ghost { background: rgba(35,39,64,.05); color: var(--navy); border: 1px solid var(--border); }
+.mod-styret .btn-add--ghost:hover { background: rgba(35,39,64,.1); }
+
+/* ── styret: arkiv (tidligere styrer) ── */
+.mod-styret .arch-sec .sec-head { flex-wrap: wrap; }
+.mod-styret .btn-add--danger { background: rgba(118,17,15,.07); color: var(--maroon); border: 1px solid rgba(118,17,15,.3); }
+.mod-styret .btn-add--danger:hover { background: rgba(118,17,15,.14); }
+.mod-styret .undo-bar { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; padding: 10px 14px; background: rgba(212,175,55,.14); border: 1px solid rgba(212,175,55,.5); border-radius: 6px; }
+.mod-styret .undo-bar[hidden] { display: none; }
+.mod-styret .undo-bar .undo-msg { flex: 1; font-size: .86rem; color: var(--navy); }
+.mod-styret .undo-bar .undo-do { padding: 6px 14px; background: var(--gold); color: var(--navy); border: none; border-radius: 4px; font-family: var(--body); font-size: .82rem; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.mod-styret .undo-bar .undo-do:hover { filter: brightness(1.07); }
+.mod-styret .undo-bar .undo-x { width: 26px; height: 26px; flex: 0 0 auto; border: 1px solid var(--border); border-radius: 4px; background: white; cursor: pointer; color: var(--ink-soft); }
+.mod-styret .undo-bar .undo-x:hover { background: rgba(35,39,64,.06); }
+.mod-styret .arch-pv { margin: 4px 0 20px; }
+.mod-styret .arch-pv-cap { font-size: .63rem; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 8px; }
+.mod-styret .pv-arch-wrap { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--paper); box-shadow: 0 4px 22px rgba(35,39,64,.07); }
+.mod-styret #pv-arch { border: 0; display: block; background: var(--paper); transform-origin: top left; }
+.mod-styret .arch-card .arch-body { padding: 16px 18px; display: flex; flex-direction: column; gap: 13px; }
+.mod-styret .arch-card .frow { display: flex; gap: 10px; flex-wrap: wrap; }
+.mod-styret .arch-card .fg { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 120px; }
+.mod-styret .arch-card .fg.narrow { flex: 0 0 130px; min-width: 100px; }
+.mod-styret .arch-card .fg label { font-size: .63rem; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; color: var(--ink-soft); }
+.mod-styret .arch-card .fg input, .mod-styret .arch-card .fg textarea { font-family: var(--body); font-size: .88rem; color: var(--ink); border: 1px solid var(--border); border-radius: 3px; padding: 6px 9px; background: white; width: 100%; resize: vertical; }
+.mod-styret .arch-card .fg textarea { min-height: 64px; line-height: 1.5; }
+.mod-styret .arch-card .fg input:focus, .mod-styret .arch-card .fg textarea:focus { outline: none; border-color: var(--navy); }
+.mod-styret .arch-mem-head { display: flex; align-items: center; gap: 10px; margin-top: 4px; padding-top: 12px; border-top: 1px dashed var(--border); }
+.mod-styret .arch-mem-ttl { font-size: .68rem; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; color: var(--gold-ink); }
+.mod-styret .arch-mem-count { font-size: .76rem; color: var(--ink-soft); margin-right: auto; }
+.mod-styret .arch-mem-list { display: flex; flex-direction: column; gap: 10px; }
+.mod-styret .arch-mem { display: flex; gap: 12px; align-items: flex-start; background: rgba(35,39,64,.02); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; }
+.mod-styret .arch-mem__img { width: 84px; flex: 0 0 84px; aspect-ratio: 1/1; border-radius: 6px; border: none; }
+.mod-styret .arch-mem__fields { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.mod-styret .arch-mem__fields .frow { display: flex; gap: 8px; flex-wrap: wrap; }
+.mod-styret .arch-mem__fields .fg { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 90px; }
+.mod-styret .arch-mem__fields .fg.narrow { flex: 0 0 70px; min-width: 60px; }
+.mod-styret .arch-mem__fields .fg label { font-size: .58rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
+.mod-styret .arch-mem__fields .fg input, .mod-styret .arch-mem__fields .fg textarea { font-family: var(--body); font-size: .84rem; border: 1px solid var(--border); border-radius: 3px; padding: 5px 8px; background: white; width: 100%; resize: vertical; }
+.mod-styret .arch-mem__fields .fg textarea { min-height: 46px; line-height: 1.45; }
+.mod-styret .arch-mem__fields .fg input:focus, .mod-styret .arch-mem__fields .fg textarea:focus { outline: none; border-color: var(--navy); }
+.mod-styret .arch-mem__ctrls { display: flex; flex-direction: column; gap: 4px; flex: 0 0 auto; }
+.mod-styret .arch-mem__ctrls .btn-mini { width: 28px; height: 28px; border: 1px solid var(--border); border-radius: 4px; background: white; cursor: pointer; font-size: .72rem; color: var(--ink-soft); display: flex; align-items: center; justify-content: center; }
+.mod-styret .arch-mem__ctrls .btn-mini:hover { background: rgba(35,39,64,.06); color: var(--navy); }
+.mod-styret .arch-mem__ctrls .btn-mini.x { color: var(--maroon); border-color: rgba(118,17,15,.25); }
+.mod-styret .arch-mem__ctrls .btn-mini.x:hover { background: rgba(118,17,15,.06); }
+@media (max-width: 620px) {
+  .mod-styret .arch-mem { flex-wrap: wrap; }
+  .mod-styret .arch-mem__img { width: 100%; flex: 0 0 auto; aspect-ratio: 16/9; }
+  .mod-styret .arch-mem__ctrls { flex-direction: row; }
+}
+
+/* ── styret: sammenleggbare tidligere styrer + visning av arkiv-medlemmer ── */
+.mod-styret .arch-card .btn-collapse { width: 26px; height: 26px; flex: 0 0 auto; border: 1px solid var(--border); border-radius: 4px; background: white; cursor: pointer; color: var(--ink-soft); display: flex; align-items: center; justify-content: center; }
+.mod-styret .arch-card .btn-collapse:hover { background: rgba(35,39,64,.06); color: var(--navy); }
+.mod-styret .arch-card .btn-collapse .chev { line-height: 1; transition: transform .15s; }
+.mod-styret .arch-card.is-collapsed .btn-collapse .chev { transform: rotate(-90deg); }
+.mod-styret .arch-card.is-collapsed .arch-body { display: none; }
+.mod-styret .arch-card .card-title { flex: 0 1 auto; }
+.mod-styret .arch-head-count { font-size: .76rem; color: var(--ink-soft); margin-left: 10px; margin-right: auto; white-space: nowrap; }
+.mod-styret .arch-mem-list.lay-cols-1 { display: flex; flex-direction: column; gap: 10px; }
+.mod-styret .arch-mem-list.lay-cols-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: start; }
+@media (max-width: 820px) { .mod-styret .arch-mem-list.lay-cols-2 { grid-template-columns: 1fr; } }
+
 /* ── begrep-spesifikke avvik fra det delte styret/begrep-temaet ── */
 .mod-begrep .pv-page-wrap { background: #0a0a0a; }
 .mod-begrep #pv-page { background: #0a0a0a; }
@@ -353,6 +512,27 @@
 .mod-nyheter .btn-status--done { color: var(--ink-soft); border-color: var(--border); }
 .mod-nyheter .card.is-done .card-title { color: var(--ink-soft); text-decoration: line-through; }
 .mod-nyheter .card.is-done .card-head { opacity: .7; }
+.mod-nyheter .kicker-custom { margin-top: 5px; }
+.mod-nyheter .arch-news { background: rgba(35,39,64,.025); border: 1px dashed var(--border); border-radius: 8px; padding: 16px 16px 6px; margin-top: 26px; }
+.mod-nyheter .arch-news .sec-head h2 { font-size: 1.25rem; }
+.mod-nyheter .arch-news .card { background: #fbf9f3; }
+/* preview-bytter: Forsiden / Nyhetssiden — delt mellom nyheter + styret */
+.mod-nyheter .pv-page, .mod-styret .pv-page { display: inline-flex; margin: 10px 0 0; border: 1px solid var(--border); border-radius: 7px; overflow: hidden; background: #fff; }
+.mod-nyheter .pv-page-btn, .mod-styret .pv-page-btn { padding: 6px 15px; border: none; background: none; font-family: var(--body); font-size: .8rem; font-weight: 600; color: var(--ink-soft); cursor: pointer; transition: background .15s, color .15s; }
+.mod-nyheter .pv-page-btn + .pv-page-btn, .mod-styret .pv-page-btn + .pv-page-btn { border-left: 1px solid var(--border); }
+.mod-nyheter .pv-page-btn:hover, .mod-styret .pv-page-btn:hover { color: var(--navy); }
+.mod-nyheter .pv-page-btn.on, .mod-styret .pv-page-btn.on { background: var(--navy); color: var(--paper); }
+/* sammenleggbare arkiverte nyheter (Kompakt/Utvidet) */
+.mod-nyheter #news-arch-density { margin: 0 0 14px; }
+.mod-nyheter .ic-rows { grid-template-rows: repeat(3,1fr); }
+.mod-nyheter .ic-one { grid-template-rows: 1fr; }
+.mod-nyheter .btn-collapse { width: 24px; height: 24px; border: none; background: none; cursor: pointer; color: var(--ink-soft); display: flex; align-items: center; justify-content: center; flex: 0 0 auto; border-radius: 5px; }
+.mod-nyheter .btn-collapse:hover { background: rgba(35,39,64,.06); color: var(--navy); }
+.mod-nyheter .btn-collapse .chev { transition: transform .2s; font-size: .78rem; }
+.mod-nyheter .card.is-collapsed .btn-collapse .chev { transform: rotate(-90deg); }
+.mod-nyheter .card.is-collapsed .fields { display: none; }
+.mod-nyheter .card.is-collapsed .card-head { border-bottom: none; }
+.mod-nyheter .arch-when { font-size: .72rem; color: var(--ink-soft); font-style: italic; flex: 0 0 auto; margin-left: 2px; }
 
 
 /* ════════ MENY (dobbel live-preview + angre/gjør-om + plassering + stedvelger) ════════ */
@@ -364,12 +544,13 @@
 .mod-meny .dpb-cap { font-size: .63rem; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 8px; display: flex; gap: 14px; align-items: baseline; flex-wrap: wrap; }
 .mod-meny .dpb-hint { font-size: .72rem; font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--ink-soft); }
 .mod-meny .dpb-hint b { color: var(--gold-ink); }
-.mod-meny .editor-grid { display: grid; grid-template-columns: minmax(0,1fr) 360px; gap: 30px; align-items: start; }
+.mod-meny .editor-grid { display: grid; grid-template-columns: minmax(0,1fr) 412px; gap: 30px; align-items: start; }
 .mod-meny .editor { min-width: 0; }
-.mod-meny .preview-pane { position: sticky; top: var(--pp-top, 150px); max-height: calc(100vh - var(--pp-top, 150px) - 16px); overflow: auto; background: white; border: 1px solid var(--border); border-radius: 9px; padding: 20px 22px; box-shadow: 0 4px 22px rgba(35,39,64,.06); }
-.mod-meny .preview-pane h3 { font-family: var(--display); font-size: 1.35rem; color: var(--navy); margin-bottom: 3px; }
-.mod-meny .preview-pane .pp-sub { font-size: .8rem; color: var(--ink-soft); margin-bottom: 16px; line-height: 1.45; }
-@media (max-width: 1180px) { .mod-meny .editor-grid { grid-template-columns: 1fr; } .mod-meny .preview-pane { position: static; max-height: none; } }
+/* Mobil-forhåndsvisning: samme telefon-ramme som i de andre panelene (ingen hvitt kort). */
+.mod-meny .preview-pane { position: sticky; top: var(--pp-top, 150px); background: transparent; border: 0; border-radius: 0; padding: 0; box-shadow: none; max-height: none; overflow: visible; }
+.mod-meny .preview-pane h3 { font-family: var(--display); font-size: 1.4rem; color: var(--navy); margin-bottom: 2px; }
+.mod-meny .preview-pane .pp-sub { font-size: .82rem; color: var(--ink-soft); margin: 2px 0 14px; line-height: 1.45; }
+@media (max-width: 1180px) { .mod-meny .editor-grid { grid-template-columns: 1fr; } .mod-meny .preview-pane { position: static; } }
 .mod-meny .sec { margin-bottom: 30px; }
 .mod-meny .sec-desc { font-size: .82rem; color: var(--ink-soft); margin-bottom: 16px; line-height: 1.5; }
 .mod-meny .fg { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 110px; }
@@ -398,8 +579,9 @@
 .mod-meny #pv-desk { width: 100%; height: var(--nav-h, 76px); border: 0; display: block; border-radius: 7px; position: relative; z-index: 1; transition: height .16s ease; }
 .mod-meny .desk-preview-bar:hover { z-index: 70; }
 .mod-meny .desk-preview-bar:hover #pv-desk { height: var(--nav-h-open, 330px); z-index: 40; }
-.mod-meny .np-mob-wrap { width: 330px; height: 600px; margin: 0 auto; overflow: hidden; border: 1px solid var(--border); border-radius: 12px; background: var(--navy); }
-.mod-meny #pv-mob { width: 390px; height: 709px; border: 0; transform: scale(.846); transform-origin: top left; display: block; }
+.mod-meny .np-mob-wrap { box-sizing: content-box; width: 390px; height: min(740px, calc(100vh - var(--pp-top, 150px) - 96px)); margin: 0; overflow: hidden; border: 11px solid #14172a; border-radius: 38px; background: #14172a; box-shadow: 0 28px 64px -24px rgba(14,16,28,.62), 0 0 0 1px rgba(0,0,0,.25) inset; }
+.mod-meny #pv-mob { width: 390px; height: min(740px, calc(100vh - var(--pp-top, 150px) - 96px)); border: 0; border-radius: 27px; transform: none; display: block; }
+@media (max-width: 1180px) { .mod-meny .np-mob-wrap { margin: 0 auto; } }
 .mod-meny .align-sec { background: white; border: 1px solid var(--border); border-radius: 7px; padding: 16px 20px; margin-bottom: 24px; }
 .mod-meny .align-sec h2 { font-family: var(--display); font-size: 1.3rem; color: var(--navy); }
 .mod-meny .align-presets { display: flex; gap: 10px; margin: 4px 0 20px; flex-wrap: wrap; }
@@ -429,6 +611,11 @@
    1180px i admin.html, så merch trenger ikke lenger egen regel her. */
 .ph-wrap.mod-meny { max-width: 1180px; }
 
+/* ── merch: valgbar visning av produktlista (admin) ── */
+.mod-merch #plist.lay-cols-1 { display: flex; flex-direction: column; gap: 14px; }
+.mod-merch #plist.lay-cols-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }
+@media (max-width: 820px) { .mod-merch #plist.lay-cols-2 { grid-template-columns: 1fr; } }
+
 /* ════════ MERCH (produkter: galleri + varianter + badge + farger + preview) ════════ */
 .mod-merch .preview-top h3 { font-family: var(--display); font-size: 1.4rem; color: var(--navy); }
 .mod-merch .preview-top .pp-sub { font-size: .82rem; color: var(--ink-soft); margin: 2px 0 12px; line-height: 1.45; }
@@ -455,6 +642,9 @@
 .mod-merch .img-thumb__bar .grip:active { cursor: grabbing; }
 .mod-merch .img-thumb .tbtn { width: 24px; height: 24px; flex: 0 0 auto; border: none; border-radius: 4px; background: rgba(255,255,255,.14); color: #fff; cursor: pointer; font-size: .78rem; display: flex; align-items: center; justify-content: center; }
 .mod-merch .img-thumb .tbtn:hover { background: rgba(255,255,255,.3); }
+.mod-merch .img-thumb .tbtn.crop { width: auto; padding: 0 9px; gap: 4px; font-size: .68rem; font-weight: 600; letter-spacing: .01em; background: var(--gold); color: var(--navy); }
+.mod-merch .img-thumb .tbtn.crop:hover { background: #e6c860; }
+.mod-merch .img-thumb .tbtn.crop .tbtn-ic { font-size: .8rem; line-height: 1; }
 .mod-merch .img-thumb .tbtn.x:hover { background: var(--maroon); }
 .mod-merch .img-thumb__color { padding: 0 5px 5px; background: rgba(0,0,0,.4); }
 .mod-merch .img-thumb__color select { width: 100%; font-family: var(--body); font-size: .72rem; border: 1px solid rgba(244,236,217,.25); border-radius: 3px; background: rgba(255,255,255,.06); color: #f4ecd9; padding: 3px 5px; }

@@ -126,13 +126,22 @@
       }
       function removeImageAt(prodId, idx) {
         var p = prod(prodId); if (!p || idx < 0 || idx >= p.images.length) return;
+        var prevImages = p.images.slice();
+        var prevColorImages = Object.assign({}, p.colorImages || {});
         p.images.splice(idx, 1);
         var cm = p.colorImages || {};
         Object.keys(cm).forEach(function (c) { if (cm[c] === idx) delete cm[c]; else if (cm[c] > idx) cm[c] = cm[c] - 1; });
         syncPrimary(p); renderGallery(prodId); lazySave();
+        AC.undoable('Bilde fjernet', function () {
+          var pp = prod(prodId); if (!pp) return;
+          pp.images = prevImages.slice();
+          pp.colorImages = Object.assign({}, prevColorImages);
+          syncPrimary(pp); renderGallery(prodId); lazySave();
+        });
       }
       function rotateImageAt(prodId, idx) {
         var p = prod(prodId); if (!p || !p.images[idx]) return;
+        var prev = p.images[idx];
         var img = new Image();
         img.onload = function () {
           var canvas = document.createElement('canvas');
@@ -143,6 +152,9 @@
           ctx.drawImage(img, -img.width / 2, -img.height / 2);
           p.images[idx] = canvas.toDataURL('image/webp', 0.82);
           syncPrimary(p); renderGallery(prodId); lazySave();
+          AC.undoable('Bilde rotert', function () {
+            var pp = prod(prodId); if (pp && pp.images[idx] != null) { pp.images[idx] = prev; syncPrimary(pp); renderGallery(prodId); lazySave(); }
+          });
         };
         img.src = p.images[idx];
       }
@@ -178,17 +190,23 @@
             + '<img src="' + esc(u) + '" alt="">'
             + '<div class="img-thumb__bar">'
               + '<span class="grip" title="Dra for å endre rekkefølge">⠿</span>'
-              + '<button class="tbtn crop" type="button" title="Beskjær / zoom" data-act="crop" data-i="' + i + '">⛶</button>'
-              + '<button class="tbtn rot" type="button" title="Roter 90°" data-act="rot" data-i="' + i + '">↻</button>'
+              + '<button class="tbtn crop" type="button" title="Rediger bilde (beskjær, zoom, roter)" data-act="crop" data-i="' + i + '"><span class="tbtn-ic">✎</span>Rediger</button>'
               + '<button class="tbtn x" type="button" title="Fjern bilde" data-act="del" data-i="' + i + '">✕</button>'
             + '</div>' + colorRow
           + '</div>';
         });
         html += '<div class="img-add" data-add-img>' + (p.images.length ? '+ Legg til flere bilder' : '📷 Klikk eller dra inn bilde(r)') + '</div>';
         wrap.innerHTML = html;
-        wrap.querySelectorAll('[data-act="rot"]').forEach(function (b) { b.addEventListener('click', function () { rotateImageAt(prodId, Number(b.getAttribute('data-i'))); }); });
         wrap.querySelectorAll('[data-act="del"]').forEach(function (b) { b.addEventListener('click', function () { removeImageAt(prodId, Number(b.getAttribute('data-i'))); }); });
-        wrap.querySelectorAll('[data-act="crop"]').forEach(function (b) { b.addEventListener('click', function () { openCrop(prodId, Number(b.getAttribute('data-i'))); }); });
+        wrap.querySelectorAll('[data-act="crop"]').forEach(function (b) { b.addEventListener('click', function () {
+          var idx = Number(b.getAttribute('data-i'));
+          var pp = prod(prodId); if (!pp || !pp.images[idx]) return;
+          window.AdminImageEditor.open({
+            src: pp.images[idx], aspect: 1, aspects: [1, 0.75, 1.3333], outSize: 1000, quality: 0.85,
+            title: 'Rediger bilde', applyLabel: 'Bruk bilde',
+            onApply: function (url) { var prev = pp.images[idx]; pp.images[idx] = url; if (window.AdminCommon) AdminCommon.checkImageSize(url); syncPrimary(pp); renderGallery(prodId); lazySave(); AC.undoable('Bilde endret', function () { var q2 = prod(prodId); if (q2 && q2.images[idx] != null) { q2.images[idx] = prev; syncPrimary(q2); renderGallery(prodId); lazySave(); } }); }
+          });
+        }); });
         wrap.querySelectorAll('[data-colorsel]').forEach(function (sel) { sel.addEventListener('change', function () { setImageColor(prodId, Number(sel.getAttribute('data-colorsel')), sel.value); }); });
         var addTile = wrap.querySelector('[data-add-img]');
         if (addTile) addTile.addEventListener('click', function () { openPicker(prodId); });
@@ -375,7 +393,7 @@
 
         card.querySelector('.btn-up').addEventListener('click', function () { move(p.id, -1); });
         card.querySelector('.btn-dn').addEventListener('click', function () { move(p.id, 1); });
-        card.querySelector('.btn-del').addEventListener('click', function () { if (confirm('Slett «' + (p.name || 'dette produktet') + '»?')) del(p.id); });
+        card.querySelector('.btn-del').addEventListener('click', function () { del(p.id); });
 
         var advBtn = card.querySelector('.adv-toggle'), advDiv = card.querySelector('.adv-fields');
         advBtn.addEventListener('click', function () { var open = advDiv.classList.toggle('open'); advBtn.textContent = (open ? '▾' : '▸') + ' Bestillingslenke (avansert)'; });
@@ -406,7 +424,7 @@
         products.push(p); renderAll(); lazySave();
         setTimeout(function () { var last = host.querySelector('#plist .pcard:last-child'); if (last) last.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60);
       }
-      function del(id) { products = products.filter(function (p) { return p.id !== id; }); renderAll(); lazySave(); }
+      function del(id) { var i = products.findIndex(function (p) { return p.id === id; }); if (i < 0) return; AC.undoDelete(products, i, '«' + (products[i].name || 'Produkt') + '» slettet', renderAll, lazySave); }
       function move(id, dir) {
         var i = products.findIndex(function (p) { return p.id === id; });
         if (i < 0) return; var j = i + dir; if (j < 0 || j >= products.length) return;
@@ -471,6 +489,10 @@
       if (pvFrame) pvFrame.addEventListener('load', fitShop);
 
       loadData(); renderInfo(); renderAll();
+      AC.viewSwitch({ list: q('plist'), key: 'apeiron-merch-view-v1', modes: [
+        { id: 'cols-1', n: 1, label: '1 i bredden', title: 'Ett produkt per rad' },
+        { id: 'cols-2', n: 2, label: '2 i bredden', title: 'To produkter i bredden' }
+      ], help: 'Velg hvordan produktkortene vises mens du redigerer her i admin. Påvirker bare redigeringsvisningen, ikke nettbutikken.' });
       fitShop(); setTimeout(fitShop, 80);
       pushPreview(); setTimeout(pushPreview, 150);
 

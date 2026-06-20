@@ -108,3 +108,34 @@
    Denne regelen lastes i <head> (render-blocking) så «Logg inn»-skjermen
    aldri blinker til før admin-common.js rekker å skjule den. */
 #gate { display: none !important; }
+
+/* ─── Angre-snackbar (AdminCommon.undoable / undoDelete) ─── */
+.undo-snack {
+  position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 16px);
+  z-index: 9700; display: flex; align-items: center; gap: 14px;
+  max-width: min(540px, 92vw); padding: 11px 12px 11px 18px;
+  background: var(--navy, #232740); color: var(--paper, #f4ecd9);
+  border-radius: 10px; box-shadow: 0 18px 44px -14px rgba(0, 0, 0, .6);
+  font-family: var(--body, 'Spectral', Georgia, serif); font-size: .9rem;
+  opacity: 0; visibility: hidden;
+  transition: opacity .18s, transform .18s, visibility .18s;
+}
+.undo-snack.show { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
+.undo-snack__count {
+  flex: 0 0 auto; min-width: 24px; height: 24px; padding: 0 7px; box-sizing: border-box;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--gold, #d4af37); color: var(--navy, #232740);
+  border-radius: 999px; font-weight: 800; font-size: .82rem; line-height: 1;
+}
+.undo-snack__msg { flex: 1; line-height: 1.4; }
+.undo-snack__do {
+  flex: 0 0 auto; padding: 7px 15px; background: var(--gold, #d4af37); color: var(--navy, #232740);
+  border: none; border-radius: 6px; font-family: inherit; font-size: .86rem; font-weight: 700;
+  cursor: pointer; white-space: nowrap;
+}
+.undo-snack__do:hover { filter: brightness(1.08); }
+.undo-snack__x {
+  flex: 0 0 auto; width: 28px; height: 28px; border: 1px solid rgba(244, 236, 217, .25);
+  border-radius: 6px; background: transparent; color: rgba(244, 236, 217, .8); cursor: pointer; font-size: .8rem;
+}
+.undo-snack__x:hover { background: rgba(244, 236, 217, .12); color: #fff; }

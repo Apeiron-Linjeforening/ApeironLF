@@ -59,7 +59,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
   gap: 24px;
-  margin-top: 2.6em;
+  margin-top: 1.7em;
 }
 .honor-card {
   background: var(--card, #f7f3ec);
@@ -108,6 +108,27 @@ html[data-mode="marine"] .honor-card__honor { color: var(--c-d, var(--gold)); }
   color: var(--ink-soft); font-style: italic; font-size: 1.05rem;
 }
 
+/* ── Årskull-filter ── */
+.honor-filter {
+  display: flex; flex-direction: column; align-items: center; gap: 13px;
+  margin: -8px 0 6px;
+}
+.honor-filter[hidden] { display: none; }
+.honor-filter__label {
+  font-family: var(--body); font-size: .7rem; font-weight: 700;
+  letter-spacing: .24em; text-transform: uppercase; color: var(--accent-ink, var(--gold-ink));
+}
+.honor-filter__chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.honor-chip {
+  font-family: var(--body); font-size: .84rem; font-weight: 600; letter-spacing: .03em;
+  padding: .5em 1.15em; border-radius: 999px; cursor: pointer; color: var(--ink-soft);
+  background: transparent; border: 1px solid var(--line);
+  transition: color .18s, background .18s, border-color .18s, transform .18s;
+}
+.honor-chip:hover { color: var(--ink); border-color: var(--ink); transform: translateY(-1px); }
+.honor-chip.is-active { background: var(--navy); color: var(--paper); border-color: var(--navy); }
+html[data-mode="marine"] .honor-chip.is-active { background: var(--gold); color: var(--navy); border-color: var(--gold); }
+
 @media (max-width: 600px) { .honor-grid { grid-template-columns: 1fr; } }
 </style>
 </head>
@@ -129,10 +150,12 @@ html[data-mode="marine"] .honor-card__honor { color: var(--c-d, var(--gold)); }
 <!-- ============ UTMERKELSER ============ -->
 <section class="section" id="utmerkelser">
   <div class="wrap">
-    <div class="center" style="margin-bottom:50px">
+    <div class="center" style="margin-bottom:34px">
       <span class="eyebrow eyebrow--center" id="intro-eyebrow">Heder &amp; ære</span>
       <h2 class="h-section" id="grid-heading">De vi hedrer</h2>
     </div>
+    <!-- Filter etter årskull — auto-fylt fra utmerkelser-content.js -->
+    <div class="honor-filter" id="honor-filter" hidden></div>
     <!-- Auto-fylt fra utmerkelser-content.js -->
     <div class="honor-grid" id="honor-grid"></div>
   </div>
@@ -165,6 +188,59 @@ html[data-mode="marine"] .honor-card__honor { color: var(--c-d, var(--gold)); }
     if (val != null && val !== '') el.textContent = val;
   }
   var STAGGER = ['', 'd1', 'd2', 'd3'];
+  var currentFilter = 'all';
+
+  // Sorteringsnøkkel: første firesifrede årstall i strengen (årskull «2024/2025» → 2024).
+  function yearKey(y) { var m = String(y == null ? '' : y).match(/\d{4}/); return m ? parseInt(m[0], 10) : -1; }
+
+  // Distinkte årskull, nyeste først.
+  function distinctYears(people) {
+    var seen = {}, out = [];
+    people.forEach(function (p) {
+      var y = String((p && p.year) || '').trim();
+      if (y && !seen[y]) { seen[y] = 1; out.push(y); }
+    });
+    out.sort(function (a, b) { return yearKey(b) - yearKey(a); });
+    return out;
+  }
+
+  // Stabil sortering etter årskull (nyeste først), beholder admin-rekkefølge innen samme kull.
+  function sortByYear(people) {
+    return people.map(function (p, i) { return { p: p, i: i }; })
+      .sort(function (a, b) { var d = yearKey(b.p.year) - yearKey(a.p.year); return d !== 0 ? d : a.i - b.i; })
+      .map(function (o) { return o.p; });
+  }
+
+  var revealIO = ('IntersectionObserver' in window) ? new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); revealIO.unobserve(e.target); } });
+  }, { threshold: 0.1 }) : null;
+  function observeGrid() {
+    var cards = document.querySelectorAll('#honor-grid .reveal');
+    if (!revealIO || IS_PREVIEW) { cards.forEach(function (c) { c.classList.add('in'); }); return; }
+    cards.forEach(function (c) { if (!c.classList.contains('in')) revealIO.observe(c); });
+  }
+
+  function renderFilter(years) {
+    var fhost = document.getElementById('honor-filter');
+    if (!fhost) return;
+    if (years.length < 2) { fhost.innerHTML = ''; fhost.hidden = true; currentFilter = 'all'; return; }
+    if (currentFilter !== 'all' && years.indexOf(currentFilter) < 0) currentFilter = 'all';
+    fhost.hidden = false;
+    var chips = ['all'].concat(years).map(function (y) {
+      var label = (y === 'all') ? 'Alle' : y;
+      var active = (currentFilter === y) ? ' is-active' : '';
+      return '<button type="button" class="honor-chip' + active + '" data-year="' + esc(y) + '">' + esc(label) + '</button>';
+    }).join('');
+    fhost.innerHTML = '<span class="honor-filter__label">Vis årskull</span><div class="honor-filter__chips">' + chips + '</div>';
+    fhost.querySelectorAll('.honor-chip').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var y = btn.getAttribute('data-year');
+        if (y === currentFilter) return;
+        currentFilter = y;
+        renderUtmerkelser();
+      });
+    });
+  }
 
   function renderUtmerkelser() {
     var C = window.UTMERKELSER_CONTENT || {};
@@ -175,25 +251,35 @@ html[data-mode="marine"] .honor-card__honor { color: var(--c-d, var(--gold)); }
     }
     var grid = document.getElementById('honor-grid');
     if (!grid || !Array.isArray(C.people)) return;
-    if (!C.people.length) {
+    var people = C.people.slice();
+    var years = distinctYears(people);
+    renderFilter(years);
+    if (!people.length) {
       grid.innerHTML = '<p class="honor-empty">Ingen utmerkelser er lagt til ennå.</p>';
       return;
     }
+    var list = sortByYear(people);
+    if (currentFilter !== 'all') list = list.filter(function (p) { return String((p.year || '')).trim() === currentFilter; });
+    if (!list.length) {
+      grid.innerHTML = '<p class="honor-empty">Ingen utmerkelser i dette årskullet ennå.</p>';
+      return;
+    }
     var sv = window.paletteStyleVars || function () { return ''; };
-    grid.innerHTML = C.people.map(function (p, i) {
+    grid.innerHTML = list.map(function (p, i) {
       var accentStyle = p.accent ? sv(p.accent) : '';
       var honor = p.honor ? '<div class="honor-card__honor">' + esc(p.honor) + '</div>' : '';
       var year = p.year ? '<div class="honor-card__year">' + esc(p.year) + '</div>' : '';
       var desc = p.desc ? '<p>' + esc(p.desc) + '</p>' : '';
       return '<div class="honor-card reveal ' + STAGGER[i % 4] + '" style="' + accentStyle + '">'
         + '<div class="honor-card__ph"><span class="honor-card__initials">' + esc(p.initials) + '</span>'
-        + '<image-slot shape="circle" placeholder="Foto" src="' + esc(p.img || '') + '"></image-slot></div>'
+        + '<image-slot id="honor-photo-' + i + '" shape="circle" placeholder="Foto" src="' + esc(p.img || '') + '"></image-slot></div>'
         + year
         + '<h3>' + esc(p.name) + '</h3>'
         + honor
         + desc
         + '</div>';
     }).join('');
+    observeGrid();
   }
 
   renderUtmerkelser();

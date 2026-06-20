@@ -25,18 +25,19 @@ previewene fungerer.
 
 ---
 
-## C — skall + moduler (PÅGÅR)
+## C — skall + moduler (FERDIG)
 
-**Mål:** samle alle editorene i ett skall (`admin.html`) med tynne moduler, i
-stedet for 13 frittstående `*-admin.html`-filer som dupliserer ramme,
-innlogging, varsler og eksport.
+**Mål (oppnådd):** samle alle editorene i ett skall (`admin.html`) med tynne
+moduler, i stedet for 13 frittstående `*-admin.html`-filer som dupliserte ramme,
+innlogging, varsler og eksport. Alle 13 panelene er nå moduler, og samtlige
+frittstående `*-admin.html`-filer er slettet.
 
 ### Slik er det bygd
 
 - **`admin.html`** — skallet. Header, bla-bar meny, oversikt (dashboard), og
-  en modul-vert (`#panel-host`). Panel-registeret (`PANELS`) sier for hvert
-  område om det er en `module` (mountes inline) eller fortsatt en `file`
-  (lastes midlertidig i iframe til det er migrert).
+  en modul-vert (`#panel-host`). Panel-registeret (`PANELS`) lister hvert
+  område; alle mountes nå inline som moduler (den gamle `file`-iframe-veien
+  for ikke-migrerte paneler er ikke lenger i bruk).
 - **`admin-common.js`** — delt logikk. Nye byggeklosser for moduler:
   - `AdminCommon.createStore(lsKey, freshFn)` — utkast-lager (auto-lagre i
     localStorage, `save/lazySave/reset`).
@@ -48,17 +49,15 @@ innlogging, varsler og eksport.
   `host`, kobler opp alt, og returnerer `{ export }` som skallets «Last ned»-
   knapp kaller.
 
-### Migreringsrekkefølge
+### Migrering — fullført
 
-- [x] **medlemskap** — første modul (bevis på mønsteret). `medlemskap-admin.html` slettet.
-- [ ] hjelp, meny, footer, medlemskap-lignende enkle paneler
-- [ ] styret, begrep, om-oss, forsiden (index), oppslagstavla, nyheter
-- [ ] merch (størst — egen `.pcard`-struktur)
-- [ ] oppnåelser, utmerkelser
+Alle 13 panelene er migrert til moduler, og de frittstående `*-admin.html`-filene
+er slettet:
 
-Hvert panel migreres + verifiseres, og den frittstående `*-admin.html`-fila
-slettes når modulen er på plass. Skallet kjører hybrid hele veien, så ingenting
-er nede underveis.
+- [x] medlemskap, hjelp, meny, footer
+- [x] styret, begrep, om-oss, forsiden (index), oppslagstavla, nyheter
+- [x] merch (størst — egen `.pcard`-struktur)
+- [x] oppnåelser, utmerkelser
 
 ### Hvorfor C er riktig fundament
 
@@ -97,8 +96,8 @@ Klon repoet  →  åpne admin  →  bygg sin egen side  →  publiser
 
 Veien dit, byggesteinene i rekkefølge:
 
-1. **C** — modulær admin (fundament). ← vi er her
-2. **Sider/seksjoner som data** — sidelisten og seksjonene i en side blir
+1. **C** — modulær admin (fundament). ✅ **ferdig**
+2. **Sider/seksjoner som data** ← *vi er her nå* — sidelisten og seksjonene i en side blir
    redigerbare data, ikke hardkodet HTML. Admin får «+ Ny side / + Ny seksjon».
 3. **Tema i admin** — farge-, font- og logo-tokens redigerbare (bygger på at
    siden allerede bruker CSS-variabler).

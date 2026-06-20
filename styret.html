@@ -123,6 +123,45 @@ html[data-mode="marine"] .role-card { border-left-color: var(--c-d, var(--gold))
 @media (max-width: 600px) {
   .role-grid { grid-template-columns: 1fr; }
 }
+
+/* ── Tidligere styrer (teaser) ── */
+.archive-teaser { background: var(--paper-2, #f7f3ec); }
+.arch-teaser__row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(248px, 1fr));
+  gap: 20px;
+}
+.arch-teaser__card {
+  display: flex; flex-direction: column; gap: 8px;
+  background: var(--card, #fff); border: 1px solid var(--line);
+  border-top: 3px solid var(--gold);
+  border-radius: 6px; padding: 22px 22px 20px;
+  text-decoration: none; color: var(--ink);
+  transition: transform .2s ease, box-shadow .24s ease;
+}
+.arch-teaser__card:hover { transform: translateY(-4px); box-shadow: 0 22px 44px -28px rgba(35,39,64,.5); }
+.arch-teaser__period { font-family: var(--display); font-size: 1.7rem; font-weight: 700; color: var(--ink); line-height: 1; }
+.arch-teaser__count { font-family: var(--body); font-size: .74rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--accent-ink, var(--navy)); opacity: .6; }
+.arch-teaser__sum {
+  font-size: .92rem; color: var(--ink-soft, #4a4d6a); line-height: 1.55; margin: 2px 0 0;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.arch-teaser__avatars { display: flex; align-items: center; margin-top: 8px; }
+.arch-av {
+  position: relative;
+  width: 34px; height: 34px; border-radius: 50%; overflow: hidden; flex: 0 0 auto;
+  margin-left: -8px; box-shadow: 0 0 0 2px var(--card, #fff);
+  display: flex; align-items: center; justify-content: center;
+  background: var(--navy); color: var(--paper);
+  font-family: var(--display); font-size: .72rem; font-weight: 700;
+}
+.arch-av:first-child { margin-left: 0; }
+.arch-av__ini { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 0; }
+.arch-av img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; z-index: 1; }
+.arch-av--more { background: var(--gold); color: var(--navy); font-family: var(--body); font-size: .68rem; }
+@media (max-width: 600px) {
+  .arch-teaser__row { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body data-mode="paper">
@@ -154,6 +193,21 @@ html[data-mode="marine"] .role-card { border-left-color: var(--c-d, var(--gold))
 
     <!-- Auto-fylt fra styret-content.js -->
     <div class="board__grid" id="styret-board"></div>
+  </div>
+</section>
+
+<!-- ============ TIDLIGERE STYRER (teaser) ============ -->
+<section class="section archive-teaser" id="tidligere-styrer" data-screen-label="Tidligere styrer" hidden>
+  <div class="wrap">
+    <div class="center" style="margin-bottom:44px">
+      <span class="eyebrow eyebrow--center">Historien</span>
+      <h2 class="h-section">Tidligere styrer</h2>
+      <p class="lede">Et arkiv over styrene som har holdt Apeiron i gang — og hva de fikk til.</p>
+    </div>
+    <div class="arch-teaser__row" id="archive-teaser"></div>
+    <div class="center" style="margin-top:40px">
+      <a class="btn btn--gold" href="styret-arkiv.html">Se hele arkivet <span class="arr">→</span></a>
+    </div>
   </div>
 </section>
 
@@ -288,6 +342,8 @@ html[data-mode="marine"] .role-card { border-left-color: var(--c-d, var(--gold))
 (function () {
   var IS_PREVIEW = false;
   try { IS_PREVIEW = /[?&]preview\b/.test(location.search); } catch (e) {}
+  var PREVIEW_IMAGES = {};   // sti -> dataURL, kun i admin-forhåndsvisning
+  function resolveImg(src) { if (!src) return ''; return PREVIEW_IMAGES[src] || src; }
 
   function esc(s) {
     return String(s == null ? '' : s)
@@ -319,7 +375,7 @@ html[data-mode="marine"] .role-card { border-left-color: var(--c-d, var(--gold))
       }).join('');
       return '<div class="member reveal ' + STAGGER[i % 4] + '">'
         + '<div class="member__ph"><span class="member__initials">' + esc(m.initials) + '</span>'
-        + '<image-slot shape="circle" placeholder="Foto" src="' + esc(m.img || '') + '"></image-slot></div>'
+        + '<image-slot id="styret-photo-' + i + '" shape="circle" placeholder="Foto" src="' + esc(resolveImg(m.img)) + '"></image-slot></div>'
         + '<div class="member__role">' + esc(m.role) + '</div>'
         + '<h3>' + esc(m.name) + '</h3>'
         + (tags ? '<div class="member__tags">' + tags + '</div>' : '')
@@ -345,7 +401,36 @@ html[data-mode="marine"] .role-card { border-left-color: var(--c-d, var(--gold))
         + '</div>';
     }).join('');
   }
+
+  // Teaser for tidligere styrer (full liste på styret-arkiv.html)
+  renderArchiveTeaser(C);
   } // /renderStyret
+
+  function renderArchiveTeaser(C) {
+    var sec = document.getElementById('tidligere-styrer');
+    var row = document.getElementById('archive-teaser');
+    if (!sec || !row) return;
+    var arch = (C.archive || []).filter(function (a) { return a && (a.period || (a.members && a.members.length)); });
+    if (!arch.length) { sec.hidden = true; row.innerHTML = ''; return; }
+    sec.hidden = false;
+    row.innerHTML = arch.slice(0, 4).map(function (a) {
+      var mem = (a.members || []).filter(function (m) { return m && (m.name || m.initials); });
+      var avatars = mem.slice(0, 5).map(function (m) {
+        var src = resolveImg(m.img);
+        var ini = esc(m.initials || (m.name || '?').slice(0, 1));
+        var im = src ? '<img src="' + esc(src) + '" alt="" loading="lazy" onerror="this.style.display=&quot;none&quot;">' : '';
+        return '<span class="arch-av"><span class="arch-av__ini">' + ini + '</span>' + im + '</span>';
+      }).join('');
+      var more = mem.length > 5 ? '<span class="arch-av arch-av--more">+' + (mem.length - 5) + '</span>' : '';
+      var sum = a.summary ? '<p class="arch-teaser__sum">' + esc(a.summary) + '</p>' : '';
+      return '<a class="arch-teaser__card" href="styret-arkiv.html#arkiv">'
+        + '<span class="arch-teaser__period">' + esc(a.period || a.heading || 'Tidligere styre') + '</span>'
+        + (mem.length ? '<span class="arch-teaser__count">' + mem.length + (mem.length === 1 ? ' medlem' : ' medlemmer') + '</span>' : '')
+        + sum
+        + (avatars ? '<span class="arch-teaser__avatars">' + avatars + more + '</span>' : '')
+        + '</a>';
+    }).join('');
+  }
 
   renderStyret();
 
@@ -360,6 +445,7 @@ html[data-mode="marine"] .role-card { border-left-color: var(--c-d, var(--gold))
       var d = e.data;
       if (!d || d.type !== 'apeiron-styret-preview') return;
       if (d.content) window.STYRET_CONTENT = d.content;
+      PREVIEW_IMAGES = d.images || {};
       renderStyret();
       // Vis alt umiddelbart i preview (ingen scroll-avsløring).
       document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });

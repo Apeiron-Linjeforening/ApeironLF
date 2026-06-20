@@ -1,15 +1,15 @@
 /* Innhold for Om oss-siden (om-oss.html) — TEKST-delene som endres ofte.
    Sist oppdatert: 18.6.2026
-   Rediger direkte her, eller åpne om-oss-admin.html for visuell redigering.
+   Rediger direkte her, eller åpne Admin-senteret → Om oss for visuell redigering.
 
    Dekker:
      om  : «Hva er apeiron?» — gresk ord, avsnitt, timeglass-kort, samarbeids-teaser, nøkkeltall
      faq : seksjonsoverskrift + ofte stilte spørsmål (spørsmål/svar)
 
    Disse delene ligger ANNETSTEDS:
-     - Hero + Kontakt (på Hjem)         → index-content.js (index-admin.html)
+     - Hero + Kontakt (på Hjem)         → index-content.js (Admin → Forsiden)
      - Fellesskap & samarbeid, Lesesalen, Møt styret → statisk i om-oss.html
-     - Bli medlem (priser/steg)         → membership-config.js (medlemskap-admin.html)
+     - Bli medlem (priser/steg)         → membership-config.js (Admin → Medlemskap)
 */
 
 window.OM_CONTENT = {

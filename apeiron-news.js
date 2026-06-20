@@ -1,7 +1,7 @@
 /* ============================================================
    apeiron-news.js — nyheter på forsiden
    Leser fra news-content.js (window.NEWS_CONTENT), som ligger i repoet og
-   lastes umiddelbart. Redigeres i nyheter-admin.html. Erstatter det gamle
+   lastes umiddelbart. Redigeres i Admin-senteret → Nyheter. Erstatter det gamle
    Google Sheet-baserte systemet.
 
    Viser:
@@ -10,9 +10,7 @@
      • Slanke beskjeder øverst i Arrangementer / Aporetisk / Fadderuke
        (#news-arrangement / #news-aporetisk / #news-fadderuke).
 
-   Valgfri live-kanal: hvis window.NEWS_ENDPOINT er satt (news-config.js),
-   hentes ekstra beskjeder live (f.eks. en hastebeskjed lagt inn fra mobil).
-   Dette er ikke nødvendig — siden virker helt fint uten.
+   Innholdet kommer fra repoet (news-content.js, redigeres i Admin → Nyheter).
    ============================================================ */
 (function () {
   'use strict';
@@ -54,25 +52,30 @@
     s = s.replace(/_([^_]+)_/g, '<u>$1</u>');
     return s.replace(/\r?\n/g, '<br>');
   }
-  function parseDate(v) {
-    var m = String(v || '').trim().match(/^(\d{2})\.(\d{2})\.(\d{2})$/);
-    if (!m) return null;
-    var d = new Date(2000 + +m[1], +m[2] - 1, +m[3]);
-    return isNaN(d.getTime()) ? null : d;
-  }
-  // Valgfritt tidsvindu (from/to «åå.mm.dd»). Feiler trygt → alltid synlig.
-  function inWindow(n) {
-    var now = new Date(), from = parseDate(n.from), to = parseDate(n.to);
-    if (from && now < from) return false;
-    if (to) { var end = new Date(to.getFullYear(), to.getMonth(), to.getDate(), 23, 59, 59, 999); if (now > end) return false; }
-    return true;
-  }
   function pad(n) { return n < 10 ? '0' + n : '' + n; }
   function fmtPosted(iso) {
     if (!iso) return '';
     var d = new Date(iso + 'T00:00:00');
     if (isNaN(d.getTime())) return iso;
     return d.toLocaleDateString('no-NO', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+  // Kort dato til «Akkurat nå»-kortet: dropp året når det er inneværende år.
+  function fmtShort(iso) {
+    if (!iso) return '';
+    var d = new Date(iso + 'T00:00:00');
+    if (isNaN(d.getTime())) return iso;
+    var sameYear = d.getFullYear() === new Date().getFullYear();
+    return d.toLocaleDateString('no-NO', sameYear ? { day: 'numeric', month: 'long' } : { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+  // Rensk markdown og kort ned brødteksten til et utdrag.
+  function excerpt(t, max) {
+    var s = String(t == null ? '' : t)
+      .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+      .replace(/[*_]{1,3}/g, '')
+      .replace(/\s+/g, ' ').trim();
+    max = max || 90;
+    if (s.length > max) s = s.slice(0, max).replace(/\s+\S*$/, '') + '…';
+    return s;
   }
 
   /* ---------- data ---------- */
@@ -87,7 +90,7 @@
   }
   function visible(items, place) {
     return items.filter(function (n) {
-      return n && !n.done && n.place === place && inWindow(n);
+      return n && !n.done && n.place === place;
     });
   }
 
@@ -96,12 +99,20 @@
     var safe = n.link ? safeUrl(n.link) : '';
     var ext = /^https?:/i.test(safe);
     var tag = ext ? ' target="_blank" rel="noopener"' : '';
-    var lbl = n.date ? esc(n.date) : 'Kunngjøring';
-    var meta = n.posted ? '<span class="now__meta">Lagt ut ' + esc(fmtPosted(n.posted)) + '</span>' : '';
-    var inner =
-      '<span class="now__body"><span class="now__lbl">' + lbl + '</span>'
-      + '<span class="now__ttl">' + esc(n.title || '') + '</span>' + meta + '</span>'
-      + '<span class="now__arr" aria-hidden="true">→</span>';
+    var kick = (n.kicker === undefined ? 'Kunngjøring' : n.kicker);
+    var when = n.date ? esc(n.date) : esc(fmtShort(n.posted));
+    var whenHtml = when ? '<span class="now__when">' + when + '</span>' : '';
+    var ex = excerpt(n.text, 90);
+    var exHtml = ex ? '<span class="now__excerpt">' + esc(ex) + '</span>' : '';
+    var ttl = '<span class="now__ttl">' + esc(n.title || '') + '</span>';
+    var body;
+    if (kick) {
+      body = '<span class="now__line"><span class="now__lbl">' + esc(kick) + '</span>' + whenHtml + '</span>' + ttl + exHtml;
+    } else {
+      // Ingen merkelapp → tittelen flytter opp og deler topplinja med datoen.
+      body = '<span class="now__line now__line--lead">' + ttl + whenHtml + '</span>' + exHtml;
+    }
+    var inner = '<span class="now__body">' + body + '</span><span class="now__arr" aria-hidden="true">→</span>';
     return safe
       ? '<a class="now__row" href="' + safe + '"' + tag + '>' + inner + '</a>'
       : '<div class="now__row">' + inner + '</div>';
@@ -219,7 +230,7 @@
     state.event = deduped.length ? deduped[0] : null;
   }
 
-  /* ---------- live forhåndsvisning (nyheter-admin.html) ---------- */
+  /* ---------- live forhåndsvisning (Admin → Nyheter) ---------- */
   function previewBridge() {
     var IS = false;
     try { IS = /[?&]preview\b/.test(location.search) || (window.self !== window.top); } catch (e) {}
@@ -233,40 +244,13 @@
     return true;
   }
 
-  /* ---------- valgfri live-kanal ---------- */
-  function loadLive() {
-    var ENDPOINT = window.NEWS_ENDPOINT || '';
-    if (!ENDPOINT) return;
-    var url = ENDPOINT;
-    var token = window.NEWS_TOKEN || '';
-    if (token) url += (url.indexOf('?') > -1 ? '&' : '?') + 'token=' + encodeURIComponent(token);
-    fetch(url, { method: 'GET' })
-      .then(function (r) { if (!r.ok) throw 0; return r.json(); })
-      .then(function (data) {
-        if (!Array.isArray(data) || !data.length) return;
-        // Live-beskjeder legges FØRST (nyest/viktigst), så repo-innholdet.
-        var live = data.map(function (n) {
-          return {
-            place: (n.place || 'panel').toLowerCase(), urgent: !!n.urgent,
-            title: n.title || '', text: n.text || '', date: n.date || '',
-            link: n.link || '', linkLabel: n.linkLabel || '',
-            from: n.from || '', to: n.to || '', done: false
-          };
-        });
-        state.items = live.concat(state.items);
-        render();
-      })
-      .catch(function () { /* stille — live-kanalen er valgfri */ });
-  }
-
   /* ---------- init ---------- */
   function init() {
     // Kjør bare der det finnes en plassholder (forsiden).
     if (!document.getElementById('news-panel') && !document.getElementById('news-arrangement')) return;
     state.items = getData();
     render();
-    if (previewBridge()) return; // i forhåndsvisning: vent på data fra admin (ikke hent live)
-    loadLive();
+    previewBridge(); // i forhåndsvisning: lytt etter data fra admin
   }
 
   if (document.readyState === 'loading') {

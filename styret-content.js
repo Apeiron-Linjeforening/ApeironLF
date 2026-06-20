@@ -1,12 +1,22 @@
-/* Innhold for Styret-siden (styret.html).
+/* Innhold for Styret-siden (styret.html) + arkivsiden (styret-arkiv.html).
    Sist oppdatert: 14.6.2026
-   Rediger direkte her, eller åpne styret-admin.html for visuell redigering.
+   Rediger direkte her, eller åpne Admin-senteret → Styret.
 
-   members[].img : "assets/Styremedlemmer/filnavn.jpg", base64-bilde fra admin, eller null.
+   members[].img : "assets/Styremedlemmer/filnavn.jpg" eller "assets/styret/…webp".
+                   Bilder lagres som EGNE filer (ikke base64), og lastes ned som
+                   egne bildefiler ved publisering. Tomt = bare initialer.
    members[].tags: tilleggsverv som chips. color = palettnavn ("maroon"),
                     eller { light, dark } med palettnavn/hex for egendefinert.
    roles[].accent: fargestripe — palettnavn ("" = gull) eller { light, dark }.
-   roles[].resp : punktliste under beskrivelsen. */
+   roles[].resp : punktliste under beskrivelsen.
+
+   archive[]    : tidligere styrer (vises på styret.html#tidligere-styrer som
+                  teaser, og i sin helhet på styret-arkiv.html). Hvert styre:
+     period      : f.eks. "2024 / 2025"
+     summary     : tekst om styreperioden
+     highlights[]: punktliste med høydepunkter/oppnåelser
+     members[]   : { name, role, initials, img, note, tags } — note = hva personen gjorde,
+                   tags = tilleggsverv som chips (samme format som styremedlemmene over) */
 
 window.STYRET_CONTENT = {
   "board": {
@@ -279,5 +289,6 @@ window.STYRET_CONTENT = {
         "Forvalter Apeirons visuelle identitet"
       ]
     }
-  ]
+  ],
+  "archive": []
 };

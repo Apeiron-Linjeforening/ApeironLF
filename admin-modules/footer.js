@@ -111,7 +111,8 @@
           el.addEventListener('input', function () { l[el.getAttribute('data-f')] = el.value; lazySave(); });
         });
         card.querySelector('.btn-del-row').addEventListener('click', function () {
-          data.links = data.links.filter(function (x) { return x !== l; }); renderLinks(); lazySave();
+          var i = data.links.indexOf(l); if (i < 0) return;
+          AC.undoDelete(data.links, i, '«' + (l.label || 'Lenke') + '» fjernet', renderLinks, lazySave);
         });
         AC.enhanceHelp(card);
         AC.wireHrefField(card);
@@ -140,7 +141,8 @@
           el.addEventListener(evt, function () { s[el.getAttribute('data-f')] = el.value; lazySave(); });
         });
         card.querySelector('.btn-del-row').addEventListener('click', function () {
-          data.social = data.social.filter(function (x) { return x !== s; }); renderSocial(); lazySave();
+          var i = data.social.indexOf(s); if (i < 0) return;
+          AC.undoDelete(data.social, i, '«' + (s.label || 'Sosial lenke') + '» fjernet', renderSocial, lazySave);
         });
         AC.enhanceHelp(card);
         AC.wireHrefField(card);
@@ -244,6 +246,9 @@
       bind('m-rep-email', function (v) { data.report.email = v; });
       bind('m-rep-subject', function (v) { data.report.subject = v; });
       renderAll();
+
+      AC.viewSwitch({ list: q('list-links'), key: 'apeiron-footer-links-view-v1', help: 'Velg hvordan lenke-radene vises mens du redigerer her i admin. Påvirker bare redigeringsvisningen, ikke nettsiden.' });
+      AC.viewSwitch({ list: q('list-social'), key: 'apeiron-footer-social-view-v1', help: 'Velg hvordan de sosiale lenkene vises mens du redigerer her i admin. Påvirker bare redigeringsvisningen, ikke nettsiden.' });
 
       return { export: exportFile, destroy: function () { window.removeEventListener('resize', fitFoot); } };
     }

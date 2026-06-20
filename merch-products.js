@@ -1,6 +1,6 @@
 /* Produktdata for Apeiron merch-siden.
    Sist oppdatert: 14.6.2026
-   Rediger direkte her, eller åpne merch-admin.html for visuell redigering.
+   Rediger direkte her, eller åpne Admin-senteret → Merch for visuell redigering.
 
    badgeType: "bestseller" | "new" | "limited" | null
    btnLabel : tekst på handlekurv-knappen (tom = "Legg i kurv")

@@ -107,50 +107,8 @@
         }
       };
 
-      var imgTarget = null;
-      var fileInput = host.querySelector('[data-file]');
-      fileInput.addEventListener('change', function () {
-        var f = fileInput.files && fileInput.files[0];
-        if (f && imgTarget) processImage(f, imgTarget);
-        fileInput.value = '';
-      });
-      function openPicker(list, id) { imgTarget = { list: list, id: id }; fileInput.click(); }
-      function processImage(file, tgt) {
-        var reader = new FileReader();
-        reader.onload = function (e) {
-          var img = new Image();
-          img.onload = function () {
-            var MAX = 900, w = img.width, h = img.height;
-            if (Math.max(w, h) > MAX) { var s = MAX / Math.max(w, h); w = Math.round(w * s); h = Math.round(h * s); }
-            var canvas = document.createElement('canvas');
-            canvas.width = w; canvas.height = h;
-            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-            var url = canvas.toDataURL('image/webp', 0.82);
-            AC.checkImageSize(url);
-            var field = SCHEMAS[tgt.list].img;
-            setField(tgt.list, tgt.id, field, url);
-            var zone = host.querySelector('[data-id="' + tgt.id + '"] .img-zone');
-            if (zone) refreshImgZone(zone, url);
-            lazySave();
-          };
-          img.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-      }
-      function refreshImgZone(zone, url) {
-        var preview = zone.querySelector('.img-preview');
-        var ph = zone.querySelector('.img-ph');
-        var clrBtn = zone.querySelector('.btn-clr-img');
-        var overlay = zone.querySelector('.img-overlay');
-        if (url) {
-          if (!preview) { preview = document.createElement('img'); preview.className = 'img-preview'; preview.alt = ''; zone.appendChild(preview); }
-          preview.style.display = 'block'; preview.src = url;
-          ph.style.display = 'none'; clrBtn.style.display = 'flex'; overlay.textContent = '↺ Bytt bilde';
-        } else {
-          if (preview) { preview.style.display = 'none'; preview.src = ''; }
-          ph.style.display = 'flex'; clrBtn.style.display = 'none'; overlay.textContent = '📷 Last opp';
-        }
-      }
+      // bildefelt håndteres av AdminCommon.wireImageField (delt) i makeCard
+
 
       function setField(list, id, field, val) {
         var item = data[list].find(function (x) { return x.id === id; });
@@ -192,20 +150,18 @@
             + '<div class="order-btns"><button class="btn-ord btn-up" type="button" title="Opp">↑</button><button class="btn-ord btn-dn" type="button" title="Ned">↓</button></div>'
             + '<button class="btn-del" type="button">Slett</button></div>'
           + '<div class="card-body' + (hasImg ? '' : ' no-img') + '">'
-            + (hasImg ? '<div class="' + zoneCls + '"><div class="img-ph"><img src="assets/apeiron-logo.png" alt=""><span>Klikk eller dra inn bilde</span></div><div class="img-overlay">📷 Last opp</div><button class="btn-clr-img" type="button" title="Fjern">✕</button></div>' : '')
+            + (hasImg ? AC.imgFieldHtml(list === 'films' ? 'poster' : '', 'Klikk eller dra inn bilde') : '')
             + '<div class="fields">' + fieldsHtml + '</div>'
           + '</div>';
 
         if (hasImg) {
-          var zone = card.querySelector('.img-zone');
-          var cur = item[schema.img];
-          if (cur) refreshImgZone(zone, cur);
-          zone.addEventListener('click', function () { openPicker(list, item.id); });
-          zone.addEventListener('dragenter', function (e) { e.preventDefault(); zone.setAttribute('data-over', ''); });
-          zone.addEventListener('dragover', function (e) { e.preventDefault(); });
-          zone.addEventListener('dragleave', function () { zone.removeAttribute('data-over'); });
-          zone.addEventListener('drop', function (e) { e.preventDefault(); zone.removeAttribute('data-over'); var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if (f) processImage(f, { list: list, id: item.id }); });
-          card.querySelector('.btn-clr-img').addEventListener('click', function (e) { e.stopPropagation(); setField(list, item.id, schema.img, null); refreshImgZone(zone, null); });
+          AC.wireImageField({
+            zone: card.querySelector('.img-zone'),
+            get: function () { return item[schema.img] || ''; },
+            set: function (url) { setField(list, item.id, schema.img, url || null); },
+            aspect: list === 'films' ? 16 / 10 : 3 / 4, outSize: 1000, quality: 0.84,
+            title: 'Rediger bilde'
+          });
         }
 
         card.querySelectorAll('[data-f]').forEach(function (el) {
@@ -221,7 +177,7 @@
         });
         card.querySelector('.btn-up').addEventListener('click', function () { move(list, item.id, -1); });
         card.querySelector('.btn-dn').addEventListener('click', function () { move(list, item.id, 1); });
-        card.querySelector('.btn-del').addEventListener('click', function () { if (confirm('Slett «' + (item[schema.titleField] || 'dette') + '»?')) del(list, item.id); });
+        card.querySelector('.btn-del').addEventListener('click', function () { del(list, item.id); });
         return card;
       }
 
@@ -254,7 +210,7 @@
         data[list].push(DEFAULTS[list]()); renderList(list); lazySave();
         setTimeout(function () { var last = host.querySelector('#list-' + list + ' .card:last-child'); if (last) last.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60);
       }
-      function del(list, id) { data[list] = data[list].filter(function (x) { return x.id !== id; }); renderList(list); lazySave(); }
+      function del(list, id) { var arr = data[list], i = arr.findIndex(function (x) { return x.id === id; }); if (i < 0) return; var it = arr[i]; var nm = it.title || it.name || it.label || 'element'; AC.undoDelete(arr, i, '«' + nm + '» slettet', function () { renderList(list); }, lazySave); }
       function move(list, id, dir) {
         var arr = data[list], i = arr.findIndex(function (x) { return x.id === id; });
         if (i < 0) return; var j = i + dir; if (j < 0 || j >= arr.length) return;
@@ -312,6 +268,9 @@
       if (pvFrame) pvFrame.addEventListener('load', fitPreview);
 
       loadData(); renderAll();
+      ['issues', 'podcasts', 'films'].forEach(function (lst) {
+        AC.viewSwitch({ list: q('list-' + lst), key: 'apeiron-begrep-view-' + lst + '-v1', help: 'Velg hvordan kortene i denne lista vises mens du redigerer her i admin. Påvirker bare redigeringsvisningen, ikke den publiserte siden.' });
+      });
       fitPreview(); setTimeout(fitPreview, 80);
       pushPreview(); setTimeout(pushPreview, 150);
 

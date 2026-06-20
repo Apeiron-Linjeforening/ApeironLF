@@ -128,7 +128,7 @@
           row.querySelector('input').addEventListener('input', function () { arr[i] = this.value; lazySave(); });
           row.querySelector('.up').addEventListener('click', function () { if (i > 0) { var t = arr[i]; arr[i] = arr[i - 1]; arr[i - 1] = t; renderSubList(host2, arr, label, addLabel, placeholder); lazySave(); } });
           row.querySelector('.dn').addEventListener('click', function () { if (i < arr.length - 1) { var t = arr[i]; arr[i] = arr[i + 1]; arr[i + 1] = t; renderSubList(host2, arr, label, addLabel, placeholder); lazySave(); } });
-          row.querySelector('.x').addEventListener('click', function () { arr.splice(i, 1); renderSubList(host2, arr, label, addLabel, placeholder); lazySave(); });
+          row.querySelector('.x').addEventListener('click', function () { AC.undoDelete(arr, i, 'Punkt fjernet', function () { renderSubList(host2, arr, label, addLabel, placeholder); }, lazySave); });
           rows.appendChild(row);
         });
         host2.querySelector('.btn-subadd').addEventListener('click', function () { arr.push(''); renderSubList(host2, arr, label, addLabel, placeholder); lazySave(); });
@@ -244,7 +244,7 @@
         function rerender() { renderAll(); }
         card.querySelector('.up').addEventListener('click', function () { var i = arr.indexOf(item); if (i > 0) { var t = arr[i]; arr[i] = arr[i - 1]; arr[i - 1] = t; rerender(); lazySave(); } });
         card.querySelector('.dn').addEventListener('click', function () { var i = arr.indexOf(item); if (i > -1 && i < arr.length - 1) { var t = arr[i]; arr[i] = arr[i + 1]; arr[i + 1] = t; rerender(); lazySave(); } });
-        card.querySelector('.btn-del').addEventListener('click', function () { var nm = item.name || item.title || 'dette kortet'; if (confirm('Slett «' + nm + '»?')) { var i = arr.indexOf(item); if (i > -1) arr.splice(i, 1); rerender(); lazySave(); } });
+        card.querySelector('.btn-del').addEventListener('click', function () { var nm = item.name || item.title || 'kort'; var i = arr.indexOf(item); if (i > -1) AC.undoDelete(arr, i, '«' + nm + '» slettet', function () { renderAll(); }, lazySave); });
       }
 
       function fillList(id, arr, maker) { var el = host.querySelector('#' + id); if (!el) return; el.innerHTML = ''; arr.forEach(function (item) { el.appendChild(maker(item, arr)); }); }
@@ -363,6 +363,10 @@
       if (pvFrame) pvFrame.addEventListener('load', fitPreview);
 
       loadData(); wireMeta(); renderAll();
+      ['list-nav', 'list-items', 'list-sifracards', 'list-studiercards', 'list-helsecards', 'list-fysiskcards', 'list-akutt'].forEach(function (lid) {
+        var el = host.querySelector('#' + lid);
+        if (el) AC.viewSwitch({ list: el, key: 'apeiron-hjelp-view-' + lid + '-v1', help: 'Velg hvordan kortene i denne lista vises mens du redigerer her i admin. Påvirker bare redigeringsvisningen, ikke den publiserte siden.' });
+      });
       fitPreview(); setTimeout(fitPreview, 80);
       pushPreview(); setTimeout(pushPreview, 150);
 

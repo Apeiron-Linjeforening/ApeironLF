@@ -11,7 +11,7 @@
    mobilmeny) — på ALLE sider, slik at «du er her» virker overalt.
 
    Footer-innholdet kommer fra window.SITE_FOOTER (site-content.js),
-   som kan redigeres i footer-admin.html.
+   som kan redigeres i Admin-senteret → Footer.
    ============================================================ */
 (function () {
   'use strict';
@@ -355,9 +355,28 @@
     });
   }
 
+  /* ─── «Til toppen»-knapp: liten sirkel nede til høyre på alle sider ─── */
+  function addToTop() {
+    if (document.querySelector('.to-top')) return;
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'to-top';
+    btn.setAttribute('aria-label', 'Til toppen av siden');
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>';
+    btn.addEventListener('click', function () {
+      var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+    });
+    document.body.appendChild(btn);
+    var onScroll = function () { btn.classList.toggle('is-visible', window.scrollY > 400); };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+
   function init() {
     replaceAnchor('site-nav', buildNav() + buildDrawer());
     replaceAnchor('site-footer', buildFooter());
+    addToTop();
     var navLinks = document.querySelector('.nav__links');
     var drawer = document.getElementById('drawer');
     if (navLinks) localizeHrefs(navLinks);

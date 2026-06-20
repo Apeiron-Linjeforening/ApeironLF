@@ -1,17 +1,17 @@
 /* Innhold for forsiden (index.html / «Hjem») — TEKST-delene som endres ofte.
    Sist oppdatert: 18.6.2026
-   Rediger direkte her, eller åpne index-admin.html for visuell redigering.
+   Rediger direkte her, eller åpne Admin-senteret → Forsiden for visuell redigering.
 
    Dekker forsiden (Hjem):
      hero    : eyebrow, undertittel, ingress, to knapper + «under oppbygging»-banner
      kontakt : kontaktboksen (e-post, adresse, nettside + sosiale lenker)
 
    Disse delene STYRES ANNETSTEDS og ligger derfor IKKE her:
-     - «Om oss» + FAQ → om-content.js (om-oss-admin.html)
+     - «Om oss» + FAQ → om-content.js (Admin → Om oss)
      - Arrangementer / Aporetisk Aften / Fadderuke → Google Kalender
-     - Nyhetsstriper → Google Sheet «Nyheter»
-     - Oppslagstavla → oppslag-content.js (oppslagstavla-admin.html)
-     - Bli medlem (priser/steg) → membership-config.js (medlemskap-admin.html)
+     - Nyheter / beskjeder → news-content.js (Admin → Nyheter)
+     - Oppslagstavla → oppslag-content.js (Admin → Oppslagstavla)
+     - Bli medlem (priser/steg) → membership-config.js (Admin → Medlemskap)
      - Styret, Samarbeid, Lesesalen, Møt styret → egne sider/filer
 */
 

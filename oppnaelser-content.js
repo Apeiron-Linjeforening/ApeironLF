@@ -1,6 +1,6 @@
 /* Innhold for Oppnåelser-siden (oppnaelser.html).
    Sist oppdatert: 18.6.2026
-   Rediger direkte her, eller åpne oppnaelser-admin.html for visuell redigering.
+   Rediger direkte her, eller åpne Admin-senteret → Oppnåelser for visuell redigering.
 
    awards[].img   : "assets/oppnaelser/filnavn.webp", base64-bilde fra admin, eller null.
    awards[].medal : resultatet, vises som merke (f.eks. «Sølv»).

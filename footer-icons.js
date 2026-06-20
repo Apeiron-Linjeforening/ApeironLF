@@ -1,7 +1,7 @@
 /* ============================================================
    footer-icons.js — felles ikonsett for footerens sosiale lenker
    ETT sted: brukes både av site-chrome.js (bygger footeren) og
-   footer-admin.html (ikon-velgeren). Legg til nye ikoner her, så
+   ikon-velgeren i Admin → Footer. Legg til nye ikoner her, så
    dukker de opp begge steder automatisk.
 
    Hvert ikon er en <svg> med fill="currentColor" (arver tekstfargen).

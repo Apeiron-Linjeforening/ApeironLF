@@ -1,6 +1,6 @@
 /* Innhold for Oppslagstavla (oppslagstavla.html).
    Sist oppdatert: 18.6.2026
-   Rediger direkte her, eller åpne oppslagstavla-admin.html for visuell redigering.
+   Rediger direkte her, eller åpne Admin-senteret → Oppslagstavla for visuell redigering.
 
    posters[].img       : "assets/oppslag/filnavn.webp", base64-bilde fra admin, eller null.
    posters[].date      : fritekst-dato.
