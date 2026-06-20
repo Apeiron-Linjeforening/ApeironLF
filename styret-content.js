@@ -312,7 +312,7 @@ window.STYRET_CONTENT = {
           "note": "",
           "tags": [
             {
-              "label": "fjfjfjfjfjfjfj",
+              "label": "ITV",
               "color": "maroon"
             }
           ]
