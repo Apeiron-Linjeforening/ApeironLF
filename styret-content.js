@@ -1,22 +1,15 @@
 /* Innhold for Styret-siden (styret.html) + arkivsiden (styret-arkiv.html).
-   Sist oppdatert: 14.6.2026
+   Sist oppdatert: 20.6.2026
    Rediger direkte her, eller åpne Admin-senteret → Styret.
 
-   members[].img : "assets/Styremedlemmer/filnavn.jpg" eller "assets/styret/…webp".
-                   Bilder lagres som EGNE filer (ikke base64), og lastes ned som
-                   egne bildefiler ved publisering. Tomt = bare initialer.
+   members[].img : sti til egen bildefil (assets/styret/…webp). Bildene
+                   lastes ned som egne filer — legg dem i assets/styret/.
    members[].tags: tilleggsverv som chips. color = palettnavn ("maroon"),
                     eller { light, dark } med palettnavn/hex for egendefinert.
    roles[].accent: fargestripe — palettnavn ("" = gull) eller { light, dark }.
    roles[].resp : punktliste under beskrivelsen.
-
-   archive[]    : tidligere styrer (vises på styret.html#tidligere-styrer som
-                  teaser, og i sin helhet på styret-arkiv.html). Hvert styre:
-     period      : f.eks. "2024 / 2025"
-     summary     : tekst om styreperioden
-     highlights[]: punktliste med høydepunkter/oppnåelser
-     members[]   : { name, role, initials, img, note, tags } — note = hva personen gjorde,
-                   tags = tilleggsverv som chips (samme format som styremedlemmene over) */
+   archive[]    : tidligere styrer { period, heading, summary, highlights[],
+                  members[]{ name, role, initials, img, note, tags } }. */
 
 window.STYRET_CONTENT = {
   "board": {
@@ -39,7 +32,7 @@ window.STYRET_CONTENT = {
       "tags": [
         {
           "label": "ITV",
-          "color": "gold"
+          "color": "maroon"
         }
       ]
     },
@@ -52,7 +45,7 @@ window.STYRET_CONTENT = {
       "tags": [
         {
           "label": "HIV",
-          "color": "navy"
+          "color": ""
         }
       ]
     },
@@ -65,7 +58,7 @@ window.STYRET_CONTENT = {
       "tags": [
         {
           "label": "HIV",
-          "color": "navy"
+          "color": ""
         }
       ]
     },
@@ -77,24 +70,24 @@ window.STYRET_CONTENT = {
       "img": "assets/Styremedlemmer/Iver.jpg",
       "tags": [
         {
-          "label": "A.S.A.P",
-          "color": "maroon"
-        },
-        {
           "label": "S.A.K",
           "color": "maroon"
         },
         {
-          "label": "HIV",
-          "color": "navy"
+          "label": "ASAP",
+          "color": "gold"
         },
         {
-          "label": "web",
-          "color": "rust"
+          "label": "HIV",
+          "color": ""
         },
         {
           "label": "Unionen",
           "color": "blue"
+        },
+        {
+          "label": "Nettside",
+          "color": "plum"
         }
       ]
     },
@@ -131,7 +124,7 @@ window.STYRET_CONTENT = {
       "tags": [
         {
           "label": "PTV",
-          "color": "gold"
+          "color": ""
         }
       ]
     },
@@ -159,11 +152,7 @@ window.STYRET_CONTENT = {
       "img": "assets/Styremedlemmer/Fredrik2.jpg",
       "tags": [
         {
-          "label": "A.S.A.P",
-          "color": "maroon"
-        },
-        {
-          "label": "S.A.K",
+          "label": "ASAP",
           "color": "maroon"
         }
       ]
@@ -288,7 +277,178 @@ window.STYRET_CONTENT = {
         "Arbeider med merch — gensere, kopper og muligens bøker",
         "Forvalter Apeirons visuelle identitet"
       ]
+    },
+    {
+      "id": "rmqc29l8bvm7",
+      "name": "Unionsrepresentant",
+      "accent": "blue",
+      "desc": "Apeiron er med i Unionen — samarbeidet mellom linjeforeningene for klassiske fag på Dragvoll.\nLinjeforeningens unionsrepresentant har ansvaret for å møte med Unionen og være bindeleddet mellom Apeiron og de deltagende linjeforeningene.",
+      "resp": [
+        "Forbedre samarbeid mellom linjeforeningene"
+      ]
+    },
+    {
+      "id": "rmqf72zb7yk0",
+      "name": "",
+      "accent": "",
+      "desc": "",
+      "resp": []
     }
   ],
-  "archive": []
+  "archive": [
+    {
+      "id": "amqmvwhqlxck",
+      "period": "2025 / 2026",
+      "heading": "",
+      "summary": "",
+      "highlights": [],
+      "members": [
+        {
+          "id": "ammqmvwhqlju7",
+          "name": "Stian Lauritzen",
+          "role": "Leder",
+          "initials": "SL",
+          "img": "assets/Styremedlemmer/Stian.jpg",
+          "note": "",
+          "tags": [
+            {
+              "label": "fjfjfjfjfjfjfj",
+              "color": "maroon"
+            }
+          ]
+        },
+        {
+          "id": "ammqmvwhql7dg",
+          "name": "Dennis Cleophas",
+          "role": "Nestleder",
+          "initials": "DC",
+          "img": "assets/Styremedlemmer/Dennis.jpg",
+          "note": "",
+          "tags": [
+            {
+              "label": "HIV",
+              "color": ""
+            }
+          ]
+        },
+        {
+          "id": "ammqmvwhqlz42",
+          "name": "Dagny Flakne",
+          "role": "Økonomiansvarlig",
+          "initials": "DN",
+          "img": "assets/Styremedlemmer/Dagny.jpg",
+          "note": "",
+          "tags": [
+            {
+              "label": "HIV",
+              "color": ""
+            }
+          ]
+        },
+        {
+          "id": "ammqmvwhqmli5",
+          "name": "Iver N. Edvardsen",
+          "role": "Sosialansvarlig",
+          "initials": "INE",
+          "img": "assets/Styremedlemmer/Iver.jpg",
+          "note": "",
+          "tags": [
+            {
+              "label": "S.A.K",
+              "color": "maroon"
+            },
+            {
+              "label": "ASAP",
+              "color": "gold"
+            },
+            {
+              "label": "HIV",
+              "color": ""
+            },
+            {
+              "label": "Unionen",
+              "color": "blue"
+            },
+            {
+              "label": "Nettside",
+              "color": "plum"
+            }
+          ]
+        },
+        {
+          "id": "ammqmvwhqmfj1",
+          "name": "Natalie Bellingmo",
+          "role": "PR-ansvarlig",
+          "initials": "NB",
+          "img": "assets/Styremedlemmer/Natalie.jpg",
+          "note": "",
+          "tags": []
+        },
+        {
+          "id": "ammqmvwhqm81j",
+          "name": "Anna Fagerli",
+          "role": "Faddersjef",
+          "initials": "AF",
+          "img": "assets/Styremedlemmer/AnnaF.jpg",
+          "note": "",
+          "tags": []
+        },
+        {
+          "id": "ammqmvwhqmcmt",
+          "name": "Robin M. Søraker",
+          "role": "Fagansvarlig",
+          "initials": "RMS",
+          "img": "assets/Styremedlemmer/Robin.jpg",
+          "note": "",
+          "tags": []
+        },
+        {
+          "id": "ammqmvwhqmb84",
+          "name": "Fredrik C.F. Rosenfors",
+          "role": "S.A.K",
+          "initials": "FCFR",
+          "img": "assets/Styremedlemmer/Fredrik2.jpg",
+          "note": "",
+          "tags": [
+            {
+              "label": "ASAP",
+              "color": "gold"
+            }
+          ]
+        },
+        {
+          "id": "ammqmvwhqm7rp",
+          "name": "Martin R. Skauge",
+          "role": "Potet",
+          "initials": "MRS",
+          "img": "assets/Styremedlemmer/Martin.png",
+          "note": "",
+          "tags": [
+            {
+              "label": "PTV",
+              "color": ""
+            }
+          ]
+        },
+        {
+          "id": "ammqmvwhqm176",
+          "name": "Helene P. Ruud",
+          "role": "Potet",
+          "initials": "HPR",
+          "img": "assets/Styremedlemmer/Helene.jpg",
+          "note": "",
+          "tags": []
+        },
+        {
+          "id": "ammqmvwhqmcj6",
+          "name": "Karoline B. Holthe",
+          "role": "Potet",
+          "initials": "KBH",
+          "img": "assets/Styremedlemmer/Karoline.jpg",
+          "note": "",
+          "tags": []
+        }
+      ]
+    }
+  ]
 };

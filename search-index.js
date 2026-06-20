@@ -255,7 +255,7 @@ window.SEARCH_INDEX = [
   },
   {
     "t": "Iver N. Edvardsen",
-    "d": "Sosialansvarlig · Apeiron 2025/26 · A.S.A.P, S.A.K, HIV, web, Unionen",
+    "d": "Sosialansvarlig · Apeiron 2025/26 · S.A.K, ASAP, HIV, Unionen, Nettside",
     "u": "index.html#styret",
     "g": "Styret"
   },
@@ -297,7 +297,7 @@ window.SEARCH_INDEX = [
   },
   {
     "t": "Fredrik C.F. Rosenfors",
-    "d": "S.A.K · Apeiron 2025/26 · A.S.A.P, S.A.K",
+    "d": "S.A.K · Apeiron 2025/26 · ASAP",
     "u": "index.html#styret",
     "g": "Styret"
   },
@@ -308,34 +308,10 @@ window.SEARCH_INDEX = [
     "g": "Styret"
   },
   {
-    "t": "Gensere er på vei!",
-    "d": "HIV er i gang med å designe gensere, kopper og muligens skrivebøker. · Kommer snart",
-    "u": "merch.html#butikk",
-    "g": "Merch"
-  },
-  {
-    "t": "Emaljekopp",
-    "d": "HIV er i gang med å designe gensere, kopper og muligens skrivebøker. · Kommer snart",
-    "u": "merch.html#butikk",
-    "g": "Merch"
-  },
-  {
-    "t": "Begrep Podcast",
-    "d": "Sesong 1 · Samtaler med forfatterne bak artiklene i Begrep tidsskrift. Vertene går i dybden på tekstene og utforsker ideene videre i samtale.",
-    "u": "begrep.html#podkast",
-    "g": "Begrep"
-  },
-  {
-    "t": "Begrepsliggjort",
-    "d": "Sesong 2 · Filosofiske samtaler med gjester fra NTNU og utenfor. Tema spenner fra etikk og politisk filosofi til eksistens og hverdagslig undring.",
-    "u": "begrep.html#podkast",
-    "g": "Begrep"
-  },
-  {
-    "t": "Hilbert Hotell",
-    "d": "Julekalender 2025 · 24 episoder med en filosofisk advent-fortelling om uendelighet, rom og mysterium. Utgitt daglig gjennom desember 2025.",
-    "u": "begrep.html#podkast",
-    "g": "Begrep"
+    "t": "Styret 2025 / 2026",
+    "d": "Tidligere styre i Apeiron.",
+    "u": "styret-arkiv.html#arkiv",
+    "g": "Styre-arkiv"
   },
   {
     "t": "Oppnåelser",
@@ -360,5 +336,35 @@ window.SEARCH_INDEX = [
     "d": "Noen mennesker løfter hele miljøet rundt seg. Her hedrer vi dem som har stått ut — i det frivillige arbeidet, i fellesskapet, og i det å gjøre Apeiron til et sted å høre hjemme.",
     "u": "utmerkelser.html",
     "g": "Heder"
+  },
+  {
+    "t": "Begrep Podcast",
+    "d": "Sesong 1 · Samtaler med forfatterne bak artiklene i Begrep tidsskrift. Vertene går i dybden på tekstene og utforsker ideene videre i samtale.",
+    "u": "begrep.html#podkast",
+    "g": "Begrep"
+  },
+  {
+    "t": "Begrepsliggjort",
+    "d": "Sesong 2 · Filosofiske samtaler med gjester fra NTNU og utenfor. Tema spenner fra etikk og politisk filosofi til eksistens og hverdagslig undring.",
+    "u": "begrep.html#podkast",
+    "g": "Begrep"
+  },
+  {
+    "t": "Hilbert Hotell",
+    "d": "Julekalender 2025 · 24 episoder med en filosofisk advent-fortelling om uendelighet, rom og mysterium. Utgitt daglig gjennom desember 2025.",
+    "u": "begrep.html#podkast",
+    "g": "Begrep"
+  },
+  {
+    "t": "Gensere er på vei!",
+    "d": "HIV er i gang med å designe gensere, kopper og muligens skrivebøker. · Kommer snart",
+    "u": "merch.html#butikk",
+    "g": "Merch"
+  },
+  {
+    "t": "Emaljekopp",
+    "d": "HIV er i gang med å designe gensere, kopper og muligens skrivebøker. · Kommer snart",
+    "u": "merch.html#butikk",
+    "g": "Merch"
   }
 ];
