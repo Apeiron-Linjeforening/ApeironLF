@@ -23,7 +23,8 @@ Statisk side (HTML/CSS/JS) på Cloudflare Pages — ingen byggesteg, ingen avhen
 | 🛒 **[docs/apps-script-oppsett.md](docs/apps-script-oppsett.md)** | Steg-for-steg: merch-bestilling (Google Sheet + Apps Script) |
 | 📝 **[CHANGELOG.md](CHANGELOG.md)** | Logg over hva som er gjort |
 
-> 🗺️ `Plan F.html` (lokalt, gitignorert) holder veikartet videre: git-CMS → klonbar mal, og en handoff av hvor vi står.
+> 🗺️ `Plan F.html` (lokalt, gitignorert) holder veikartet videre: WYSIWYG-redigering →
+> klonbar mal, og en handoff av hvor vi står.
 
 ---
 
@@ -50,9 +51,10 @@ Statisk side (HTML/CSS/JS) på Cloudflare Pages — ingen byggesteg, ingen avhen
 # Slik endrer du innhold på Apeiron-nettsiden
 
 Alt innhold på nettsiden redigeres **ett sted: Admin-senteret**, rett i nettleseren.
-Du trenger ingen programmer og ingen innlogging — og du skal **aldri åpne eller endre
-en kodefil**. Skriver du i Admin-senteret, lager det ferdige filer for deg; du laster
-dem bare opp uendret når du vil publisere.
+Du trenger ingen programmer — og du skal **aldri åpne eller endre en kodefil**. Du
+redigerer i Admin-senteret og trykker **☁ Publiser til GitHub** når endringene skal bli
+synlige for alle. Første gang logger du inn med GitHub-kontoen din; etter det husker
+nettleseren deg en stund.
 
 > 🧑‍🔧 **Den ene regelen:** Hvis du ikke vedlikeholder selve koden, skal du aldri gå
 > inn i en fil på GitHub og redigere teksten i den. All redigering skjer i
@@ -71,7 +73,9 @@ Bla ned til bunnen av siden og trykk på "Admin", eller legg til `/admin.html` p
 https://apeironlf.pages.dev/admin.html
 ```
 
-Ingen innlogging. Du møter en meny med alle delene av siden du kan endre.
+Du møter en meny med alle delene av siden du kan endre. Selve redigeringen og
+forhåndsvisningen krever **ingen innlogging** — du logger bare inn med GitHub når du
+vil **publisere** (knappen øverst til høyre).
 
 ---
 
