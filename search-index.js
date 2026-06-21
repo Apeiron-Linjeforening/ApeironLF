@@ -302,8 +302,8 @@ window.SEARCH_INDEX = [
     "g": "Styret"
   },
   {
-    "t": "Ole Gunnar",
-    "d": "Fotballmann · Apeiron 2025/26 · Baller",
+    "t": "Gunnar Ole",
+    "d": "Kul Fyr · Apeiron 2025/26 · Kroneis",
     "u": "index.html#styret",
     "g": "Styret"
   },

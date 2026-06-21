@@ -163,15 +163,15 @@ window.STYRET_CONTENT = {
       ]
     },
     {
-      "id": "mmqo1krkhy8y",
-      "name": "Ole Gunnar",
-      "role": "Fotballmann",
-      "initials": "OG",
-      "img": "assets/styret/mmqo1krkhy8y.webp",
+      "id": "mmqo20nkwex9",
+      "name": "Gunnar Ole",
+      "role": "Kul Fyr",
+      "initials": "GO",
+      "img": "assets/styret/mmqo20nkwex9.webp",
       "tags": [
         {
-          "label": "Baller",
-          "color": "gold"
+          "label": "Kroneis",
+          "color": "blue"
         }
       ]
     }
