@@ -302,12 +302,6 @@ window.SEARCH_INDEX = [
     "g": "Styret"
   },
   {
-    "t": "Gunnar Ole",
-    "d": "Kul Fyr · Apeiron 2025/26 · Kroneis",
-    "u": "index.html#styret",
-    "g": "Styret"
-  },
-  {
     "t": "Om vervene — Styret",
     "d": "Beskrivelse av styrevervene i Apeiron: Leder, Nestleder, Økonomiansvarlig, Sosialansvarlig, PR-ansvarlig, Faddersjef, Fagansvarlig, Potet, S.A.K — Sosiale Arrangement Komité, H.I.…",
     "u": "styret.html",

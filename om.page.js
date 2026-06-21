@@ -252,10 +252,6 @@ window.OM_PAGE = {
           {
             "q": "Hva er Begrep?",
             "a": "Begrep er et studentdrevet filosofitidsskrift laget av nåværende og tidligere filosofi- og etikkstudenter. Det er ikke en del av Apeiron, men springer ut av det samme studentmiljøet. Begrep gir ut et tidsskrift i semesteret — alle kan sende inn bidrag og få redaksjonell tilbakemelding."
-          },
-          {
-            "q": "Dette er en test",
-            "a": "Jeg tester bare om dette fungerer som en oppdatering av nettsiden!"
           }
         ]
       }
