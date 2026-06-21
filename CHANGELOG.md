@@ -1,5 +1,9 @@
 ## Siste endringer
 
+**21.06.26 — CodeQL: «prototype-polluting function» lukket i 4 moduler**
+- CodeQL flagget `setPath()` i `forsiden.js`, `galleri.js`, `marked.js` og `pensum.js` (Medium). Funksjonene var allerede trygge (en forhånds-løkke avviste `__proto__`/`prototype`/`constructor`), men CodeQL kjente ikke igjen at sjekken dekket nøklene. Flyttet `isUnsafeKey`-sjekken **inline rett før hver property-skriving** — mønsteret analysen gjenkjenner — uten å endre oppførsel. Verifisert: alle fire paneler mounter og lagrer rent, ingen konsollfeil.
+- Berørte filer: `admin-modules/forsiden.js`, `admin-modules/galleri.js`, `admin-modules/marked.js`, `admin-modules/pensum.js`.
+
 **21.06.26 — Herdet bildepublisering (venter til alle bilder er fanget)**
 - Ved «☁ Publiser til GitHub» committes nå filene først når bilde-fangsten er **stille** (ingen nye filer på 600 ms, maks 15 s) i stedet for en fast pause. Paneler som Styret sender portrettene asynkront (drypp ~220 ms) — med mange bilder kunne den gamle faste ventetiden bomme på de siste. Nå venter publiseringen til alt er med.
 - `admin-common.js` fikk `captureIdleFor()` (tid siden siste fangede fil); `admin.html` poller på den før commit.

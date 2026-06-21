@@ -66,13 +66,15 @@
       function isUnsafeKey(k) { return k === '__proto__' || k === 'prototype' || k === 'constructor'; }
       function setPath(path, val) {
         var parts = path.split('.'), o = data;
-        for (var p = 0; p < parts.length; p++) { if (isUnsafeKey(parts[p])) return; }
         for (var i = 0; i < parts.length - 1; i++) {
           var key = parts[i];
+          if (isUnsafeKey(key)) return;
           if (!Object.prototype.hasOwnProperty.call(o, key) || o[key] == null || typeof o[key] !== 'object') o[key] = {};
           o = o[key];
         }
-        o[parts[parts.length - 1]] = val;
+        var last = parts[parts.length - 1];
+        if (isUnsafeKey(last)) return;
+        o[last] = val;
       }
       function renderFields() { Object.keys(FIELD_MAP).forEach(function (id) { var el = q(id); if (el) el.value = getPath(FIELD_MAP[id]) || ''; }); }
       function wireFields() { Object.keys(FIELD_MAP).forEach(function (id) { var el = q(id); if (!el) return; el.addEventListener('input', function () { setPath(FIELD_MAP[id], el.value); lazySave(); }); }); }
