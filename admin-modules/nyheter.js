@@ -44,6 +44,13 @@
           + '</ol>'
           + '<div class="tip-note">💾 Lagres automatisk i nettleseren mens du jobber. Nyeste øverst — dra i ⠿ for å sortere. Gamle nyheter: trykk <b>● Aktiv → ✓ Arkivert</b> i stedet for å slette — da flyttes de til arkivet på nyhetssiden. «Neste arrangement» i panelet hentes automatisk fra kalenderen; det legger du ikke inn her.</div>'
         + '</div>'
+        + '<div class="sec"><div class="sec-head"><h2>Topp-banner</h2></div>'
+          + '<p class="sec-desc">Tittelen og teksten øverst på nyhetssiden.</p>'
+          + '<div class="fields">'
+            + '<div class="fg"><label>Tilbake-lenke (tekst)</label><input type="text" id="sh-back"></div>'
+            + '<div class="fg"><label>Tittel</label><input type="text" id="sh-title"></div>'
+            + '<div class="fg"><label>Ingress</label><textarea id="sh-lede"></textarea></div>'
+          + '</div></div>'
         + '<div class="sec-head"><h2>Nyheter</h2><span class="count" id="count-items"></span><button class="btn-add" type="button" id="add-item">+ Ny nyhet</button></div>'
         + '<div class="list" id="list-items"></div>'
         + '<div class="sec arch-news" id="arch-sec" style="display:none">'
@@ -69,7 +76,7 @@
         { v: 'fadderuke', t: 'Fadderukene' }
       ];
       var KICKERS = ['Kunngjøring', 'Nyhet', 'Beskjed', 'Påminnelse', 'Frist'];
-      var data = { items: [] };
+      var data = { subhero: {}, items: [] };
 
       var ARCH_OPEN_KEY = 'apeiron-news-arch-open-v1';
       var archOpen = {}; try { archOpen = JSON.parse(localStorage.getItem(ARCH_OPEN_KEY)) || {}; } catch (_) { archOpen = {}; }
@@ -78,10 +85,10 @@
       function setArchOpen(id, v) { if (v) archOpen[id] = true; else delete archOpen[id]; saveArchOpen(); }
       function archAnyClosed() { return data.items.some(function (n) { return n.done && !isArchOpen(n.id); }); }
 
-      function fresh() { var c = window.NEWS_CONTENT || {}; return { items: (c.items || []).map(function (x) { return Object.assign({}, x); }) }; }
+      function fresh() { var c = window.NEWS_CONTENT || {}; return { subhero: Object.assign({}, c.subhero || {}), items: (c.items || []).map(function (x) { return Object.assign({}, x); }) }; }
       function loadData() {
         var raw = localStorage.getItem(LS_KEY);
-        if (raw) { try { data = JSON.parse(raw); if (!data.items) data.items = []; normItems(); return; } catch (_) {} }
+        if (raw) { try { data = JSON.parse(raw); if (!data.items) data.items = []; if (!data.subhero) data.subhero = {}; normItems(); return; } catch (_) {} }
         data = fresh(); normItems();
       }
       var saveTimer = null;
@@ -208,8 +215,9 @@
           + '   kicker: merkelapp på «Akkurat nå»-kortet ("" = ingen). date: liten tidsstempel-tekst (tom = lagt ut-dato).\n'
           + '   urgent: true = vinrød «Viktig». text: **fet** *kursiv* _understrek_ [tekst](url).\n'
           + '   done: true = arkivert (vises i arkivet på nyheter.html, ikke på forsiden).\n'
+          + '   subhero: topp-banneret (tilbake-lenke, tittel, ingress).\n'
           + '   ============================================================ */\n\n'
-          + 'window.NEWS_CONTENT = ' + JSON.stringify({ items: data.items }, null, 2) + ';\n';
+          + 'window.NEWS_CONTENT = ' + JSON.stringify({ subhero: data.subhero, items: data.items }, null, 2) + ';\n';
         AC.saveFile('news-content.js', header);
         AC.toast('Fil lastet ned — erstatt i GitHub og push!');
       }
@@ -233,7 +241,7 @@
       AC.enableDragSort(q('list-arch'), { itemSelector: '.card', handleSelector: '.drag-handle', onReorder: applyOrderFromDom });
 
       var pvFrame = q('pv-frame');
-      function pushPreview() { if (!pvFrame || !pvFrame.contentWindow) return; try { pvFrame.contentWindow.postMessage({ type: 'apeiron-news-preview', items: data.items }, '*'); } catch (e) {} }
+      function pushPreview() { if (!pvFrame || !pvFrame.contentWindow) return; try { pvFrame.contentWindow.postMessage({ type: 'apeiron-news-preview', items: data.items, subhero: data.subhero }, '*'); } catch (e) {} }
       function onPreviewMsg(e) { if (e.data && e.data.type === 'apeiron-news-preview-ready') { pushPreview(); } }
       function fitPreview() {
         var wrap = host.querySelector('.pv-wrap');
@@ -259,6 +267,14 @@
       if (pvFrame) pvFrame.addEventListener('load', function () { fitPreview(); pushPreview(); });
 
       loadData(); renderList();
+      (function () {
+        var map = { 'sh-back': 'back', 'sh-title': 'title', 'sh-lede': 'lede' };
+        Object.keys(map).forEach(function (id) {
+          var el = q(id); if (!el) return;
+          el.value = (data.subhero && data.subhero[map[id]]) || '';
+          el.addEventListener('input', function () { data.subhero[map[id]] = el.value; lazySave(); });
+        });
+      })();
       AC.viewSwitch({ list: q('list-items'), key: 'apeiron-news-view-v1', help: 'Velg hvordan nyhetskortene vises mens du redigerer her i admin. Påvirker bare redigeringsvisningen, ikke den publiserte siden.' });
       fitPreview(); setTimeout(fitPreview, 80);
       pushPreview(); setTimeout(pushPreview, 200);

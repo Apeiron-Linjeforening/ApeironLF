@@ -353,6 +353,30 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
   .info-panel { grid-template-columns: 1fr; }
   .a-header h1 { display: none; } .a-header .hint { display: none; } .ctx .pub-count { display: none; }
 }
+
+/* ── Advarsel ved lukking (nullstilling til publisert versjon) ── */
+.leave-warn-ov {
+  position: fixed; inset: 0; z-index: 2000;
+  background: rgba(20,22,38,.55); backdrop-filter: blur(2px);
+  display: flex; align-items: center; justify-content: center; padding: 24px;
+}
+.leave-warn {
+  background: var(--paper, #f4ecd9); color: var(--ink, #1c1f33);
+  max-width: 460px; width: 100%; border-radius: 10px;
+  padding: 26px 28px 22px; box-shadow: 0 20px 60px rgba(0,0,0,.35);
+  border-top: 4px solid var(--gold, #d4af37);
+}
+.leave-warn h3 { font-family: var(--display, serif); font-size: 1.3rem; margin: 0 0 10px; letter-spacing: .02em; }
+.leave-warn p { font-size: .94rem; line-height: 1.55; margin: 0 0 16px; color: var(--ink-soft, #4a4d63); }
+.leave-warn__cb { display: flex; align-items: center; gap: 9px; font-size: .86rem; color: var(--ink-soft, #4a4d63); cursor: pointer; user-select: none; }
+.leave-warn__cb input { width: 16px; height: 16px; accent-color: var(--navy, #1c1f33); cursor: pointer; }
+.leave-warn__row { display: flex; justify-content: flex-end; margin-top: 20px; }
+.leave-warn__ok {
+  background: var(--navy, #1c1f33); color: var(--paper, #f4ecd9);
+  border: 0; border-radius: 6px; padding: 10px 22px; font-size: .9rem; font-weight: 600;
+  letter-spacing: .03em; cursor: pointer; transition: background .15s;
+}
+.leave-warn__ok:hover { background: var(--maroon, #76110f); }
 </style>
 <link rel="stylesheet" href="admin-common.css">
 <link rel="stylesheet" href="admin-modules.css">
@@ -444,6 +468,9 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 <script src="styret-content.js"></script>
 <script src="begrep-content.js"></script>
 <script src="oppslag-content.js"></script>
+<script src="marked-content.js"></script>
+<script src="galleri-content.js"></script>
+<script src="pensum-content.js"></script>
 <script src="admin-modules/medlemskap.js"></script>
 <script src="admin-modules/footer.js"></script>
 <script src="admin-modules/hjelp.js"></script>
@@ -457,6 +484,9 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 <script src="admin-modules/nyheter.js"></script>
 <script src="admin-modules/meny.js"></script>
 <script src="admin-modules/merch.js"></script>
+<script src="admin-modules/marked.js"></script>
+<script src="admin-modules/galleri.js"></script>
+<script src="admin-modules/pensum.js"></script>
 <!-- Søk: statiske treff (input) + auto-generert indeks (sammenligningsgrunnlag) -->
 <script src="search-base.js"></script>
 <script src="search-index.js"></script>
@@ -473,12 +503,73 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
     { id: 'oppnaelser',   ico: '🏆', label: 'Oppnåelser',    module: true, ls: ['apeiron-oppnaelser-v1'],                desc: 'Milepæler og oppnåelser.' },
     { id: 'utmerkelser',  ico: '🎖️', label: 'Utmerkelser',   module: true, ls: ['apeiron-utmerkelser-v1'],               desc: 'Priser og utmerkelser.' },
     { id: 'begrep',       ico: '📓', label: 'Begrep',        module: true, ls: ['apeiron-begrep-v1'],                    desc: 'Utgaver, podkast, film og julekalender.' },
-    { id: 'merch',        ico: '🛍️', label: 'Merch',         module: true, ls: ['apeiron-merch-v1', 'apeiron-merch-info-v1'], desc: 'Produktene i nettbutikken.' },
+    { id: 'merch',        ico: '🛍️', label: 'Merch',         module: true, ls: ['apeiron-merch-v1', 'apeiron-merch-info-v1', 'apeiron-merch-subhero-v1'], desc: 'Produktene i nettbutikken.' },
     { id: 'medlemskap',   ico: '🎟️', label: 'Medlemskap',    module: true, ls: ['apeiron-membership-v1'],               desc: 'Priser og innmeldingssteg.' },
     { id: 'hjelp',        ico: '🆘', label: 'Hjelp',         module: true, ls: ['apeiron-hjelp-v1'],                     desc: 'Ressurser og kontakter på Hjelp-siden.' },
     { id: 'meny',         ico: '🧭', label: 'Meny',          module: true, ls: ['apeiron-nav-v1', 'apeiron-nav-align-v1'], desc: 'Lenkene i hovedmenyen.' },
-    { id: 'footer',       ico: '👣', label: 'Footer',        module: true, ls: ['apeiron-footer-v1'],                    desc: 'Bunntekst, lenker og sosiale ikoner.' }
+    { id: 'footer',       ico: '👣', label: 'Footer',        module: true, ls: ['apeiron-footer-v1'],                    desc: 'Bunntekst, lenker og sosiale ikoner.' },
+    { id: 'marked',       ico: '⇄', label: 'Marked',        module: true, ls: ['apeiron-marked-v1'],                    desc: 'Teksten på «Pensum-markedet»-siden (kommer snart).' },
+    { id: 'galleri',      ico: '🖼️', label: 'Galleri',       module: true, ls: ['apeiron-galleri-v1'],                   desc: 'Topp-banneret på Galleri-siden (bildene styres i Google Drive).' },
+    { id: 'pensum',       ico: '📚', label: 'Pensum',        module: true, ls: ['apeiron-pensum-v1'],                    desc: 'Emnekatalogen, studieretninger og grader.' }
   ];
+
+  /* ─── NULLSTILL UTKAST VED NY ØKT + ADVARSEL VED LUKKING ───────────
+     Mål: admin skal alltid åpne i den PUBLISERTE tilstanden — ikke vise
+     gamle, upubliserte utkast fra en tidligere økt. Alle panel-utkast i
+     localStorage tømmes når admin åpnes i en NY fane/økt. En oppdatering
+     (refresh) i samme fane beholder utkastene (sessionStorage-flagg), så
+     man ikke mister arbeid ved et uhell. Når fanen lukkes, nullstiller
+     nettleseren sessionStorage automatisk, og neste åpning starter rent. */
+  var DRAFT_KEYS = (function () {
+    var seen = {}, keys = [];
+    PANELS.forEach(function (p) { (p.ls || []).forEach(function (k) { if (!seen[k]) { seen[k] = 1; keys.push(k); } }); });
+    return keys;
+  })();
+  var SESSION_FLAG = 'apeiron-admin-session-active';
+  var LEAVE_NOWARN = 'apeiron-admin-leave-nowarn';   // localStorage: bruker har skrudd av varselet
+  var LEAVE_SHOWN  = 'apeiron-admin-leave-shown';    // sessionStorage: varsel allerede vist i økta
+
+  function clearAllDrafts() {
+    DRAFT_KEYS.forEach(function (k) { try { localStorage.removeItem(k); } catch (_) {} });
+  }
+  function resetDraftsOnFreshSession() {
+    var fresh = true;
+    try { fresh = sessionStorage.getItem(SESSION_FLAG) !== '1'; } catch (_) {}
+    if (fresh) {
+      clearAllDrafts();
+      try { sessionStorage.setItem(SESSION_FLAG, '1'); } catch (_) {}
+    }
+  }
+  function leaveWarnDisabled() {
+    try { return localStorage.getItem(LEAVE_NOWARN) === '1'; } catch (_) { return false; }
+  }
+  // Vises FØRSTE gang i en økt at det finnes upubliserte endringer — med
+  // avhukingsboks «Ikke vis dette igjen». Forklarer at endringer forsvinner
+  // ved lukking hvis de ikke er lastet ned/publisert.
+  function maybeShowLeaveWarning() {
+    if (leaveWarnDisabled()) return;
+    try { if (sessionStorage.getItem(LEAVE_SHOWN) === '1') return; } catch (_) {}
+    if (changedPanels().length === 0) return;
+    try { sessionStorage.setItem(LEAVE_SHOWN, '1'); } catch (_) {}
+    if (document.getElementById('leave-warn-ov')) return;
+    var ov = document.createElement('div');
+    ov.id = 'leave-warn-ov';
+    ov.className = 'leave-warn-ov';
+    ov.innerHTML =
+      '<div class="leave-warn" role="dialog" aria-modal="true" aria-labelledby="leave-warn-h">'
+      + '<h3 id="leave-warn-h">Husk å publisere før du lukker</h3>'
+      + '<p>Endringene dine lever bare i denne nettleseren. Lukker eller forlater du admin uten å <b>laste ned og publisere</b>, forsvinner de — admin starter alltid fra den publiserte versjonen neste gang du åpner den.</p>'
+      + '<label class="leave-warn__cb"><input type="checkbox" id="leave-warn-cb"> Ikke vis dette varselet igjen</label>'
+      + '<div class="leave-warn__row"><button type="button" class="leave-warn__ok" id="leave-warn-ok">Forstått</button></div>'
+      + '</div>';
+    document.body.appendChild(ov);
+    function close() {
+      try { if (ov.querySelector('#leave-warn-cb').checked) localStorage.setItem(LEAVE_NOWARN, '1'); } catch (_) {}
+      ov.remove();
+    }
+    ov.querySelector('#leave-warn-ok').addEventListener('click', close);
+    ov.addEventListener('click', function (e) { if (e.target === ov) close(); });
+  }
 
   /* ─── SØKEINDEKS ───────────────────────────────────────────────
      Bygges fra search-base.js (statiske treff) + hver moduls
@@ -845,6 +936,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
     if (pubCount) pubCount.textContent = n === 0 ? '' : (n === 1 ? '1 upublisert endring' : n + ' upubliserte endringer');
     if (pubBtn) pubBtn.textContent = '↓ Last ned alle endrede (' + n + ')';
     syncHeader();
+    maybeShowLeaveWarning();
   }
 
   var bulkBusy = false;
@@ -1074,7 +1166,17 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
   }
 
   function init() {
-    // «Se siden»-lenker: åpne i ny fane og ta med ev. forhåndsvisnings-token (?t=…)
+    // Nullstill upubliserte utkast til publisert versjon når admin åpnes i en ny
+    // økt — MÅ kjøre før build()/panel-mount, så modulene leser publisert data.
+    resetDraftsOnFreshSession();
+    // Advarsel ved faktisk lukking/oppdatering med upubliserte endringer.
+    window.addEventListener('beforeunload', function (e) {
+      if (leaveWarnDisabled()) return;
+      if (changedPanels().length === 0) return;
+      e.preventDefault();
+      e.returnValue = '';
+      return '';
+    });
     // slik at de fungerer både i editor-forhåndsvisningen og på den publiserte siden
     // (der token-strengen er tom, så lenken blir bare den vanlige relative URL-en).
     document.addEventListener('click', function (e) {

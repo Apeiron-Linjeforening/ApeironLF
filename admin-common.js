@@ -124,7 +124,7 @@
         dragEl.style.margin = '0';
         dragEl.style.pointerEvents = 'none';
         dragEl.style.boxSizing = 'border-box';
-        try { handle.setPointerCapture(e.pointerId); } catch (_) {}
+        document.body.style.userSelect = 'none';
         autoScroll();
       }
 
@@ -137,21 +137,24 @@
       }
 
       function onMove(ev) {
+        if (ev.pointerId !== e.pointerId) return;
         if (!dragging) {
           if (Math.abs(ev.clientX - startX) < THRESH && Math.abs(ev.clientY - startY) < THRESH) return;
           begin();
         }
+        if (ev.cancelable) ev.preventDefault();
         lastY = ev.clientY;
         dragEl.style.left = (ev.clientX - offX) + 'px';
         dragEl.style.top = (ev.clientY - offY) + 'px';
         positionPlaceholder(ev.clientY);
       }
 
-      function end() {
-        handle.removeEventListener('pointermove', onMove);
-        handle.removeEventListener('pointerup', end);
-        handle.removeEventListener('pointercancel', end);
-        try { handle.releasePointerCapture(e.pointerId); } catch (_) {}
+      function end(ev) {
+        if (ev && ev.pointerId != null && ev.pointerId !== e.pointerId) return;
+        document.removeEventListener('pointermove', onMove);
+        document.removeEventListener('pointerup', end);
+        document.removeEventListener('pointercancel', end);
+        document.body.style.userSelect = '';
         if (raf) cancelAnimationFrame(raf);
         if (dragging) {
           if (ph && ph.parentNode) container.insertBefore(dragEl, ph);
@@ -168,9 +171,13 @@
       }
 
       e.preventDefault();
-      handle.addEventListener('pointermove', onMove);
-      handle.addEventListener('pointerup', end);
-      handle.addEventListener('pointercancel', end);
+      // Lytterne ligger på document (ikke handle): da overlever de at det dratte
+      // kortet får position:fixed + pointer-events:none, som tidligere fikk
+      // peker-fangsten til å slippe og «frøs» dra-operasjonen. pointerId-filteret
+      // gjør at bare den aktive pekeren styrer draget.
+      document.addEventListener('pointermove', onMove, { passive: false });
+      document.addEventListener('pointerup', end);
+      document.addEventListener('pointercancel', end);
     });
   }
 

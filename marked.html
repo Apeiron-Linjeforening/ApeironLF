@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <script src="theme.js"></script>
+<script>try{if(/[?&]preview\b/.test(location.search))document.documentElement.classList.add('is-preview');}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Pensum-markedet — Apeiron · NTNU</title>
 <meta name="description" content="Kjøp og bytt brukt pensum med andre filosofi- og etikkstudenter ved NTNU. Pensum-markedet til Apeiron linjeforening — kommer snart." />
@@ -182,11 +183,11 @@
 <section class="subhero">
   <img class="subhero__seal" src="assets/apeiron-logo.png" alt="" aria-hidden="true" />
   <div class="subhero__inner">
-    <a class="subhero__back" href="pensum.html">Tilbake til pensum</a>
-    <span class="eyebrow hero__eyebrow">Kommer snart · Under utvikling</span>
-    <h1>Pensum-markedet</h1>
-    <p class="subhero__lede">Et sted å selge pensumbøkene du er ferdig med, og kjøpe brukte bøker fra studenter som var der før deg.</p>
-    <div class="subhero__tag-row">
+    <a class="subhero__back" href="pensum.html" id="ix-mk-back">Tilbake til pensum</a>
+    <span class="eyebrow hero__eyebrow" id="ix-mk-eyebrow">Kommer snart · Under utvikling</span>
+    <h1 id="ix-mk-title">Pensum-markedet</h1>
+    <p class="subhero__lede" id="ix-mk-lede">Et sted å selge pensumbøkene du er ferdig med, og kjøpe brukte bøker fra studenter som var der før deg.</p>
+    <div class="subhero__tag-row" id="ix-mk-pills">
       <span class="subhero__pill">⇄ Kjøp &amp; bytte</span>
       <span class="subhero__pill">✦ Logg inn med Google</span>
       <span class="subhero__pill">📚 Alle pensum-emner</span>
@@ -206,12 +207,12 @@
 <section class="section" style="background:var(--paper-2);">
   <div class="wrap">
     <div class="cs-wrap reveal">
-      <span class="cs-symbol">⇄</span>
-      <h2>Vi bygger noe nyttig</h2>
-      <p class="lede center">Pensum-markedet vil gjøre det enkelt å la bøker leve videre fra kull til kull — og spare alle for unødvendige utgifter.</p>
+      <span class="cs-symbol" id="ix-mk-symbol">⇄</span>
+      <h2 id="ix-mk-intro-heading">Vi bygger noe nyttig</h2>
+      <p class="lede center" id="ix-mk-intro-lede">Pensum-markedet vil gjøre det enkelt å la bøker leve videre fra kull til kull — og spare alle for unødvendige utgifter.</p>
     </div>
 
-    <div class="feat-grid">
+    <div class="feat-grid" id="ix-mk-features">
       <div class="feat reveal">
         <span class="feat__glyph">📖</span>
         <h3>List bøkene dine</h3>
@@ -238,16 +239,16 @@
 <section class="section" style="background:var(--paper-2);">
   <div class="wrap">
     <div class="interest-band reveal">
-      <span class="eyebrow eyebrow--center">Vær tidlig ute</span>
-      <h2>Meld interesse</h2>
-      <p>Vil du bli varslet når markedet åpner — eller bidra til å bygge det? Send oss en mail, så noterer vi deg.</p>
+      <span class="eyebrow eyebrow--center" id="ix-mk-interest-eyebrow">Vær tidlig ute</span>
+      <h2 id="ix-mk-interest-heading">Meld interesse</h2>
+      <p id="ix-mk-interest-body">Vil du bli varslet når markedet åpner — eller bidra til å bygge det? Send oss en mail, så noterer vi deg.</p>
       <div class="interest-form">
-        <a class="btn btn--gold" href="mailto:apeironlinjeforening@gmail.com?subject=Interesse%3A%20Pensum-markedet&body=Hei!%20Jeg%20er%20interessert%20i%20pensum-markedet%20og%20vil%20gjerne%20bli%20varslet%20n%C3%A5r%20det%20%C3%A5pner.%0A%0ANavn%3A%20%0AStudieretning%3A%20">
-          Send interesse-mail <span class="arr">→</span>
+        <a class="btn btn--gold" id="ix-mk-cta1" href="mailto:apeironlinjeforening@gmail.com?subject=Interesse%3A%20Pensum-markedet&body=Hei!%20Jeg%20er%20interessert%20i%20pensum-markedet%20og%20vil%20gjerne%20bli%20varslet%20n%C3%A5r%20det%20%C3%A5pner.%0A%0ANavn%3A%20%0AStudieretning%3A%20">
+          <span id="ix-mk-cta1-label">Send interesse-mail</span> <span class="arr">→</span>
         </a>
-        <a class="btn btn--ghost-light" href="https://www.instagram.com/apeiron_linjeforening_ntnu/" target="_blank" rel="noopener">Følg oss på Instagram</a>
+        <a class="btn btn--ghost-light" id="ix-mk-cta2" href="https://www.instagram.com/apeiron_linjeforening_ntnu/" target="_blank" rel="noopener"><span id="ix-mk-cta2-label">Følg oss på Instagram</span></a>
       </div>
-      <span class="interest-form__note">Vi selger ikke data videre og spammer ikke. Vi varsler kun om markedet.</span>
+      <span class="interest-form__note" id="ix-mk-interest-note">Vi selger ikke data videre og spammer ikke. Vi varsler kun om markedet.</span>
     </div>
   </div>
 </section>
@@ -259,6 +260,9 @@
 <script src="site-content.js"></script>
 <script src="nav-content.js"></script>
 <script src="site-chrome.js"></script>
+
+<script src="marked-content.js"></script>
+<script src="apeiron-marked.js"></script>
 
 <script>
 (function () {
@@ -290,6 +294,7 @@
 </script>
 <script src="report.js"></script>
 <script src="search-index.js"></script>
+<script src="minisearch.min.js"></script>
 <script src="site-search.js"></script>
 </body>
 </html>

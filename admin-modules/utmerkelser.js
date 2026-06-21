@@ -47,6 +47,8 @@
             + '<div class="fg narrow"><label data-help="Liten etikett over overskriften, f.eks. «Heder & ære».">Eyebrow</label><input type="text" data-meta="eyebrow"></div>'
             + '<div class="fg"><label>Overskrift</label><input type="text" data-meta="heading"></div>'
             + '<div class="fg"><label>Ingress</label><input type="text" data-meta="lede"></div>'
+            + '<div class="fg narrow"><label data-help="Teksten på «Tilbake»-lenken øverst til venstre.">Tilbake-tekst</label><input type="text" data-meta="back"></div>'
+            + '<div class="fg narrow"><label data-help="Hvor «Tilbake»-lenken går, f.eks. index.html.">Tilbake-lenke</label><input type="text" data-meta="backHref"></div>'
           + '</div>'
         + '</div>'
         + '<div class="sec"><div class="sec-head"><h2>Utmerkelser (personer)</h2><span class="count" data-count></span><button class="btn-add" type="button" data-add>+ Ny utmerkelse</button></div><div class="list" data-list></div></div>'
@@ -59,7 +61,7 @@
       function fresh() {
         var c = window.UTMERKELSER_CONTENT || {};
         return {
-          intro: Object.assign({ eyebrow: 'Heder & ære', heading: 'Utmerkelser', lede: '' }, c.intro || {}),
+          intro: Object.assign({ eyebrow: 'Heder & ære', heading: 'Utmerkelser', lede: '', back: 'Tilbake', backHref: 'index.html' }, c.intro || {}),
           people: (c.people || []).map(function (x) { return Object.assign({}, x); })
         };
       }

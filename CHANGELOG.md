@@ -1,5 +1,56 @@
 ## Siste endringer
 
+**21.06.26 — F1 FERDIG: «Tilbake»-lenkene er nå redigerbare — all redaksjonell tekst er data-drevet**
+- De siste hardkodede «Tilbake»-lenkene er flyttet til data. **Utmerkelser**, **Oppnåelser** og **Oppslagstavla** fikk `intro.back` + `intro.backHref` i sine content-filer; sidene leser dem inn (`#intro-back`), og panelene fikk «Tilbake-tekst» + «Tilbake-lenke» i topp-banner-feltene. **Hjelp** hadde dette fra før (`hero.back`/`hero.backHref`).
+- Berørte filer: `utmerkelser-content.js`, `oppnaelser-content.js`, `oppslag-content.js`, `utmerkelser.html`, `oppnaelser.html`, `oppslagstavla.html`, `admin-modules/utmerkelser.js`, `admin-modules/oppnaelser.js`, `admin-modules/oppslag.js`.
+- **Med dette er F1 helt i mål:** ingen redaksjonell tekst på noen side er lenger hardkodet — alt redigeres i admin. Neste: F2 (seksjoner av/på som data).
+
+**21.06.26 — S1: Oppgradert søkemotor (MiniSearch + norsk bøyning + skrivefeil)**
+- **Selve match-motoren er byttet.** Søket brukte enkel delstreng-scoring uten bøyning eller feiltoleranse («søke» fant ikke «søk», én skrivefeil ga null treff). Nå kjører det på **MiniSearch** med en **norsk Snowball-stemmer** (bøyning: «studieretninger» → «studieretning», «filosofien» → «filosofi») og **fuzzy-treff** (skrivefeil: «filosfi» → «filosofi», «aporetsik» → «Aporetisk Aften»).
+- **Vendet inn, ingen CDN:** biblioteket ligger som `minisearch.min.js` (MiniSearch v7, MIT) i repoet og lastes på alle 14 offentlige sider **før** `site-search.js` (rett etter `search-index.js`). Fortsatt gratis, statisk, uten server — og virker offline / ved kloning.
+- **Datakilden er urørt:** kun `score()`/`doSearch()` i `site-search.js` ble byttet. `search-base.js`, modulenes `searchEntries()` og auto-genereringen ved «Publiser» står som før. Indeksen bygges i nettleseren fra `search-index.js` ved hver sidelast, så nytt publisert innhold er automatisk søkbart. Highlighting er nå stamme-bevisst (markerer også bøyde treff). Faller automatisk tilbake til den gamle delstreng-scoringen hvis biblioteket ikke laster.
+- **Uregelmessige ord** stemmeren bommer på (f.eks. `bøker → bok`) håndteres av en liten `SYN`-liste øverst i `site-search.js`. Prøvebenk brukt til å velge motor: `Søk-spike — MiniSearch.html`. Berørte filer: `site-search.js`, `minisearch.min.js` (ny), alle 14 offentlige `*.html`, `VEDLIKEHOLD.md`, `Plan F.html`.
+
+**21.06.26 — F1: Merch topp-banner redigerbart — F1 dekker nå alle sidene**
+- **Merch** (`merch.html`) fikk topp-banneret (tilbake-lenke, tittel, ingress) flyttet til data (`window.MERCH_SUBHERO` i `merch-products.js`) og redigerbart i Merch-panelet, ved siden av info-teksten. Eksporten skriver nå `MERCH_SUBHERO` + `MERCH_INFO` + `MERCH_PRODUCTS`, og live-forhåndsvisningen oppdaterer banneret. Ny draft-nøkkel `apeiron-merch-subhero-v1` lagt til i panelets `ls`.
+- **Med dette er F1 (gjøre all redaksjonell tekst redigerbar) gjennomført for alle sidene** — forsiden (inkl. ordmerket), Om oss, Nyheter, Styret, Merch, Pensum, Galleri, Pensum-markedet, samt sidene som var data-drevet fra før (Oppslagstavla, Utmerkelser, Hjelp, Oppnåelser, Begrep). Gjenstår kun «Tilbake»-lenkene på et fåtall allerede-data-drevne sider (lav verdi).
+
+**21.06.26 — F1: topp-bannere på Nyheter og Styret er nå redigerbare**
+- **Nyheter** (`nyheter.html`) og **Styret** (`styret.html`) fikk topp-banneret (tilbake-lenke, tittel, ingress) flyttet til data og redigerbart i sine admin-paneler (`subhero` i `news-content.js` / `styret-content.js`). Nyheter-eksporten ble samtidig fikset så den tar med `subhero` (skrev tidligere bare `items`). Sidene ser uendret ut.
+
+**21.06.26 — F1: hero-ordmerket «Apeiron» er nå redigerbart**
+- **Foreningsnavnet** øverst på forsiden (det store «Apeiron» med ∞-stilet o) er flyttet til data (`index-content.js` → `hero.wordmark` = pre/mid/post) og redigeres i **Admin → Forsiden → Hero**: «Tittel (før)», «Spesial-bokstav» (får ∞-stilen — kan stå tom) og «Tittel (etter)». Det gjør at en annen forening kan sette sitt eget navn uten å røre HTML-en — et nøkkelsteg mot den klonbare malen. Gjengis av `apeiron-index.js`; ser identisk ut. Berørte filer: `index-content.js`, `index.html`, `apeiron-index.js`, `admin-modules/forsiden.js`.
+
+**21.06.26 — F1: Pensum + Galleri er nå redigerbare**
+- **Pensum (nytt panel).** Hele `pensum.html` er flyttet 1:1 til `pensum-content.js` (gjengis av `apeiron-pensum.js`) og redigeres i et nytt **Admin → Pensum**-panel: topp-banner med meta-punkter, **hele emnekatalogen** (15 emner — kode, navn, semester, beskrivelse, ntnu-lenke og enten **bokliste** eller **melding/tom-tilstand**, valgbart per emne), seksjonsoverskriftene, studieretningene (med punkt-lister), grader & løp (med smakebit-lister), markeds-teaseren og de to ansvarsfraskrivelsene. Søk/filter/trekkspill-logikken i `pensum.html` er urørt og fanger opp de data-gjengitte emnekortene. Støtter `**fet**` og `[tekst](adresse)` i meta og tom-tilstand.
+- **Galleri (nytt panel).** Topp-banneret på `galleri.html` er flyttet til `galleri-content.js` (gjengis av `apeiron-galleri.js`), redigeres i **Admin → Galleri**. Bildene hentes fortsatt automatisk fra Google Drive.
+- Standardverdiene er identiske med HTML-en, så begge sidene ser uendret ut. Berørte filer: `pensum-content.js`, `apeiron-pensum.js`, `pensum.html`, `admin-modules/pensum.js`, `galleri-content.js`, `apeiron-galleri.js`, `galleri.html`, `admin-modules/galleri.js`, `admin.html`, `admin-common.css`.
+
+**21.06.26 — F1: Pensum-markedet er nå redigerbart (nytt Marked-panel)**
+- **Tredje steg av Plan F — første helt nye admin-panel bygget fra bunnen.** Hele `marked.html` (kommer-snart-siden lenket fra Pensum) er flyttet 1:1 til `marked-content.js` (gjengis av `apeiron-marked.js`) og redigeres nå i et nytt **Admin → Marked**-panel: topp-banner (tilbake-lenke, eyebrow, tittel, ingress, merkelapper), intro-blokken, de tre funksjons-kortene (dra-sorterbare) og «Meld interesse»-banneret (overskrift, tekst, to knapper, notis).
+- Demonstrerer hele mønsteret for å gjøre en modul-løs side redigerbar: nytt content-fil + render-skript + `admin-modules/marked.js`, registrert i `PANELS` + lastet i `admin.html`. Samme oppskrift kan brukes på Pensum og Galleri. Berørte filer: `marked-content.js`, `apeiron-marked.js`, `marked.html`, `admin-modules/marked.js`, `admin.html`.
+
+**21.06.26 — F1: Om oss er nå fullt redigerbar**
+- **Andre steg av Plan F.** All gjenstående hardkodet tekst på Om oss er flyttet 1:1 til `om-content.js` (gjengis av `apeiron-om.js`) og redigeres nå i **Admin → Om oss**:
+  - **Topp-banneret** (`subhero`): tilbake-lenke, tittel, ingress.
+  - **Fellesskap & samarbeid** (`samarbeid`): intro + kortene (Unionen/Dionysos/Begrep) med symbol, merkelapp, tittel, tekst og **redigerbare lenker** — dra-sorterbart.
+  - **Lesesalen** (`lesesalen`): intro + tjeneste-punktene (ikonet følger rekkefølgen).
+  - **Møt styret** (`motStyret`): intro + kortene (Styret/Tillitsvalgte/Verv) med lenker.
+  - **Bli medlem** (`medlem`): intro + fordels-lista (samme tekst som forsiden, egen versjon på Om oss).
+- Ny nøstet lenke-redigerer i kort-listene (`admin-common.css`). Standardverdiene er identiske med HTML-en, så siden ser uendret ut. Lesesalen-bildene ligger fortsatt som filer i `assets/lesesalen/`. Berørte filer: `om-content.js`, `om-oss.html`, `apeiron-om.js`, `admin-modules/om-oss.js`, `admin-common.css`.
+
+**21.06.26 — F1 (start): hele forsidens redaksjonelle tekst er nå redigerbar**
+- **Første steg av Plan F.** All hardkodet redaksjonell tekst på Hjem er flyttet 1:1 til data i `index-content.js` (gjengis av `apeiron-index.js`) og redigeres nå i **Admin → Forsiden**:
+  - **«Bli medlem»-intro** (`medlem`): eyebrow, overskrift, ingress + den dra-sorterbare **fordels-lista** (de fire punktene med avhuking). Priser/innmeldingssteg styres fortsatt i Medlemskap-panelet.
+  - **Seksjons-introer** for **Arrangementer** (`arr`), **Aporetisk Aften** (`apo`, inkl. det greske ordet «ἀπορία», uttale/oversettelse, «For hvem» og side-notatet) og **Fadderukene** (`fadder`) — eyebrow + overskrift + ingress.
+  - **Hero** fikk «Ny her?»-broteksten; **Kontakt** fikk seksjons-etiketten.
+- Standardverdiene er identiske med den gamle HTML-en, så forsiden ser nøyaktig lik ut. Selve arrangementene/programmet hentes fortsatt fra Google Kalender — kun overskriftene og tekstene rundt dem er flyttet hit. Berørte filer: `index-content.js`, `index.html`, `apeiron-index.js`, `admin-modules/forsiden.js`.
+
+**21.06.26 — Admin: dra-sortering rettet + nullstilling til publisert versjon ved ny økt**
+- **Dra-og-slipp fryser ikke lenger.** `AdminCommon.enableDragSort` flyttet `pointermove`/`pointerup`/`pointercancel` fra håndtaket til `document` og droppet `setPointerCapture`. Tidligere ga `pointer-events:none` på det løftede kortet (som inneholder håndtaket) tap av peker-fangst — første dra «frøs», og kortet landet ikke der plassholderen viste. Nå filtreres draget på `pointerId`, og plassholder/slipp samsvarer alltid. Gjelder alle admin-paneler.
+- **Admin åpner alltid på publisert versjon.** Upubliserte panel-utkast i `localStorage` tømmes når admin åpnes i en **ny fane/økt** (sessionStorage-flagg). En vanlig oppdatering (refresh) i samme fane beholder utkastene, så man ikke mister arbeid ved et uhell; når fanen lukkes, starter neste åpning rent. Slutt på «gamle, upubliserte endringer dukker opp når jeg åpner admin».
+- **Advarsel ved lukking.** Første gang en økt har upubliserte endringer, vises et varsel om at endringer forsvinner hvis de ikke lastes ned/publiseres, med avhukingsboks «Ikke vis dette varselet igjen» (lagres i `apeiron-admin-leave-nowarn`). Samme avhuking skrur også av nettleserens «forlat siden?»-spørsmål ved lukking/oppdatering.
+
 **20.06.26 — Dokumentasjon: README som forside + brukerveiledning, VEDLIKEHOLD for drift**
 - **README er nå repoets forside.** Lagt til en dokumentasjon-navigasjon (alle `.md`-filer i én tabell), statusmerker, innholdsfortegnelse og sammenleggbare planleggingsseksjoner (Kjente begrensninger, To-do, Domene). Hele «Slik endrer du innhold»-veiledningen bor nå i README.
 - **Ny `VEDLIKEHOLD.md`** samler all teknisk drift (publisering, lokal kjøring, manuell redigering av innholdsfilene, søkeindeks, Apps Script, filstruktur, sikkerhet). Bruker (README) og drift (VEDLIKEHOLD) er nå tydelig skilt. Den gamle `HVORDAN.md` er borte — innholdet er flyttet inn i README, og alle lenker dit er rettet.

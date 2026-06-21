@@ -48,14 +48,14 @@
     <div class="hero__grid">
       <div>
         <span class="eyebrow hero__eyebrow" id="ix-hero-eyebrow">LINJEFORENING SIDEN 1981 · </span>
-        <h1>Apeir<span class="infin">o</span>n</h1>
+        <h1><span id="ix-hero-wm-pre">Apeir</span><span class="infin" id="ix-hero-wm-mid">o</span><span id="ix-hero-wm-post">n</span></h1>
         <p class="hero__tag" id="ix-hero-tag">det grenseløse fellesskapet</p>
         <p class="hero__lede" id="ix-hero-lede">Vi er linjeforeningen for filosofi og etikk ved NTNU. Vi tenker de store tankene, stiller de vanskelige spørsmålene og tar oss en kaffe på det etterpå.</p>
         <div class="hero__cta">
           <a class="btn btn--gold" id="ix-hero-cta1" href="#bli-medlem"><span id="ix-hero-cta1-label">Bli medlem</span> <span class="arr">→</span></a>
           <a class="btn btn--ghost-light" id="ix-hero-cta2" href="#arrangementer"><span id="ix-hero-cta2-label">Se hva som skjer</span></a>
         </div>
-        <p class="hero__bridge"><a href="om-oss.html">Ny her? Bli kjent med Apeiron <span class="arr">→</span></a></p>
+        <p class="hero__bridge"><a href="om-oss.html"><span id="ix-hero-bridge">Ny her? Bli kjent med Apeiron</span> <span class="arr">→</span></a></p>
       </div>
       <!-- «Akkurat nå»-panel: hastebeskjeder, neste arrangement (auto fra kalenderen)
            og siste kunngjøringer. Fylles av apeiron-news.js fra news-content.js.
@@ -118,9 +118,9 @@ samtale &amp; vin
 <section class="section events" id="arrangementer" data-screen-label="Arrangementer">
   <div class="wrap">
     <div class="center" style="margin-bottom:40px">
-      <span class="eyebrow eyebrow--center">Hva skjer</span>
-      <h2 class="h-section">Arrangementer</h2>
-      <p class="lede">Fra dyptpløyende fagkvelder til legendariske symposion. Se hele semesterprogrammet som liste, rutenett eller helhetlig oversikt — og legg det rett inn i din egen kalender.</p>
+      <span class="eyebrow eyebrow--center" id="ix-arr-eyebrow">Hva skjer</span>
+      <h2 class="h-section" id="ix-arr-heading">Arrangementer</h2>
+      <p class="lede" id="ix-arr-lede">Fra dyptpløyende fagkvelder til legendariske symposion. Se hele semesterprogrammet som liste, rutenett eller helhetlig oversikt — og legg det rett inn i din egen kalender.</p>
     </div>
 
     <!-- Nyheter: arrangementer (plassering «arrangement» i news-content.js / Admin → Nyheter) -->
@@ -156,13 +156,13 @@ samtale &amp; vin
   <div class="wrap">
     <div class="apo reveal">
       <div class="apo__main">
-        <span class="eyebrow">Fast hver måned</span>
-        <h2 class="apo__title">Aporetisk Aften</h2>
-        <p class="apo__lede">Én kveld i måneden samler vi oss rundt ett eneste spørsmål — uten pensum og uten fasit. Vi tenker høyt, er uenige i godt selskap, og går hjem med flere spørsmål enn vi kom med. Ferskinger og veteraner er like velkomne.</p>
+        <span class="eyebrow" id="ix-apo-eyebrow">Fast hver måned</span>
+        <h2 class="apo__title" id="ix-apo-title">Aporetisk Aften</h2>
+        <p class="apo__lede" id="ix-apo-lede">Én kveld i måneden samler vi oss rundt ett eneste spørsmål — uten pensum og uten fasit. Vi tenker høyt, er uenige i godt selskap, og går hjem med flere spørsmål enn vi kom med. Ferskinger og veteraner er like velkomne.</p>
         <div class="apo__meta">
           <span class="apo__meta-item" id="apoWhen"><b>Når</b><span>—</span></span>
           <span class="apo__meta-item" id="apoWhere"><b>Hvor</b><span>—</span></span>
-          <span class="apo__meta-item"><b>For hvem</b>Åpent for alle</span>
+          <span class="apo__meta-item"><b>For hvem</b><span id="ix-apo-forwhom">Åpent for alle</span></span>
         </div>
         <!-- Nyheter: Aporetisk Aften (plassering «aporetisk» i news-content.js / Admin → Nyheter) -->
         <div id="news-aporetisk" class="news-zone" hidden></div>
@@ -173,10 +173,10 @@ samtale &amp; vin
         <div id="apoCalRoot" class="apo__cal-area"></div>
       </div>
       <aside class="apo__aside">
-        <div class="apo__greek">ἀπορία
-          <small>a-po-ri-a · «rådvillhet»</small>
+        <div class="apo__greek"><span id="ix-apo-greek">ἀπορία</span>
+          <small id="ix-apo-greek-sub">a-po-ri-a · «rådvillhet»</small>
         </div>
-        <p class="apo__note">En aporia er øyeblikket der svarene tar slutt og den ekte tenkningen begynner. Akkurat der vil vi være.</p>
+        <p class="apo__note" id="ix-apo-note">En aporia er øyeblikket der svarene tar slutt og den ekte tenkningen begynner. Akkurat der vil vi være.</p>
       </aside>
     </div>
   </div>
@@ -187,9 +187,9 @@ samtale &amp; vin
   <span class="fadder__glow" aria-hidden="true"></span>
   <div class="wrap">
     <div class="center fadder__intro reveal">
-      <span class="eyebrow eyebrow--center">Velkommen til Dragvoll</span>
-      <h2 class="h-section">Fadderukene</h2>
-      <p class="lede">Studiestartens beste uker — bli kjent med faget, byen og hverandre. Velg en dag for å se programmet.</p>
+      <span class="eyebrow eyebrow--center" id="ix-fadder-eyebrow">Velkommen til Dragvoll</span>
+      <h2 class="h-section" id="ix-fadder-heading">Fadderukene</h2>
+      <p class="lede" id="ix-fadder-lede">Studiestartens beste uker — bli kjent med faget, byen og hverandre. Velg en dag for å se programmet.</p>
       <span class="fadder__dates"><span class="fadder__dates-lbl">Datoer</span><span id="fadderDates">[ datoer kommer ]</span></span>
       <p class="fadder__placeholder" id="fadderPlaceholder">⚠ Programmet under er plassholdere — kobles automatisk til fadderuke-kalenderen så snart den er satt opp.</p>
       <!-- Nyheter: fadderuke (plassering «fadderuke» i news-content.js / Admin → Nyheter) -->
@@ -223,10 +223,10 @@ samtale &amp; vin
   <div class="wrap">
     <div class="join__grid">
       <div class="reveal">
-        <span class="eyebrow">Bli en av oss</span>
-        <h2 class="h-section">Bli medlem i Apeiron</h2>
-        <p class="join__lede">Studerer du filosofi eller etikk ved NTNU? Da hører du hjemme her. Ett medlemskap, et helt fellesskap.</p>
-        <ul class="join__benefits">
+        <span class="eyebrow" id="ix-m-eyebrow">Bli en av oss</span>
+        <h2 class="h-section" id="ix-m-heading">Bli medlem i Apeiron</h2>
+        <p class="join__lede" id="ix-m-lede">Studerer du filosofi eller etikk ved NTNU? Da hører du hjemme her. Ett medlemskap, et helt fellesskap.</p>
+        <ul class="join__benefits" id="ix-m-benefits">
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg> Rabattert inngang på alle arrangementer</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg> Gratis kaffe på lesesalen, og rabatt på Apeiron-pins</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg> Et fellesskap av nysgjerrige folk på tvers av kull</li>
@@ -261,7 +261,7 @@ samtale &amp; vin
 <section class="section" id="kontakt" data-screen-label="Kontakt">
   <div class="wrap">
     <div class="center" style="margin-bottom:54px">
-      <span class="eyebrow eyebrow--center">Kontakt</span>
+      <span class="eyebrow eyebrow--center" id="ix-k-eyebrow">Kontakt</span>
       <h2 class="h-section" id="ix-hjem-faq-heading">Ta kontakt &amp; vanlige spørsmål</h2>
     </div>
 
@@ -436,6 +436,7 @@ samtale &amp; vin
 </script>
 <script src="report.js"></script>
 <script src="search-index.js"></script>
+<script src="minisearch.min.js"></script>
 <script src="site-search.js"></script>
 </body>
 </html>

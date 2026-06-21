@@ -16,7 +16,7 @@
       host.innerHTML =
         '<section class="preview-top">'
           + '<h3>Forhåndsvisning</h3>'
-          + '<p class="pp-sub">Live fra den ekte forsiden (Hjem) — endringene dine vises umiddelbart. Dette panelet styrer <b>Hero</b> og <b>Kontakt</b>. «Om oss» og FAQ redigeres i <b>Om oss</b>.</p>'
+          + '<p class="pp-sub">Live fra den ekte forsiden (Hjem) — endringene dine vises umiddelbart. Dette panelet styrer <b>tekstene på Hjem</b> (hero, seksjons-introer, «Bli medlem» og kontakt). «Om oss» og FAQ redigeres i <b>Om oss</b>.</p>'
           + '<div class="pv-board-wrap"><iframe id="pv-board" src="index.html?preview=1" title="Forhåndsvisning av forsiden"></iframe></div>'
         + '</section>'
         + '<div class="tip">'
@@ -28,10 +28,14 @@
             + '<li>Erstatt <code>index-content.js</code> i GitHub-repositoriet og push/commit</li>'
             + '<li>Cloudflare oppdaterer nettsiden automatisk innen et minutt</li>'
           + '</ol>'
-          + '<div class="tip-note">💾 Endringer lagres automatisk i nettleseren din. Dette panelet styrer kun <b>Hero</b> og <b>Kontakt</b> på Hjem. «Om oss» + FAQ ligger i Om oss-panelet. Arrangementer, nyheter, oppslagstavla og medlemspriser redigeres andre steder.</div>'
+          + '<div class="tip-note">💾 Endringer lagres automatisk i nettleseren din. Dette panelet styrer <b>tekstene på Hjem</b> (hero, seksjons-introer, «Bli medlem»-intro og kontakt). «Om oss» + FAQ ligger i Om oss-panelet. Arrangementene, nyheter, oppslagstavla og medlemspriser hentes/redigeres andre steder.</div>'
         + '</div>'
         + '<div class="panel"><h2>Hero <small>øverst på Hjem</small></h2>'
           + '<div class="panel-body">'
+            + '<div class="frow"><div class="fg narrow"><label>Tittel (før)</label><input type="text" id="hero-wm-pre"></div>'
+            + '<div class="fg narrow"><label>Spesial-bokstav</label><input type="text" id="hero-wm-mid"></div>'
+            + '<div class="fg narrow"><label>Tittel (etter)</label><input type="text" id="hero-wm-post"></div></div>'
+            + '<p class="hint">Den store tittelen øverst (foreningsnavnet). «Spesial-bokstaven» får ∞-stilen — la den stå tom for en vanlig bokstav.</p>'
             + '<div class="fg"><label>Eyebrow (liten etikett over tittelen)</label><input type="text" id="hero-eyebrow"></div>'
             + '<div class="fg"><label>Undertittel</label><input type="text" id="hero-tag"></div>'
             + '<div class="fg"><label>Ingress</label><textarea id="hero-lede"></textarea></div>'
@@ -39,14 +43,54 @@
             + '<div class="fg narrow"><label>Knapp 1 — lenke</label><input type="text" id="hero-cta1-href" placeholder="#bli-medlem"></div></div>'
             + '<div class="frow"><div class="fg"><label>Knapp 2 — tekst</label><input type="text" id="hero-cta2-label"></div>'
             + '<div class="fg narrow"><label>Knapp 2 — lenke</label><input type="text" id="hero-cta2-href" placeholder="#arrangementer"></div></div>'
+            + '<div class="fg"><label>«Ny her?»-bro-lenke (tekst under knappene)</label><input type="text" id="hero-bridge"></div>'
             + '<div class="sub-h">«Under oppbygging»-banner</div>'
             + '<div class="toggle-row"><span class="t-lbl"><b>Vis banneret</b><span>Den gule advarselen nederst i hero. Skru av når siden er ferdig.</span></span>'
             + '<label class="switch"><input type="checkbox" id="hero-wip-show"><span class="sl"></span></label></div>'
             + '<div class="fg"><label>Banner-tekst</label><input type="text" id="hero-wip-text"></div>'
           + '</div>'
         + '</div>'
+        + '<div class="panel"><h2>Arrangementer <small>seksjons-intro på Hjem</small></h2>'
+          + '<div class="panel-body">'
+            + '<div class="fg"><label>Eyebrow (liten etikett over tittelen)</label><input type="text" id="arr-eyebrow"></div>'
+            + '<div class="fg"><label>Overskrift</label><input type="text" id="arr-heading"></div>'
+            + '<div class="fg"><label>Ingress</label><textarea id="arr-lede"></textarea></div>'
+            + '<p class="hint">Selve arrangementene hentes fra Google Kalender — her styrer du bare overskriften og teksten over dem.</p>'
+          + '</div>'
+        + '</div>'
+        + '<div class="panel"><h2>Aporetisk Aften <small>seksjons-intro på Hjem</small></h2>'
+          + '<div class="panel-body">'
+            + '<div class="fg"><label>Eyebrow (liten etikett over tittelen)</label><input type="text" id="apo-eyebrow"></div>'
+            + '<div class="fg"><label>Overskrift</label><input type="text" id="apo-title"></div>'
+            + '<div class="fg"><label>Ingress</label><textarea id="apo-lede"></textarea></div>'
+            + '<div class="fg"><label>«For hvem»</label><input type="text" id="apo-forwhom"></div>'
+            + '<div class="sub-h">Side-boks (det greske ordet)</div>'
+            + '<div class="frow"><div class="fg"><label>Gresk ord</label><input type="text" id="apo-greek"></div>'
+            + '<div class="fg"><label>Uttale / oversettelse</label><input type="text" id="apo-greek-sub"></div></div>'
+            + '<div class="fg"><label>Notat under ordet</label><textarea id="apo-note"></textarea></div>'
+          + '</div>'
+        + '</div>'
+        + '<div class="panel"><h2>Fadderukene <small>seksjons-intro på Hjem</small></h2>'
+          + '<div class="panel-body">'
+            + '<div class="fg"><label>Eyebrow (liten etikett over tittelen)</label><input type="text" id="fadder-eyebrow"></div>'
+            + '<div class="fg"><label>Overskrift</label><input type="text" id="fadder-heading"></div>'
+            + '<div class="fg"><label>Ingress</label><textarea id="fadder-lede"></textarea></div>'
+            + '<p class="hint">Selve programmet og datoene hentes fra fadderuke-kalenderen.</p>'
+          + '</div>'
+        + '</div>'
+        + '<div class="panel"><h2>Bli medlem <small>intro-teksten i «Bli medlem»-seksjonen</small></h2>'
+          + '<div class="panel-body">'
+            + '<div class="fg"><label>Eyebrow (liten etikett over tittelen)</label><input type="text" id="m-eyebrow"></div>'
+            + '<div class="fg"><label>Overskrift</label><input type="text" id="m-heading"></div>'
+            + '<div class="fg"><label>Ingress</label><textarea id="m-lede"></textarea></div>'
+            + '<div class="sub-h">Fordeler <small style="font-weight:400;text-transform:none;letter-spacing:0">(punktene med avhuking)</small></div>'
+            + '<p class="hint">Hvert punkt får automatisk et avhukings-ikon. Priser og innmeldingssteg redigeres i <b>Medlemskap</b>-panelet.</p>'
+            + '<div class="lst" id="lst-benefits"></div><button class="btn-add" type="button" data-add="benefits">+ Ny fordel</button>'
+          + '</div>'
+        + '</div>'
         + '<div class="panel"><h2>Kontakt <small>nederst på Hjem</small></h2>'
           + '<div class="panel-body">'
+            + '<div class="fg"><label>Eyebrow (seksjons-etikett over «Ta kontakt…»)</label><input type="text" id="k-eyebrow"></div>'
             + '<div class="fg"><label>Overskrift</label><input type="text" id="k-heading"></div>'
             + '<div class="fg"><label>E-post</label><input type="text" id="k-email"></div>'
             + '<div class="fg"><label>Adresse</label><input type="text" id="k-address"></div>'
@@ -73,6 +117,12 @@
         d.hero.cta1 = d.hero.cta1 || { label: '', href: '' };
         d.hero.cta2 = d.hero.cta2 || { label: '', href: '' };
         d.hero.wip = d.hero.wip || { show: true, text: '' };
+        d.hero.wordmark = d.hero.wordmark || { pre: '', mid: '', post: '' };
+        d.arr = d.arr || {};
+        d.apo = d.apo || {};
+        d.fadder = d.fadder || {};
+        d.medlem = d.medlem || {};
+        d.medlem.benefits = Array.isArray(d.medlem.benefits) ? d.medlem.benefits : [];
         d.kontakt = d.kontakt || {};
         d.kontakt.socials = Array.isArray(d.kontakt.socials) ? d.kontakt.socials : [];
         d.kontakt.faq = Array.isArray(d.kontakt.faq) ? d.kontakt.faq : [];
@@ -90,6 +140,12 @@
         data.hero.cta1 = Object.assign({}, f.hero.cta1, data.hero.cta1);
         data.hero.cta2 = Object.assign({}, f.hero.cta2, data.hero.cta2);
         data.hero.wip = Object.assign({}, f.hero.wip, data.hero.wip);
+        data.hero.wordmark = Object.assign({}, f.hero.wordmark, data.hero.wordmark);
+        data.arr = Object.assign({}, f.arr, data.arr);
+        data.apo = Object.assign({}, f.apo, data.apo);
+        data.fadder = Object.assign({}, f.fadder, data.fadder);
+        data.medlem = Object.assign({}, f.medlem, data.medlem);
+        if (!Array.isArray(data.medlem.benefits)) data.medlem.benefits = [];
         data.kontakt = Object.assign({}, f.kontakt, data.kontakt);
         if (!Array.isArray(data.kontakt.socials)) data.kontakt.socials = [];
         if (!Array.isArray(data.kontakt.faq)) data.kontakt.faq = [];
@@ -103,8 +159,14 @@
         'hero-eyebrow': 'hero.eyebrow', 'hero-tag': 'hero.tag', 'hero-lede': 'hero.lede',
         'hero-cta1-label': 'hero.cta1.label', 'hero-cta1-href': 'hero.cta1.href',
         'hero-cta2-label': 'hero.cta2.label', 'hero-cta2-href': 'hero.cta2.href',
-        'hero-wip-text': 'hero.wip.text',
-        'k-heading': 'kontakt.heading', 'k-email': 'kontakt.email', 'k-address': 'kontakt.address',
+        'hero-wip-text': 'hero.wip.text', 'hero-bridge': 'hero.bridge',
+        'hero-wm-pre': 'hero.wordmark.pre', 'hero-wm-mid': 'hero.wordmark.mid', 'hero-wm-post': 'hero.wordmark.post',
+        'arr-eyebrow': 'arr.eyebrow', 'arr-heading': 'arr.heading', 'arr-lede': 'arr.lede',
+        'apo-eyebrow': 'apo.eyebrow', 'apo-title': 'apo.title', 'apo-lede': 'apo.lede',
+        'apo-forwhom': 'apo.forWhom', 'apo-greek': 'apo.greek', 'apo-greek-sub': 'apo.greekSub', 'apo-note': 'apo.note',
+        'fadder-eyebrow': 'fadder.eyebrow', 'fadder-heading': 'fadder.heading', 'fadder-lede': 'fadder.lede',
+        'm-eyebrow': 'medlem.eyebrow', 'm-heading': 'medlem.heading', 'm-lede': 'medlem.lede',
+        'k-heading': 'kontakt.heading', 'k-eyebrow': 'kontakt.eyebrow', 'k-email': 'kontakt.email', 'k-address': 'kontakt.address',
         'k-web': 'kontakt.web', 'k-webHref': 'kontakt.webHref', 'k-faqHeading': 'kontakt.faqHeading'
       };
       function getPath(path) { return path.split('.').reduce(function (o, k) { return (o || {})[k]; }, data); }
@@ -150,6 +212,24 @@
           hostEl.appendChild(row);
         });
       }
+      function renderBenefits() {
+        var hostEl = q('lst-benefits'); hostEl.innerHTML = '';
+        data.medlem.benefits.forEach(function (b, i) {
+          var row = document.createElement('div');
+          row.className = 'lrow'; row.setAttribute('data-id', 'ben' + i);
+          row.innerHTML =
+            '<span class="drag-handle" title="Dra for å sortere">⠿</span>'
+            + '<div class="lrow-fields">'
+              + '<div class="fg"><label>Fordel</label><input type="text" data-k="text" value="' + esc(b) + '" placeholder="f.eks. Rabattert inngang på alle arrangementer"></div>'
+            + '</div>'
+            + '<div class="lrow-ctrls"><button class="btn-mini up" type="button" title="Opp">↑</button><button class="btn-mini dn" type="button" title="Ned">↓</button><button class="btn-mini x" type="button" title="Slett">✕</button></div>';
+          row.querySelector('[data-k]').addEventListener('input', function () { data.medlem.benefits[i] = this.value; lazySave(); });
+          row.querySelector('.up').addEventListener('click', function () { moveArr(data.medlem.benefits, i, -1); renderBenefits(); lazySave(); });
+          row.querySelector('.dn').addEventListener('click', function () { moveArr(data.medlem.benefits, i, 1); renderBenefits(); lazySave(); });
+          row.querySelector('.x').addEventListener('click', function () { AC.undoDelete(data.medlem.benefits, i, 'Fordel fjernet', renderBenefits, lazySave); });
+          hostEl.appendChild(row);
+        });
+      }
       function renderHjemFaq() {
         var hostEl = q('lst-hjemfaq'); hostEl.innerHTML = '';
         data.kontakt.faq.forEach(function (it, i) {
@@ -174,6 +254,7 @@
       host.querySelectorAll('[data-add]').forEach(function (b) {
         b.addEventListener('click', function () {
           if (b.getAttribute('data-add') === 'socials') { data.kontakt.socials.push({ label: '', href: '', icon: 'web' }); renderSocials(); lazySave(); }
+          else if (b.getAttribute('data-add') === 'benefits') { data.medlem.benefits.push(''); renderBenefits(); lazySave(); }
           else if (b.getAttribute('data-add') === 'hjemfaq') { data.kontakt.faq.push({ q: '', a: '' }); renderHjemFaq(); lazySave(); }
         });
       });
@@ -189,10 +270,11 @@
           }
         });
       }
-      function renderAll() { renderFields(); renderSocials(); renderHjemFaq(); }
+      function renderAll() { renderFields(); renderBenefits(); renderSocials(); renderHjemFaq(); }
 
       function exportFile() {
-        var out = { hero: clone(data.hero || {}), kontakt: clone(data.kontakt || {}) };
+        var out = { hero: clone(data.hero || {}), arr: clone(data.arr || {}), apo: clone(data.apo || {}), fadder: clone(data.fadder || {}), medlem: clone(data.medlem || {}), kontakt: clone(data.kontakt || {}) };
+        out.medlem.benefits = (out.medlem.benefits || []).filter(function (b) { return b && b.trim(); });
         out.kontakt.socials = (out.kontakt.socials || []).filter(function (s) { return (s.label && s.label.trim()) || (s.href && s.href.trim()); });
         out.kontakt.faq = (out.kontakt.faq || []).filter(function (it) { return (it.q && it.q.trim()) || (it.a && it.a.trim()); });
         var content =
@@ -200,7 +282,7 @@
           + '   Sist oppdatert: ' + new Date().toLocaleDateString('no-NO') + '\n'
           + '   Rediger direkte her, eller åpne Admin-senteret → Forsiden.\n'
           + '\n'
-          + '   Dekker forsiden (Hjem): hero + kontakt.\n'
+          + '   Dekker forsiden (Hjem): hero + seksjons-introer (arrangementer/aporetisk/fadderuke) + bli medlem (intro) + kontakt.\n'
           + '   «Om oss» + FAQ ligger på om-oss.html → om-content.js (Om oss-panelet).\n'
           + '*/\n\n'
           + 'window.INDEX_CONTENT = ' + JSON.stringify(out, null, 2) + ';\n';
@@ -234,6 +316,7 @@
 
       loadData(); renderAll(); wireFields();
       wireDrag('lst-socials', function () { return data.kontakt.socials; }, renderSocials);
+      wireDrag('lst-benefits', function () { return data.medlem.benefits; }, renderBenefits);
       wireDrag('lst-hjemfaq', function () { return data.kontakt.faq; }, renderHjemFaq);
       AC.viewSwitch({ list: q('lst-socials'), key: 'apeiron-forsiden-socials-view-v1', help: 'Velg hvordan lenke-radene vises mens du redigerer her i admin. Påvirker bare redigeringsvisningen, ikke nettsiden.' });
       AC.viewSwitch({ list: q('lst-hjemfaq'), key: 'apeiron-forsiden-faq-view-v1', help: 'Velg hvordan FAQ-radene vises mens du redigerer her i admin. Påvirker bare redigeringsvisningen, ikke nettsiden.' });

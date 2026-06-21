@@ -95,6 +95,77 @@
   var DATA = (typeof window !== 'undefined' && window.SEARCH_INDEX
               && window.SEARCH_INDEX.length) ? window.SEARCH_INDEX : IDX;
 
+  /* ── Norsk stemmer (bøyning) ──
+     Reduserer bøyde former til en felles stamme, både ved indeksering og
+     ved søk, slik at «studieretninger» møter «studieretning». Kompakt port
+     av Snowball (bokmål). God, ikke perfekt — uregelmessige/sammensatte ord
+     dekkes av SYN-lista under. */
+  function norwegianStem(word) {
+    word = (word || '').toLowerCase();
+    var len = word.length;
+    if (len < 3) return word;
+    var V = 'aeiouyæåø';
+    var isV = function (c) { return V.indexOf(c) !== -1; };
+    var r1 = len;
+    for (var i = 1; i < len; i++) { if (!isV(word[i]) && isV(word[i - 1])) { r1 = i + 1; break; } }
+    if (r1 < 3) r1 = 3;
+    var ends = function (w, s) { return w.length >= s.length && w.slice(w.length - s.length) === s; };
+    var step1 = [
+      ['hetenes', ''], ['hetene', ''], ['hetens', ''], ['heten', ''], ['heter', ''],
+      ['endes', ''], ['enes', ''], ['edes', ''], ['erte', 'er'], ['ande', ''], ['ende', ''],
+      ['ane', ''], ['ene', ''], ['ens', ''], ['ers', ''], ['ets', ''], ['het', ''], ['ast', ''],
+      ['ede', ''], ['ert', 'er'], ['ar', ''], ['er', ''], ['as', ''], ['es', ''], ['et', ''],
+      ['en', ''], ['a', ''], ['e', '']
+    ];
+    var applied = false;
+    for (var k = 0; k < step1.length; k++) {
+      var suf = step1[k][0];
+      if (ends(word, suf) && (len - suf.length) >= r1) {
+        word = word.slice(0, word.length - suf.length) + step1[k][1];
+        applied = true; break;
+      }
+    }
+    if (!applied && ends(word, 's') && (word.length - 1) >= r1) {
+      var b = word[word.length - 2], validS = 'bcdfghjlmnoprtvyz', keep = false;
+      if (b && validS.indexOf(b) !== -1) keep = true;
+      else if (b === 'k') { var b2 = word[word.length - 3]; if (b2 && !isV(b2)) keep = true; }
+      if (keep) word = word.slice(0, word.length - 1);
+    }
+    len = word.length;
+    if ((ends(word, 'dt') || ends(word, 'vt')) && (len - 1) >= r1) word = word.slice(0, len - 1);
+    var step3 = ['hetslov', 'slov', 'elov', 'lov', 'elig', 'eleg', 'els', 'lig', 'eig', 'ig', 'leg'];
+    for (var m = 0; m < step3.length; m++) {
+      var s3 = step3[m];
+      if (ends(word, s3) && (word.length - s3.length) >= r1) { word = word.slice(0, word.length - s3.length); break; }
+    }
+    return word;
+  }
+
+  /* Håndholdt synonym-/normaliseringsliste for uregelmessige former som
+     stemmeren ikke fanger (utvid ved behov). */
+  var SYN = { 'bøker': 'bok', 'bøkene': 'bok', 'bøkenes': 'bok', 'bøkers': 'bok' };
+
+  function nTokenize(str) { return (str || '').toLowerCase().split(/[^\p{L}\p{N}]+/u).filter(Boolean); }
+  function nProcess(term) {
+    term = (term || '').toLowerCase();
+    if (term.length < 2) return null;
+    if (SYN[term]) term = SYN[term];
+    return norwegianStem(term);
+  }
+
+  /* ── Søkemotor: MiniSearch (bøyning + fuzzy) hvis lastet, ellers delstreng-fallback ── */
+  var mini = null;
+  (function buildIndex() {
+    try {
+      if (typeof MiniSearch === 'undefined') return;
+      mini = new MiniSearch({
+        fields: ['t', 'd'], storeFields: ['t', 'd', 'u', 'g'], idField: '_id',
+        tokenize: nTokenize, processTerm: nProcess
+      });
+      mini.addAll(DATA.map(function (it, i) { return { _id: i, t: it.t, d: it.d, u: it.u, g: it.g }; }));
+    } catch (e) { mini = null; }
+  })();
+
   /* ── Hjelpere ── */
   function reEsc(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
   function htmlEsc(s) {
@@ -102,45 +173,60 @@
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
+  /* Stamme-bevisst highlighting: marker hele ord hvis stammen matcher et
+     søkeords stamme (fanger bøyde treff), med delstreng-prefiks som backup. */
   function hl(str, q) {
     if (!q) return htmlEsc(str);
-    return htmlEsc(str).replace(
-      new RegExp('(' + reEsc(htmlEsc(q)) + ')', 'ig'),
-      '<mark>$1</mark>'
-    );
+    var qStems = nTokenize(q).map(nProcess).filter(Boolean);
+    var raw = q.trim().toLowerCase().split(/\s+/).filter(function (w) { return w.length >= 2; });
+    if (!qStems.length && !raw.length) return htmlEsc(str);
+    var parts = String(str).split(/([\p{L}\p{N}]+)/u);
+    return parts.map(function (seg, i) {
+      if (i % 2 === 1) {
+        var low = seg.toLowerCase(), st = nProcess(seg);
+        var hit = (st && qStems.some(function (qs) { return st === qs || st.indexOf(qs) === 0 || qs.indexOf(st) === 0; }))
+               || raw.some(function (w) { return low.indexOf(w) === 0; });
+        return hit ? '<mark>' + htmlEsc(seg) + '</mark>' : htmlEsc(seg);
+      }
+      return htmlEsc(seg);
+    }).join('');
   }
 
-  /* ── Scoring ── */
-  function score(item, q) {
+  /* ── Delstreng-scoring (fallback hvis MiniSearch ikke lastet) ── */
+  function legacyScore(item, q) {
     var t = item.t.toLowerCase(), d = item.d.toLowerCase();
     var words = q.split(/\s+/).filter(Boolean);
     if (!words.length) return 0;
-    /* exact phrase first */
     if (t.startsWith(q)) return 12;
     if (t.includes(q)) return 10;
     if (d.includes(q)) return 6;
-    /* all words present */
-    var allT = words.every(function (w) { return t.includes(w); });
-    if (allT) return 8;
-    var allD = words.every(function (w) { return d.includes(w); });
-    if (allD) return 4;
-    /* any word */
-    var anyT = words.some(function (w) { return t.includes(w); });
-    if (anyT) return 3;
-    var anyD = words.some(function (w) { return d.includes(w); });
-    if (anyD) return 1;
+    if (words.every(function (w) { return t.includes(w); })) return 8;
+    if (words.every(function (w) { return d.includes(w); })) return 4;
+    if (words.some(function (w) { return t.includes(w); })) return 3;
+    if (words.some(function (w) { return d.includes(w); })) return 1;
     return 0;
   }
-
-  function doSearch(q) {
-    q = q.trim().toLowerCase();
-    if (!q) return [];
+  function legacySearch(q) {
     return DATA
-      .map(function (it) { return { it: it, s: score(it, q) }; })
+      .map(function (it) { return { it: it, s: legacyScore(it, q) }; })
       .filter(function (x) { return x.s > 0; })
       .sort(function (a, b) { return b.s - a.s; })
       .map(function (x) { return x.it; })
       .slice(0, 28);
+  }
+
+  /* ── Søk ── MiniSearch (bøyning + prefiks + skrivefeil), ellers delstreng ── */
+  function doSearch(q) {
+    q = (q || '').trim();
+    if (!q) return [];
+    if (mini) {
+      try {
+        return mini.search(q, { prefix: true, fuzzy: 0.2, boost: { t: 2 }, combineWith: 'OR' })
+          .slice(0, 28)
+          .map(function (r) { return { t: r.t, d: r.d, u: r.u, g: r.g }; });
+      } catch (e) { /* faller tilbake */ }
+    }
+    return legacySearch(q.toLowerCase());
   }
 
   /* ── Tastaturhint ── */

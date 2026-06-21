@@ -173,9 +173,9 @@ html[data-mode="marine"] .role-card { border-left-color: var(--c-d, var(--gold))
 <section class="subhero">
   <img class="subhero__seal" src="assets/apeiron-logo.png" alt="" aria-hidden="true" />
   <div class="subhero__inner">
-    <a class="subhero__back" href="index.html">Tilbake</a>
-    <h1>Apeiron styret</h1>
-    <p class="subhero__lede">
+    <a class="subhero__back" href="index.html" id="ix-st-back">Tilbake</a>
+    <h1 id="ix-st-title">Apeiron styret</h1>
+    <p class="subhero__lede" id="ix-st-lede">
       Styret i Apeiron består av frivillige studenter som holder linjeforeningen i gang.
       Her finner du en oversikt over hvert verv og hva det innebærer.
     </p>
@@ -363,6 +363,7 @@ html[data-mode="marine"] .role-card { border-left-color: var(--c-d, var(--gold))
 
   // Overskrifter
   if (C.board) { setText('board-eyebrow', C.board.eyebrow); setText('board-heading', C.board.heading); setText('board-lede', C.board.lede); }
+  if (C.subhero) { setText('ix-st-back', C.subhero.back); setText('ix-st-title', C.subhero.title); setText('ix-st-lede', C.subhero.lede); }
   if (C.verv)  { setText('verv-eyebrow', C.verv.eyebrow);  setText('verv-heading', C.verv.heading);  setText('verv-lede', C.verv.lede); }
 
   // Styremedlemmer
@@ -489,6 +490,7 @@ html[data-mode="marine"] .role-card { border-left-color: var(--c-d, var(--gold))
 </script>
 <script src="report.js"></script>
 <script src="search-index.js"></script>
+<script src="minisearch.min.js"></script>
 <script src="site-search.js"></script>
 </body>
 </html>

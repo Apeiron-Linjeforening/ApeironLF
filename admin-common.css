@@ -45,6 +45,20 @@
   box-sizing: border-box;
 }
 
+/* Nøstet lenke-redigerer i kort-lister (Samarbeid / Møt styret) */
+.card-links { display: flex; flex-direction: column; gap: 8px; margin: 4px 0 10px; }
+.card-links:empty { margin: 0; }
+.link-row { align-items: flex-end; }
+.link-row .btn-mini { flex: 0 0 auto; margin-bottom: 5px; }
+
+/* Enkle streng-lister + segment-bryter (Pensum) */
+.str-row { align-items: flex-end; }
+.str-ctrls { display: flex; gap: 4px; flex: 0 0 auto; margin-bottom: 5px; }
+.seg-row { display: flex; align-items: center; gap: 14px; margin: 10px 0 4px; flex-wrap: wrap; }
+.seg-lbl { font-size: .72rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft, #4a4d63); }
+.seg-opt { display: inline-flex; align-items: center; gap: 5px; font-size: .88rem; cursor: pointer; }
+
+
 /* «?»-hjelpeboble ved felt-etiketter */
 .help-tip {
   display: inline-flex;

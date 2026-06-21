@@ -12,6 +12,11 @@
                   members[]{ name, role, initials, img, note, tags } }. */
 
 window.STYRET_CONTENT = {
+  "subhero": {
+    "back": "Tilbake",
+    "title": "Apeiron styret",
+    "lede": "Styret i Apeiron består av frivillige studenter som holder linjeforeningen i gang. Her finner du en oversikt over hvert verv og hva det innebærer."
+  },
   "board": {
     "eyebrow": "Hvem er vi",
     "heading": "Styret 2025/26",
