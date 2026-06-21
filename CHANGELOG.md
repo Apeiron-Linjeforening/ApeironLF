@@ -1,5 +1,10 @@
 ## Siste endringer
 
+**21.06.26 — Herdet bildepublisering (venter til alle bilder er fanget)**
+- Ved «☁ Publiser til GitHub» committes nå filene først når bilde-fangsten er **stille** (ingen nye filer på 600 ms, maks 15 s) i stedet for en fast pause. Paneler som Styret sender portrettene asynkront (drypp ~220 ms) — med mange bilder kunne den gamle faste ventetiden bomme på de siste. Nå venter publiseringen til alt er med.
+- `admin-common.js` fikk `captureIdleFor()` (tid siden siste fangede fil); `admin.html` poller på den før commit.
+- Berørte filer: `admin-common.js`, `admin.html`.
+
 **21.06.26 — Ny: «Tilbakestill alle sider» i Oversikt**
 - Samlet angre-knapp i **Oversikt**-fanen som tilbakestiller alle upubliserte endringer (på tvers av alle paneler) til siste publiserte versjon — supplerer den per-panel «Tilbakestill». Vises kun når det finnes endringer, med bekreftelses-dialog som lister hvilke sider som nullstilles.
 - Berørt fil: `admin.html`.

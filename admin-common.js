@@ -411,11 +411,12 @@
      Når en «capture» er aktiv, samler downloadBlob/saveBlob filene i en liste
      i stedet for å laste dem ned — slik at «Publiser til GitHub» kan committe
      nøyaktig de samme filene modulenes export() ellers laster ned. */
-  var _capture = null;
-  function beginCapture() { _capture = []; }
+  var _capture = null, _captureTs = 0;
+  function beginCapture() { _capture = []; _captureTs = Date.now(); }
   function endCapture() { var c = _capture; _capture = null; return c || []; }
+  function captureIdleFor() { return _capture ? (Date.now() - _captureTs) : 1e9; }
   function downloadBlob(filename, content) {
-    if (_capture) { _capture.push({ path: filename, content: String(content == null ? '' : content), encoding: 'utf-8' }); return; }
+    if (_capture) { _capture.push({ path: filename, content: String(content == null ? '' : content), encoding: 'utf-8' }); _captureTs = Date.now(); return; }
     var blob = new Blob([content], { type: 'text/javascript;charset=utf-8' });
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
@@ -514,7 +515,7 @@
     return new Blob(all, { type: 'application/zip' });
   }
   function saveBlob(filename, blob) {
-    if (_capture) { _capture.push({ path: filename, blob: blob }); return; }
+    if (_capture) { _capture.push({ path: filename, blob: blob }); _captureTs = Date.now(); return; }
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
     a.href = url; a.download = String(filename).split('/').pop();
@@ -789,6 +790,7 @@
     saveBlob: saveBlob,
     beginCapture: beginCapture,
     endCapture: endCapture,
+    captureIdleFor: captureIdleFor,
     imgGet: imgGet,
     imgSet: imgSet,
     imgDel: imgDel,

@@ -1069,8 +1069,10 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
     function step() {
       if (i >= list.length) {
         try { publishSearchIndex(); } catch (e) {}
-        // ekstra ventetid: noen paneler (f.eks. Styret) laster bilder asynkront
-        setTimeout(function () {
+        // Vent til bilde-fangsten er STILLE før commit: paneler som Styret
+        // sender bildene asynkront (drypp på ~220 ms). Vi committer først når
+        // ingen nye filer er fanget på 600 ms (maks 15 s) — så ingen mister.
+        var finalize = function () {
           var files = window.AdminCommon.endCapture();
           if (hostDiv) hostDiv.innerHTML = '';
           if (!files.length) { resetBtns(); window.AdminCommon.toast('Ingenting å publisere'); return; }
@@ -1087,7 +1089,13 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
               window.AdminCommon.toast('Publisering feilet: ' + ((res && res.error) || 'ukjent'));
             }
           }).catch(function () { resetBtns(); window.AdminCommon.toast('Publisering feilet (nettverk)'); });
-        }, 900);
+        };
+        var t0 = Date.now();
+        (function poll() {
+          var idle = window.AdminCommon.captureIdleFor ? window.AdminCommon.captureIdleFor() : 9999;
+          if (idle >= 600 || (Date.now() - t0) > 15000) finalize();
+          else setTimeout(poll, 150);
+        })();
         return;
       }
       var p = list[i++];
