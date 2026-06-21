@@ -90,18 +90,26 @@ eller dra et bilde inn.
 
 ## 3. Slik publiserer du (gjør endringene synlige for alle)
 
-Tre steg. Du redigerer aldri kode — du flytter bare ferdige filer.
+Med GitHub-innlogging publiserer du **rett fra Admin-senteret** — ingen filer å laste ned
+eller pushe manuelt.
 
-1. Trykk **↓ Last ned alle endrede** øverst til høyre. De endrede filene (og eventuelle
-   bilder) lastes ned til maskinen din.
-2. **Last filene opp til GitHub** — der nettsiden «bor». Du **erstatter** hele filer
-   med de nye; du åpner dem aldri for å skrive i dem.
-3. Vent ca. ett minutt. Nettsiden oppdaterer seg selv automatisk.
+1. **Logg inn** med GitHub-kontoen din — knappen **☁ Logg inn for å publisere** øverst til
+   høyre. (Bare første gang; du holder deg innlogget en stund.)
+2. **Rediger** i panelene som vanlig. Alt lagres automatisk i nettleseren og vises i live
+   forhåndsvisning.
+3. Trykk **☁ Publiser til GitHub** øverst til høyre. Endringene skrives rett til nettsidens
+   repo (én samlet «commit»).
+4. Vent ca. ett minutt — nettsiden oppdaterer seg selv automatisk.
 
-> 💡 **Usikker på GitHub-steget?** Det er det eneste som krever litt teknisk tilgang —
-> selve redigeringen har du allerede gjort i Admin-senteret. Spør den som drifter
-> nettsiden, så tar de opplastingen. Full framgangsmåte for opplasting ligger i
-> [VEDLIKEHOLD.md](VEDLIKEHOLD.md).
+> 💡 **Hvem kan publisere?** Bare GitHub-kontoer som er satt opp med tilgang (se
+> [docs/g1-oppsett.md](docs/g1-oppsett.md)). Hver publisering merkes med hvem som gjorde den.
+
+### Reserveløsning: last ned filene manuelt
+
+Hvis publisering ikke virker (eller du heller vil pushe selv), finner du **↓ Last ned alle
+endrede** nederst i **Oversikt**-fanen. Da laster du ned de endrede filene, **erstatter** dem
+i GitHub og «commit / push» manuelt. Full framgangsmåte i [VEDLIKEHOLD.md](VEDLIKEHOLD.md).
+Normalt trenger du **ikke** dette — bruk «☁ Publiser til GitHub».
 
 ---
 
@@ -125,8 +133,8 @@ Hver del i menyen styrer én del av nettsiden:
 | **Oppnåelser** | Milepæler / oppnåelser |
 | **Utmerkelser** | Utmerkelser og priser |
 
-Hvert panel har sin egen **↓ Last ned**-knapp hvis du bare vil publisere den ene delen,
-eller bruk **↓ Last ned alle endrede** for å ta alt på én gang.
+Publiser alt på én gang med **☁ Publiser til GitHub** øverst til høyre (eller bruk
+reserveløsningen **↓ Last ned alle endrede** i **Oversikt**).
 
 > 💡 **Hastebeskjed?** En kjapp viktig melding (for eksempel «Aporetisk i kveld er flyttet»)
 > legger du ut i **Nyheter**-panelet — skru på **⚑ Viktig** og velg hvor den skal vises.

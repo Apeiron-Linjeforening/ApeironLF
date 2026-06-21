@@ -516,7 +516,7 @@
     if (_capture) { _capture.push({ path: filename, blob: blob }); return; }
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
-    a.href = url; a.download = filename;
+    a.href = url; a.download = String(filename).split('/').pop();
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
     setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
   }

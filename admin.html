@@ -95,6 +95,11 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 }
 .flow-steps b { color: var(--gold-ink); }
 .info-note { margin-top: 12px; padding: 9px 12px; background: rgba(212,175,55,.1); border-radius: 6px; font-size: .82rem; color: var(--gold-ink); line-height: 1.5; }
+.backup-box { margin-top: 14px; padding: 12px 14px; border: 1px dashed rgba(35,39,64,.28); border-radius: 8px; background: rgba(35,39,64,.025); display: flex; flex-direction: column; gap: 10px; }
+.backup-box__txt { font-size: .8rem; color: var(--ink-soft); line-height: 1.5; }
+.pub-btn--backup { align-self: flex-start; padding: 7px 14px; background: transparent; color: var(--navy); border: 1px solid rgba(35,39,64,.3); border-radius: 4px; font-family: var(--body); font-size: .8rem; font-weight: 700; cursor: pointer; }
+.pub-btn--backup:hover { border-color: var(--navy); background: rgba(35,39,64,.04); }
+.pub-btn--backup:disabled { opacity: .55; cursor: progress; }
 .quick-links { display: flex; flex-direction: column; gap: 9px; }
 .quick-links a {
   display: flex; align-items: center; gap: 10px; padding: 10px 13px; border: 1px solid var(--border);
@@ -400,7 +405,6 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
       <a id="ctx-see" href="#" target="_blank" rel="noopener" data-keep-token>Se siden ↗</a>
       <span class="pub-count" id="pub-count"></span>
       <button class="pub-btn pub-btn--git" id="gh-pub-btn" type="button" style="display:none">☁ Publiser til GitHub</button>
-      <button class="pub-btn" id="pub-btn" type="button">↓ Last ned alle endrede</button>
     </div>
     <span class="gh-auth" id="gh-auth"></span>
     <a href="index.html" target="_blank" rel="noopener" data-keep-token>Se nettsiden ↗</a>
@@ -424,14 +428,18 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
         <div class="info-panel">
           <div class="info-card is-flow">
             <h3>Slik publiserer du</h3>
-            <p class="flow-intro">Det du endrer her lever først bare i din egen nettleser. Først når du publiserer, blir det synlig for andre. Slik gjør du det:</p>
+            <p class="flow-intro">Det du endrer her lever først bare i din egen nettleser. Når du publiserer, skrives det rett til nettsiden. Slik gjør du det:</p>
             <ol class="flow-steps">
-              <li><b>Rediger</b> i et panel. Det du skriver lagres automatisk i din egen nettleser — ingenting er sendt videre ennå.</li>
-              <li>Når du er fornøyd, trykk <b>↓ Last ned alle endrede</b> oppe til høyre. De endrede filene lastes da ned til maskinen din.</li>
-              <li>Legg filene inn i <b>GitHub</b> (der nettsiden «bor») og bekreft — kalt <b>commit / push</b>. Usikker? Følg <a href="README.md" target="_blank" rel="noopener" data-keep-token>veiledningen</a> steg for steg.</li>
+              <li><b>Logg inn</b> med GitHub-kontoen — knappen <b>☁ Logg inn for å publisere</b> øverst til høyre. (Bare første gang.)</li>
+              <li><b>Rediger</b> i et panel. Det du skriver lagres automatisk i din egen nettleser og vises live i forhåndsvisningen.</li>
+              <li>Når du er fornøyd, trykk <b>☁ Publiser til GitHub</b> øverst til høyre.</li>
               <li>Ferdig! Nettsiden oppdaterer seg selv automatisk innen ett minutt.</li>
             </ol>
-            <div class="info-note">💡 Ingenting blir synlig for andre før steg 3. Du kan trygt prøve deg fram og forhåndsvise så mye du vil — alt er privat til du laster ned og pusher.</div>
+            <div class="info-note">💡 Ingenting blir synlig for andre før du trykker «Publiser». Du kan trygt prøve deg fram og forhåndsvise så mye du vil.</div>
+            <div class="backup-box">
+              <div class="backup-box__txt"><b>⚠ Reserveløsning — brukes bare hvis publisering ikke virker.</b> Du kan laste ned de endrede filene og legge dem i GitHub manuelt (erstatt filene og «commit / push»). Normalt trenger du <em>ikke</em> dette — bruk «☁ Publiser til GitHub».</div>
+              <button class="pub-btn pub-btn--backup" id="pub-btn" type="button">↓ Last ned alle endrede</button>
+            </div>
           </div>
           <div class="info-card">
             <h3>Snarveier</h3>

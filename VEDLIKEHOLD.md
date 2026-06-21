@@ -35,9 +35,17 @@ Du trenger **ikke** å gjøre noe på Cloudflare manuelt. Det skjer av seg selv 
 endringer pushes til GitHub-repoet. Vanligvis tar det under ett minutt fra push til
 siden er live.
 
-Admin-senteret skriver aldri til serveren selv — det **laster ned** ferdige filer som
-en innholdsredaktør så legger inn i GitHub. Det er denne opplastingen som utløser en ny
-Cloudflare-deploy.
+**Publisering fra Admin-senteret (G1):** med GitHub-innlogging committer admin
+endringene **rett til repoet** når du trykker «☁ Publiser til GitHub» — ingen
+nedlasting, ingen manuell push. Innloggingen kjører server-løst på Cloudflare Pages
+Functions (`functions/api/github/`); tokenet ligger i en httpOnly-cookie og når aldri
+nettleseren. Engangs-oppsett (GitHub OAuth-app + miljøvariabler) er beskrevet i
+[docs/g1-oppsett.md](docs/g1-oppsett.md).
+
+**Reserveløsning:** «↓ Last ned alle endrede» (nederst i **Oversikt**-fanen i admin)
+laster fortsatt ned de ferdige filene, slik at en redaktør kan legge dem inn i GitHub
+manuelt hvis publiseringen ikke virker. Det er denne opplastingen — eller G1-commiten —
+som utløser en ny Cloudflare-deploy.
 
 ---
 

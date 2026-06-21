@@ -42,7 +42,7 @@
           + '<button class="tip-reset" data-reset type="button">Tilbakestill til siste publiserte versjon</button>'
           + '<strong>Slik oppdaterer du medlemskapsprisene</strong>'
           + '<ol><li>Rediger Vipps-info, prisnivåer og innmeldingsstegene nedenfor</li>'
-          + '<li>Klikk <b>↓ Last ned alle endrede</b> oppe til høyre</li>'
+          + '<li>Trykk <b>☁ Publiser til GitHub</b> oppe til høyre</li>'
           + '<li>Erstatt <code>membership-config.js</code> i GitHub-repoet og commit/push</li>'
           + '<li>Cloudflare oppdaterer nettsiden automatisk innen et minutt</li></ol>'
           + '<div class="tip-note">💾 Endringer lagres automatisk i nettleseren. Last ned filen for å publisere.</div>'

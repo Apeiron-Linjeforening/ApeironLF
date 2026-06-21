@@ -40,7 +40,7 @@
             + '<li>Trykk <b>+ Ny nyhet</b> og velg <b>hvor</b> den skal vises (Forsiden, Arrangementer, Aporetisk eller Fadderuke)</li>'
             + '<li>Skriv en kort <b>tittel</b> — og evt. litt brødtekst og en lenke (påmelding, skjema …)</li>'
             + '<li>Sett <b>⚑ Viktig</b> for tydelig vinrød hastemarkering</li>'
-            + '<li>Trykk <b>↓ Last ned alle endrede</b> oppe til høyre, erstatt fila i GitHub og push — siden oppdateres innen et minutt</li>'
+            + '<li>Trykk <b>☁ Publiser til GitHub</b> oppe til høyre — siden oppdateres innen et minutt</li>'
           + '</ol>'
           + '<div class="tip-note">💾 Lagres automatisk i nettleseren mens du jobber. Nyeste øverst — dra i ⠿ for å sortere. Gamle nyheter: trykk <b>● Aktiv → ✓ Arkivert</b> i stedet for å slette — da flyttes de til arkivet på nyhetssiden. «Neste arrangement» i panelet hentes automatisk fra kalenderen; det legger du ikke inn her.</div>'
         + '</div>'

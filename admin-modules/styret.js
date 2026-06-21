@@ -55,10 +55,10 @@
             + '<li>Rediger innholdet nedenfor — klikk på et felt for å redigere det</li>'
             + '<li>Last opp portrett ved å <b>klikke på bildefeltet</b> eller dra et bilde inn — da åpnes redigeringsvinduet (flytt, zoom, roter, speilvend, lys/kontrast/metning)</li>'
             + '<li>Arkivér et avtroppende styre med <b>+ Arkivér nåværende styre</b>, og skriv notater om hva styret og hvert medlem gjorde</li>'
-            + '<li>Klikk <b>↓ Last ned alle endrede</b> oppe til høyre — du får <code>styret-content.js</code> og portrettene som egne bildefiler (lastes ned én og én)</li>'
-            + '<li>Legg <code>styret-content.js</code> i GitHub, og slipp bildefilene i mappa <code>assets/styret/</code> (arkivbilder i <code>assets/styret/arkiv/</code>). Push/commit alt.</li>'
+            + '<li>Trykk <b>☁ Publiser til GitHub</b> oppe til høyre — <code>styret-content.js</code> og portrettene committes automatisk til <code>assets/styret/</code></li>'
+            + '<li><em>Reserve hvis publisering svikter: «↓ Last ned alle endrede» nederst i Oversikt — da lastes <code>styret-content.js</code> + portrettene ned, som du legger i <code>assets/styret/</code>.</em></li>'
           + '</ol>'
-          + '<div class="tip-note">💾 Endringer lagres automatisk i nettleseren din. Bilder lastes ned som egne filer (ikke inni innholdsfila), så fila holder seg liten. Til bildene er committet vises initialene som fallback.</div>'
+          + '<div class="tip-note">💾 Endringer lagres automatisk i nettleseren din. Bilder lagres som egne filer (ikke inni innholdsfila), så fila holder seg liten — de committes til <code>assets/styret/</code> når du publiserer. Tomt portrett viser initialene som fallback.</div>'
         + '</div>'
         + '<div class="meta-panel">'
           + '<h3>Topp-banner</h3>'
@@ -731,7 +731,7 @@
           Object.keys(refs).forEach(function (p) {
             var d = store[p] || imgCache[p];
             if (d && /^data:/.test(d)) {
-              try { items.push({ name: p.split('/').pop(), bytes: AC.dataUrlToBytes(d) }); } catch (_) {}
+              try { items.push({ name: p, bytes: AC.dataUrlToBytes(d) }); } catch (_) {}
             }
           });
           if (items.length) {

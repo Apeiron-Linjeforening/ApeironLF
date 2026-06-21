@@ -41,7 +41,7 @@
               + '<li>Rediger produktene nedenfor — klikk på et felt for å redigere det</li>'
               + '<li>Last opp bilder ved å <b>klikke på bildefeltet</b> eller dra bilder inn på det (du kan velge flere)</li>'
               + '<li><b>Koble farger til bilder:</b> har produktet farger, kan du på hvert bilde velge hvilken farge det hører til — da byttes hovedbildet i butikken når kunden velger den fargen</li>'
-              + '<li>Klikk <b>↓ Last ned alle endrede</b> oppe til høyre, erstatt <code>merch-products.js</code> i GitHub og push</li>'
+              + '<li>Trykk <b>☁ Publiser til GitHub</b> oppe til høyre — endringene legges ut automatisk</li>'
             + '</ol>'
             + '<div class="tip-note">🖼️ <b>Bilder pr. produkt:</b> Det <b>første</b> bildet er hovedbildet («Hoved»). På hver miniatyr: <b>⠿</b> dra rekkefølge · <b>⛶</b> beskjær/zoom · <b>↻</b> roter · <b>✕</b> slett. Har produktet farger, kan du koble et bilde til en farge.</div>'
             + '<div class="tip-note">💾 Endringer lagres automatisk i nettleseren din. Last ned filen for å publisere.</div>'

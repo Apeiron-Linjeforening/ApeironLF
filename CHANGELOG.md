@@ -1,5 +1,17 @@
 ## Siste endringer
 
+**21.06.26 — Opprydding for stabil main: bildesti-bug + konsekvente publiserings-hint**
+- **Bug fikset: bilder havnet i rot ved publisering.** Styret lastet ned portretter med bare filnavnet (`leder.webp`) — greit for manuell nedlasting, men ved G1-commit havnet de da i repo-roten i stedet for `assets/styret/`, så de ikke vistes. Nå sendes **full sti** til `saveBlob`; `admin-common.js` korter ned til filnavn *kun* ved nedlasting, mens commit beholder full sti (`assets/styret/<id>.webp`). Gjelder også arkivbilder.
+- **Per-panel «Hvordan publisere»-hintene oppdatert** i alle 16 modulene: «Klikk ↓ Last ned alle endrede oppe til høyre … erstatt i GitHub og push» → «Trykk **☁ Publiser til GitHub** oppe til høyre», med nedlasting som tydelig merket reserve («nederst i Oversikt-fanen»). Konsistent med den nye flyten.
+- Berørte filer: `admin-common.js`, `admin-modules/styret.js` + de 15 øvrige panel-modulene.
+- **Til drift:** `apeiron-om.js` og `om-content.js` er fjernet fra prosjektet (ikke lenger i bruk). De ligger fortsatt i repoet og bør `git rm`-es.
+
+**21.06.26 — G1 i bruk: publiser-knapp primær, nedlasting flyttet til backup**
+- **G1 er testet ende-til-ende og virker:** «☁ Publiser til GitHub» committer rett til `main`, og Cloudflare bygger siden live innen ~1 min. (Oppsett: GitHub OAuth-app + Cloudflare-miljøvariabler, callback `…/api/github/callback` — domenet må matche, f.eks. `apeironlf.pages.dev`.)
+- **Nedlastingsknappen er ryddet bort fra headeren** og ligger nå som en tydelig merket **reserveløsning nederst i Oversikt-fanen** («⚠ Reserveløsning — brukes bare hvis publisering ikke virker»). Headeren har nå kun «☁ Publiser til GitHub» + teller for upubliserte endringer.
+- **«Slik publiserer du» i admin oppdatert** til den nye flyten: logg inn med GitHub → rediger → publiser → live om ~1 min. Tilsvarende oppdatert i **README.md** (seksjon 3 + reserveløsning) og **VEDLIKEHOLD.md** (publiserings-seksjonen peker nå til `docs/g1-oppsett.md`).
+- Berørte filer: `admin.html`, `README.md`, `VEDLIKEHOLD.md`.
+
 **21.06.26 — G1 bygd: «Lagre = commit» (publiser rett til GitHub fra admin)**
 - **«☁ Publiser til GitHub»** i admin committer alle endrede data-filer som ÉN commit til `main` — ingen nedlasting, ingen manuell push. Fortsatt 100 % statisk og gratis. **↓ Last ned alle endrede** beholdt som reserve.
 - **Ekte innlogging (path B), server-løst på Cloudflare Pages Functions:** GitHub OAuth web-flow. Nye funksjoner under `functions/api/github/`: `login`, `callback`, `me`, `commit`, `logout` (+ `_common.js`). Tokenet lagres i en **httpOnly/Secure/SameSite=Lax-cookie** — når aldri nettleser-JS; alle commits går via `commit`-funksjonen (Git Data API: blob → tree → commit → ref, atomisk). `ALLOWED_LOGINS` begrenser hvem som kan publisere.

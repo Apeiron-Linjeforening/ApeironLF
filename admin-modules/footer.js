@@ -25,7 +25,7 @@
           + '<ol>'
             + '<li>Rediger feltene nedenfor — endringene vises i forhåndsvisningen og lagres i nettleseren</li>'
             + '<li>Legg til, fjern eller dra for å sortere lenker</li>'
-            + '<li>Klikk <b>↓ Last ned alle endrede</b> oppe til høyre</li>'
+            + '<li>Trykk <b>☁ Publiser til GitHub</b> oppe til høyre</li>'
             + '<li>Erstatt <code>site-content.js</code> i GitHub-repoet og push/commit</li>'
             + '<li>Cloudflare oppdaterer alle sider automatisk innen et minutt</li>'
           + '</ol>'
