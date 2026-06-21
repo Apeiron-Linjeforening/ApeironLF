@@ -55,12 +55,18 @@
             + '<li>Rediger innholdet nedenfor — klikk på et felt for å redigere det</li>'
             + '<li>Last opp portrett ved å <b>klikke på bildefeltet</b> eller dra et bilde inn — da åpnes redigeringsvinduet (flytt, zoom, roter, speilvend, lys/kontrast/metning)</li>'
             + '<li>Arkivér et avtroppende styre med <b>+ Arkivér nåværende styre</b>, og skriv notater om hva styret og hvert medlem gjorde</li>'
-            + '<li>Klikk <b>↓ Last ned alle endrede</b> oppe til høyre — du får <code>styret-content.js</code> og portrettene som egne bildefiler (lastes ned én og én)</li>'
-            + '<li>Legg <code>styret-content.js</code> i GitHub, og slipp bildefilene i mappa <code>assets/styret/</code> (arkivbilder i <code>assets/styret/arkiv/</code>). Push/commit alt.</li>'
+            + '<li>Trykk <b>☁ Publiser til GitHub</b> oppe til høyre — <code>styret-content.js</code> og portrettene committes automatisk til <code>assets/styret/</code></li>'
+            + '<li><em>Reserve hvis publisering svikter: «↓ Last ned alle endrede» nederst i Oversikt — da lastes <code>styret-content.js</code> + portrettene ned, som du legger i <code>assets/styret/</code>.</em></li>'
           + '</ol>'
-          + '<div class="tip-note">💾 Endringer lagres automatisk i nettleseren din. Bilder lastes ned som egne filer (ikke inni innholdsfila), så fila holder seg liten. Til bildene er committet vises initialene som fallback.</div>'
+          + '<div class="tip-note">💾 Endringer lagres automatisk i nettleseren din. Bilder lagres som egne filer (ikke inni innholdsfila), så fila holder seg liten — de committes til <code>assets/styret/</code> når du publiserer. Tomt portrett viser initialene som fallback.</div>'
         + '</div>'
         + '<div class="meta-panel">'
+          + '<h3>Topp-banner</h3>'
+          + '<div class="meta-grid">'
+            + '<div class="fg narrow"><label>Tilbake-lenke</label><input type="text" id="meta-sh-back"></div>'
+            + '<div class="fg"><label>Tittel</label><input type="text" id="meta-sh-title"></div>'
+            + '<div class="fg"><label>Ingress</label><input type="text" id="meta-sh-lede"></div>'
+          + '</div>'
           + '<h3>Overskrift — Styremedlemmer</h3>'
           + '<div class="meta-grid">'
             + '<div class="fg narrow"><label data-help="Liten etikett som vises over overskriften på siden, f.eks. «Hvem er vi».">Eyebrow</label><input type="text" id="meta-board-eyebrow"></div>'
@@ -125,6 +131,7 @@
       function fresh() {
         var c = window.STYRET_CONTENT || {};
         return {
+          subhero: Object.assign({}, c.subhero || {}),
           board: Object.assign({ eyebrow: 'Hvem er vi', heading: 'Styret 2025/26', lede: '' }, c.board || {}),
           verv: Object.assign({ eyebrow: 'Rollene', heading: 'Hva gjør vi?', lede: '' }, c.verv || {}),
           members: (c.members || []).map(function (x) { return Object.assign({}, x, { tags: (x.tags || []).map(function (t) { return Object.assign({}, t); }) }); }),
@@ -136,6 +143,7 @@
         };
       }
       function normalize() {
+        data.subhero = data.subhero || {};
         data.board = data.board || {}; data.verv = data.verv || {};
         data.members = data.members || []; data.roles = data.roles || []; data.archive = data.archive || [];
         data.members.forEach(function (m) { if (!Array.isArray(m.tags)) m.tags = []; });
@@ -645,6 +653,7 @@
         });
       }
       function renderMeta() {
+        q('meta-sh-back').value = (data.subhero && data.subhero.back) || ''; q('meta-sh-title').value = (data.subhero && data.subhero.title) || ''; q('meta-sh-lede').value = (data.subhero && data.subhero.lede) || '';
         q('meta-board-eyebrow').value = data.board.eyebrow || ''; q('meta-board-heading').value = data.board.heading || ''; q('meta-board-lede').value = data.board.lede || '';
         q('meta-verv-eyebrow').value = data.verv.eyebrow || ''; q('meta-verv-heading').value = data.verv.heading || ''; q('meta-verv-lede').value = data.verv.lede || '';
       }
@@ -679,6 +688,7 @@
       }
 
       function wireMeta(id, group, key) { q(id).addEventListener('input', function () { data[group][key] = this.value; lazySave(); }); }
+      wireMeta('meta-sh-back', 'subhero', 'back'); wireMeta('meta-sh-title', 'subhero', 'title'); wireMeta('meta-sh-lede', 'subhero', 'lede');
       wireMeta('meta-board-eyebrow', 'board', 'eyebrow'); wireMeta('meta-board-heading', 'board', 'heading'); wireMeta('meta-board-lede', 'board', 'lede');
       wireMeta('meta-verv-eyebrow', 'verv', 'eyebrow'); wireMeta('meta-verv-heading', 'verv', 'heading'); wireMeta('meta-verv-lede', 'verv', 'lede');
 
@@ -721,7 +731,7 @@
           Object.keys(refs).forEach(function (p) {
             var d = store[p] || imgCache[p];
             if (d && /^data:/.test(d)) {
-              try { items.push({ name: p.split('/').pop(), bytes: AC.dataUrlToBytes(d) }); } catch (_) {}
+              try { items.push({ name: p, bytes: AC.dataUrlToBytes(d) }); } catch (_) {}
             }
           });
           if (items.length) {

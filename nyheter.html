@@ -72,9 +72,9 @@
 <section class="subhero">
   <img class="subhero__seal" src="assets/apeiron-logo.png" alt="" aria-hidden="true" />
   <div class="subhero__inner">
-    <a class="subhero__back" href="index.html">Tilbake</a>
-    <h1>Nyheter</h1>
-    <p class="subhero__lede">Kunngjøringer og beskjeder fra Apeiron — det som er aktuelt nå øverst, og et arkiv over tidligere oppslag lenger ned.</p>
+    <a class="subhero__back" href="index.html" id="ix-nw-back">Tilbake</a>
+    <h1 id="ix-nw-title">Nyheter</h1>
+    <p class="subhero__lede" id="ix-nw-lede">Kunngjøringer og beskjeder fra Apeiron — det som er aktuelt nå øverst, og et arkiv over tidligere oppslag lenger ned.</p>
   </div>
 </section>
 
@@ -159,7 +159,15 @@
       if (arkList) arkList.innerHTML = '';
     }
   }
+  function effSubhero(){
+    var base=(window.NEWS_CONTENT&&window.NEWS_CONTENT.subhero)||{};
+    try{ var raw=localStorage.getItem('apeiron-news-v1'); if(raw){var d=JSON.parse(raw); if(d&&d.subhero) return d.subhero;} }catch(_){}
+    return base;
+  }
+  function setTx(id,v){ var el=document.getElementById(id); if(el&&v!=null&&v!=='') el.textContent=v; }
+  function applySubhero(sh){ sh=sh||effSubhero(); setTx('ix-nw-back',sh.back); setTx('ix-nw-title',sh.title); setTx('ix-nw-lede',sh.lede); }
   render();
+  applySubhero();
 
   /* ── Live forhåndsvisning fra admin (nyheter.html?preview=1) ── */
   (function(){
@@ -168,6 +176,7 @@
     window.addEventListener('message', function(e){
       var d=e.data; if(!d||d.type!=='apeiron-news-preview')return;
       if(Array.isArray(d.items)) render(d.items);
+      if(d.subhero) applySubhero(d.subhero);
     });
     try{ parent.postMessage({type:'apeiron-news-preview-ready'},'*'); }catch(_){}
   })();
@@ -175,6 +184,7 @@
 </script>
 <script src="report.js"></script>
 <script src="search-index.js"></script>
+<script src="minisearch.min.js"></script>
 <script src="site-search.js"></script>
 </body>
 </html>

@@ -21,6 +21,12 @@
 
 window.MERCH_INFO = "Her kommer det mye snacks!";
 
+window.MERCH_SUBHERO = {
+  "back": "Tilbake til forsiden",
+  "title": "Merch",
+  "lede": "Bær filosofien med deg. Alt av Apeiron-merch lages i begrenset opplag — bestill via Vipps og hent på lesesalen."
+};
+
 window.MERCH_PRODUCTS = [
   {
     "id": "segl-pin",

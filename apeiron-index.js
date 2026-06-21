@@ -37,14 +37,20 @@
 
   function renderIndex() {
     var C = window.INDEX_CONTENT || {};
-    var hero = C.hero || {}, kontakt = C.kontakt || {};
+    var hero = C.hero || {}, medlem = C.medlem || {}, kontakt = C.kontakt || {};
+    var arr = C.arr || {}, apo = C.apo || {}, fadder = C.fadder || {};
 
     /* ── HERO ── */
+    var wm = hero.wordmark || {};
+    setText('ix-hero-wm-pre', wm.pre);
+    setText('ix-hero-wm-mid', wm.mid);
+    setText('ix-hero-wm-post', wm.post);
     setText('ix-hero-eyebrow', hero.eyebrow);
     setText('ix-hero-tag', hero.tag);
     setText('ix-hero-lede', hero.lede);
     if (hero.cta1) { setText('ix-hero-cta1-label', hero.cta1.label); setHref('ix-hero-cta1', hero.cta1.href); }
     if (hero.cta2) { setText('ix-hero-cta2-label', hero.cta2.label); setHref('ix-hero-cta2', hero.cta2.href); }
+    setText('ix-hero-bridge', hero.bridge);
 
     var wipBanner = document.getElementById('wip-banner');
     if (wipBanner && hero.wip) {
@@ -54,8 +60,36 @@
       else wipBanner.style.display = '';
     }
 
+    /* ── BLI MEDLEM (intro-kolonnen) ── */
+    setText('ix-m-eyebrow', medlem.eyebrow);
+    setText('ix-m-heading', medlem.heading);
+    setText('ix-m-lede', medlem.lede);
+    var benHost = document.getElementById('ix-m-benefits');
+    if (benHost && Array.isArray(medlem.benefits) && (IS_PREVIEW || medlem.benefits.length)) {
+      var CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg>';
+      benHost.innerHTML = medlem.benefits.map(function (b) {
+        return '<li>' + CHECK + ' ' + esc(b) + '</li>';
+      }).join('');
+    }
+
+    /* ── SEKSJONS-INTROER (Arrangementer / Aporetisk / Fadderukene) ── */
+    setText('ix-arr-eyebrow', arr.eyebrow);
+    setText('ix-arr-heading', arr.heading);
+    setText('ix-arr-lede', arr.lede);
+    setText('ix-apo-eyebrow', apo.eyebrow);
+    setText('ix-apo-title', apo.title);
+    setText('ix-apo-lede', apo.lede);
+    setText('ix-apo-forwhom', apo.forWhom);
+    setText('ix-apo-greek', apo.greek);
+    setText('ix-apo-greek-sub', apo.greekSub);
+    setText('ix-apo-note', apo.note);
+    setText('ix-fadder-eyebrow', fadder.eyebrow);
+    setText('ix-fadder-heading', fadder.heading);
+    setText('ix-fadder-lede', fadder.lede);
+
     /* ── KONTAKT ── */
     setText('ix-k-heading', kontakt.heading);
+    setText('ix-k-eyebrow', kontakt.eyebrow);
     setText('ix-k-email', kontakt.email);
     setHref('ix-k-email', kontakt.email ? 'mailto:' + kontakt.email : '');
     setText('ix-k-address', kontakt.address);

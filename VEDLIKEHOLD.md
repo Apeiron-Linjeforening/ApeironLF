@@ -35,9 +35,17 @@ Du trenger **ikke** å gjøre noe på Cloudflare manuelt. Det skjer av seg selv 
 endringer pushes til GitHub-repoet. Vanligvis tar det under ett minutt fra push til
 siden er live.
 
-Admin-senteret skriver aldri til serveren selv — det **laster ned** ferdige filer som
-en innholdsredaktør så legger inn i GitHub. Det er denne opplastingen som utløser en ny
-Cloudflare-deploy.
+**Publisering fra Admin-senteret (G1):** med GitHub-innlogging committer admin
+endringene **rett til repoet** når du trykker «☁ Publiser til GitHub» — ingen
+nedlasting, ingen manuell push. Innloggingen kjører server-løst på Cloudflare Pages
+Functions (`functions/api/github/`); tokenet ligger i en httpOnly-cookie og når aldri
+nettleseren. Engangs-oppsett (GitHub OAuth-app + miljøvariabler) er beskrevet i
+[docs/g1-oppsett.md](docs/g1-oppsett.md).
+
+**Reserveløsning:** «↓ Last ned alle endrede» (nederst i **Oversikt**-fanen i admin)
+laster fortsatt ned de ferdige filene, slik at en redaktør kan legge dem inn i GitHub
+manuelt hvis publiseringen ikke virker. Det er denne opplastingen — eller G1-commiten —
+som utløser en ny Cloudflare-deploy.
 
 ---
 
@@ -222,9 +230,19 @@ Den regenereres automatisk når du publiserer fra Admin-senteret.
 
 | Fil | Hva den er | Redigeres |
 | --- | --- | --- |
-| `site-search.js` | Selve søkefunksjonen (overlay, tastatur, scoring) | Sjelden — kun ved endret *oppførsel* |
+| `site-search.js` | Selve søkefunksjonen (overlay, tastatur, MiniSearch-motor) | Sjelden — kun ved endret *oppførsel* |
+| `minisearch.min.js` | Søkemotor-biblioteket (MiniSearch v7, vendet inn — ingen CDN). Lastes **før** `site-search.js` | Aldri — bytt kun ved versjonsoppgradering |
 | `search-index.js` | **Auto-generert** liste over alle treff. Lastes på alle sider | **Aldri for hånd** — genereres ved «Publiser» |
 | `search-base.js` | Statiske treff som *ikke* kommer fra en admin-modul (sider, seksjoner, emner) | For hånd, ved behov |
+
+**Motoren:** søket bruker **MiniSearch** med en norsk stemmer (bøyning — «studieretninger»
+finner «studieretning») og fuzzy-treff (skrivefeil — «filosfi» finner «filosofi»). Faller
+automatisk tilbake til enkel delstreng-scoring hvis biblioteket ikke skulle laste. Indeksen
+bygges i nettleseren fra `search-index.js` ved hver sidelast — nytt publisert innhold er
+automatisk søkbart. Uregelmessige ord stemmeren bommer på legges i `SYN`-lista øverst i
+`site-search.js`.
+
+> Nye sider må laste `minisearch.min.js` **før** `site-search.js` (rett etter `search-index.js`).
 
 - **Dynamiske treff** kommer fra modulenes `searchEntries()` (styremedlemmer,
   merch-produkter, Begrep-podkast, oppnåelser, utmerkelser, nyheter).
@@ -247,6 +265,31 @@ side, ny seksjon, nytt emne):
 `GROUP_ORDER` øverst i `site-search.js`.)
 
 > ⚠️ **Rediger aldri `search-index.js` direkte** — den overskrives ved neste publisering.
+
+### Oppdatere søkemotoren (MiniSearch) — kun ved behov
+
+`minisearch.min.js` er **frosset** på én versjon (MiniSearch v7) og oppdateres aldri av
+seg selv. Du trenger **ikke** vedlikeholde den — biblioteket kjører i nettleseren på våre
+egne statiske data, så det er ingen sikkerhetsgrunn til å oppgradere. Gjør det **bare** hvis
+en nyere versjon gir noe dere faktisk vil ha, eller for å rette en konkret feil.
+
+Slik oppdaterer du (engangsjobb — «bytt ut den ene fila og test»):
+
+1. **Hent det nye UMD-bygget.** Last ned fra et CDN og bytt versjonsnummeret til det nyeste:
+   `https://cdn.jsdelivr.net/npm/minisearch@7.1.0/dist/umd/index.min.js`
+   (fila som starter med `!function(t,e)…` og definerer `window.MiniSearch`).
+2. **Lagre den over `minisearch.min.js`** — *samme filnavn*. Da slipper du å røre de 14
+   sidene; de peker allerede på det navnet.
+3. **Test søket:** åpne en side, trykk **⌘/Ctrl + K**, og søk på noe med bøyning
+   («studieretninger» skal finne «studieretning») og en skrivefeil («filosfi» skal finne
+   «filosofi»). Virker det som før, er du i mål.
+4. **Commit/push** den ene fila.
+
+> ⚠️ **Hovedversjon-hopp (f.eks. v7 → v8)** kan endre hvordan biblioteket kalles.
+> `site-search.js` bruker tre ting: `new MiniSearch({…})`, `.addAll(…)` og
+> `.search(q, { prefix, fuzzy, boost, combineWith })`. Endrer en storversjon noen av disse,
+> må `site-search.js` justeres tilsvarende. Innenfor samme storversjon (v7.x) er det et rent
+> drop-in-bytte. Er du i tvil, la utvikleren ta hovedversjon-hopp så API-et sjekkes samtidig.
 
 ---
 
@@ -425,7 +468,8 @@ function doPost(e) {
 | `palette.js` | Felles fargesystem (lys/mørk per navngitt farge) |
 | `footer-icons.js` | Delt ikonsett for footeren |
 | `image-slot.js` | Gjenbrukbar bildekomponent (`<image-slot>`) |
-| `site-search.js` | Søkefunksjon (overlay + scoring) |
+| `site-search.js` | Søkefunksjon (overlay + MiniSearch-motor) |
+| `minisearch.min.js` | Søkemotor-bibliotek (MiniSearch v7, vendet inn) |
 | `search-base.js` | Statiske søketreff — input til indeksen |
 | `search-index.js` | Auto-generert søkeindeks (rediger aldri for hånd) |
 | `styles.css` | All styling for de offentlige sidene |

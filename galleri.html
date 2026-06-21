@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <script src="theme.js"></script>
+<script>try{if(/[?&]preview\b/.test(location.search))document.documentElement.classList.add('is-preview');}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Galleri — Apeiron · NTNU</title>
 <meta name="description" content="Bilder fra Apeirons arrangementer — fester, fagkvelder, fadderuker og turer gjennom årene. Linjeforeningen for filosofi og etikk ved NTNU." />
@@ -341,9 +342,9 @@
 <section class="subhero" id="top">
   <img class="subhero__seal" src="assets/apeiron-logo.png" alt="" aria-hidden="true" />
   <div class="subhero__inner">
-    <a class="subhero__back" href="index.html#arrangementer">Tilbake</a>
-    <h1>Galleri</h1>
-    <p class="subhero__lede">Øyeblikk fra det sosiale livet i Apeiron — fester, fagkvelder og alt imellom.</p>
+    <a class="subhero__back" href="index.html#arrangementer" id="ix-gl-back">Tilbake</a>
+    <h1 id="ix-gl-title">Galleri</h1>
+    <p class="subhero__lede" id="ix-gl-lede">Øyeblikk fra det sosiale livet i Apeiron — fester, fagkvelder og alt imellom.</p>
   </div>
 </section>
 
@@ -383,6 +384,9 @@
 <script src="site-content.js"></script>
 <script src="nav-content.js"></script>
 <script src="site-chrome.js"></script>
+
+<script src="galleri-content.js"></script>
+<script src="apeiron-galleri.js"></script>
 
 <script src="api-config.js"></script>
 <script>
@@ -814,6 +818,7 @@
 </script>
 <script src="report.js"></script>
 <script src="search-index.js"></script>
+<script src="minisearch.min.js"></script>
 <script src="site-search.js"></script>
 </body>
 </html>

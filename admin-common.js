@@ -124,7 +124,7 @@
         dragEl.style.margin = '0';
         dragEl.style.pointerEvents = 'none';
         dragEl.style.boxSizing = 'border-box';
-        try { handle.setPointerCapture(e.pointerId); } catch (_) {}
+        document.body.style.userSelect = 'none';
         autoScroll();
       }
 
@@ -137,21 +137,24 @@
       }
 
       function onMove(ev) {
+        if (ev.pointerId !== e.pointerId) return;
         if (!dragging) {
           if (Math.abs(ev.clientX - startX) < THRESH && Math.abs(ev.clientY - startY) < THRESH) return;
           begin();
         }
+        if (ev.cancelable) ev.preventDefault();
         lastY = ev.clientY;
         dragEl.style.left = (ev.clientX - offX) + 'px';
         dragEl.style.top = (ev.clientY - offY) + 'px';
         positionPlaceholder(ev.clientY);
       }
 
-      function end() {
-        handle.removeEventListener('pointermove', onMove);
-        handle.removeEventListener('pointerup', end);
-        handle.removeEventListener('pointercancel', end);
-        try { handle.releasePointerCapture(e.pointerId); } catch (_) {}
+      function end(ev) {
+        if (ev && ev.pointerId != null && ev.pointerId !== e.pointerId) return;
+        document.removeEventListener('pointermove', onMove);
+        document.removeEventListener('pointerup', end);
+        document.removeEventListener('pointercancel', end);
+        document.body.style.userSelect = '';
         if (raf) cancelAnimationFrame(raf);
         if (dragging) {
           if (ph && ph.parentNode) container.insertBefore(dragEl, ph);
@@ -168,9 +171,13 @@
       }
 
       e.preventDefault();
-      handle.addEventListener('pointermove', onMove);
-      handle.addEventListener('pointerup', end);
-      handle.addEventListener('pointercancel', end);
+      // Lytterne ligger på document (ikke handle): da overlever de at det dratte
+      // kortet får position:fixed + pointer-events:none, som tidligere fikk
+      // peker-fangsten til å slippe og «frøs» dra-operasjonen. pointerId-filteret
+      // gjør at bare den aktive pekeren styrer draget.
+      document.addEventListener('pointermove', onMove, { passive: false });
+      document.addEventListener('pointerup', end);
+      document.addEventListener('pointercancel', end);
     });
   }
 
@@ -340,7 +347,8 @@
       window.AdminImageEditor.open({
         src: src, aspect: aspect, aspects: opts.aspects, outSize: opts.outSize || 1000, quality: opts.quality || 0.86,
         round: !!opts.round, title: opts.title || 'Rediger bilde', applyLabel: 'Bruk bilde',
-        onApply: function (url) { var prev = (opts.get && opts.get()) || null; opts.set(url); refresh(url); checkImageSize(url); if (opts.afterChange) opts.afterChange(url); undoable('Bilde endret', function () { opts.set(prev); refresh(prev || ''); if (opts.afterChange) opts.afterChange(prev); }); }
+        onApply: function (url) { var prev = (opts.get && opts.get()) || null; opts.set(url); refresh(url); checkImageSize(url); if (opts.afterChange) opts.afterChange(url); undoable('Bilde endret', function () { opts.set(prev); refresh(prev || ''); if (opts.afterChange) opts.afterChange(prev); }); },
+        onError: function () { try { toast('Det gamle bildet kunne ikke lastes — velg et nytt.'); } catch (_) {} imgPick(openEd); }
       });
     }
     function editOrPick() { var cur = opts.get && opts.get(); if (cur) openEd(cur); else imgPick(openEd); }
@@ -399,7 +407,16 @@
       return handle.requestPermission(opts).then(function (p2) { return p2 === 'granted'; });
     });
   }
+  /* ─── PUBLISERINGS-SINK (G1) ───
+     Når en «capture» er aktiv, samler downloadBlob/saveBlob filene i en liste
+     i stedet for å laste dem ned — slik at «Publiser til GitHub» kan committe
+     nøyaktig de samme filene modulenes export() ellers laster ned. */
+  var _capture = null, _captureTs = 0;
+  function beginCapture() { _capture = []; _captureTs = Date.now(); }
+  function endCapture() { var c = _capture; _capture = null; return c || []; }
+  function captureIdleFor() { return _capture ? (Date.now() - _captureTs) : 1e9; }
   function downloadBlob(filename, content) {
+    if (_capture) { _capture.push({ path: filename, content: String(content == null ? '' : content), encoding: 'utf-8' }); _captureTs = Date.now(); return; }
     var blob = new Blob([content], { type: 'text/javascript;charset=utf-8' });
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
@@ -498,9 +515,10 @@
     return new Blob(all, { type: 'application/zip' });
   }
   function saveBlob(filename, blob) {
+    if (_capture) { _capture.push({ path: filename, blob: blob }); _captureTs = Date.now(); return; }
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
-    a.href = url; a.download = filename;
+    a.href = url; a.download = String(filename).split('/').pop();
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
     setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
   }
@@ -770,6 +788,9 @@
     saveFile: saveFile,
     downloadBlob: downloadBlob,
     saveBlob: saveBlob,
+    beginCapture: beginCapture,
+    endCapture: endCapture,
+    captureIdleFor: captureIdleFor,
     imgGet: imgGet,
     imgSet: imgSet,
     imgDel: imgDel,

@@ -11,6 +11,11 @@
    ============================================================ */
 
 window.NEWS_CONTENT = {
+  "subhero": {
+    "back": "Tilbake",
+    "title": "Nyheter",
+    "lede": "Kunngjøringer og beskjeder fra Apeiron — det som er aktuelt nå øverst, og et arkiv over tidligere oppslag lenger ned."
+  },
   "items": [
     {
       "id": "n-symposion",

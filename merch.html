@@ -455,9 +455,9 @@ html[data-mode="marine"] .cart-item__rm:hover { color: var(--navy); background: 
 <section class="subhero">
   <img class="subhero__seal" src="assets/apeiron-logo.png" alt="" aria-hidden="true" />
   <div class="subhero__inner">
-    <a class="subhero__back" href="index.html">Tilbake til forsiden</a>
-    <h1>Merch</h1>
-    <p class="subhero__lede">Bær filosofien med deg. Alt av Apeiron-merch lages i begrenset opplag — bestill via Vipps og hent på lesesalen.</p>
+    <a class="subhero__back" href="index.html" id="ix-mc-back">Tilbake til forsiden</a>
+    <h1 id="ix-mc-title">Merch</h1>
+    <p class="subhero__lede" id="ix-mc-lede">Bær filosofien med deg. Alt av Apeiron-merch lages i begrenset opplag — bestill via Vipps og hent på lesesalen.</p>
   </div>
 </section>
 
@@ -579,6 +579,13 @@ html[data-mode="marine"] .cart-item__rm:hover { color: var(--navy); background: 
     }).join('');
     box.hidden = false;
   }
+
+  function renderBanner() {
+    var C = window.MERCH_SUBHERO || {};
+    function st(id, v) { var el = document.getElementById(id); if (el && v != null && v !== '') el.textContent = v; }
+    st('ix-mc-back', C.back); st('ix-mc-title', C.title); st('ix-mc-lede', C.lede);
+  }
+  renderBanner();
 
   function renderMerch() {
     var grid = document.getElementById('merch-grid');
@@ -764,6 +771,7 @@ html[data-mode="marine"] .cart-item__rm:hover { color: var(--navy); background: 
       if (!d || d.type !== 'apeiron-merch-preview') return;
       if (Array.isArray(d.products)) window.MERCH_PRODUCTS = d.products;
       window.MERCH_INFO = (d.info != null ? d.info : '');
+      if (d.subhero != null) { window.MERCH_SUBHERO = d.subhero; renderBanner(); }
       renderInfo();
       renderMerch();
       // Vis alle kort umiddelbart i preview (ingen scroll-avsløring).
@@ -779,6 +787,7 @@ html[data-mode="marine"] .cart-item__rm:hover { color: var(--navy); background: 
 <script src="merch-cart.js"></script>
 <script src="report.js"></script>
 <script src="search-index.js"></script>
+<script src="minisearch.min.js"></script>
 <script src="site-search.js"></script>
 </body>
 </html>

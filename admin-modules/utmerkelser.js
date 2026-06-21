@@ -36,8 +36,8 @@
           + '<ol>'
             + '<li>Rediger innholdet nedenfor — klikk på et felt for å redigere det</li>'
             + '<li>Last opp portrett ved å <b>klikke på bildefeltet</b> eller dra et bilde inn</li>'
-            + '<li>Klikk <b>↓ Last ned alle endrede</b> oppe til høyre</li>'
-            + '<li>Erstatt <code>utmerkelser-content.js</code> i GitHub-repositoriet og push/commit</li>'
+            + '<li>Trykk <b>☁ Publiser til GitHub</b> oppe til høyre</li>'
+            + '<li><em>(Reserve hvis publisering svikter: «↓ Last ned alle endrede» nederst i Oversikt-fanen, og legg fila i GitHub.)</em></li>'
             + '<li>Cloudflare oppdaterer nettsiden automatisk innen et minutt</li>'
           + '</ol>'
           + '<div class="tip-note">💾 Endringer lagres automatisk i nettleseren din. Eksempel­kortene er bare maler — bytt dem ut med ekte personer.</div>'
@@ -47,6 +47,8 @@
             + '<div class="fg narrow"><label data-help="Liten etikett over overskriften, f.eks. «Heder & ære».">Eyebrow</label><input type="text" data-meta="eyebrow"></div>'
             + '<div class="fg"><label>Overskrift</label><input type="text" data-meta="heading"></div>'
             + '<div class="fg"><label>Ingress</label><input type="text" data-meta="lede"></div>'
+            + '<div class="fg narrow"><label data-help="Teksten på «Tilbake»-lenken øverst til venstre.">Tilbake-tekst</label><input type="text" data-meta="back"></div>'
+            + '<div class="fg narrow"><label data-help="Hvor «Tilbake»-lenken går, f.eks. index.html.">Tilbake-lenke</label><input type="text" data-meta="backHref"></div>'
           + '</div>'
         + '</div>'
         + '<div class="sec"><div class="sec-head"><h2>Utmerkelser (personer)</h2><span class="count" data-count></span><button class="btn-add" type="button" data-add>+ Ny utmerkelse</button></div><div class="list" data-list></div></div>'
@@ -59,7 +61,7 @@
       function fresh() {
         var c = window.UTMERKELSER_CONTENT || {};
         return {
-          intro: Object.assign({ eyebrow: 'Heder & ære', heading: 'Utmerkelser', lede: '' }, c.intro || {}),
+          intro: Object.assign({ eyebrow: 'Heder & ære', heading: 'Utmerkelser', lede: '', back: 'Tilbake', backHref: 'index.html' }, c.intro || {}),
           people: (c.people || []).map(function (x) { return Object.assign({}, x); })
         };
       }

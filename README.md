@@ -90,18 +90,23 @@ eller dra et bilde inn.
 
 ## 3. Slik publiserer du (gjør endringene synlige for alle)
 
-Tre steg. Du redigerer aldri kode — du flytter bare ferdige filer.
+Med GitHub-innlogging publiserer du **rett fra Admin-senteret** — ingen filer å laste ned
+eller pushe manuelt.
 
-1. Trykk **↓ Last ned alle endrede** øverst til høyre. De endrede filene (og eventuelle
-   bilder) lastes ned til maskinen din.
-2. **Last filene opp til GitHub** — der nettsiden «bor». Du **erstatter** hele filer
-   med de nye; du åpner dem aldri for å skrive i dem.
-3. Vent ca. ett minutt. Nettsiden oppdaterer seg selv automatisk.
+1. **Logg inn** med GitHub-kontoen din — knappen **☁ Logg inn for å publisere** øverst til
+   høyre. (Bare første gang; du holder deg innlogget en stund.)
+2. **Rediger** i panelene som vanlig. Alt lagres automatisk i nettleseren og vises i live
+   forhåndsvisning.
+3. Trykk **☁ Publiser til GitHub** øverst til høyre. Endringene skrives rett til nettsidens
+   repo (én samlet «commit»).
+4. Vent ca. ett minutt — nettsiden oppdaterer seg selv automatisk.
 
-> 💡 **Usikker på GitHub-steget?** Det er det eneste som krever litt teknisk tilgang —
-> selve redigeringen har du allerede gjort i Admin-senteret. Spør den som drifter
-> nettsiden, så tar de opplastingen. Full framgangsmåte for opplasting ligger i
-> [VEDLIKEHOLD.md](VEDLIKEHOLD.md).
+> 💡 **Hvem kan publisere?** Bare GitHub-kontoer som er satt opp med tilgang (se
+> [docs/g1-oppsett.md](docs/g1-oppsett.md)). Hver publisering merkes med hvem som gjorde den.
+
+> 🛟 **Reserveløsning:** skulle publisering svikte, finnes en backup som laster ned filene
+> for manuell opplasting til GitHub. Den trenger du normalt ikke — full framgangsmåte for
+> drift står i [VEDLIKEHOLD.md](VEDLIKEHOLD.md).
 
 ---
 
@@ -125,8 +130,7 @@ Hver del i menyen styrer én del av nettsiden:
 | **Oppnåelser** | Milepæler / oppnåelser |
 | **Utmerkelser** | Utmerkelser og priser |
 
-Hvert panel har sin egen **↓ Last ned**-knapp hvis du bare vil publisere den ene delen,
-eller bruk **↓ Last ned alle endrede** for å ta alt på én gang.
+Publiser alt på én gang med **☁ Publiser til GitHub** øverst til høyre.
 
 > 💡 **Hastebeskjed?** En kjapp viktig melding (for eksempel «Aporetisk i kveld er flyttet»)
 > legger du ut i **Nyheter**-panelet — skru på **⚑ Viktig** og velg hvor den skal vises.
@@ -232,8 +236,9 @@ Sideinnhold ligger i data-filer (`*-content.js` / `*-config.js`), ikke hardkodet
 mounter tynne editor-moduler fra `admin-modules/<område>.js`. Modulene deler
 `admin-common.js` (datalager `createStore`, drag-sortering, hjelpebobler, `saveFile`,
 panel-registeret `AdminPanels`) og `admin-modules.css` (klasse-scopet stil per modul).
-Hver modul har live forhåndsvisning og en «↓ Last ned»-knapp; redigeringsløkka er
-*rediger → last ned data-fil → commit/push → Cloudflare bygger (~1 min)*.
+Hver modul har live forhåndsvisning. Redigeringsløkka er
+*rediger → **☁ Publiser til GitHub** → Cloudflare bygger (~1 min)*; en nedlastings-backup
+finnes for manuell publisering (se [VEDLIKEHOLD.md](VEDLIKEHOLD.md)).
 Full arkitekturforklaring: [docs/admin-arkitektur.md](/docs/admin-arkitektur.md).
 
 ---
@@ -261,10 +266,6 @@ Ting vi vet om, men er usikre på om det er verdt å gjøre noe med. Ført opp s
 <summary><b>Åpne to-do-lista</b></summary>
 
 Kritisk:
-- [ ] Sjekke at "Legg til fadderukeprogrammet i din kalender" fungerer: iCal og Google Kalender.
-- [ ] Revamp av Hero. - ish gjort.
-- [ ] Admin bug fix: Drag and drop for sortering i admin er veldig buggy- Første gang man drar fryser det opp + det man drar samsvarer ikke med hvor man slipper det.
-- [ ] Admin bug fix: admin har ofte allerde upubliserte endringer når man åpner en opp. Hver gang man lukker/åpner admin burde ting automatisk bli satt til hvordan publiserte versjonen er (sett inn varsel for når man første gang lukker admin siden med en sjekk boks for "ikke vis meg dette varselet igjen")
 
 Medium:
 - [ ] Be HF studentrådet om å oppdatere sidene deres og gi oss mer informasjon om hva de faktisk gjør. 
@@ -272,10 +273,9 @@ Medium:
       - [ ] Hvordan får vi kontakt med våre egne TVer?
 - [ ] Legge til side for møtereferat -> Kan tas i egen wiki, muligens. Fylle ut SAK / utvide den kan tas på denne wiki siden.
 - [ ] Sammenlign med https://www.mfplacebo.no/
+- [ ] Sjekke at "Legg til fadderukeprogrammet i din kalender" fungerer: iCal og Google Kalender.
 
 Lav:
-- [ ] Full revamp av hvordan hele siden redigeres: mer square space aktig.
-      Hva kan ikke gjøres per nå: Endre av logo - Flytte om på seksjoner - Flytte seksjoner mellom sider - Endre alt fra én admin side - Visuell endring direkte i et preview.
 
 Ønsker:
 - [ ] Snakke med IFR/NTNU om API for automatisk oppdatering av emner for studiene.
@@ -286,7 +286,7 @@ Må gjøres før vi slapper av med å bygge nettsiden:
 - [ ] Sjekke på nytt hvordan alt oppfører seg på mobil og smalere skjermer.
 - [ ] Fjern WIP banneret.
 
-Skjelett Prosjekt:
+Page-builder Prosjekt:
 - [ ] Gjøre om prosjektet til et nytt repo som kan klones og lett gjøres om til andre linjeforeninger.
 - [ ] Må lages en readme som sier hva man må gjøre for å starte.
 

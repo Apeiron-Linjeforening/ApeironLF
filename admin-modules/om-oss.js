@@ -1,226 +1,467 @@
 /* ============================================================
-   admin-modules/om-oss.js — «Om oss»-editor som C-modul
-   Erstatter om-oss-admin.html. Krever om-content.js (OM_CONTENT), som skallet
-   (admin.html) laster. Live forhåndsvisning via om-oss.html?preview=1.
+   admin-modules/om-oss.js — «Om oss»-bygger (Page Builder)
+   ------------------------------------------------------------
+   PAGE-native: redigerer window.OM_PAGE (om.page.js) — en ordnet
+   liste av typede seksjoner { id, type, tone, enabled, props }.
+
+   To deler:
+     1) SEKSJONSBYGGER (øverst): dra for å sortere, tone-velger per
+        seksjon (Auto/Lys/Mørk/Aksent) med rytme-vakt, «+ Ny seksjon»
+        og slett. Topp-banneret er pinnet (kan ikke slettes).
+     2) INNHOLD (under): ett panel per seksjon, felter etter type.
+
+   PRESIS LIVE-PREVIEW — tre meldingstyper, så previewen ikke bygges
+   om unødig (var årsaken til flimmer/bilde-relasting):
+     fargebytte      → apeiron-page-tone     (kun data-tone)
+     tekstredigering → apeiron-section-update (kun den ene seksjonen)
+     struktur        → apeiron-page-preview   (full tegning)
+   Eksporterer om.page.js.
    ============================================================ */
 (function () {
   'use strict';
 
+  var TONES = [
+    { v: 'auto', l: 'Auto' },
+    { v: 'paper', l: 'Lys' },
+    { v: 'navy', l: 'Mørk' },
+    { v: 'accent', l: 'Aksent' }
+  ];
+  var TYPE_ICON = { banner: '▤', about: '¶', cardgrid: '▦', lesesal: '▥', join: '★', faq: '?' };
+
   AdminPanels.define('om-oss', {
     title: 'Om oss',
     see: { href: 'om-oss.html', label: 'Se Om oss ↗' },
-    exportName: 'om-content.js',
+    exportName: 'om.page.js',
 
     mount: function (host, AC) {
       host.innerHTML =
         '<section class="preview-top">'
           + '<h3>Forhåndsvisning</h3>'
-          + '<p class="pp-sub">Live fra den ekte «Om oss»-siden — endringene dine vises umiddelbart. Dette panelet styrer <b>«Hva er apeiron?»</b> og <b>FAQ-en</b>. (Samarbeid, Lesesalen, Møt styret og Bli medlem styres andre steder.)</p>'
+          + '<p class="pp-sub">Live fra den ekte «Om oss»-siden. Bygg siden med <b>seksjoner</b>: dra for å endre rekkefølge, velg <b>tone</b> (farge) per seksjon, legg til eller fjern. Innholdet redigeres i panelene under.</p>'
           + '<div class="pv-board-wrap"><iframe id="pv-board" src="om-oss.html?preview=1" title="Forhåndsvisning av Om oss"></iframe></div>'
         + '</section>'
         + '<div class="tip">'
           + '<button class="tip-reset" id="reset-btn" type="button">Tilbakestill til siste publiserte versjon</button>'
           + '<strong>Slik oppdaterer du Om oss</strong>'
           + '<ol>'
-            + '<li>Rediger tekstene nedenfor — endringer vises live i forhåndsvisningen</li>'
-            + '<li>Klikk <b>↓ Last ned alle endrede</b> oppe til høyre</li>'
-            + '<li>Erstatt <code>om-content.js</code> i GitHub-repositoriet og push/commit</li>'
+            + '<li>Bygg og rediger nedenfor — endringer vises live i forhåndsvisningen</li>'
+            + '<li>Trykk <b>☁ Publiser til GitHub</b> oppe til høyre</li>'
+            + '<li><em>(Reserve hvis publisering svikter: «↓ Last ned alle endrede» nederst i Oversikt-fanen, og legg fila i GitHub.)</em></li>'
             + '<li>Cloudflare oppdaterer nettsiden automatisk innen et minutt</li>'
           + '</ol>'
-          + '<div class="tip-note">💾 Endringer lagres automatisk i nettleseren din. Dette panelet styrer «Om oss»-teksten og hele FAQ-en. Hero/Kontakt på Hjem ligger i Forsiden-panelet.</div>'
+          + '<div class="tip-note">💾 Endringer lagres automatisk i nettleseren din. Lesesalen-bildene ligger som filer i <code>assets/lesesalen/</code>; medlemspriser i Medlemskap-panelet.</div>'
         + '</div>'
-        + '<div class="panel"><h2>Om oss <small>«Hva er apeiron?»</small></h2>'
+        + '<div class="panel"><h2>Seksjoner <small>dra, velg tone, legg til eller fjern</small></h2>'
           + '<div class="panel-body">'
-            + '<div class="frow">'
-              + '<div class="fg narrow"><label>Eyebrow</label><input type="text" id="om-eyebrow"></div>'
-              + '<div class="fg narrow"><label>Gresk ord</label><input type="text" id="om-greek"></div>'
-              + '<div class="fg"><label>Uttale / undertekst</label><input type="text" id="om-greekSmall"></div>'
-            + '</div>'
-            + '<div class="sub-h">Avsnitt</div><div class="lst" id="lst-paras"></div><button class="btn-add" type="button" data-add="paras">+ Nytt avsnitt</button>'
-            + '<div class="sub-h">Timeglass-kort</div>'
-            + '<div class="fg"><label>Tittel</label><input type="text" id="om-card-title"></div>'
-            + '<div class="fg"><label>Tekst</label><textarea id="om-card-body"></textarea></div>'
-            + '<div class="sub-h">Samarbeids-teaser</div>'
-            + '<div class="frow"><div class="fg narrow"><label>Eyebrow</label><input type="text" id="om-teaser-eyebrow"></div>'
-            + '<div class="fg"><label>Tittel</label><input type="text" id="om-teaser-title"></div></div>'
-            + '<div class="fg"><label>Tekst</label><textarea id="om-teaser-body"></textarea></div>'
-            + '<div class="frow"><div class="fg"><label>Lenketekst</label><input type="text" id="om-teaser-linkLabel"></div>'
-            + '<div class="fg narrow"><label>Lenke</label><input type="text" id="om-teaser-linkHref" placeholder="#samarbeid"></div></div>'
-            + '<div class="sub-h">Nøkkeltall</div><div class="lst" id="lst-stats"></div><button class="btn-add" type="button" data-add="stats">+ Nytt tall</button>'
+            + '<p class="hint">Tonen styrer bakgrunnen. <b>Auto</b> veksler lys/mørk automatisk så rytmen aldri brekker; velg en fast tone for å bestemme selv. Topp-banneret ligger alltid øverst.</p>'
+            + '<div class="builder" id="lst-sections"></div>'
+            + '<div id="picker-host"></div>'
           + '</div>'
         + '</div>'
-        + '<div class="panel"><h2>FAQ <small>ofte stilte spørsmål</small></h2>'
-          + '<div class="panel-body">'
-            + '<div class="frow"><div class="fg narrow"><label>Eyebrow</label><input type="text" id="faq-eyebrow"></div>'
-            + '<div class="fg"><label>Overskrift</label><input type="text" id="faq-heading"></div></div>'
-            + '<div class="sub-h">Spørsmål &amp; svar</div><div class="lst" id="lst-faq"></div><button class="btn-add" type="button" data-add="faq">+ Nytt spørsmål</button>'
-          + '</div>'
-        + '</div>';
+        + '<div id="sec-editors"></div>';
 
-      var q = function (id) { return host.querySelector('#' + id); };
-      var LS_KEY = 'apeiron-om-v1';
+      var LS_KEY = 'apeiron-om-page-v1';
       var data = {};
+      var openPicker = false;
+
       function clone(o) { return JSON.parse(JSON.stringify(o)); }
-      function fresh() {
-        var c = window.OM_CONTENT || {};
-        var d = clone(c);
-        d.om = d.om || {};
-        d.om.paras = Array.isArray(d.om.paras) ? d.om.paras : [];
-        d.om.card = d.om.card || { title: '', body: '' };
-        d.om.teaser = d.om.teaser || { eyebrow: '', title: '', body: '', linkLabel: '', linkHref: '' };
-        d.om.stats = Array.isArray(d.om.stats) ? d.om.stats : [];
-        d.faq = d.faq || {};
-        d.faq.items = Array.isArray(d.faq.items) ? d.faq.items : [];
-        return d;
+      function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+      function freshPage() { return clone(window.OM_PAGE || { meta: {}, sections: [] }); }
+
+      function normalize() {
+        if (!data || typeof data !== 'object') data = freshPage();
+        if (!data.meta) data.meta = { title: 'Om oss', slug: 'om-oss' };
+        if (!Array.isArray(data.sections)) data.sections = [];
+        data.sections.forEach(function (s) {
+          if (!s.id) s.id = newId(s.type || 'sek');
+          if (!s.type) s.type = 'about';
+          if (!s.tone) s.tone = 'auto';
+          if (!s.props || typeof s.props !== 'object') s.props = SectionTypes.defaults(s.type);
+        });
       }
+      function newId(type) {
+        var base = (type || 'sek').replace(/[^a-z0-9]/gi, '').slice(0, 8) || 'sek';
+        var id, n = 0;
+        do { id = base + (n ? '-' + n : '-' + Math.random().toString(36).slice(2, 5)); n++; }
+        while (data.sections && data.sections.some(function (s) { return s.id === id; }));
+        return id;
+      }
+
       function loadData() {
         var raw = localStorage.getItem(LS_KEY);
         if (raw) { try { data = JSON.parse(raw); normalize(); return; } catch (_) {} }
-        data = fresh();
+        data = freshPage(); normalize();
       }
-      function normalize() {
-        var f = fresh();
-        data = Object.assign({}, f, data);
-        data.om = Object.assign({}, f.om, data.om);
-        data.om.card = Object.assign({}, f.om.card, data.om.card);
-        data.om.teaser = Object.assign({}, f.om.teaser, data.om.teaser);
-        if (!Array.isArray(data.om.paras)) data.om.paras = [];
-        if (!Array.isArray(data.om.stats)) data.om.stats = [];
-        data.faq = Object.assign({}, f.faq, data.faq);
-        if (!Array.isArray(data.faq.items)) data.faq.items = [];
-      }
-      function saveData() { localStorage.setItem(LS_KEY, JSON.stringify(data)); pushPreview(); }
+
+      /* ── Persistering + presise preview-dytt ──────────────── */
       var saveTimer = null;
-      function lazySave() { pushPreview(); clearTimeout(saveTimer); saveTimer = setTimeout(function () { saveData(); AC.toast('Lagret i nettleseren'); }, 300); }
-      function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+      function persist() { clearTimeout(saveTimer); saveTimer = setTimeout(function () { localStorage.setItem(LS_KEY, JSON.stringify(data)); AC.toast('Lagret i nettleseren'); }, 350); }
+      var pvFrame;
+      function post(msg) { if (pvFrame && pvFrame.contentWindow) { try { pvFrame.contentWindow.postMessage(msg, '*'); } catch (e) {} } }
+      function pushFull() { post({ type: 'apeiron-page-preview', page: data }); }
+      function pushTone() { post({ type: 'apeiron-page-tone', page: data }); }
+      function pushSection(id) { post({ type: 'apeiron-section-update', page: data, id: id }); }
 
-      var FIELD_MAP = {
-        'om-eyebrow': 'om.eyebrow', 'om-greek': 'om.greek', 'om-greekSmall': 'om.greekSmall',
-        'om-card-title': 'om.card.title', 'om-card-body': 'om.card.body',
-        'om-teaser-eyebrow': 'om.teaser.eyebrow', 'om-teaser-title': 'om.teaser.title', 'om-teaser-body': 'om.teaser.body',
-        'om-teaser-linkLabel': 'om.teaser.linkLabel', 'om-teaser-linkHref': 'om.teaser.linkHref',
-        'faq-eyebrow': 'faq.eyebrow', 'faq-heading': 'faq.heading'
-      };
-      function getPath(path) { return path.split('.').reduce(function (o, k) { return (o || {})[k]; }, data); }
-      function isUnsafeKey(k) { return k === '__proto__' || k === 'prototype' || k === 'constructor'; }
-      function setPath(path, val) {
-        var parts = path.split('.'), o = data;
-        for (var p = 0; p < parts.length; p++) { if (isUnsafeKey(parts[p])) return; }
-        for (var i = 0; i < parts.length - 1; i++) {
-          var key = parts[i];
-          if (!Object.prototype.hasOwnProperty.call(o, key) || o[key] == null || typeof o[key] !== 'object') o[key] = {};
-          o = o[key];
+      /* ── Tone-utregning (speiler section-engine) for rytme-vakt ── */
+      function resolveTones() {
+        var prev = null;
+        return data.sections.map(function (s) {
+          var t = s.tone || 'auto';
+          if (t === 'auto') t = (prev === 'paper') ? 'navy' : 'paper';
+          prev = t;
+          return t;
+        });
+      }
+      function toneName(t) { return t === 'navy' ? 'mørk' : t === 'accent' ? 'aksent' : 'lys'; }
+      function secLabel(s) {
+        var p = s.props || {};
+        return p.title || p.heading || p.eyebrow || (SectionTypes.get(s.type) || {}).label || s.type;
+      }
+
+      /* ════════ SEKSJONSBYGGER ════════ */
+      function renderBuilder() {
+        var hostEl = document.getElementById('lst-sections'); if (!hostEl) return;
+        hostEl.innerHTML = '';
+        var resolved = resolveTones();
+        data.sections.forEach(function (s, i) {
+          var row = document.createElement('div');
+          row.className = 'brow' + (s.enabled === false ? ' is-off' : '') + (s.pinned ? ' is-pinned' : '');
+          row.setAttribute('data-id', s.id);
+          var seg = TONES.map(function (t) {
+            return '<button type="button" data-tone="' + t.v + '"' + (s.tone === t.v ? ' class="on"' : '') + '>' + t.l + '</button>';
+          }).join('');
+          row.innerHTML =
+            '<span class="drag-handle" title="Dra for å sortere">⠿</span>'
+            + '<span class="brow__ico">' + (TYPE_ICON[s.type] || '▭') + '</span>'
+            + '<span class="brow__name"><b>' + esc(secLabel(s)) + '</b><span>#' + esc(s.id) + ' · ' + esc(s.type) + '</span></span>'
+            + '<span class="seg">' + seg + '</span>'
+            + '<span class="brow__act">'
+              + '<button class="iconbtn" data-act="edit" title="Rediger innhold">✎</button>'
+              + (s.pinned ? '' : '<button class="iconbtn danger" data-act="del" title="Fjern seksjon">✕</button>')
+            + '</span>';
+          row.querySelectorAll('.seg button').forEach(function (b) {
+            b.addEventListener('click', function () {
+              s.tone = b.getAttribute('data-tone');
+              renderBuilder();        // oppdater knapper + rytme-vakt
+              pushTone(); persist();  // PRESIS: bare data-tone i preview
+            });
+          });
+          row.querySelector('[data-act="edit"]').addEventListener('click', function () { scrollToEditor(s.id); });
+          var del = row.querySelector('[data-act="del"]');
+          if (del) del.addEventListener('click', function () {
+            AC.undoDelete(data.sections, i, 'Seksjon «' + secLabel(s) + '» fjernet', function () { renderBuilder(); renderEditors(); }, function () { pushFull(); persist(); });
+          });
+          hostEl.appendChild(row);
+
+          if (i > 0 && resolved[i] === resolved[i - 1] && (s.tone !== 'auto' || data.sections[i - 1].tone !== 'auto')) {
+            var warn = document.createElement('div');
+            warn.className = 'brow__warn';
+            warn.textContent = 'Samme tone (' + toneName(resolved[i]) + ') som seksjonen over — vil du bytte for litt kontrast?';
+            hostEl.appendChild(warn);
+          }
+        });
+
+        var add = document.createElement('button');
+        add.className = 'addbar'; add.type = 'button'; add.textContent = '+ Ny seksjon';
+        add.addEventListener('click', function () { openPicker = !openPicker; renderPicker(); });
+        hostEl.appendChild(add);
+      }
+
+      function renderPicker() {
+        var ph = document.getElementById('picker-host'); if (!ph) return;
+        if (!openPicker) { ph.innerHTML = ''; return; }
+        var tiles = SectionTypes.list().filter(function (t) { return t.type !== 'banner'; }).map(function (t) {
+          return '<button class="ptile" type="button" data-type="' + t.type + '">'
+            + '<span class="ptile__ico">' + (TYPE_ICON[t.type] || '▭') + '</span>'
+            + '<b>' + esc(t.label) + '</b><span>' + esc(t.desc || '') + '</span></button>';
+        }).join('');
+        ph.innerHTML = '<div class="picker"><div class="picker__h">+ Ny seksjon</div>'
+          + '<div class="picker__sub">Velg en blokktype — den legges nederst med standardinnhold du kan redigere.</div>'
+          + '<div class="picker__grid">' + tiles + '</div></div>';
+        ph.querySelectorAll('.ptile').forEach(function (b) {
+          b.addEventListener('click', function () {
+            var type = b.getAttribute('data-type');
+            var s = { id: newId(type), type: type, tone: 'auto', enabled: true, props: SectionTypes.defaults(type) };
+            data.sections.push(s);
+            openPicker = false;
+            renderBuilder(); renderPicker(); renderEditors();
+            pushFull(); persist();
+            setTimeout(function () { scrollToEditor(s.id); }, 30);
+          });
+        });
+      }
+
+      function scrollToEditor(id) {
+        var panel = document.getElementById('sec-ed-' + id);
+        var scroller = host.closest('.panel-host') || host.parentElement;
+        if (panel && scroller) {
+          var top = panel.offsetTop - 12;
+          try { scroller.scrollTo({ top: top, behavior: 'smooth' }); } catch (e) { scroller.scrollTop = top; }
+          panel.classList.add('flash');
+          setTimeout(function () { panel.classList.remove('flash'); }, 900);
         }
-        o[parts[parts.length - 1]] = val;
       }
-      function renderFields() { Object.keys(FIELD_MAP).forEach(function (id) { var el = q(id); if (el) el.value = getPath(FIELD_MAP[id]) || ''; }); }
-      function wireFields() { Object.keys(FIELD_MAP).forEach(function (id) { var el = q(id); if (!el) return; el.addEventListener('input', function () { setPath(FIELD_MAP[id], el.value); lazySave(); }); }); }
 
-      function renderParas() {
-        var hostEl = q('lst-paras'); hostEl.innerHTML = '';
-        data.om.paras.forEach(function (txt, i) {
-          var row = document.createElement('div');
-          row.className = 'lrow'; row.setAttribute('data-id', 'p' + i);
-          row.innerHTML =
-            '<span class="drag-handle" title="Dra for å sortere">⠿</span>'
-            + '<div class="lrow-fields"><textarea placeholder="Avsnittstekst...">' + esc(txt) + '</textarea></div>'
-            + '<div class="lrow-ctrls"><button class="btn-mini up" type="button" title="Opp">↑</button><button class="btn-mini dn" type="button" title="Ned">↓</button><button class="btn-mini x" type="button" title="Slett">✕</button></div>';
-          row.querySelector('textarea').addEventListener('input', function () { data.om.paras[i] = this.value; lazySave(); });
-          row.querySelector('.up').addEventListener('click', function () { moveArr(data.om.paras, i, -1); renderParas(); lazySave(); });
-          row.querySelector('.dn').addEventListener('click', function () { moveArr(data.om.paras, i, 1); renderParas(); lazySave(); });
-          row.querySelector('.x').addEventListener('click', function () { AC.undoDelete(data.om.paras, i, 'Avsnitt fjernet', renderParas, lazySave); });
-          hostEl.appendChild(row);
+      /* ════════ INNHOLDS-EDITORER (ett panel per seksjon) ════════ */
+      function renderEditors() {
+        var wrap = document.getElementById('sec-editors'); if (!wrap) return;
+        wrap.innerHTML = '';
+        data.sections.forEach(function (s) {
+          var panel = document.createElement('div');
+          panel.className = 'panel'; panel.id = 'sec-ed-' + s.id;
+          var label = SectionTypes.get(s.type) ? SectionTypes.get(s.type).label : s.type;
+          panel.innerHTML = '<h2>' + esc(secLabel(s)) + ' <small>' + esc(label) + '</small></h2><div class="panel-body"></div>';
+          var body = panel.querySelector('.panel-body');
+          var fn = EDITORS[s.type];
+          // notify: presis preview-oppdatering av KUN denne seksjonen
+          var notify = function () { updateBuilderLabels(); pushSection(s.id); persist(); };
+          if (fn) fn(s, body, notify); else body.innerHTML = '<p class="hint">Ingen redigering for type «' + esc(s.type) + '» ennå.</p>';
+          wrap.appendChild(panel);
         });
       }
-      function renderStats() {
-        var hostEl = q('lst-stats'); hostEl.innerHTML = '';
-        data.om.stats.forEach(function (s, i) {
-          var row = document.createElement('div');
-          row.className = 'lrow'; row.setAttribute('data-id', 's' + i);
-          row.innerHTML =
-            '<span class="drag-handle" title="Dra for å sortere">⠿</span>'
-            + '<div class="lrow-fields"><div class="frow">'
-              + '<div class="fg narrow"><label>Tall</label><input type="text" data-k="num" value="' + esc(s.num) + '" placeholder="180+"></div>'
-              + '<div class="fg"><label>Etikett</label><input type="text" data-k="lbl" value="' + esc(s.lbl) + '" placeholder="Medlemmer"></div>'
-            + '</div></div>'
-            + '<div class="lrow-ctrls"><button class="btn-mini up" type="button" title="Opp">↑</button><button class="btn-mini dn" type="button" title="Ned">↓</button><button class="btn-mini x" type="button" title="Slett">✕</button></div>';
-          row.querySelectorAll('[data-k]').forEach(function (inp) { inp.addEventListener('input', function () { s[inp.getAttribute('data-k')] = inp.value; lazySave(); }); });
-          row.querySelector('.up').addEventListener('click', function () { moveArr(data.om.stats, i, -1); renderStats(); lazySave(); });
-          row.querySelector('.dn').addEventListener('click', function () { moveArr(data.om.stats, i, 1); renderStats(); lazySave(); });
-          row.querySelector('.x').addEventListener('click', function () { AC.undoDelete(data.om.stats, i, 'Tall fjernet', renderStats, lazySave); });
-          hostEl.appendChild(row);
+      function updateBuilderLabels() {
+        data.sections.forEach(function (s) {
+          var b = document.querySelector('#lst-sections .brow[data-id="' + s.id + '"] .brow__name b');
+          if (b) b.textContent = secLabel(s);
+          var h = document.querySelector('#sec-ed-' + s.id + ' > h2');
+          if (h && h.firstChild) h.firstChild.textContent = secLabel(s) + ' ';
         });
       }
-      function renderFaq() {
-        var hostEl = q('lst-faq'); hostEl.innerHTML = '';
-        data.faq.items.forEach(function (it, i) {
-          var row = document.createElement('div');
-          row.className = 'lrow'; row.setAttribute('data-id', 'q' + i);
-          row.innerHTML =
-            '<span class="drag-handle" title="Dra for å sortere">⠿</span>'
-            + '<div class="lrow-fields">'
-              + '<div class="fg"><label>Spørsmål</label><input type="text" data-k="q" value="' + esc(it.q) + '" placeholder="Spørsmålet..."></div>'
-              + '<div class="fg"><label>Svar</label><textarea data-k="a" placeholder="Svaret...">' + esc(it.a) + '</textarea></div>'
-            + '</div>'
-            + '<div class="lrow-ctrls"><button class="btn-mini up" type="button" title="Opp">↑</button><button class="btn-mini dn" type="button" title="Ned">↓</button><button class="btn-mini x" type="button" title="Slett">✕</button></div>';
-          row.querySelectorAll('[data-k]').forEach(function (inp) { inp.addEventListener('input', function () { it[inp.getAttribute('data-k')] = inp.value; lazySave(); }); });
-          row.querySelector('.up').addEventListener('click', function () { moveArr(data.faq.items, i, -1); renderFaq(); lazySave(); });
-          row.querySelector('.dn').addEventListener('click', function () { moveArr(data.faq.items, i, 1); renderFaq(); lazySave(); });
-          row.querySelector('.x').addEventListener('click', function () { AC.undoDelete(data.faq.items, i, 'Spørsmål fjernet', renderFaq, lazySave); });
-          hostEl.appendChild(row);
-        });
-      }
+
+      /* ── felles list-rad-verktøy ── */
       function moveArr(arr, i, dir) { var j = i + dir; if (j < 0 || j >= arr.length) return; var t = arr[i]; arr[i] = arr[j]; arr[j] = t; }
+      function listRow(fieldsHTML) {
+        var row = document.createElement('div'); row.className = 'lrow';
+        row.innerHTML = '<span class="drag-handle" title="Dra for å sortere">⠿</span>'
+          + '<div class="lrow-fields">' + fieldsHTML + '</div>'
+          + '<div class="lrow-ctrls"><button class="btn-mini up" type="button" title="Opp">↑</button><button class="btn-mini dn" type="button" title="Ned">↓</button><button class="btn-mini x" type="button" title="Slett">✕</button></div>';
+        return row;
+      }
+      function wireCtrls(row, arr, i, rerender, label, notify) {
+        row.querySelector('.up').addEventListener('click', function () { moveArr(arr, i, -1); rerender(); notify(); });
+        row.querySelector('.dn').addEventListener('click', function () { moveArr(arr, i, 1); rerender(); notify(); });
+        row.querySelector('.x').addEventListener('click', function () { AC.undoDelete(arr, i, label + ' fjernet', rerender, notify); });
+      }
+      function field(label, obj, key, opts, notify) {
+        opts = opts || {};
+        var wrap = document.createElement('div'); wrap.className = 'fg' + (opts.narrow ? ' narrow' : '');
+        var ctl = opts.area ? document.createElement('textarea') : document.createElement('input');
+        if (!opts.area) ctl.type = 'text';
+        if (opts.ph) ctl.setAttribute('placeholder', opts.ph);
+        ctl.value = obj[key] == null ? '' : obj[key];
+        ctl.addEventListener('input', function () { obj[key] = ctl.value; if (notify) notify(); });
+        wrap.innerHTML = '<label>' + esc(label) + '</label>';
+        wrap.appendChild(ctl);
+        return wrap;
+      }
+      function subH(t) { var d = document.createElement('div'); d.className = 'sub-h'; d.textContent = t; return d; }
+      function addBtn(label, onClick) { var b = document.createElement('button'); b.className = 'btn-add'; b.type = 'button'; b.textContent = label; b.addEventListener('click', onClick); return b; }
+      function frow(children) { var d = document.createElement('div'); d.className = 'frow'; children.forEach(function (c) { d.appendChild(c); }); return d; }
 
-      host.querySelectorAll('[data-add]').forEach(function (b) {
-        b.addEventListener('click', function () {
-          var which = b.getAttribute('data-add');
-          if (which === 'paras') { data.om.paras.push(''); renderParas(); }
-          else if (which === 'stats') { data.om.stats.push({ num: '', lbl: '' }); renderStats(); }
-          else if (which === 'faq') { data.faq.items.push({ q: '', a: '' }); renderFaq(); }
-          lazySave();
-        });
-      });
-      function wireDrag(hostId, arrRef, rerender) {
-        AC.enableDragSort(q(hostId), {
+      function dragList(listEl, arr, rer, notify) {
+        AC.enableDragSort(listEl, {
           itemSelector: '.lrow', handleSelector: '.drag-handle',
-          onReorder: function (ids) {
-            var arr = arrRef();
-            var order = ids.map(function (id) { return parseInt(id.replace(/^\D+/, ''), 10); });
-            var next = order.map(function (idx) { return arr[idx]; });
-            arr.length = 0; Array.prototype.push.apply(arr, next);
-            rerender(); lazySave();
+          onReorder: function () {
+            var rows = [].slice.call(listEl.querySelectorAll('.lrow'));
+            var next = rows.map(function (r) { return arr[parseInt(r.getAttribute('data-idx'), 10)]; });
+            arr.length = 0; Array.prototype.push.apply(arr, next); rer(); notify();
           }
         });
       }
-      function renderAll() { renderFields(); renderParas(); renderStats(); renderFaq(); }
 
-      function exportFile() {
-        var out = { om: clone(data.om || {}), faq: clone(data.faq || {}) };
-        out.om.paras = (out.om.paras || []).filter(function (p) { return p && p.trim(); });
-        out.om.stats = (out.om.stats || []).filter(function (s) { return (s.num && s.num.trim()) || (s.lbl && s.lbl.trim()); });
-        out.faq.items = (out.faq.items || []).filter(function (it) { return (it.q && it.q.trim()) || (it.a && it.a.trim()); });
-        var content =
-          '/* Innhold for Om oss-siden (om-oss.html) — TEKST-delene som endres ofte.\n'
-          + '   Sist oppdatert: ' + new Date().toLocaleDateString('no-NO') + '\n'
-          + '   Rediger direkte her, eller åpne Admin-senteret → Om oss.\n'
-          + '     om  : «Hva er apeiron?» — gresk ord, avsnitt, timeglass-kort, samarbeids-teaser, nøkkeltall\n'
-          + '     faq : seksjonsoverskrift + ofte stilte spørsmål\n'
-          + '   Hero + Kontakt (Hjem) ligger i index-content.js (Forsiden-panelet).\n'
-          + '*/\n\n'
-          + 'window.OM_CONTENT = ' + JSON.stringify(out, null, 2) + ';\n';
-        AC.downloadBlob('om-content.js', content);
-        AC.toast('Fil lastet ned — erstatt i GitHub og push!');
+      // liste av tekstlinjer (strenger)
+      function stringList(body, arr, label, ph, notify) {
+        var listEl = document.createElement('div'); listEl.className = 'lst';
+        function rer() {
+          listEl.innerHTML = '';
+          arr.forEach(function (txt, i) {
+            var row = listRow('<div class="fg"><input type="text" value="' + esc(txt) + '" placeholder="' + esc(ph || '') + '"></div>');
+            row.setAttribute('data-idx', i);
+            row.querySelector('input').addEventListener('input', function () { arr[i] = this.value; notify(); });
+            wireCtrls(row, arr, i, rer, label, notify);
+            listEl.appendChild(row);
+          });
+        }
+        rer();
+        body.appendChild(listEl);
+        body.appendChild(addBtn('+ ' + label, function () { arr.push(''); rer(); notify(); }));
+        dragList(listEl, arr, rer, notify);
       }
 
-      q('reset-btn').addEventListener('click', function () {
-        if (!confirm('Dette sletter alle ueksporterte endringer og laster inn siste publiserte versjon. Fortsette?')) return;
-        localStorage.removeItem(LS_KEY); data = fresh(); renderAll(); AC.toast('Tilbakestilt til publisert versjon'); pushPreview();
-      });
+      // liste av objekter med egendefinert felt-bygger
+      function objList(body, arr, label, buildFields, makeNew, notify) {
+        var listEl = document.createElement('div'); listEl.className = 'lst';
+        function rer() {
+          listEl.innerHTML = '';
+          arr.forEach(function (item, i) {
+            var row = listRow('');
+            row.setAttribute('data-idx', i);
+            row.querySelector('.lrow-fields').appendChild(buildFields(item, i));
+            wireCtrls(row, arr, i, rer, label, notify);
+            listEl.appendChild(row);
+          });
+        }
+        rer();
+        body.appendChild(listEl);
+        body.appendChild(addBtn('+ ' + label, function () { arr.push(makeNew()); rer(); notify(); }));
+        dragList(listEl, arr, rer, notify);
+      }
 
-      var pvFrame = q('pv-board');
-      function pushPreview() { if (!pvFrame || !pvFrame.contentWindow) return; try { pvFrame.contentWindow.postMessage({ type: 'apeiron-om-preview', content: data }, '*'); } catch (e) {} }
-      function onPreviewMsg(e) { if (e.data && e.data.type === 'apeiron-om-preview-ready') { pushPreview(); fitPreview(); } }
+      // kort med nøstede lenker (allies / mot-styret)
+      function cardList(body, arr, notify) {
+        var listEl = document.createElement('div'); listEl.className = 'lst';
+        function rer() {
+          listEl.innerHTML = '';
+          arr.forEach(function (c, i) {
+            if (!Array.isArray(c.links)) c.links = [];
+            var row = listRow(
+              '<div class="frow"><div class="fg narrow"><label>Symbol</label><input data-k="glyph" value="' + esc(c.glyph) + '"></div>'
+              + '<div class="fg narrow"><label>Merkelapp</label><input data-k="level" value="' + esc(c.level) + '"></div>'
+              + '<div class="fg"><label>Tittel</label><input data-k="title" value="' + esc(c.title) + '"></div></div>'
+              + '<div class="fg"><label>Tekst</label><textarea data-k="body">' + esc(c.body) + '</textarea></div>'
+              + '<div class="sub-h" style="margin-top:6px">Lenker</div><div class="card-links"></div>'
+              + '<button class="btn-add" type="button" data-addlink>+ Ny lenke</button>'
+            );
+            row.setAttribute('data-idx', i);
+            row.querySelectorAll('[data-k]').forEach(function (inp) { inp.addEventListener('input', function () { c[inp.getAttribute('data-k')] = inp.value; notify(); }); });
+            wireCtrls(row, arr, i, rer, 'Kort', notify);
+            var linksHost = row.querySelector('.card-links');
+            function renderLinks() {
+              linksHost.innerHTML = '';
+              c.links.forEach(function (l, j) {
+                var lr = document.createElement('div'); lr.className = 'frow link-row';
+                lr.innerHTML = '<div class="fg"><input data-lk="label" value="' + esc(l.label) + '" placeholder="Instagram"></div>'
+                  + '<div class="fg"><input data-lk="href" value="' + esc(l.href) + '" placeholder="https://…"></div>'
+                  + '<button class="btn-mini x" type="button" title="Fjern lenke">✕</button>';
+                lr.querySelectorAll('[data-lk]').forEach(function (inp) { inp.addEventListener('input', function () { l[inp.getAttribute('data-lk')] = inp.value; notify(); }); });
+                lr.querySelector('.x').addEventListener('click', function () { c.links.splice(j, 1); renderLinks(); notify(); });
+                linksHost.appendChild(lr);
+              });
+            }
+            renderLinks();
+            row.querySelector('[data-addlink]').addEventListener('click', function () { c.links.push({ label: '', href: '' }); renderLinks(); notify(); });
+            listEl.appendChild(row);
+          });
+        }
+        rer();
+        body.appendChild(listEl);
+        body.appendChild(addBtn('+ Nytt kort', function () { arr.push({ glyph: '', level: '', title: '', body: '', links: [] }); rer(); notify(); }));
+        dragList(listEl, arr, rer, notify);
+      }
+
+      /* ── per-type editorer ── */
+      var EDITORS = {
+        banner: function (s, body, notify) {
+          var p = s.props;
+          body.appendChild(field('Tilbake-lenke (tekst)', p, 'back', {}, notify));
+          body.appendChild(field('Tilbake-lenke (URL)', p, 'backHref', { ph: 'index.html' }, notify));
+          body.appendChild(field('Tittel', p, 'title', {}, notify));
+          body.appendChild(field('Ingress', p, 'lede', { area: true }, notify));
+        },
+        about: function (s, body, notify) {
+          var p = s.props;
+          if (!Array.isArray(p.paras)) p.paras = [];
+          if (!p.card) p.card = { title: '', body: '' };
+          if (!p.teaser) p.teaser = { eyebrow: '', title: '', body: '', linkLabel: '', linkHref: '' };
+          if (!Array.isArray(p.stats)) p.stats = [];
+          body.appendChild(frow([field('Eyebrow', p, 'eyebrow', { narrow: true }, notify), field('Gresk ord', p, 'greek', { narrow: true }, notify), field('Uttale / undertekst', p, 'greekSmall', {}, notify)]));
+          body.appendChild(subH('Avsnitt'));
+          stringList(body, p.paras, 'Avsnitt', 'Avsnittstekst…', notify);
+          body.appendChild(subH('Timeglass-kort'));
+          body.appendChild(field('Tittel', p.card, 'title', {}, notify));
+          body.appendChild(field('Tekst', p.card, 'body', { area: true }, notify));
+          body.appendChild(subH('Samarbeids-teaser'));
+          body.appendChild(frow([field('Eyebrow', p.teaser, 'eyebrow', { narrow: true }, notify), field('Tittel', p.teaser, 'title', {}, notify)]));
+          body.appendChild(field('Tekst', p.teaser, 'body', { area: true }, notify));
+          body.appendChild(frow([field('Lenketekst', p.teaser, 'linkLabel', {}, notify), field('Lenke', p.teaser, 'linkHref', { narrow: true, ph: '#samarbeid' }, notify)]));
+          body.appendChild(subH('Nøkkeltall'));
+          objList(body, p.stats, 'Tall', function (st) {
+            return frow([field('Tall', st, 'num', { narrow: true }, notify), field('Etikett', st, 'lbl', {}, notify)]);
+          }, function () { return { num: '', lbl: '' }; }, notify);
+        },
+        cardgrid: function (s, body, notify) {
+          var p = s.props;
+          if (!Array.isArray(p.cards)) p.cards = [];
+          body.appendChild(frow([field('Eyebrow', p, 'eyebrow', { narrow: true }, notify), field('Overskrift', p, 'heading', {}, notify)]));
+          body.appendChild(field('Ingress', p, 'lede', { area: true }, notify));
+          body.appendChild(subH('Kort'));
+          cardList(body, p.cards, notify);
+        },
+        lesesal: function (s, body, notify) {
+          var p = s.props;
+          if (!Array.isArray(p.features)) p.features = [];
+          body.appendChild(frow([field('Eyebrow', p, 'eyebrow', { narrow: true }, notify), field('Overskrift', p, 'heading', {}, notify)]));
+          body.appendChild(field('Ingress', p, 'lede', { area: true }, notify));
+          body.appendChild(field('Hovedbilde (URL)', p, 'mainImage', { ph: 'assets/lesesalen/lesesal1.jpg' }, notify));
+          body.appendChild(subH('Punkter (ikonet følger rekkefølgen)'));
+          objList(body, p.features, 'Punkt', function (f) {
+            var d = document.createElement('div');
+            d.appendChild(field('Tittel', f, 'title', {}, notify));
+            d.appendChild(field('Tekst', f, 'body', { area: true }, notify));
+            return d;
+          }, function () { return { title: '', body: '' }; }, notify);
+        },
+        join: function (s, body, notify) {
+          var p = s.props;
+          if (!Array.isArray(p.benefits)) p.benefits = [];
+          body.appendChild(field('Eyebrow', p, 'eyebrow', {}, notify));
+          body.appendChild(field('Overskrift', p, 'heading', {}, notify));
+          body.appendChild(field('Ingress', p, 'lede', { area: true }, notify));
+          body.appendChild(subH('Fordeler'));
+          stringList(body, p.benefits, 'Fordel', 'En fordel…', notify);
+          body.appendChild(subH('Kort'));
+          body.appendChild(frow([field('Kort-tittel', p, 'cardTitle', {}, notify), field('Knappetekst', p, 'ctaLabel', {}, notify)]));
+          body.appendChild(field('Knappe-lenke', p, 'ctaHref', { ph: 'index.html#kontakt' }, notify));
+          var note = document.createElement('p'); note.className = 'hint';
+          note.textContent = 'Priser og innmeldingssteg styres i Medlemskap-panelet.';
+          body.appendChild(note);
+        },
+        faq: function (s, body, notify) {
+          var p = s.props;
+          if (!Array.isArray(p.items)) p.items = [];
+          body.appendChild(frow([field('Eyebrow', p, 'eyebrow', { narrow: true }, notify), field('Overskrift', p, 'heading', {}, notify)]));
+          body.appendChild(subH('Spørsmål & svar'));
+          objList(body, p.items, 'Spørsmål', function (it) {
+            var d = document.createElement('div');
+            d.appendChild(field('Spørsmål', it, 'q', {}, notify));
+            d.appendChild(field('Svar', it, 'a', { area: true }, notify));
+            return d;
+          }, function () { return { q: '', a: '' }; }, notify);
+        }
+      };
+
+      /* ════════ EKSPORT ════════ */
+      function exportFile() {
+        var out = clone(data);
+        out.sections.forEach(function (s) {
+          var p = s.props || {};
+          if (Array.isArray(p.paras)) p.paras = p.paras.filter(function (x) { return x && x.trim(); });
+          if (Array.isArray(p.benefits)) p.benefits = p.benefits.filter(function (x) { return x && x.trim(); });
+          if (Array.isArray(p.stats)) p.stats = p.stats.filter(function (x) { return (x.num && x.num.trim()) || (x.lbl && x.lbl.trim()); });
+          if (Array.isArray(p.features)) p.features = p.features.filter(function (x) { return (x.title && x.title.trim()) || (x.body && x.body.trim()); });
+          if (Array.isArray(p.items)) p.items = p.items.filter(function (x) { return (x.q && x.q.trim()) || (x.a && x.a.trim()); });
+          if (Array.isArray(p.cards)) {
+            p.cards = p.cards.filter(function (c) { return (c.title && c.title.trim()) || (c.body && c.body.trim()); });
+            p.cards.forEach(function (c) { if (Array.isArray(c.links)) c.links = c.links.filter(function (l) { return (l.label && l.label.trim()) || (l.href && l.href.trim()); }); });
+          }
+        });
+        var content =
+          '/* «Om oss» som DATA — Apeiron Page Builder (om.page.js)\n'
+          + '   Sist oppdatert: ' + new Date().toLocaleDateString('no-NO') + '\n'
+          + '   Hver seksjon: { id, type, tone, enabled?, props }. Motoren (section-engine.js)\n'
+          + '   tegner lista; typene bor i om-sections.js. Rediger i Admin → Om oss.\n'
+          + '   Bilder: assets/lesesalen/ · medlemspriser: membership-config.js\n'
+          + '*/\n\n'
+          + 'window.OM_PAGE = ' + JSON.stringify(out, null, 2) + ';\n';
+        AC.downloadBlob('om.page.js', content);
+        AC.toast('Fil lastet ned — erstatt om.page.js i GitHub og push!');
+      }
+
+      /* ════════ PREVIEW-RAMME (skalering) ════════ */
+      pvFrame = document.getElementById('pv-board');
+      function onPreviewMsg(e) {
+        if (e.data && e.data.type === 'apeiron-om-preview-ready') { pushFull(); fitPreview(); }
+      }
       function fitPreview() {
         var wrap = host.querySelector('.pv-board-wrap');
         if (!pvFrame || !wrap) return;
@@ -237,14 +478,27 @@
       window.addEventListener('resize', fitPreview);
       if (pvFrame) pvFrame.addEventListener('load', fitPreview);
 
-      loadData(); renderAll(); wireFields();
-      wireDrag('lst-paras', function () { return data.om.paras; }, renderParas);
-      wireDrag('lst-stats', function () { return data.om.stats; }, renderStats);
-      wireDrag('lst-faq', function () { return data.faq.items; }, renderFaq);
-      AC.viewSwitch({ list: q('lst-stats'), key: 'apeiron-omoss-stats-view-v1', help: 'Velg hvordan nøkkeltall-radene vises mens du redigerer her i admin. Påvirker bare redigeringsvisningen, ikke nettsiden.' });
-      AC.viewSwitch({ list: q('lst-faq'), key: 'apeiron-omoss-faq-view-v1', help: 'Velg hvordan spørsmål & svar vises mens du redigerer her i admin. Påvirker bare redigeringsvisningen, ikke nettsiden.' });
+      function wireSectionDrag() {
+        AC.enableDragSort(document.getElementById('lst-sections'), {
+          itemSelector: '.brow', handleSelector: '.drag-handle',
+          onReorder: function (ids) {
+            ids = ids.filter(function (id) { return id; });
+            data.sections.sort(function (a, b) { return ids.indexOf(a.id) - ids.indexOf(b.id); });
+            renderBuilder(); renderEditors(); pushFull(); persist();
+          }
+        });
+      }
+
+      document.getElementById('reset-btn').addEventListener('click', function () {
+        if (!confirm('Dette sletter alle ueksporterte endringer og laster inn siste publiserte versjon. Fortsette?')) return;
+        localStorage.removeItem(LS_KEY); data = freshPage(); normalize();
+        renderBuilder(); renderPicker(); renderEditors(); AC.toast('Tilbakestilt til publisert versjon'); pushFull();
+      });
+
+      loadData();
+      renderBuilder(); renderPicker(); renderEditors(); wireSectionDrag();
       fitPreview(); setTimeout(fitPreview, 80);
-      pushPreview(); setTimeout(pushPreview, 150);
+      pushFull(); setTimeout(pushFull, 150);
 
       return {
         export: exportFile,

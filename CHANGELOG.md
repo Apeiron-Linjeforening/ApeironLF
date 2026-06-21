@@ -1,5 +1,122 @@
 ## Siste endringer
 
+**21.06.26 — Herdet bildepublisering (venter til alle bilder er fanget)**
+- Ved «☁ Publiser til GitHub» committes nå filene først når bilde-fangsten er **stille** (ingen nye filer på 600 ms, maks 15 s) i stedet for en fast pause. Paneler som Styret sender portrettene asynkront (drypp ~220 ms) — med mange bilder kunne den gamle faste ventetiden bomme på de siste. Nå venter publiseringen til alt er med.
+- `admin-common.js` fikk `captureIdleFor()` (tid siden siste fangede fil); `admin.html` poller på den før commit.
+- Berørte filer: `admin-common.js`, `admin.html`.
+
+**21.06.26 — Ny: «Tilbakestill alle sider» i Oversikt**
+- Samlet angre-knapp i **Oversikt**-fanen som tilbakestiller alle upubliserte endringer (på tvers av alle paneler) til siste publiserte versjon — supplerer den per-panel «Tilbakestill». Vises kun når det finnes endringer, med bekreftelses-dialog som lister hvilke sider som nullstilles.
+- Berørt fil: `admin.html`.
+
+**21.06.26 — Bug fikset: kunne ikke bytte bilde når det gamle manglet**
+- Klikket man på et bildefelt der bildet var slettet/utilgjengelig, prøvde redigereren å laste det manglende bildet og feilet med «Kunne ikke laste bildet for redigering» — uten vei videre. Nå faller flyten tilbake til **å velge et nytt bilde** (med en kort beskjed) når det gamle ikke kan lastes. `AdminImageEditor.open` fikk en `onError`-hook; `wireImageField` bruker den til å åpne filvelgeren.
+- Berørte filer: `admin-image-editor.js`, `admin-common.js`.
+
+**21.06.26 — Opprydding for stabil main: bildesti-bug + konsekvente publiserings-hint**
+- **Bug fikset: bilder havnet i rot ved publisering.** Styret lastet ned portretter med bare filnavnet (`leder.webp`) — greit for manuell nedlasting, men ved G1-commit havnet de da i repo-roten i stedet for `assets/styret/`, så de ikke vistes. Nå sendes **full sti** til `saveBlob`; `admin-common.js` korter ned til filnavn *kun* ved nedlasting, mens commit beholder full sti (`assets/styret/<id>.webp`). Gjelder også arkivbilder.
+- **Per-panel «Hvordan publisere»-hintene oppdatert** i alle 16 modulene: «Klikk ↓ Last ned alle endrede oppe til høyre … erstatt i GitHub og push» → «Trykk **☁ Publiser til GitHub** oppe til høyre», med nedlasting som tydelig merket reserve («nederst i Oversikt-fanen»). Konsistent med den nye flyten.
+- Berørte filer: `admin-common.js`, `admin-modules/styret.js` + de 15 øvrige panel-modulene.
+- **Til drift:** `apeiron-om.js` og `om-content.js` er fjernet fra prosjektet (ikke lenger i bruk). De ligger fortsatt i repoet og bør `git rm`-es.
+
+**21.06.26 — G1 i bruk: publiser-knapp primær, nedlasting flyttet til backup**
+- **G1 er testet ende-til-ende og virker:** «☁ Publiser til GitHub» committer rett til `main`, og Cloudflare bygger siden live innen ~1 min. (Oppsett: GitHub OAuth-app + Cloudflare-miljøvariabler, callback `…/api/github/callback` — domenet må matche, f.eks. `apeironlf.pages.dev`.)
+- **Nedlastingsknappen er ryddet bort fra headeren** og ligger nå som en tydelig merket **reserveløsning nederst i Oversikt-fanen** («⚠ Reserveløsning — brukes bare hvis publisering ikke virker»). Headeren har nå kun «☁ Publiser til GitHub» + teller for upubliserte endringer.
+- **«Slik publiserer du» i admin oppdatert** til den nye flyten: logg inn med GitHub → rediger → publiser → live om ~1 min. Tilsvarende oppdatert i **README.md** (seksjon 3 + reserveløsning) og **VEDLIKEHOLD.md** (publiserings-seksjonen peker nå til `docs/g1-oppsett.md`).
+- Berørte filer: `admin.html`, `README.md`, `VEDLIKEHOLD.md`.
+
+**21.06.26 — G1 bygd: «Lagre = commit» (publiser rett til GitHub fra admin)**
+- **«☁ Publiser til GitHub»** i admin committer alle endrede data-filer som ÉN commit til `main` — ingen nedlasting, ingen manuell push. Fortsatt 100 % statisk og gratis. **↓ Last ned alle endrede** beholdt som reserve.
+- **Ekte innlogging (path B), server-løst på Cloudflare Pages Functions:** GitHub OAuth web-flow. Nye funksjoner under `functions/api/github/`: `login`, `callback`, `me`, `commit`, `logout` (+ `_common.js`). Tokenet lagres i en **httpOnly/Secure/SameSite=Lax-cookie** — når aldri nettleser-JS; alle commits går via `commit`-funksjonen (Git Data API: blob → tree → commit → ref, atomisk). `ALLOWED_LOGINS` begrenser hvem som kan publisere.
+- **Additivt og trygt for main-admin:** ny klient `admin-github.js` + en capture-sink i `admin-common.js` (`beginCapture`/`endCapture`) som lar «publiser» fange nøyaktig de samme filene modulenes `export()` ellers laster ned (tekst + binære bilder via base64). Eksisterende nedlastingsflyt er urørt; ingen modul endret.
+- **Oppsett kreves én gang** (GitHub OAuth-app + Cloudflare-miljøvariabler) — se `docs/g1-oppsett.md`. Virker kun på den deployede siden (funksjonene kjører på Cloudflare, ikke lokalt).
+- Verifisert lokalt: admin laster rent, logger inn-knapp vises, nedlastingsflyt intakt, ingen konsollfeil. Selve OAuth/commit må testes på Cloudflare-deploy med variablene satt.
+- Nye filer: `functions/api/github/{_common,login,callback,me,commit,logout}.js`, `admin-github.js`, `docs/g1-oppsett.md`. Endret: `admin-common.js`, `admin.html`.
+
+**21.06.26 — Page Builder: presis live-preview (slutt på flimmer ved fargebytte)**
+- **Problem:** previewen bygde HELE siden om ved hver minste endring — også fargebytte — så det flimret, scrollen hoppet, og Lesesalen-bildene ble lastet på nytt hver gang. Fargeredigering føltes ødelagt.
+- **Fix:** motoren fikk to inkrementelle metoder — `PageEngine.applyTones()` (oppdaterer kun `data-tone` på seksjonene) og `PageEngine.renderSection()` (tegner kun ÉN seksjon om). `om-oss.html` lytter nå på tre meldinger: `apeiron-page-tone` (fargebytte → kun attributt, myk CSS-overgang), `apeiron-section-update` (tekstredigering → kun den redigerte seksjonen), og `apeiron-page-preview` (struktur: legg til/fjern/sorter → full tegning). Admin-byggeren sender riktig type per handling.
+- **Resultat:** fargebytte er nå momentant og uten ombygging; tekstendring tegner bare sin egen seksjon, så resten av siden (scroll-posisjon, Lesesalen-bilder) står helt i ro. Verifisert med probe-attributter: tone-klikk lar nabo-seksjoner stå urørt; tekstedit rører bare egen seksjon.
+- Berørte filer: `section-engine.js`, `om-oss.html`, `admin-modules/om-oss.js`.
+
+**21.06.26 — Page Builder G2: tone-system + ny seksjonsbygger i admin**
+- **Tonen driver nå bakgrunnen.** Nytt tone-lag i `styles.css` (scopet til `#page` så bare motor-tegnede sider påvirkes — `index.html` o.l. er urørt): `paper` (lys), `navy` (mørk, med mørk kort-variant), `accent` (maroon). `auto` veksler lys/mørk ut fra posisjon så rytmen aldri brekker når seksjoner flyttes. Om oss-rytmen er nå lys → mørk → lys → mørk → maroon → lys (bli-medlem pinnet `accent`).
+- **Ny admin-bygger (`admin-modules/om-oss.js` skrevet om, PAGE-native).** Erstatter den gamle OM_CONTENT-editoren. Øverst en **seksjonsbygger**: dra for å sortere, **tone-velger** per seksjon (Auto/Lys/Mørk/Aksent), **+ Ny seksjon** (type-velger), og slett — med en **rytme-vakt** som varsler når to like, pinnede toner havner ved siden av hverandre. Topp-banneret er pinnet. Under bygger­en: ett innholds-panel per seksjon, felter etter type, bundet til `section.props`. Eksporterer **`om.page.js`**, live-preview via `apeiron-page-preview`.
+- `membership.js` eksponerer nå `window.renderMembership` så medlemskortet fylles på nytt når motoren re-tegner siden (live-preview). `admin.html` laster `section-engine.js` + `om-sections.js` + `om.page.js` (i stedet for `om-content.js`); Om oss-panelets lagringsnøkkel er `apeiron-om-page-v1`.
+- **Slettet** (erstattet, ikke lenger lastet noe sted): `om-content.js`, `apeiron-om.js`.
+- Verifisert: bygger viser 7 seksjoner m/ riktige toner, banner pinnet; tone-bytte gir rytme-vakt; «+ Ny seksjon» legger til; live-preview oppdaterer seksjonsantall/tittel/tone og beholder medlemskortet. Berørte filer: `styles.css`, `admin-modules/om-oss.js`, `admin-modules.css`, `admin.html`, `membership.js`, `om.page.js`.
+
+**21.06.26 — Page Builder G1: motoren bygd, Om oss tegnes nå HELT fra data**
+- **Retningen er lagt om** (etter designforslaget): en side er ikke lenger fast HTML, men en **ordnet liste av typede seksjoner** som en felles motor tegner. Dette er arkitekturen som gjør prosjektet til en ekte, klonbar sidebygger.
+- **Ny motor — `section-engine.js`:** `SectionTypes.define/get/has/list/defaults` (register for seksjonstyper) + `PageEngine.render(page, el, opts)` som filtrerer på `enabled`, regner ut **auto-tone** (veksler lys/mørk så rytmen aldri brekker) og kjører `mount()`-hooks. `PageEngine.toneClashes()` finner naboer med lik pinnet tone (grunnlag for admin-vakt neste steg).
+- **Kjernetyper — `om-sections.js`:** `banner`, `about`, `cardgrid`, `lesesal`, `join`, `faq`. Hver `render()` gjenskaper dagens markup/klasser 1:1 (parity), og eier sin egen `defaults`/`mount`. Lesesalens galleri + lightbox er flyttet fra inline-script til typens `mount()`.
+- **Siden som data — `om.page.js`:** hele Om oss som `sections: [{ id, type, tone, props }]`. `om-oss.html` er slanket til `<main id="page"></main>` + motor-bootstrap; scriptene er omordnet så motoren tegner FØR `membership.js`/`app.js`, slik at `#joinTiers`/`#joinSteps`, `.reveal` og `.faq__q` finnes når de kobler seg på.
+- **Verifisert:** 7 seksjoner tegnet fra data, alle kort/punkter/FAQ/nøkkeltall til stede, medlemskortet fylt, tone-veksling korrekt, ingen konsollfeil. Visuelt identisk med forrige Om oss.
+- **Merk (midlertidig):** det gamle **Admin → Om oss**-panelet skriver fortsatt `om-content.js` (gammelt format) og får ikke live-preview mot den nye motoren. Innhold redigeres i `om.page.js` inntil det nye seksjons-baserte panelet er bygd (neste steg). `apeiron-om.js` + `om-content.js` lastes ikke lenger av `om-oss.html`, men beholdes til admin er flyttet over.
+- Nye filer: `section-engine.js`, `om-sections.js`, `om.page.js`. Endret: `om-oss.html`.
+
+**21.06.26 — F3 (pilot): dra-sortér seksjoner — Om oss**
+- Bygger rett på F2-lista. **Seksjons-rekkefølgen er nå redigerbar**: Seksjoner-panelet i Admin → Om oss fikk dra-håndtak (⠿) på hver rad (`AdminCommon.enableDragSort`, samme mønster som meny/oppslag/styret). Rekkefølgen lagres i `sections`-lista.
+- `applySections()` i `apeiron-om.js` ble utvidet: i tillegg til vis/skjul flytter den nå de styrte seksjonene til **listerekkefølge** i DOM-en (reinnsettes rett etter topp-banneret). Idempotent — flytter bare når noe faktisk er ute av rekkefølge, så ekte side (standardrekkefølge) er en no-op.
+- Verifisert: omsortering i admin speiles umiddelbart i live-preview (DOM-rekkefølge endres), samtidig som av/på fortsatt virker. Berørte filer: `apeiron-om.js`, `admin-modules/om-oss.js`.
+
+**21.06.26 — F2 (pilot): seksjoner av/på som data — Om oss**
+- **Seksjoner er nå data, ikke fast HTML.** Om oss fikk en ordnet `sections`-liste i `om-content.js` (`{ id, label, enabled }`, der `id` = seksjonens DOM-anker). `apeiron-om.js` har en ny `applySections()` som vises/skjuler hver seksjon ut fra `enabled` — kjøres i `renderOm()`, så både ekte side og live-preview følger med.
+- **Admin → Om oss** fikk et nytt **Seksjoner**-panel øverst med av/på-bryter per seksjon (gjenbruker `.toggle-row`/`.switch`-stilen fra Forsiden, utvidet til `.mod-om-oss`). Topp-banneret er alltid på. En `mergeSections()` slår lagret liste sammen med kanon: bevarer rekkefølge + valg, reparerer etiketter, legger til manglende og dropper ukjente id-er — robust mot fremtidige endringer. Eksporten skriver `sections` først i `om-content.js`.
+- **Lista er bevisst ordnet** så F3 (dra-sortering) blir en liten påbygging: sorter `sections` + rendre seksjonene i den rekkefølgen. **«+ Ny seksjon»** (legge til helt nye) er et separat, større steg senere.
+- Verifisert: alle 6 seksjoner synlige som før på ekte side; av-bryter i admin skjuler seksjonen umiddelbart i live-preview. Berørte filer: `om-content.js`, `apeiron-om.js`, `admin-modules/om-oss.js`, `admin-modules.css`.
+
+**21.06.26 — F1 FERDIG: «Tilbake»-lenkene er nå redigerbare — all redaksjonell tekst er data-drevet**
+- De siste hardkodede «Tilbake»-lenkene er flyttet til data. **Utmerkelser**, **Oppnåelser** og **Oppslagstavla** fikk `intro.back` + `intro.backHref` i sine content-filer; sidene leser dem inn (`#intro-back`), og panelene fikk «Tilbake-tekst» + «Tilbake-lenke» i topp-banner-feltene. **Hjelp** hadde dette fra før (`hero.back`/`hero.backHref`).
+- Berørte filer: `utmerkelser-content.js`, `oppnaelser-content.js`, `oppslag-content.js`, `utmerkelser.html`, `oppnaelser.html`, `oppslagstavla.html`, `admin-modules/utmerkelser.js`, `admin-modules/oppnaelser.js`, `admin-modules/oppslag.js`.
+- **Med dette er F1 helt i mål:** ingen redaksjonell tekst på noen side er lenger hardkodet — alt redigeres i admin. Neste: F2 (seksjoner av/på som data).
+
+**21.06.26 — S1: Oppgradert søkemotor (MiniSearch + norsk bøyning + skrivefeil)**
+- **Selve match-motoren er byttet.** Søket brukte enkel delstreng-scoring uten bøyning eller feiltoleranse («søke» fant ikke «søk», én skrivefeil ga null treff). Nå kjører det på **MiniSearch** med en **norsk Snowball-stemmer** (bøyning: «studieretninger» → «studieretning», «filosofien» → «filosofi») og **fuzzy-treff** (skrivefeil: «filosfi» → «filosofi», «aporetsik» → «Aporetisk Aften»).
+- **Vendet inn, ingen CDN:** biblioteket ligger som `minisearch.min.js` (MiniSearch v7, MIT) i repoet og lastes på alle 14 offentlige sider **før** `site-search.js` (rett etter `search-index.js`). Fortsatt gratis, statisk, uten server — og virker offline / ved kloning.
+- **Datakilden er urørt:** kun `score()`/`doSearch()` i `site-search.js` ble byttet. `search-base.js`, modulenes `searchEntries()` og auto-genereringen ved «Publiser» står som før. Indeksen bygges i nettleseren fra `search-index.js` ved hver sidelast, så nytt publisert innhold er automatisk søkbart. Highlighting er nå stamme-bevisst (markerer også bøyde treff). Faller automatisk tilbake til den gamle delstreng-scoringen hvis biblioteket ikke laster.
+- **Uregelmessige ord** stemmeren bommer på (f.eks. `bøker → bok`) håndteres av en liten `SYN`-liste øverst i `site-search.js`. Prøvebenk brukt til å velge motor: `Søk-spike — MiniSearch.html`. Berørte filer: `site-search.js`, `minisearch.min.js` (ny), alle 14 offentlige `*.html`, `VEDLIKEHOLD.md`, `Plan F.html`.
+
+**21.06.26 — F1: Merch topp-banner redigerbart — F1 dekker nå alle sidene**
+- **Merch** (`merch.html`) fikk topp-banneret (tilbake-lenke, tittel, ingress) flyttet til data (`window.MERCH_SUBHERO` i `merch-products.js`) og redigerbart i Merch-panelet, ved siden av info-teksten. Eksporten skriver nå `MERCH_SUBHERO` + `MERCH_INFO` + `MERCH_PRODUCTS`, og live-forhåndsvisningen oppdaterer banneret. Ny draft-nøkkel `apeiron-merch-subhero-v1` lagt til i panelets `ls`.
+- **Med dette er F1 (gjøre all redaksjonell tekst redigerbar) gjennomført for alle sidene** — forsiden (inkl. ordmerket), Om oss, Nyheter, Styret, Merch, Pensum, Galleri, Pensum-markedet, samt sidene som var data-drevet fra før (Oppslagstavla, Utmerkelser, Hjelp, Oppnåelser, Begrep). Gjenstår kun «Tilbake»-lenkene på et fåtall allerede-data-drevne sider (lav verdi).
+
+**21.06.26 — F1: topp-bannere på Nyheter og Styret er nå redigerbare**
+- **Nyheter** (`nyheter.html`) og **Styret** (`styret.html`) fikk topp-banneret (tilbake-lenke, tittel, ingress) flyttet til data og redigerbart i sine admin-paneler (`subhero` i `news-content.js` / `styret-content.js`). Nyheter-eksporten ble samtidig fikset så den tar med `subhero` (skrev tidligere bare `items`). Sidene ser uendret ut.
+
+**21.06.26 — F1: hero-ordmerket «Apeiron» er nå redigerbart**
+- **Foreningsnavnet** øverst på forsiden (det store «Apeiron» med ∞-stilet o) er flyttet til data (`index-content.js` → `hero.wordmark` = pre/mid/post) og redigeres i **Admin → Forsiden → Hero**: «Tittel (før)», «Spesial-bokstav» (får ∞-stilen — kan stå tom) og «Tittel (etter)». Det gjør at en annen forening kan sette sitt eget navn uten å røre HTML-en — et nøkkelsteg mot den klonbare malen. Gjengis av `apeiron-index.js`; ser identisk ut. Berørte filer: `index-content.js`, `index.html`, `apeiron-index.js`, `admin-modules/forsiden.js`.
+
+**21.06.26 — F1: Pensum + Galleri er nå redigerbare**
+- **Pensum (nytt panel).** Hele `pensum.html` er flyttet 1:1 til `pensum-content.js` (gjengis av `apeiron-pensum.js`) og redigeres i et nytt **Admin → Pensum**-panel: topp-banner med meta-punkter, **hele emnekatalogen** (15 emner — kode, navn, semester, beskrivelse, ntnu-lenke og enten **bokliste** eller **melding/tom-tilstand**, valgbart per emne), seksjonsoverskriftene, studieretningene (med punkt-lister), grader & løp (med smakebit-lister), markeds-teaseren og de to ansvarsfraskrivelsene. Søk/filter/trekkspill-logikken i `pensum.html` er urørt og fanger opp de data-gjengitte emnekortene. Støtter `**fet**` og `[tekst](adresse)` i meta og tom-tilstand.
+- **Galleri (nytt panel).** Topp-banneret på `galleri.html` er flyttet til `galleri-content.js` (gjengis av `apeiron-galleri.js`), redigeres i **Admin → Galleri**. Bildene hentes fortsatt automatisk fra Google Drive.
+- Standardverdiene er identiske med HTML-en, så begge sidene ser uendret ut. Berørte filer: `pensum-content.js`, `apeiron-pensum.js`, `pensum.html`, `admin-modules/pensum.js`, `galleri-content.js`, `apeiron-galleri.js`, `galleri.html`, `admin-modules/galleri.js`, `admin.html`, `admin-common.css`.
+
+**21.06.26 — F1: Pensum-markedet er nå redigerbart (nytt Marked-panel)**
+- **Tredje steg av Plan F — første helt nye admin-panel bygget fra bunnen.** Hele `marked.html` (kommer-snart-siden lenket fra Pensum) er flyttet 1:1 til `marked-content.js` (gjengis av `apeiron-marked.js`) og redigeres nå i et nytt **Admin → Marked**-panel: topp-banner (tilbake-lenke, eyebrow, tittel, ingress, merkelapper), intro-blokken, de tre funksjons-kortene (dra-sorterbare) og «Meld interesse»-banneret (overskrift, tekst, to knapper, notis).
+- Demonstrerer hele mønsteret for å gjøre en modul-løs side redigerbar: nytt content-fil + render-skript + `admin-modules/marked.js`, registrert i `PANELS` + lastet i `admin.html`. Samme oppskrift kan brukes på Pensum og Galleri. Berørte filer: `marked-content.js`, `apeiron-marked.js`, `marked.html`, `admin-modules/marked.js`, `admin.html`.
+
+**21.06.26 — F1: Om oss er nå fullt redigerbar**
+- **Andre steg av Plan F.** All gjenstående hardkodet tekst på Om oss er flyttet 1:1 til `om-content.js` (gjengis av `apeiron-om.js`) og redigeres nå i **Admin → Om oss**:
+  - **Topp-banneret** (`subhero`): tilbake-lenke, tittel, ingress.
+  - **Fellesskap & samarbeid** (`samarbeid`): intro + kortene (Unionen/Dionysos/Begrep) med symbol, merkelapp, tittel, tekst og **redigerbare lenker** — dra-sorterbart.
+  - **Lesesalen** (`lesesalen`): intro + tjeneste-punktene (ikonet følger rekkefølgen).
+  - **Møt styret** (`motStyret`): intro + kortene (Styret/Tillitsvalgte/Verv) med lenker.
+  - **Bli medlem** (`medlem`): intro + fordels-lista (samme tekst som forsiden, egen versjon på Om oss).
+- Ny nøstet lenke-redigerer i kort-listene (`admin-common.css`). Standardverdiene er identiske med HTML-en, så siden ser uendret ut. Lesesalen-bildene ligger fortsatt som filer i `assets/lesesalen/`. Berørte filer: `om-content.js`, `om-oss.html`, `apeiron-om.js`, `admin-modules/om-oss.js`, `admin-common.css`.
+
+**21.06.26 — F1 (start): hele forsidens redaksjonelle tekst er nå redigerbar**
+- **Første steg av Plan F.** All hardkodet redaksjonell tekst på Hjem er flyttet 1:1 til data i `index-content.js` (gjengis av `apeiron-index.js`) og redigeres nå i **Admin → Forsiden**:
+  - **«Bli medlem»-intro** (`medlem`): eyebrow, overskrift, ingress + den dra-sorterbare **fordels-lista** (de fire punktene med avhuking). Priser/innmeldingssteg styres fortsatt i Medlemskap-panelet.
+  - **Seksjons-introer** for **Arrangementer** (`arr`), **Aporetisk Aften** (`apo`, inkl. det greske ordet «ἀπορία», uttale/oversettelse, «For hvem» og side-notatet) og **Fadderukene** (`fadder`) — eyebrow + overskrift + ingress.
+  - **Hero** fikk «Ny her?»-broteksten; **Kontakt** fikk seksjons-etiketten.
+- Standardverdiene er identiske med den gamle HTML-en, så forsiden ser nøyaktig lik ut. Selve arrangementene/programmet hentes fortsatt fra Google Kalender — kun overskriftene og tekstene rundt dem er flyttet hit. Berørte filer: `index-content.js`, `index.html`, `apeiron-index.js`, `admin-modules/forsiden.js`.
+
+**21.06.26 — Admin: dra-sortering rettet + nullstilling til publisert versjon ved ny økt**
+- **Dra-og-slipp fryser ikke lenger.** `AdminCommon.enableDragSort` flyttet `pointermove`/`pointerup`/`pointercancel` fra håndtaket til `document` og droppet `setPointerCapture`. Tidligere ga `pointer-events:none` på det løftede kortet (som inneholder håndtaket) tap av peker-fangst — første dra «frøs», og kortet landet ikke der plassholderen viste. Nå filtreres draget på `pointerId`, og plassholder/slipp samsvarer alltid. Gjelder alle admin-paneler.
+- **Admin åpner alltid på publisert versjon.** Upubliserte panel-utkast i `localStorage` tømmes når admin åpnes i en **ny fane/økt** (sessionStorage-flagg). En vanlig oppdatering (refresh) i samme fane beholder utkastene, så man ikke mister arbeid ved et uhell; når fanen lukkes, starter neste åpning rent. Slutt på «gamle, upubliserte endringer dukker opp når jeg åpner admin».
+- **Advarsel ved lukking.** Første gang en økt har upubliserte endringer, vises et varsel om at endringer forsvinner hvis de ikke lastes ned/publiseres, med avhukingsboks «Ikke vis dette varselet igjen» (lagres i `apeiron-admin-leave-nowarn`). Samme avhuking skrur også av nettleserens «forlat siden?»-spørsmål ved lukking/oppdatering.
+
 **20.06.26 — Dokumentasjon: README som forside + brukerveiledning, VEDLIKEHOLD for drift**
 - **README er nå repoets forside.** Lagt til en dokumentasjon-navigasjon (alle `.md`-filer i én tabell), statusmerker, innholdsfortegnelse og sammenleggbare planleggingsseksjoner (Kjente begrensninger, To-do, Domene). Hele «Slik endrer du innhold»-veiledningen bor nå i README.
 - **Ny `VEDLIKEHOLD.md`** samler all teknisk drift (publisering, lokal kjøring, manuell redigering av innholdsfilene, søkeindeks, Apps Script, filstruktur, sikkerhet). Bruker (README) og drift (VEDLIKEHOLD) er nå tydelig skilt. Den gamle `HVORDAN.md` er borte — innholdet er flyttet inn i README, og alle lenker dit er rettet.

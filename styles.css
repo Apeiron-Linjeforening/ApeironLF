@@ -1029,9 +1029,9 @@ html[data-mode="marine"] .cal-popup__opt:hover{ background:rgba(212,175,55,.1); 
   font-family:var(--display); font-size:1.4rem; color:var(--navy);
   padding:22px 40px 22px 0; position:relative;
 }
-.faq__q::after{ content:"+"; position:absolute; right:4px; top:50%; transform:translateY(-50%); font-size:1.6rem; color:var(--warm); transition:transform .25s; }
+.faq__q::after{ content:"+"; position:absolute; right:4px; top:50%; transform:translateY(-50%); font-size:1.6rem; color:var(--warm); transition:transform .22s cubic-bezier(.22,.61,.36,1); }
 .faq__item.open .faq__q::after{ transform:translateY(-50%) rotate(45deg); }
-.faq__a{ max-height:0; overflow:hidden; transition:max-height .35s ease; }
+.faq__a{ max-height:0; overflow:hidden; transition:max-height .26s cubic-bezier(.22,.61,.36,1); }
 .faq__a p{ padding:0 0 22px; color:var(--ink-soft); font-size:1.02rem; max-width:54ch; }
 
 .contact__box{ background:var(--navy); color:var(--paper); border-radius:5px; padding:40px; position:relative; }
@@ -1967,3 +1967,49 @@ a.now__row:hover{ background:#efe5cd; }
 .events .beskjed--urgent .beskjed__body b, .events .beskjed--urgent .beskjed__body strong,
 .events .beskjed--urgent .beskjed__body a{ color:var(--navy); }
 .events .beskjed--urgent .beskjed__tag{ color:var(--navy); border-color:rgba(35,39,64,.5); background:rgba(35,39,64,.08); }
+
+/* ============================================================
+   PAGE BUILDER — TONE (per-seksjon bakgrunn / stemning)
+   ------------------------------------------------------------
+   data-tone settes av section-engine.js per seksjon. Reglene er
+   scopet til #page slik at KUN motor-tegnede sider (om-oss.html)
+   påvirkes — index.html o.l. beholder sine egne bakgrunner.
+   'auto' veksler lys (paper) / mørk (navy) så rytmen aldri brekker;
+   pinnet 'accent' gir det maroon båndet.
+   Høyere spesifisitet (#page + klasse + attr) overstyrer de gamle
+   .about/.allies/.lesesal/.join-bakgrunnene trygt, kun her.
+   ============================================================ */
+#page .section{ transition:background-color .25s ease, color .25s ease; }
+
+/* — LYS (paper) — standard, lys bakgrunn + mørk tekst */
+#page .section[data-tone="paper"]{ background:var(--paper); border-top:0; border-bottom:0; }
+#page .section[data-tone="paper-2"]{ background:var(--paper-2); border-top:1px solid rgba(35,39,64,.1); border-bottom:1px solid rgba(35,39,64,.1); }
+
+/* — MØRK (navy) — mørk bakgrunn + lys tekst, kort får mørk variant */
+#page .section[data-tone="navy"]{ background:var(--navy); color:var(--paper); border-top:0; border-bottom:0; }
+#page .section[data-tone="navy"] .eyebrow{ color:var(--gold); }
+#page .section[data-tone="navy"] .h-section,
+#page .section[data-tone="navy"] h2,
+#page .section[data-tone="navy"] h3,
+#page .section[data-tone="navy"] h4{ color:var(--paper); }
+#page .section[data-tone="navy"] .lede,
+#page .section[data-tone="navy"] > .wrap > p,
+#page .section[data-tone="navy"] .lesesal__lede{ color:rgba(244,236,217,.82); }
+/* «ally»-kort på mørk bakgrunn (samme behandling som marine-modus) */
+#page .section[data-tone="navy"] .ally{ background:#2a2e4a; border-color:rgba(244,236,217,.16); border-top-color:var(--gold); }
+#page .section[data-tone="navy"] .ally h3{ color:var(--paper); }
+#page .section[data-tone="navy"] .ally > p{ color:rgba(244,236,217,.8); }
+#page .section[data-tone="navy"] .ally__link{ color:var(--gold); }
+#page .section[data-tone="navy"] .ally__link:hover{ color:var(--paper); }
+#page .section[data-tone="navy"] .ally__glyph{ color:var(--gold); }
+/* lesesal-funksjonsliste + om-avsnitt på mørk */
+#page .section[data-tone="navy"] .lesesal__features li strong{ color:var(--paper); }
+#page .section[data-tone="navy"] .lesesal__features li span{ color:rgba(244,236,217,.72); }
+#page .section[data-tone="navy"] .lesesal__features svg{ color:var(--gold); }
+
+/* — AKSENT (maroon) — fremhevet bånd, lys tekst */
+#page .section[data-tone="accent"]{ background:var(--maroon); color:var(--paper); border-top:0; border-bottom:0; }
+#page .section[data-tone="accent"] .eyebrow{ color:var(--gold); }
+#page .section[data-tone="accent"] .h-section,
+#page .section[data-tone="accent"] h2,
+#page .section[data-tone="accent"] h3{ color:var(--paper); }

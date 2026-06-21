@@ -41,7 +41,7 @@
               + '<li>Rediger produktene nedenfor — klikk på et felt for å redigere det</li>'
               + '<li>Last opp bilder ved å <b>klikke på bildefeltet</b> eller dra bilder inn på det (du kan velge flere)</li>'
               + '<li><b>Koble farger til bilder:</b> har produktet farger, kan du på hvert bilde velge hvilken farge det hører til — da byttes hovedbildet i butikken når kunden velger den fargen</li>'
-              + '<li>Klikk <b>↓ Last ned alle endrede</b> oppe til høyre, erstatt <code>merch-products.js</code> i GitHub og push</li>'
+              + '<li>Trykk <b>☁ Publiser til GitHub</b> oppe til høyre — endringene legges ut automatisk</li>'
             + '</ol>'
             + '<div class="tip-note">🖼️ <b>Bilder pr. produkt:</b> Det <b>første</b> bildet er hovedbildet («Hoved»). På hver miniatyr: <b>⠿</b> dra rekkefølge · <b>⛶</b> beskjær/zoom · <b>↻</b> roter · <b>✕</b> slett. Har produktet farger, kan du koble et bilde til en farge.</div>'
             + '<div class="tip-note">💾 Endringer lagres automatisk i nettleseren din. Last ned filen for å publisere.</div>'
@@ -51,6 +51,13 @@
             + '<p class="info-edit__hint">Vises i en boks øverst på merch-siden — f.eks. leveringstid, henteinfo eller en beskjed. La stå tom for å skjule boksen. Dobbelt linjeskift gir nytt avsnitt.</p>'
             + '<textarea id="info-input" rows="3" placeholder="F.eks. «Neste utlevering på lesesalen torsdag 12. juni. Bestill innen mandag!»"></textarea>'
           + '</div>'
+          + '<div class="info-edit">'
+            + '<label><strong>Topp-banner</strong></label>'
+            + '<p class="info-edit__hint">Tittelen og teksten øverst på merch-siden.</p>'
+            + '<div class="fg"><label>Tilbake-lenke (tekst)</label><input type="text" id="msh-back"></div>'
+            + '<div class="fg"><label>Tittel</label><input type="text" id="msh-title"></div>'
+            + '<div class="fg"><label>Ingress</label><textarea id="msh-lede" rows="2"></textarea></div>'
+          + '</div>'
           + '<div style="display:flex;justify-content:flex-end;margin-bottom:14px"><button class="btn-add" id="add-btn" type="button">+ Nytt produkt</button></div>'
           + '<div id="plist"></div>'
         + '</div>'
@@ -59,8 +66,10 @@
       var q = function (id) { return host.querySelector('#' + id); };
       var LS_KEY = 'apeiron-merch-v1';
       var LS_INFO_KEY = 'apeiron-merch-info-v1';
+      var LS_SUBHERO_KEY = 'apeiron-merch-subhero-v1';
       var products = [];
       var info = '';
+      var subhero = {};
 
       function fromPublished() { return (window.MERCH_PRODUCTS || []).map(function (p) { return Object.assign({}, p); }); }
       function loadData() {
@@ -69,8 +78,10 @@
         normalizeProducts();
         var rawInfo = localStorage.getItem(LS_INFO_KEY);
         info = rawInfo != null ? rawInfo : (window.MERCH_INFO || '');
+        var rawSh = localStorage.getItem(LS_SUBHERO_KEY);
+        try { subhero = rawSh != null ? (JSON.parse(rawSh) || {}) : Object.assign({}, window.MERCH_SUBHERO || {}); } catch (_) { subhero = Object.assign({}, window.MERCH_SUBHERO || {}); }
       }
-      function saveData() { localStorage.setItem(LS_KEY, JSON.stringify(products)); localStorage.setItem(LS_INFO_KEY, info); AC.toast('Lagret i nettleseren'); pushPreview(); }
+      function saveData() { localStorage.setItem(LS_KEY, JSON.stringify(products)); localStorage.setItem(LS_INFO_KEY, info); localStorage.setItem(LS_SUBHERO_KEY, JSON.stringify(subhero)); AC.toast('Lagret i nettleseren'); pushPreview(); }
       var saveTimer = null;
       function lazySave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveData, 350); }
       function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
@@ -445,6 +456,7 @@
           + '     btnColor, edge (farge el. { anim: "aurora-bold" }).\n'
           + '   images: galleri — base64 fra admin eller "assets/merch/..." stier. Hoved = images[0].\n'
           + '   colorImages: { "Fargenavn": indeks } — bytt bilde når en farge velges. */\n\n'
+          + 'window.MERCH_SUBHERO = ' + JSON.stringify(subhero) + ';\n\n'
           + 'window.MERCH_INFO = ' + JSON.stringify(info) + ';\n\n'
           + 'window.MERCH_PRODUCTS = ' + JSON.stringify(products, null, 2) + ';\n';
         AC.saveFile('merch-products.js', content);
@@ -453,15 +465,18 @@
 
       q('reset-btn').addEventListener('click', function () {
         if (!confirm('Dette sletter alle ueksporterte endringer og laster inn siste publiserte versjon fra merch-products.js. Fortsette?')) return;
-        localStorage.removeItem(LS_KEY); localStorage.removeItem(LS_INFO_KEY);
-        products = fromPublished(); normalizeProducts(); info = window.MERCH_INFO || '';
-        renderInfo(); renderAll(); AC.toast('Tilbakestilt til publisert versjon'); pushPreview();
+        localStorage.removeItem(LS_KEY); localStorage.removeItem(LS_INFO_KEY); localStorage.removeItem(LS_SUBHERO_KEY);
+        products = fromPublished(); normalizeProducts(); info = window.MERCH_INFO || ''; subhero = Object.assign({}, window.MERCH_SUBHERO || {});
+        renderInfo(); renderSubhero(); renderAll(); AC.toast('Tilbakestilt til publisert versjon'); pushPreview();
       });
       q('add-btn').addEventListener('click', add);
 
       var infoInput = q('info-input');
       if (infoInput) infoInput.addEventListener('input', function () { info = infoInput.value; lazySave(); });
       function renderInfo() { if (infoInput) infoInput.value = info; }
+      var SH_MAP = { 'msh-back': 'back', 'msh-title': 'title', 'msh-lede': 'lede' };
+      function renderSubhero() { Object.keys(SH_MAP).forEach(function (id) { var el = q(id); if (el) el.value = subhero[SH_MAP[id]] || ''; }); }
+      Object.keys(SH_MAP).forEach(function (id) { var el = q(id); if (el) el.addEventListener('input', function () { subhero[SH_MAP[id]] = el.value; lazySave(); }); });
 
       AC.enableDragSort(q('plist'), {
         itemSelector: '.pcard', handleSelector: '.drag-handle',
@@ -470,7 +485,7 @@
 
       /* ── live forhåndsvisning ── */
       var pvFrame = q('pv-shop');
-      function pushPreview() { if (!pvFrame || !pvFrame.contentWindow) return; try { pvFrame.contentWindow.postMessage({ type: 'apeiron-merch-preview', products: products, info: info }, '*'); } catch (e) {} }
+      function pushPreview() { if (!pvFrame || !pvFrame.contentWindow) return; try { pvFrame.contentWindow.postMessage({ type: 'apeiron-merch-preview', products: products, info: info, subhero: subhero }, '*'); } catch (e) {} }
       function onPreviewMsg(e) { if (e.data && e.data.type === 'apeiron-merch-preview-ready') { pushPreview(); fitShop(); } }
       function fitShop() {
         var wrap = host.querySelector('.pv-shop-wrap');
@@ -488,7 +503,7 @@
       window.addEventListener('resize', fitShop);
       if (pvFrame) pvFrame.addEventListener('load', fitShop);
 
-      loadData(); renderInfo(); renderAll();
+      loadData(); renderInfo(); renderSubhero(); renderAll();
       AC.viewSwitch({ list: q('plist'), key: 'apeiron-merch-view-v1', modes: [
         { id: 'cols-1', n: 1, label: '1 i bredden', title: 'Ett produkt per rad' },
         { id: 'cols-2', n: 2, label: '2 i bredden', title: 'To produkter i bredden' }

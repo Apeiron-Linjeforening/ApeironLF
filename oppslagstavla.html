@@ -66,7 +66,7 @@
 <section class="subhero">
   <img class="subhero__seal" src="assets/apeiron-logo.png" alt="" aria-hidden="true" />
   <div class="subhero__inner">
-    <a class="subhero__back" href="index.html">Tilbake</a>
+    <a class="subhero__back" href="index.html" id="intro-back">Tilbake</a>
     <h1 id="intro-heading">Oppslagstavla</h1>
     <p class="subhero__lede" id="intro-lede"></p>
   </div>
@@ -161,6 +161,12 @@
       setText('intro-eyebrow', C.intro.eyebrow);
       setText('intro-heading', C.intro.heading);
       setText('intro-lede', C.intro.lede);
+      var bk = document.getElementById('intro-back');
+      if (bk) {
+        if (IS_PREVIEW) bk.textContent = (C.intro.back == null ? '' : C.intro.back);
+        else if (C.intro.back) bk.textContent = C.intro.back;
+        if (C.intro.backHref) bk.setAttribute('href', C.intro.backHref);
+      }
     }
     var grid = document.getElementById('board-grid');
     if (!grid) return;
@@ -217,6 +223,7 @@
 </script>
 <script src="report.js"></script>
 <script src="search-index.js"></script>
+<script src="minisearch.min.js"></script>
 <script src="site-search.js"></script>
 </body>
 </html>

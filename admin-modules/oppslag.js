@@ -27,8 +27,8 @@
           + '<ol>'
             + '<li>Rediger plakatene nedenfor — klikk på et felt for å redigere det</li>'
             + '<li>Last opp plakatbildet ved å <b>klikke på bildefeltet</b> eller dra et bilde inn — hover over bildet for å <b>↻ rotere</b> eller <b>⛶ beskjære/zoome</b></li>'
-            + '<li>Klikk <b>↓ Last ned alle endrede</b> oppe til høyre</li>'
-            + '<li>Erstatt <code>oppslag-content.js</code> i GitHub-repositoriet og push/commit</li>'
+            + '<li>Trykk <b>☁ Publiser til GitHub</b> oppe til høyre</li>'
+            + '<li><em>(Reserve hvis publisering svikter: «↓ Last ned alle endrede» nederst i Oversikt-fanen, og legg fila i GitHub.)</em></li>'
             + '<li>Cloudflare oppdaterer nettsiden automatisk innen et minutt</li>'
           + '</ol>'
           + '<div class="tip-note">💾 Endringer lagres automatisk i nettleseren din. Nyeste plakat bør ligge øverst — dra i ⠿ for å sortere. Klikk <b>● Aktiv / ✓ Ferdig</b> på en plakat for å arkivere den — arkiverte plakater vises i «Tidligere oppslag» på oppslagstavla-siden, men ikke på forsiden.</div>'
@@ -38,6 +38,8 @@
             + '<div class="fg narrow"><label data-help="Liten etikett over overskriften, f.eks. «Oppslagstavla».">Eyebrow</label><input type="text" id="meta-eyebrow"></div>'
             + '<div class="fg"><label>Overskrift</label><input type="text" id="meta-heading"></div>'
             + '<div class="fg"><label>Ingress</label><input type="text" id="meta-lede"></div>'
+            + '<div class="fg narrow"><label data-help="Teksten på «Tilbake»-lenken øverst til venstre.">Tilbake-tekst</label><input type="text" id="meta-back"></div>'
+            + '<div class="fg narrow"><label data-help="Hvor «Tilbake»-lenken går, f.eks. index.html.">Tilbake-lenke</label><input type="text" id="meta-backHref"></div>'
           + '</div>'
         + '</div>'
         + '<div class="sec"><div class="sec-head"><h2>Plakater</h2><span class="count" id="count-posters"></span><button class="btn-add" type="button" data-add="posters">+ Ny plakat</button></div><div class="list" id="list-posters"></div></div>'
@@ -51,7 +53,7 @@
       function fresh() {
         var c = window.OPPSLAG_CONTENT || {};
         return {
-          intro: Object.assign({ eyebrow: 'Oppslagstavla', heading: '', lede: '' }, c.intro || {}),
+          intro: Object.assign({ eyebrow: 'Oppslagstavla', heading: '', lede: '', back: 'Tilbake', backHref: 'index.html' }, c.intro || {}),
           posters: (c.posters || []).map(function (x) { return Object.assign({}, x); })
         };
       }
@@ -135,6 +137,7 @@
       function renderMeta() {
         host.querySelectorAll('[id^="meta-"]').forEach(function () {});
         q('meta-eyebrow').value = data.intro.eyebrow || ''; q('meta-heading').value = data.intro.heading || ''; q('meta-lede').value = data.intro.lede || '';
+        q('meta-back').value = data.intro.back || ''; q('meta-backHref').value = data.intro.backHref || '';
       }
       function renderAll() { renderMeta(); renderList(); AC.enhanceHelp(host); }
 
@@ -151,6 +154,7 @@
       }
       function wireMeta(id, key) { q(id).addEventListener('input', function () { data.intro[key] = this.value; lazySave(); }); }
       wireMeta('meta-eyebrow', 'eyebrow'); wireMeta('meta-heading', 'heading'); wireMeta('meta-lede', 'lede');
+      wireMeta('meta-back', 'back'); wireMeta('meta-backHref', 'backHref');
 
       function exportFile() {
         var out = JSON.parse(JSON.stringify(data));

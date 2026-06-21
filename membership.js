@@ -43,6 +43,9 @@
   }
 
   renderMembership();
+  // Eksponer slik at section-engine kan fylle #joinTiers/#joinSteps på nytt
+  // etter at den har tegnet siden om (f.eks. ved live-preview av seksjoner).
+  try { window.renderMembership = renderMembership; } catch (_) {}
 
   /* ── Live forhåndsvisning fra Medlemskap-admin (index.html?preview=1) ──
      Lytter etter ny config og re-renderer «Bli medlem»-kortet. */

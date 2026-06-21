@@ -10,6 +10,8 @@
 
 window.OPPSLAG_CONTENT = {
   "intro": {
+    "back": "Tilbake",
+    "backHref": "index.html",
     "eyebrow": "Oppslagstavla",
     "heading": "Hva henger på tavla?",
     "lede": "Plakatene for det som skjer i Apeiron. Fagkvelder, fester, frister og kunngjøringer. Nyeste oppslag øverst. Klikk en plakat for detaljer."
