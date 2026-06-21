@@ -134,6 +134,14 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 .ctx .pub-btn { padding: 7px 15px; background: var(--gold); color: var(--navy); border: none; border-radius: 4px; font-family: var(--body); font-size: .82rem; font-weight: 700; cursor: pointer; transition: filter .15s; white-space: nowrap; }
 .ctx .pub-btn:hover { filter: brightness(1.08); }
 .ctx .pub-btn:disabled { opacity: .6; cursor: progress; }
+.ctx .pub-btn--git { background: #1f8a4c; color: #fff; }
+.gh-auth { display: inline-flex; align-items: center; gap: 8px; font-size: .8rem; color: rgba(244,236,217,.8); }
+.gh-auth .gh-dot { width: 8px; height: 8px; border-radius: 50%; background: #41d07f; box-shadow: 0 0 0 2px rgba(65,208,127,.25); flex: 0 0 auto; }
+.gh-auth .gh-who { font-weight: 600; color: #f4ecd9; }
+.gh-auth .gh-link { background: none; border: 1px solid rgba(244,236,217,.3); color: rgba(244,236,217,.85); border-radius: 4px; padding: 4px 9px; font-family: var(--body); font-size: .76rem; cursor: pointer; white-space: nowrap; }
+.gh-auth .gh-link:hover { border-color: var(--gold); color: var(--gold); }
+.gh-auth .gh-note { font-size: .7rem; color: rgba(244,236,217,.5); white-space: nowrap; }
+@media (max-width: 720px) { .gh-auth .gh-who { display: none; } }
 
 /* ── Modul-vert (C: paneler som mountes inline i skallet) ── */
 .panel-host { position: absolute; inset: 0; overflow-y: auto; padding: 28px 22px 80px; display: none; }
@@ -391,8 +399,10 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
     <div class="ctx" id="ctx">
       <a id="ctx-see" href="#" target="_blank" rel="noopener" data-keep-token>Se siden ↗</a>
       <span class="pub-count" id="pub-count"></span>
+      <button class="pub-btn pub-btn--git" id="gh-pub-btn" type="button" style="display:none">☁ Publiser til GitHub</button>
       <button class="pub-btn" id="pub-btn" type="button">↓ Last ned alle endrede</button>
     </div>
+    <span class="gh-auth" id="gh-auth"></span>
     <a href="index.html" target="_blank" rel="noopener" data-keep-token>Se nettsiden ↗</a>
   </header>
 
@@ -451,6 +461,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 <div id="bulk-host" class="ph-wrap" aria-hidden="true" style="position:fixed;left:-10000px;top:0;width:880px;height:1px;overflow:hidden;opacity:0;pointer-events:none;"></div>
 
 <script src="admin-common.js"></script>
+<script src="admin-github.js"></script>
 <!-- C-moduler: paneler som mountes inline i skallet (erstatter frittstående *-admin.html etter hvert) -->
 <script src="palette.js"></script>
 <script src="admin-image-editor.js"></script>
@@ -463,7 +474,9 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 <script src="merch-products.js"></script>
 <script src="oppnaelser-content.js"></script>
 <script src="utmerkelser-content.js"></script>
-<script src="om-content.js"></script>
+<script src="section-engine.js"></script>
+<script src="om-sections.js"></script>
+<script src="om.page.js"></script>
 <script src="index-content.js"></script>
 <script src="styret-content.js"></script>
 <script src="begrep-content.js"></script>
@@ -498,7 +511,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
     { id: 'forsiden',     ico: '🏛️', label: 'Forsiden',      module: true, ls: ['apeiron-index-v1'],                     desc: 'Tekster i toppbildet, om-seksjon, FAQ og kontakt.' },
     { id: 'nyheter',      ico: '📰', label: 'Nyheter',       module: true, ls: ['apeiron-news-v1'],                      desc: 'Kunngjøringer og beskjeder på forsiden, med arkiv.' },
     { id: 'oppslag',      ico: '📌', label: 'Oppslagstavla', module: true, ls: ['apeiron-oppslag-v1'],                   desc: 'Plakatene på oppslagstavla og forside-teaseren.' },
-    { id: 'om-oss',       ico: '📖', label: 'Om oss',        module: true, ls: ['apeiron-om-v1'],                        desc: 'Innholdet på Om oss-siden.' },
+    { id: 'om-oss',       ico: '📖', label: 'Om oss',        module: true, ls: ['apeiron-om-page-v1'],                   desc: 'Innholdet på Om oss-siden.' },
     { id: 'styret',       ico: '👥', label: 'Styret',        module: true, ls: ['apeiron-styret-v1'],                    desc: 'Styremedlemmer, bilder og vervbeskrivelser.' },
     { id: 'oppnaelser',   ico: '🏆', label: 'Oppnåelser',    module: true, ls: ['apeiron-oppnaelser-v1'],                desc: 'Milepæler og oppnåelser.' },
     { id: 'utmerkelser',  ico: '🎖️', label: 'Utmerkelser',   module: true, ls: ['apeiron-utmerkelser-v1'],               desc: 'Priser og utmerkelser.' },
@@ -909,6 +922,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
      kaller dets ekte eksport, og rydder opp — så filene blir 100 % korrekte. */
   var tabBtns = {}, cardEls = {};
   var pubBtn = null, pubCount = null, panelOn = false;
+  var ghPubBtn = null, ghAuth = null;
 
   // Samordner header-området: «Se siden» (når et panel er åpent) og den samlede
   // publiser-knappen + telleren (når minst étt panel har upubliserte endringer).
@@ -935,6 +949,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
     var n = changedPanels().length;
     if (pubCount) pubCount.textContent = n === 0 ? '' : (n === 1 ? '1 upublisert endring' : n + ' upubliserte endringer');
     if (pubBtn) pubBtn.textContent = '↓ Last ned alle endrede (' + n + ')';
+    updateGhVisibility(n);
     syncHeader();
     maybeShowLeaveWarning();
   }
@@ -974,6 +989,91 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
         if (hostDiv) hostDiv.innerHTML = '';
         setTimeout(step, 420);
       }, 90);
+    }
+    step();
+  }
+
+  /* ─── G1: PUBLISER TIL GITHUB (commit i stedet for nedlasting) ───
+     Speiler bulkExport(), men fanger filene via AdminCommon.beginCapture()
+     og committer dem som ÉN commit på branchen (Cloudflare-funksjon). */
+  function updateGhVisibility(n) {
+    var authed = !!(window.AdminGitHub && window.AdminGitHub.state && window.AdminGitHub.state.authenticated);
+    if (ghPubBtn) ghPubBtn.style.display = (authed && n > 0) ? '' : 'none';
+  }
+  function renderAuth() {
+    if (!ghAuth) return;
+    var s = (window.AdminGitHub && window.AdminGitHub.state) || { authenticated: false };
+    if (s.authenticated) {
+      ghAuth.innerHTML = '<span class="gh-dot"></span><span class="gh-who">' + (s.login || 'innlogget') + '</span><button class="gh-link" id="gh-logout" type="button">Logg ut</button>';
+      var lo = document.getElementById('gh-logout');
+      if (lo) lo.addEventListener('click', function () { window.AdminGitHub.logout().then(function () { renderAuth(); updateGhVisibility(changedPanels().length); }); });
+    } else {
+      var unavailable = !!(s.offline || s.unavailable);
+      var label = (s.error === 'not_allowed') ? ('GitHub: ingen tilgang (' + (s.login || '') + ')') : '☁ Logg inn for å publisere';
+      ghAuth.innerHTML = '<button class="gh-link" id="gh-login" type="button">' + label + '</button>'
+        + (unavailable ? '<span class="gh-note">krever publisert side</span>' : '');
+      var li = document.getElementById('gh-login');
+      if (li) li.addEventListener('click', function () {
+        if (unavailable) { window.AdminCommon.toast('GitHub-publisering virker kun på den publiserte siden (Cloudflare) — ikke når du åpner filene lokalt.'); return; }
+        window.AdminGitHub.login();
+      });
+    }
+    updateGhVisibility(changedPanels().length);
+  }
+  function bulkPublish() {
+    if (bulkBusy) return;
+    if (!window.AdminGitHub || !window.AdminGitHub.state.authenticated) { window.AdminCommon.toast('Logg inn på GitHub først'); return; }
+    var list = changedPanels();
+    if (!list.length) return;
+    var branch = window.AdminGitHub.state.branch || 'main';
+    if (!confirm('Publisere ' + list.length + (list.length === 1 ? ' endring' : ' endringer') + ' rett til GitHub (' + branch + ')?\n\n'
+      + list.map(function (p) { return '• ' + p.label; }).join('\n')
+      + '\n\nNettsiden oppdaterer seg automatisk innen ~1 minutt.')) return;
+    bulkBusy = true;
+    function resetBtns() { bulkBusy = false; if (ghPubBtn) { ghPubBtn.disabled = false; ghPubBtn.textContent = '☁ Publiser til GitHub'; } if (pubBtn) pubBtn.disabled = false; }
+    if (ghPubBtn) { ghPubBtn.disabled = true; ghPubBtn.textContent = '☁ Publiserer…'; }
+    if (pubBtn) pubBtn.disabled = true;
+    var hostDiv = document.getElementById('bulk-host');
+    window.AdminCommon.beginCapture();
+    var i = 0;
+    function step() {
+      if (i >= list.length) {
+        try { publishSearchIndex(); } catch (e) {}
+        // ekstra ventetid: noen paneler (f.eks. Styret) laster bilder asynkront
+        setTimeout(function () {
+          var files = window.AdminCommon.endCapture();
+          if (hostDiv) hostDiv.innerHTML = '';
+          if (!files.length) { resetBtns(); window.AdminCommon.toast('Ingenting å publisere'); return; }
+          window.AdminCommon.toast('Publiserer ' + files.length + (files.length === 1 ? ' fil' : ' filer') + '…');
+          var msg = 'Admin: oppdater ' + list.map(function (p) { return p.label; }).join(', ');
+          window.AdminGitHub.commit(files, msg).then(function (res) {
+            resetBtns();
+            if (res && res.ok) {
+              // publisert → fjern lokale utkast så «upublisert»-merkene nullstilles
+              list.forEach(function (p) { (p.ls || []).forEach(function (k) { try { localStorage.removeItem(k); } catch (_) {} }); });
+              refreshStatus();
+              window.AdminCommon.toast('✓ Publisert til GitHub — live om ~1 min');
+            } else {
+              window.AdminCommon.toast('Publisering feilet: ' + ((res && res.error) || 'ukjent'));
+            }
+          }).catch(function () { resetBtns(); window.AdminCommon.toast('Publisering feilet (nettverk)'); });
+        }, 900);
+        return;
+      }
+      var p = list[i++];
+      var def = window.AdminPanels && window.AdminPanels.get(p.id);
+      if (!def || !def.mount || !hostDiv) { step(); return; }
+      hostDiv.innerHTML = ''; hostDiv.className = 'ph-wrap mod-' + p.id;
+      var ctrl;
+      try { ctrl = def.mount(hostDiv, window.AdminCommon) || {}; } catch (e) { ctrl = {}; }
+      setTimeout(function () {
+        try { if (ctrl.export) ctrl.export(); } catch (e) {}
+        // vent på ev. asynkrone bilde-saves før vi river panelet
+        setTimeout(function () {
+          try { if (ctrl.destroy) ctrl.destroy(); } catch (e) {}
+          setTimeout(step, 140);
+        }, 700);
+      }, 110);
     }
     step();
   }
@@ -1194,6 +1294,18 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
   pubBtn = document.getElementById('pub-btn');
     pubCount = document.getElementById('pub-count');
     if (pubBtn) pubBtn.addEventListener('click', bulkExport);
+    ghPubBtn = document.getElementById('gh-pub-btn');
+    ghAuth = document.getElementById('gh-auth');
+    if (ghPubBtn) ghPubBtn.addEventListener('click', bulkPublish);
+    if (window.AdminGitHub) {
+      try {
+        var sp = new URLSearchParams(location.search);
+        if (sp.get('gh') === 'ok') window.AdminCommon.toast('Innlogget på GitHub ✓');
+        else if (sp.get('gh') === 'error') window.AdminCommon.toast('GitHub-innlogging feilet (' + (sp.get('reason') || '') + ')');
+        if (sp.get('gh')) { sp.delete('gh'); sp.delete('reason'); var qs = sp.toString(); history.replaceState(null, '', location.pathname + (qs ? '?' + qs : '') + location.hash); }
+      } catch (_) {}
+      window.AdminGitHub.status().then(function () { renderAuth(); });
+    }
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') { var f = document.querySelector('.ph-wrap.pv-full'); if (f) { f.classList.remove('pv-full'); kickResize(); } }
     });

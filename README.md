@@ -261,10 +261,6 @@ Ting vi vet om, men er usikre på om det er verdt å gjøre noe med. Ført opp s
 <summary><b>Åpne to-do-lista</b></summary>
 
 Kritisk:
-- [ ] Sjekke at "Legg til fadderukeprogrammet i din kalender" fungerer: iCal og Google Kalender.
-- [ ] Revamp av Hero. - ish gjort.
-- [ ] Admin bug fix: Drag and drop for sortering i admin er veldig buggy- Første gang man drar fryser det opp + det man drar samsvarer ikke med hvor man slipper det.
-- [ ] Admin bug fix: admin har ofte allerde upubliserte endringer når man åpner en opp. Hver gang man lukker/åpner admin burde ting automatisk bli satt til hvordan publiserte versjonen er (sett inn varsel for når man første gang lukker admin siden med en sjekk boks for "ikke vis meg dette varselet igjen")
 
 Medium:
 - [ ] Be HF studentrådet om å oppdatere sidene deres og gi oss mer informasjon om hva de faktisk gjør. 
@@ -272,10 +268,9 @@ Medium:
       - [ ] Hvordan får vi kontakt med våre egne TVer?
 - [ ] Legge til side for møtereferat -> Kan tas i egen wiki, muligens. Fylle ut SAK / utvide den kan tas på denne wiki siden.
 - [ ] Sammenlign med https://www.mfplacebo.no/
+- [ ] Sjekke at "Legg til fadderukeprogrammet i din kalender" fungerer: iCal og Google Kalender.
 
 Lav:
-- [ ] Full revamp av hvordan hele siden redigeres: mer square space aktig.
-      Hva kan ikke gjøres per nå: Endre av logo - Flytte om på seksjoner - Flytte seksjoner mellom sider - Endre alt fra én admin side - Visuell endring direkte i et preview.
 
 Ønsker:
 - [ ] Snakke med IFR/NTNU om API for automatisk oppdatering av emner for studiene.
@@ -286,7 +281,7 @@ Må gjøres før vi slapper av med å bygge nettsiden:
 - [ ] Sjekke på nytt hvordan alt oppfører seg på mobil og smalere skjermer.
 - [ ] Fjern WIP banneret.
 
-Skjelett Prosjekt:
+Page-builder Prosjekt:
 - [ ] Gjøre om prosjektet til et nytt repo som kan klones og lett gjøres om til andre linjeforeninger.
 - [ ] Må lages en readme som sier hva man må gjøre for å starte.
 

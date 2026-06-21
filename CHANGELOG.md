@@ -1,5 +1,46 @@
 ## Siste endringer
 
+**21.06.26 — G1 bygd: «Lagre = commit» (publiser rett til GitHub fra admin)**
+- **«☁ Publiser til GitHub»** i admin committer alle endrede data-filer som ÉN commit til `main` — ingen nedlasting, ingen manuell push. Fortsatt 100 % statisk og gratis. **↓ Last ned alle endrede** beholdt som reserve.
+- **Ekte innlogging (path B), server-løst på Cloudflare Pages Functions:** GitHub OAuth web-flow. Nye funksjoner under `functions/api/github/`: `login`, `callback`, `me`, `commit`, `logout` (+ `_common.js`). Tokenet lagres i en **httpOnly/Secure/SameSite=Lax-cookie** — når aldri nettleser-JS; alle commits går via `commit`-funksjonen (Git Data API: blob → tree → commit → ref, atomisk). `ALLOWED_LOGINS` begrenser hvem som kan publisere.
+- **Additivt og trygt for main-admin:** ny klient `admin-github.js` + en capture-sink i `admin-common.js` (`beginCapture`/`endCapture`) som lar «publiser» fange nøyaktig de samme filene modulenes `export()` ellers laster ned (tekst + binære bilder via base64). Eksisterende nedlastingsflyt er urørt; ingen modul endret.
+- **Oppsett kreves én gang** (GitHub OAuth-app + Cloudflare-miljøvariabler) — se `docs/g1-oppsett.md`. Virker kun på den deployede siden (funksjonene kjører på Cloudflare, ikke lokalt).
+- Verifisert lokalt: admin laster rent, logger inn-knapp vises, nedlastingsflyt intakt, ingen konsollfeil. Selve OAuth/commit må testes på Cloudflare-deploy med variablene satt.
+- Nye filer: `functions/api/github/{_common,login,callback,me,commit,logout}.js`, `admin-github.js`, `docs/g1-oppsett.md`. Endret: `admin-common.js`, `admin.html`.
+
+**21.06.26 — Page Builder: presis live-preview (slutt på flimmer ved fargebytte)**
+- **Problem:** previewen bygde HELE siden om ved hver minste endring — også fargebytte — så det flimret, scrollen hoppet, og Lesesalen-bildene ble lastet på nytt hver gang. Fargeredigering føltes ødelagt.
+- **Fix:** motoren fikk to inkrementelle metoder — `PageEngine.applyTones()` (oppdaterer kun `data-tone` på seksjonene) og `PageEngine.renderSection()` (tegner kun ÉN seksjon om). `om-oss.html` lytter nå på tre meldinger: `apeiron-page-tone` (fargebytte → kun attributt, myk CSS-overgang), `apeiron-section-update` (tekstredigering → kun den redigerte seksjonen), og `apeiron-page-preview` (struktur: legg til/fjern/sorter → full tegning). Admin-byggeren sender riktig type per handling.
+- **Resultat:** fargebytte er nå momentant og uten ombygging; tekstendring tegner bare sin egen seksjon, så resten av siden (scroll-posisjon, Lesesalen-bilder) står helt i ro. Verifisert med probe-attributter: tone-klikk lar nabo-seksjoner stå urørt; tekstedit rører bare egen seksjon.
+- Berørte filer: `section-engine.js`, `om-oss.html`, `admin-modules/om-oss.js`.
+
+**21.06.26 — Page Builder G2: tone-system + ny seksjonsbygger i admin**
+- **Tonen driver nå bakgrunnen.** Nytt tone-lag i `styles.css` (scopet til `#page` så bare motor-tegnede sider påvirkes — `index.html` o.l. er urørt): `paper` (lys), `navy` (mørk, med mørk kort-variant), `accent` (maroon). `auto` veksler lys/mørk ut fra posisjon så rytmen aldri brekker når seksjoner flyttes. Om oss-rytmen er nå lys → mørk → lys → mørk → maroon → lys (bli-medlem pinnet `accent`).
+- **Ny admin-bygger (`admin-modules/om-oss.js` skrevet om, PAGE-native).** Erstatter den gamle OM_CONTENT-editoren. Øverst en **seksjonsbygger**: dra for å sortere, **tone-velger** per seksjon (Auto/Lys/Mørk/Aksent), **+ Ny seksjon** (type-velger), og slett — med en **rytme-vakt** som varsler når to like, pinnede toner havner ved siden av hverandre. Topp-banneret er pinnet. Under bygger­en: ett innholds-panel per seksjon, felter etter type, bundet til `section.props`. Eksporterer **`om.page.js`**, live-preview via `apeiron-page-preview`.
+- `membership.js` eksponerer nå `window.renderMembership` så medlemskortet fylles på nytt når motoren re-tegner siden (live-preview). `admin.html` laster `section-engine.js` + `om-sections.js` + `om.page.js` (i stedet for `om-content.js`); Om oss-panelets lagringsnøkkel er `apeiron-om-page-v1`.
+- **Slettet** (erstattet, ikke lenger lastet noe sted): `om-content.js`, `apeiron-om.js`.
+- Verifisert: bygger viser 7 seksjoner m/ riktige toner, banner pinnet; tone-bytte gir rytme-vakt; «+ Ny seksjon» legger til; live-preview oppdaterer seksjonsantall/tittel/tone og beholder medlemskortet. Berørte filer: `styles.css`, `admin-modules/om-oss.js`, `admin-modules.css`, `admin.html`, `membership.js`, `om.page.js`.
+
+**21.06.26 — Page Builder G1: motoren bygd, Om oss tegnes nå HELT fra data**
+- **Retningen er lagt om** (etter designforslaget): en side er ikke lenger fast HTML, men en **ordnet liste av typede seksjoner** som en felles motor tegner. Dette er arkitekturen som gjør prosjektet til en ekte, klonbar sidebygger.
+- **Ny motor — `section-engine.js`:** `SectionTypes.define/get/has/list/defaults` (register for seksjonstyper) + `PageEngine.render(page, el, opts)` som filtrerer på `enabled`, regner ut **auto-tone** (veksler lys/mørk så rytmen aldri brekker) og kjører `mount()`-hooks. `PageEngine.toneClashes()` finner naboer med lik pinnet tone (grunnlag for admin-vakt neste steg).
+- **Kjernetyper — `om-sections.js`:** `banner`, `about`, `cardgrid`, `lesesal`, `join`, `faq`. Hver `render()` gjenskaper dagens markup/klasser 1:1 (parity), og eier sin egen `defaults`/`mount`. Lesesalens galleri + lightbox er flyttet fra inline-script til typens `mount()`.
+- **Siden som data — `om.page.js`:** hele Om oss som `sections: [{ id, type, tone, props }]`. `om-oss.html` er slanket til `<main id="page"></main>` + motor-bootstrap; scriptene er omordnet så motoren tegner FØR `membership.js`/`app.js`, slik at `#joinTiers`/`#joinSteps`, `.reveal` og `.faq__q` finnes når de kobler seg på.
+- **Verifisert:** 7 seksjoner tegnet fra data, alle kort/punkter/FAQ/nøkkeltall til stede, medlemskortet fylt, tone-veksling korrekt, ingen konsollfeil. Visuelt identisk med forrige Om oss.
+- **Merk (midlertidig):** det gamle **Admin → Om oss**-panelet skriver fortsatt `om-content.js` (gammelt format) og får ikke live-preview mot den nye motoren. Innhold redigeres i `om.page.js` inntil det nye seksjons-baserte panelet er bygd (neste steg). `apeiron-om.js` + `om-content.js` lastes ikke lenger av `om-oss.html`, men beholdes til admin er flyttet over.
+- Nye filer: `section-engine.js`, `om-sections.js`, `om.page.js`. Endret: `om-oss.html`.
+
+**21.06.26 — F3 (pilot): dra-sortér seksjoner — Om oss**
+- Bygger rett på F2-lista. **Seksjons-rekkefølgen er nå redigerbar**: Seksjoner-panelet i Admin → Om oss fikk dra-håndtak (⠿) på hver rad (`AdminCommon.enableDragSort`, samme mønster som meny/oppslag/styret). Rekkefølgen lagres i `sections`-lista.
+- `applySections()` i `apeiron-om.js` ble utvidet: i tillegg til vis/skjul flytter den nå de styrte seksjonene til **listerekkefølge** i DOM-en (reinnsettes rett etter topp-banneret). Idempotent — flytter bare når noe faktisk er ute av rekkefølge, så ekte side (standardrekkefølge) er en no-op.
+- Verifisert: omsortering i admin speiles umiddelbart i live-preview (DOM-rekkefølge endres), samtidig som av/på fortsatt virker. Berørte filer: `apeiron-om.js`, `admin-modules/om-oss.js`.
+
+**21.06.26 — F2 (pilot): seksjoner av/på som data — Om oss**
+- **Seksjoner er nå data, ikke fast HTML.** Om oss fikk en ordnet `sections`-liste i `om-content.js` (`{ id, label, enabled }`, der `id` = seksjonens DOM-anker). `apeiron-om.js` har en ny `applySections()` som vises/skjuler hver seksjon ut fra `enabled` — kjøres i `renderOm()`, så både ekte side og live-preview følger med.
+- **Admin → Om oss** fikk et nytt **Seksjoner**-panel øverst med av/på-bryter per seksjon (gjenbruker `.toggle-row`/`.switch`-stilen fra Forsiden, utvidet til `.mod-om-oss`). Topp-banneret er alltid på. En `mergeSections()` slår lagret liste sammen med kanon: bevarer rekkefølge + valg, reparerer etiketter, legger til manglende og dropper ukjente id-er — robust mot fremtidige endringer. Eksporten skriver `sections` først i `om-content.js`.
+- **Lista er bevisst ordnet** så F3 (dra-sortering) blir en liten påbygging: sorter `sections` + rendre seksjonene i den rekkefølgen. **«+ Ny seksjon»** (legge til helt nye) er et separat, større steg senere.
+- Verifisert: alle 6 seksjoner synlige som før på ekte side; av-bryter i admin skjuler seksjonen umiddelbart i live-preview. Berørte filer: `om-content.js`, `apeiron-om.js`, `admin-modules/om-oss.js`, `admin-modules.css`.
+
 **21.06.26 — F1 FERDIG: «Tilbake»-lenkene er nå redigerbare — all redaksjonell tekst er data-drevet**
 - De siste hardkodede «Tilbake»-lenkene er flyttet til data. **Utmerkelser**, **Oppnåelser** og **Oppslagstavla** fikk `intro.back` + `intro.backHref` i sine content-filer; sidene leser dem inn (`#intro-back`), og panelene fikk «Tilbake-tekst» + «Tilbake-lenke» i topp-banner-feltene. **Hjelp** hadde dette fra før (`hero.back`/`hero.backHref`).
 - Berørte filer: `utmerkelser-content.js`, `oppnaelser-content.js`, `oppslag-content.js`, `utmerkelser.html`, `oppnaelser.html`, `oppslagstavla.html`, `admin-modules/utmerkelser.js`, `admin-modules/oppnaelser.js`, `admin-modules/oppslag.js`.
