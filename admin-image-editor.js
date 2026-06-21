@@ -319,7 +319,7 @@
       // vent på layout før vi måler boksbredde
       requestAnimationFrame(function () { setAspect(aspect); });
     };
-    img.onerror = function () { pending = null; alert('Kunne ikke laste bildet for redigering.'); };
+    img.onerror = function () { pending = null; if (typeof opts.onError === 'function') { opts.onError(); return; } alert('Kunne ikke laste bildet for redigering.'); };
     if (/^data:|^blob:/.test(opts.src)) img.src = opts.src;
     else { img.crossOrigin = 'anonymous'; img.src = opts.src; }
   }

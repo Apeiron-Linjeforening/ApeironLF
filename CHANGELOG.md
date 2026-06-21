@@ -1,5 +1,9 @@
 ## Siste endringer
 
+**21.06.26 — Bug fikset: kunne ikke bytte bilde når det gamle manglet**
+- Klikket man på et bildefelt der bildet var slettet/utilgjengelig, prøvde redigereren å laste det manglende bildet og feilet med «Kunne ikke laste bildet for redigering» — uten vei videre. Nå faller flyten tilbake til **å velge et nytt bilde** (med en kort beskjed) når det gamle ikke kan lastes. `AdminImageEditor.open` fikk en `onError`-hook; `wireImageField` bruker den til å åpne filvelgeren.
+- Berørte filer: `admin-image-editor.js`, `admin-common.js`.
+
 **21.06.26 — Opprydding for stabil main: bildesti-bug + konsekvente publiserings-hint**
 - **Bug fikset: bilder havnet i rot ved publisering.** Styret lastet ned portretter med bare filnavnet (`leder.webp`) — greit for manuell nedlasting, men ved G1-commit havnet de da i repo-roten i stedet for `assets/styret/`, så de ikke vistes. Nå sendes **full sti** til `saveBlob`; `admin-common.js` korter ned til filnavn *kun* ved nedlasting, mens commit beholder full sti (`assets/styret/<id>.webp`). Gjelder også arkivbilder.
 - **Per-panel «Hvordan publisere»-hintene oppdatert** i alle 16 modulene: «Klikk ↓ Last ned alle endrede oppe til høyre … erstatt i GitHub og push» → «Trykk **☁ Publiser til GitHub** oppe til høyre», med nedlasting som tydelig merket reserve («nederst i Oversikt-fanen»). Konsistent med den nye flyten.
