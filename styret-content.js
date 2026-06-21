@@ -1,5 +1,5 @@
 /* Innhold for Styret-siden (styret.html) + arkivsiden (styret-arkiv.html).
-   Sist oppdatert: 20.6.2026
+   Sist oppdatert: 21.6.2026
    Rediger direkte her, eller åpne Admin-senteret → Styret.
 
    members[].img : sti til egen bildefil (assets/styret/…webp). Bildene
@@ -159,6 +159,19 @@ window.STYRET_CONTENT = {
         {
           "label": "ASAP",
           "color": "maroon"
+        }
+      ]
+    },
+    {
+      "id": "mmqo1krkhy8y",
+      "name": "Ole Gunnar",
+      "role": "Fotballmann",
+      "initials": "OG",
+      "img": "assets/styret/mmqo1krkhy8y.webp",
+      "tags": [
+        {
+          "label": "Baller",
+          "color": "gold"
         }
       ]
     }

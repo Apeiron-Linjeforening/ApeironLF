@@ -302,6 +302,12 @@ window.SEARCH_INDEX = [
     "g": "Styret"
   },
   {
+    "t": "Ole Gunnar",
+    "d": "Fotballmann · Apeiron 2025/26 · Baller",
+    "u": "index.html#styret",
+    "g": "Styret"
+  },
+  {
     "t": "Om vervene — Styret",
     "d": "Beskrivelse av styrevervene i Apeiron: Leder, Nestleder, Økonomiansvarlig, Sosialansvarlig, PR-ansvarlig, Faddersjef, Fagansvarlig, Potet, S.A.K — Sosiale Arrangement Komité, H.I.…",
     "u": "styret.html",
