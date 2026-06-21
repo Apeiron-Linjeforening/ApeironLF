@@ -104,12 +104,9 @@ eller pushe manuelt.
 > 💡 **Hvem kan publisere?** Bare GitHub-kontoer som er satt opp med tilgang (se
 > [docs/g1-oppsett.md](docs/g1-oppsett.md)). Hver publisering merkes med hvem som gjorde den.
 
-### Reserveløsning: last ned filene manuelt
-
-Hvis publisering ikke virker (eller du heller vil pushe selv), finner du **↓ Last ned alle
-endrede** nederst i **Oversikt**-fanen. Da laster du ned de endrede filene, **erstatter** dem
-i GitHub og «commit / push» manuelt. Full framgangsmåte i [VEDLIKEHOLD.md](VEDLIKEHOLD.md).
-Normalt trenger du **ikke** dette — bruk «☁ Publiser til GitHub».
+> 🛟 **Reserveløsning:** skulle publisering svikte, finnes en backup som laster ned filene
+> for manuell opplasting til GitHub. Den trenger du normalt ikke — full framgangsmåte for
+> drift står i [VEDLIKEHOLD.md](VEDLIKEHOLD.md).
 
 ---
 
@@ -133,8 +130,7 @@ Hver del i menyen styrer én del av nettsiden:
 | **Oppnåelser** | Milepæler / oppnåelser |
 | **Utmerkelser** | Utmerkelser og priser |
 
-Publiser alt på én gang med **☁ Publiser til GitHub** øverst til høyre (eller bruk
-reserveløsningen **↓ Last ned alle endrede** i **Oversikt**).
+Publiser alt på én gang med **☁ Publiser til GitHub** øverst til høyre.
 
 > 💡 **Hastebeskjed?** En kjapp viktig melding (for eksempel «Aporetisk i kveld er flyttet»)
 > legger du ut i **Nyheter**-panelet — skru på **⚑ Viktig** og velg hvor den skal vises.
@@ -240,8 +236,9 @@ Sideinnhold ligger i data-filer (`*-content.js` / `*-config.js`), ikke hardkodet
 mounter tynne editor-moduler fra `admin-modules/<område>.js`. Modulene deler
 `admin-common.js` (datalager `createStore`, drag-sortering, hjelpebobler, `saveFile`,
 panel-registeret `AdminPanels`) og `admin-modules.css` (klasse-scopet stil per modul).
-Hver modul har live forhåndsvisning og en «↓ Last ned»-knapp; redigeringsløkka er
-*rediger → last ned data-fil → commit/push → Cloudflare bygger (~1 min)*.
+Hver modul har live forhåndsvisning. Redigeringsløkka er
+*rediger → **☁ Publiser til GitHub** → Cloudflare bygger (~1 min)*; en nedlastings-backup
+finnes for manuell publisering (se [VEDLIKEHOLD.md](VEDLIKEHOLD.md)).
 Full arkitekturforklaring: [docs/admin-arkitektur.md](/docs/admin-arkitektur.md).
 
 ---

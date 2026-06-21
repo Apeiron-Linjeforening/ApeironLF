@@ -113,6 +113,10 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
   font-size: .68rem; letter-spacing: .18em; text-transform: uppercase; font-weight: 700;
   color: var(--ink-soft); margin: 4px 0 14px;
 }
+.reset-all-box { margin: 0 0 22px; padding: 12px 14px; border: 1px dashed rgba(118,17,15,.4); border-radius: 8px; background: rgba(118,17,15,.04); display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.reset-all-box__txt { flex: 1; min-width: 200px; font-size: .82rem; color: var(--ink-soft); line-height: 1.5; }
+.reset-all-btn { padding: 7px 14px; background: transparent; color: #76110f; border: 1px solid rgba(118,17,15,.5); border-radius: 4px; font-family: var(--body); font-size: .8rem; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.reset-all-btn:hover { background: #76110f; color: #fff; }
 .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(232px, 1fr)); gap: 14px; }
 .panel-card {
   text-align: left; background: white; border: 1px solid var(--border); border-radius: 10px;
@@ -449,6 +453,11 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
               <a href="README.md" target="_blank" rel="noopener" data-keep-token><span class="ql-ico">📘</span> Veiledning <span class="ql-sub">README.md</span></a>
             </div>
           </div>
+        </div>
+
+        <div class="reset-all-box" id="reset-all-box" style="display:none">
+          <div class="reset-all-box__txt"><b>↺ Angre alle endringer</b> — tilbakestiller alle upubliserte endringer (på tvers av alle paneler) til siste publiserte versjon. Kan ikke angres.</div>
+          <button class="reset-all-btn" id="reset-all-btn" type="button">Tilbakestill alle sider</button>
         </div>
 
         <div class="dash-section-label">Rediger innhold</div>
@@ -931,6 +940,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
   var tabBtns = {}, cardEls = {};
   var pubBtn = null, pubCount = null, panelOn = false;
   var ghPubBtn = null, ghAuth = null;
+  var resetAllBox = null;
 
   // Samordner header-området: «Se siden» (når et panel er åpent) og den samlede
   // publiser-knappen + telleren (når minst étt panel har upubliserte endringer).
@@ -958,6 +968,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
     if (pubCount) pubCount.textContent = n === 0 ? '' : (n === 1 ? '1 upublisert endring' : n + ' upubliserte endringer');
     if (pubBtn) pubBtn.textContent = '↓ Last ned alle endrede (' + n + ')';
     updateGhVisibility(n);
+    if (resetAllBox) resetAllBox.style.display = n > 0 ? '' : 'none';
     syncHeader();
     maybeShowLeaveWarning();
   }
@@ -999,6 +1010,17 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
       }, 90);
     }
     step();
+  }
+
+  function resetAll() {
+    var list = changedPanels();
+    if (!list.length) { window.AdminCommon.toast('Ingen endringer å tilbakestille'); return; }
+    if (!confirm('Tilbakestille ALLE ' + list.length + (list.length === 1 ? ' endret side' : ' endrede sider') + ' til siste publiserte versjon?\n\n'
+      + list.map(function (p) { return '• ' + p.label; }).join('\n')
+      + '\n\nDette sletter de upubliserte endringene og kan ikke angres.')) return;
+    list.forEach(function (p) { (p.ls || []).forEach(function (k) { try { localStorage.removeItem(k); } catch (_) {} }); });
+    refreshStatus();
+    window.AdminCommon.toast('Alle sider tilbakestilt til publisert versjon');
   }
 
   /* ─── G1: PUBLISER TIL GITHUB (commit i stedet for nedlasting) ───
@@ -1305,6 +1327,9 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
     ghPubBtn = document.getElementById('gh-pub-btn');
     ghAuth = document.getElementById('gh-auth');
     if (ghPubBtn) ghPubBtn.addEventListener('click', bulkPublish);
+    resetAllBox = document.getElementById('reset-all-box');
+    var resetAllBtn = document.getElementById('reset-all-btn');
+    if (resetAllBtn) resetAllBtn.addEventListener('click', resetAll);
     if (window.AdminGitHub) {
       try {
         var sp = new URLSearchParams(location.search);

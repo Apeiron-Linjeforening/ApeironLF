@@ -1,5 +1,9 @@
 ## Siste endringer
 
+**21.06.26 — Ny: «Tilbakestill alle sider» i Oversikt**
+- Samlet angre-knapp i **Oversikt**-fanen som tilbakestiller alle upubliserte endringer (på tvers av alle paneler) til siste publiserte versjon — supplerer den per-panel «Tilbakestill». Vises kun når det finnes endringer, med bekreftelses-dialog som lister hvilke sider som nullstilles.
+- Berørt fil: `admin.html`.
+
 **21.06.26 — Bug fikset: kunne ikke bytte bilde når det gamle manglet**
 - Klikket man på et bildefelt der bildet var slettet/utilgjengelig, prøvde redigereren å laste det manglende bildet og feilet med «Kunne ikke laste bildet for redigering» — uten vei videre. Nå faller flyten tilbake til **å velge et nytt bilde** (med en kort beskjed) når det gamle ikke kan lastes. `AdminImageEditor.open` fikk en `onError`-hook; `wireImageField` bruker den til å åpne filvelgeren.
 - Berørte filer: `admin-image-editor.js`, `admin-common.js`.
