@@ -1,5 +1,10 @@
 ## Siste endringer
 
+**21.06.26 — «Akkurat nå»: kalender-raden glir inn (slutt på synlig pop)**
+- Kalender-raden i «Akkurat nå»-kortet kommer fra et API et lite øyeblikk etter resten av kortet, så den «poppet» synlig inn. Nå animeres den inn (høyde + fade, `nowEventIn` .38s) **kun første gang** den dukker opp — så reflowen glir på plass i stedet for å hoppe. Respekterer `prefers-reduced-motion`.
+- De tre kalenderne (aktivitet/aporetisk/fadder) melder seg inn hver for seg; render-en **debounces (60 ms)** så panelet tegnes én gang når de har satt seg, og animasjonen ikke avbrytes midt i.
+- Berørte filer: `apeiron-news.js`, `styles.css`.
+
 **21.06.26 — CodeQL: «prototype-polluting function» lukket i 4 moduler**
 - CodeQL flagget `setPath()` i `forsiden.js`, `galleri.js`, `marked.js` og `pensum.js` (Medium). Funksjonene var allerede trygge (en forhånds-løkke avviste `__proto__`/`prototype`/`constructor`), men CodeQL kjente ikke igjen at sjekken dekket nøklene. Flyttet `isUnsafeKey`-sjekken **inline rett før hver property-skriving** — mønsteret analysen gjenkjenner — uten å endre oppførsel. Verifisert: alle fire paneler mounter og lagrer rent, ingen konsollfeil.
 - Berørte filer: `admin-modules/forsiden.js`, `admin-modules/galleri.js`, `admin-modules/marked.js`, `admin-modules/pensum.js`.

@@ -1913,6 +1913,15 @@ a.now__urgent:hover{ background:var(--maroon-2); }
 }
 a.now__row{ transition:background .15s; }
 a.now__row:hover{ background:#efe5cd; }
+/* Entré for kalender-raden i «Akkurat nå»: den kommer fra et API et lite
+   øyeblikk etter resten av kortet. Animer den inn (høyde + fade) så den glir
+   på plass i stedet for å poppe. Settes kun første gang raden dukker opp. */
+@keyframes nowEventIn{
+  from{ opacity:0; transform:translateY(-6px); max-height:0; padding-top:0; padding-bottom:0; }
+  to  { opacity:1; transform:translateY(0);   max-height:120px; padding-top:14px; padding-bottom:14px; }
+}
+.now__row--enter{ animation:nowEventIn .38s cubic-bezier(.22,.61,.36,1) both; overflow:hidden; }
+@media (prefers-reduced-motion: reduce){ .now__row--enter{ animation:none; } }
 .now__date{
   flex:0 0 auto; width:48px; height:48px; border-radius:7px; background:var(--navy);
   color:#f4ecd9; display:flex; flex-direction:column; align-items:center; justify-content:center; line-height:1;

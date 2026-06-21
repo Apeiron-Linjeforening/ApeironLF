@@ -22,6 +22,7 @@
   var MAX_PANEL = 3; // antall kunngjøringer i panelet (resten ligger i arkivet)
 
   var state = { items: [], event: null, sources: {} };
+  var shownEvent = false; // true når kalender-raden har vist seg minst én gang (styrer entré-animasjon)
   var SRC_PRIORITY = { aporetisk: 3, fadder: 2, activity: 1 };
   var SRC_LABEL = {
     aporetisk: { lbl: 'Neste · Aporetisk Aften', href: 'index.html#aporetisk' },
@@ -124,7 +125,7 @@
       ? '<a class="now__urgent" href="' + safe + '">' + txt + '</a>'
       : '<div class="now__urgent">' + txt + '</div>';
   }
-  function panelEventRow() {
+  function panelEventRow(entering) {
     var c = state.event;
     if (!c || !c.ev || !c.ev.start) return '';
     var e = c.ev, d = e.start;
@@ -132,7 +133,7 @@
     if (e.place) meta += ' · ' + esc(e.place);
     var L = SRC_LABEL[c.src] || SRC_LABEL.activity;
     var ttl = esc(e.title || 'Arrangement');
-    return '<a class="now__row now__row--event" href="' + L.href + '">'
+    return '<a class="now__row now__row--event' + (entering ? ' now__row--enter' : '') + '" href="' + L.href + '">'
       + '<span class="now__date"><b>' + d.getDate() + '</b><span>' + MON[d.getMonth()] + '</span></span>'
       + '<span class="now__body"><span class="now__lbl">' + L.lbl + '</span>'
       + '<span class="now__ttl">' + ttl + '</span><span class="now__meta">' + meta + '</span></span>'
@@ -150,7 +151,10 @@
     var panel = visible(items, 'panel');
     var urgent = panel.filter(function (n) { return n.urgent; });
     var normal = panel.filter(function (n) { return !n.urgent; }).slice(0, MAX_PANEL);
-    var evRow = panelEventRow();
+    // Animer kalender-raden inn bare første gang den dukker opp (ikke ved senere re-render).
+    var entering = !!state.event && !shownEvent;
+    var evRow = panelEventRow(entering);
+    if (evRow) shownEvent = true;
 
     // Tomt kort unngås: uten innhold OG uten arrangement → seglet.
     if (!urgent.length && !normal.length && !evRow) { logoFallback(host); return; }
@@ -210,8 +214,13 @@
     source = source || 'activity';
     state.sources[source] = (ev && ev.start) ? ev : null;
     recomputeEvent();
-    render();
+    // Kalenderne (aktivitet/aporetisk/fadder) melder seg inn hver for seg i rask
+    // rekkefølge. Debounce render-en så panelet tegnes én gang når de har satt seg
+    // — da spiller entré-animasjonen på kalender-raden rent (uten å avbrytes).
+    clearTimeout(evRenderTimer);
+    evRenderTimer = setTimeout(render, 60);
   };
+  var evRenderTimer = null;
   function recomputeEvent() {
     var now = new Date(), cands = [];
     Object.keys(state.sources).forEach(function (src) {
