@@ -65,7 +65,7 @@ window.INDEX_CONTENT = {
     "heading": "Ta kontakt",
     "email": "apeironlinjeforening@gmail.com",
     "address": "Låven, Dragvoll allé 40 · NTNU Trondheim",
-    "web": "apeironlf.pages.dev",
+    "web": "apeironlf.pages.dev & apeiron.org.ntnu.no",
     "webHref": "https://apeironlf.pages.dev",
     "socials": [
       {

@@ -1,13 +1,13 @@
 /* ============================================================
    news-content.js — nyheter, kunngjøringer og beskjeder
-   Sist oppdatert: 19.6.2026
+   Sist oppdatert: 22.6.2026
    Redigeres i Admin-senteret → Nyheter, eller rett her.
 
    place: "panel" (Akkurat nå-kortet) | "arrangement" | "aporetisk" | "fadderuke"
-   kicker: merkelapp på «Akkurat nå»-kortet ("" = ingen, da får tittelen plassen).
-   date: liten tidsstempel-tekst øverst til høyre (tom = «lagt ut»-dato brukes).
+   kicker: merkelapp på «Akkurat nå»-kortet ("" = ingen). date: liten tidsstempel-tekst (tom = lagt ut-dato).
    urgent: true = vinrød «Viktig». text: **fet** *kursiv* _understrek_ [tekst](url).
    done: true = arkivert (vises i arkivet på nyheter.html, ikke på forsiden).
+   subhero: topp-banneret (tilbake-lenke, tittel, ingress).
    ============================================================ */
 
 window.NEWS_CONTENT = {
@@ -25,8 +25,8 @@ window.NEWS_CONTENT = {
       "text": "Vi håper dere har en finfin sommer og at dere har noen artige planer!\nHilsen Apeiron",
       "date": "",
       "kicker": "Kunngjøring",
-      "link": "index.html#arrangementer",
-      "linkLabel": "Meld deg på",
+      "link": "",
+      "linkLabel": "",
       "done": false,
       "posted": "2026-06-15"
     }

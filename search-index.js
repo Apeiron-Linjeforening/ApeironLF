@@ -338,6 +338,12 @@ window.SEARCH_INDEX = [
     "g": "Heder"
   },
   {
+    "t": "Blir dette deg?",
+    "d": "GOAT · 2026/2027 — Et eksempelkort. Beskriv kort hva personen har betydd for Apeiron og hvorfor de fortjener heder. Bytt ut navn, bilde og tekst i admin.",
+    "u": "utmerkelser.html",
+    "g": "Heder"
+  },
+  {
     "t": "Begrep Podcast",
     "d": "Sesong 1 · Samtaler med forfatterne bak artiklene i Begrep tidsskrift. Vertene går i dybden på tekstene og utforsker ideene videre i samtale.",
     "u": "begrep.html#podkast",
