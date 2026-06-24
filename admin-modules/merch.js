@@ -50,6 +50,10 @@
             + '<label for="info-input"><strong>Info-tekst øverst i butikken</strong></label>'
             + '<p class="info-edit__hint">Vises i en boks øverst på merch-siden — f.eks. leveringstid, henteinfo eller en beskjed. La stå tom for å skjule boksen. Dobbelt linjeskift gir nytt avsnitt.</p>'
             + '<textarea id="info-input" rows="3" placeholder="F.eks. «Neste utlevering på lesesalen torsdag 12. juni. Bestill innen mandag!»"></textarea>'
+            + '<div class="fg" style="margin-top:12px"><label for="info-label-input">Merkelapp over teksten</label>'
+              + '<input type="text" id="info-label-input" placeholder="f.eks. «Merk», «Nyhet», «Viktig» — tom = ingen merkelapp">'
+              + '<p class="info-edit__hint" style="margin-top:6px">Den lille gull-teksten med ✦-stjernen øverst i boksen. La stå tom for å fjerne den helt.</p>'
+            + '</div>'
           + '</div>'
           + '<div class="info-edit">'
             + '<label><strong>Topp-banner</strong></label>'
@@ -66,9 +70,11 @@
       var q = function (id) { return host.querySelector('#' + id); };
       var LS_KEY = 'apeiron-merch-v1';
       var LS_INFO_KEY = 'apeiron-merch-info-v1';
+      var LS_INFO_LABEL_KEY = 'apeiron-merch-info-label-v1';
       var LS_SUBHERO_KEY = 'apeiron-merch-subhero-v1';
       var products = [];
       var info = '';
+      var infoLabel = 'Merk';
       var subhero = {};
 
       function fromPublished() { return (window.MERCH_PRODUCTS || []).map(function (p) { return Object.assign({}, p); }); }
@@ -78,10 +84,12 @@
         normalizeProducts();
         var rawInfo = localStorage.getItem(LS_INFO_KEY);
         info = rawInfo != null ? rawInfo : (window.MERCH_INFO || '');
+        var rawLabel = localStorage.getItem(LS_INFO_LABEL_KEY);
+        infoLabel = rawLabel != null ? rawLabel : (window.MERCH_INFO_LABEL != null ? window.MERCH_INFO_LABEL : 'Merk');
         var rawSh = localStorage.getItem(LS_SUBHERO_KEY);
         try { subhero = rawSh != null ? (JSON.parse(rawSh) || {}) : Object.assign({}, window.MERCH_SUBHERO || {}); } catch (_) { subhero = Object.assign({}, window.MERCH_SUBHERO || {}); }
       }
-      function saveData() { localStorage.setItem(LS_KEY, JSON.stringify(products)); localStorage.setItem(LS_INFO_KEY, info); localStorage.setItem(LS_SUBHERO_KEY, JSON.stringify(subhero)); AC.toast('Lagret i nettleseren'); pushPreview(); }
+      function saveData() { localStorage.setItem(LS_KEY, JSON.stringify(products)); localStorage.setItem(LS_INFO_KEY, info); localStorage.setItem(LS_INFO_LABEL_KEY, infoLabel); localStorage.setItem(LS_SUBHERO_KEY, JSON.stringify(subhero)); AC.toast('Lagret i nettleseren'); pushPreview(); }
       var saveTimer = null;
       function lazySave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveData, 350); }
       function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
@@ -458,6 +466,7 @@
           + '   colorImages: { "Fargenavn": indeks } — bytt bilde når en farge velges. */\n\n'
           + 'window.MERCH_SUBHERO = ' + JSON.stringify(subhero) + ';\n\n'
           + 'window.MERCH_INFO = ' + JSON.stringify(info) + ';\n\n'
+          + 'window.MERCH_INFO_LABEL = ' + JSON.stringify(infoLabel) + ';\n\n'
           + 'window.MERCH_PRODUCTS = ' + JSON.stringify(products, null, 2) + ';\n';
         AC.saveFile('merch-products.js', content);
         AC.toast('Fil lastet ned — erstatt i GitHub og push!');
@@ -465,15 +474,17 @@
 
       q('reset-btn').addEventListener('click', function () {
         if (!confirm('Dette sletter alle ueksporterte endringer og laster inn siste publiserte versjon fra merch-products.js. Fortsette?')) return;
-        localStorage.removeItem(LS_KEY); localStorage.removeItem(LS_INFO_KEY); localStorage.removeItem(LS_SUBHERO_KEY);
-        products = fromPublished(); normalizeProducts(); info = window.MERCH_INFO || ''; subhero = Object.assign({}, window.MERCH_SUBHERO || {});
+        localStorage.removeItem(LS_KEY); localStorage.removeItem(LS_INFO_KEY); localStorage.removeItem(LS_INFO_LABEL_KEY); localStorage.removeItem(LS_SUBHERO_KEY);
+        products = fromPublished(); normalizeProducts(); info = window.MERCH_INFO || ''; infoLabel = (window.MERCH_INFO_LABEL != null ? window.MERCH_INFO_LABEL : 'Merk'); subhero = Object.assign({}, window.MERCH_SUBHERO || {});
         renderInfo(); renderSubhero(); renderAll(); AC.toast('Tilbakestilt til publisert versjon'); pushPreview();
       });
       q('add-btn').addEventListener('click', add);
 
       var infoInput = q('info-input');
       if (infoInput) infoInput.addEventListener('input', function () { info = infoInput.value; lazySave(); });
-      function renderInfo() { if (infoInput) infoInput.value = info; }
+      var infoLabelInput = q('info-label-input');
+      if (infoLabelInput) infoLabelInput.addEventListener('input', function () { infoLabel = infoLabelInput.value; lazySave(); });
+      function renderInfo() { if (infoInput) infoInput.value = info; if (infoLabelInput) infoLabelInput.value = infoLabel; }
       var SH_MAP = { 'msh-back': 'back', 'msh-title': 'title', 'msh-lede': 'lede' };
       function renderSubhero() { Object.keys(SH_MAP).forEach(function (id) { var el = q(id); if (el) el.value = subhero[SH_MAP[id]] || ''; }); }
       Object.keys(SH_MAP).forEach(function (id) { var el = q(id); if (el) el.addEventListener('input', function () { subhero[SH_MAP[id]] = el.value; lazySave(); }); });
@@ -485,7 +496,7 @@
 
       /* ── live forhåndsvisning ── */
       var pvFrame = q('pv-shop');
-      function pushPreview() { if (!pvFrame || !pvFrame.contentWindow) return; try { pvFrame.contentWindow.postMessage({ type: 'apeiron-merch-preview', products: products, info: info, subhero: subhero }, '*'); } catch (e) {} }
+      function pushPreview() { if (!pvFrame || !pvFrame.contentWindow) return; try { pvFrame.contentWindow.postMessage({ type: 'apeiron-merch-preview', products: products, info: info, infoLabel: infoLabel, subhero: subhero }, '*'); } catch (e) {} }
       function onPreviewMsg(e) { if (e.data && e.data.type === 'apeiron-merch-preview-ready') { pushPreview(); fitShop(); } }
       function fitShop() {
         var wrap = host.querySelector('.pv-shop-wrap');

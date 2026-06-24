@@ -1060,9 +1060,11 @@
   }
 
   // ── Pensum controller: tabs + search + accordion + expand-all ──
-  var tabs = [].slice.call(document.querySelectorAll('.ps-tab'));
-  var courses = [].slice.call(document.querySelectorAll('.ps-course'));
-  var dividers = [].slice.call(document.querySelectorAll('.ps-section-divider'));
+  // Emnekortene og fanene gjengis (og re-gjengis) av apeiron-pensum.js, så vi
+  // bruker hendelses-delegering på containerne + en refreshNodes() som kjøres
+  // på nytt etter hver preview-oppdatering (window.__pensumRefresh).
+  var tabsWrap = document.querySelector('.ps-tabs');
+  var grid = document.getElementById('psGrid');
   var countEl = document.getElementById('psCount');
   var noResults = document.getElementById('psNoresults');
   var searchWrap = document.getElementById('psSearch');
@@ -1071,16 +1073,34 @@
   var expandAllBtn = document.getElementById('psExpandAll');
   var noResultsReset = document.getElementById('psNoresultsReset');
   var activeFilter = 'alle';
+  var courses = [], dividers = [], hlNodes = [];
 
-  // Cache highlightable nodes (original text) + a searchable blob per course
-  var hlNodes = [];
-  courses.forEach(function (c) {
-    c.querySelectorAll('.ps-course__code, .ps-course__name, .ps-book__title, .ps-book__author').forEach(function (n) {
-      n.dataset.orig = n.textContent;
-      hlNodes.push(n);
+  function setActiveTab(filter) {
+    if (!tabsWrap) return;
+    [].slice.call(tabsWrap.querySelectorAll('.ps-tab')).forEach(function (t) {
+      t.classList.toggle('is-active', t.getAttribute('data-filter') === filter);
     });
-    c.dataset.search = (c.textContent || '').toLowerCase().replace(/\s+/g, ' ');
-  });
+  }
+
+  // (Re)les emnekort + fane-tilstand fra DOM-en (highlight-noder + søkbar tekst).
+  // Kalles ved oppstart og etter hver re-gjengivelse.
+  function refreshNodes() {
+    courses = [].slice.call(document.querySelectorAll('.ps-course'));
+    dividers = [].slice.call(document.querySelectorAll('.ps-section-divider'));
+    hlNodes = [];
+    courses.forEach(function (c) {
+      c.querySelectorAll('.ps-course__code, .ps-course__name, .ps-book__title, .ps-book__author').forEach(function (n) {
+        n.dataset.orig = n.textContent;
+        hlNodes.push(n);
+      });
+      c.dataset.search = (c.textContent || '').toLowerCase().replace(/\s+/g, ' ');
+    });
+    var active = tabsWrap && tabsWrap.querySelector('.ps-tab.is-active');
+    if (active) activeFilter = active.getAttribute('data-filter') || 'alle';
+    if (tabsWrap && !tabsWrap.querySelector('.ps-tab[data-filter="' + activeFilter + '"]')) {
+      activeFilter = 'alle'; setActiveTab('alle');
+    }
+  }
 
   function esc(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 
@@ -1141,13 +1161,12 @@
 
   function collapseAll() { courses.forEach(function (c) { setOpen(c, false); }); }
 
-  tabs.forEach(function (tab) {
-    tab.addEventListener('click', function () {
-      tabs.forEach(function (t) { t.classList.remove('is-active'); });
-      this.classList.add('is-active');
-      activeFilter = this.dataset.filter;
-      apply();
-    });
+  if (tabsWrap) tabsWrap.addEventListener('click', function (e) {
+    var tab = e.target.closest && e.target.closest('.ps-tab');
+    if (!tab || !tabsWrap.contains(tab)) return;
+    activeFilter = tab.getAttribute('data-filter') || 'alle';
+    setActiveTab(activeFilter);
+    apply();
   });
 
   var searchTimer;
@@ -1164,7 +1183,7 @@
   noResultsReset.addEventListener('click', function () {
     searchInput.value = '';
     activeFilter = 'alle';
-    tabs.forEach(function (t) { t.classList.toggle('is-active', t.dataset.filter === 'alle'); });
+    setActiveTab('alle');
     collapseAll(); apply();
   });
 
@@ -1175,16 +1194,20 @@
     syncExpandLabel();
   });
 
-  // Individual accordion toggles
-  courses.forEach(function (article) {
-    var toggle = article.querySelector('.ps-course__toggle');
-    if (!toggle) return;
-    toggle.addEventListener('click', function () {
-      setOpen(article, !article.classList.contains('is-open'));
-      syncExpandLabel();
-    });
+  // Trekkspill — delegert på rutenettet, så nye kort (etter re-gjengivelse) virker.
+  if (grid) grid.addEventListener('click', function (e) {
+    var toggle = e.target.closest && e.target.closest('.ps-course__toggle');
+    if (!toggle || !grid.contains(toggle)) return;
+    var article = toggle.closest('.ps-course');
+    if (!article) return;
+    setOpen(article, !article.classList.contains('is-open'));
+    syncExpandLabel();
   });
 
+  // Lar apeiron-pensum.js re-initialisere kontrolleren etter preview-oppdatering.
+  window.__pensumRefresh = function () { refreshNodes(); apply(); };
+
+  refreshNodes();
   apply();
 })();
 </script>

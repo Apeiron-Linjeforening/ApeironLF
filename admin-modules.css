@@ -16,6 +16,12 @@
 .panel-host .preview-top .pp-sub { font-size: .82rem; color: var(--ink-soft); margin: 2px 0 12px; line-height: 1.45; }
 .panel-host .pv-frame-wrap { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--paper); box-shadow: 0 4px 22px rgba(35,39,64,.07); }
 .panel-host .pv-frame-wrap iframe { border: 0; display: block; background: var(--paper); transform-origin: top left; }
+/* Generisk .pv-board-wrap-boks: dekker moduler uten egen per-modul-regel
+   (pensum, galleri, marked). Uten dette skalerer iframen fra sentrum
+   (transform-origin 50% 50%) og flyter ut av en uklippet boks → ødelagt
+   forhåndsvisning. Per-modul-reglene under overstyrer der de finnes. */
+.panel-host .pv-board-wrap { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--paper); box-shadow: 0 4px 22px rgba(35,39,64,.07); }
+.panel-host .pv-board-wrap #pv-board { border: 0; display: block; background: var(--paper); transform-origin: top left; }
 
 /* ── generisk adressefelt: 📍-velger + lenkevarsel (footer/nyheter m.fl.) ── */
 .panel-host .addr-wrap { position: relative; display: flex; align-items: stretch; }
@@ -719,4 +725,101 @@
   .mod-merch .img-gallery { width: 100%; border-right: none; border-bottom: 1px solid rgba(35,39,64,.09); }
   .mod-merch .frow { flex-direction: column; }
   .mod-merch .fg.narrow { flex: 1; }
+}
+
+/* ════════ PENSUM (emnekatalog gruppert per seksjon, sammenleggbare emnekort) ════════ */
+.mod-pensum .preview-top h3 { font-family: var(--display); font-size: 1.4rem; color: var(--navy); }
+.mod-pensum .preview-top .pp-sub { font-size: .82rem; color: var(--ink-soft); margin: 2px 0 12px; line-height: 1.45; }
+/* basis-chrome (samme språk som Om oss / Forsiden) */
+.mod-pensum .panel { background: white; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 22px; overflow: hidden; }
+.mod-pensum .panel > h2 { font-family: var(--display); font-size: 1.5rem; color: var(--navy); padding: 15px 20px 13px; background: rgba(35,39,64,.03); border-bottom: 1px solid var(--border); display: flex; align-items: baseline; gap: 10px; }
+.mod-pensum .panel > h2 small { font-family: var(--body); font-size: .76rem; font-weight: 400; color: var(--ink-soft); letter-spacing: 0; text-transform: none; }
+.mod-pensum .panel-body { padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; }
+.mod-pensum .sub-h { font-family: var(--display); font-size: 1.05rem; color: var(--navy); margin-top: 4px; padding-top: 12px; border-top: 1px dashed var(--border); }
+.mod-pensum .sub-h:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+.mod-pensum .frow { display: flex; gap: 12px; flex-wrap: wrap; }
+.mod-pensum .fg { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 150px; }
+.mod-pensum .fg.narrow { flex: 0 0 140px; min-width: 110px; }
+.mod-pensum .fg label { font-size: .63rem; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; color: var(--ink-soft); }
+.mod-pensum .fg label small { font-weight: 400; }
+.mod-pensum .fg input, .mod-pensum .fg textarea, .mod-pensum .fg select { font-family: var(--body); font-size: .9rem; color: var(--ink); border: 1px solid var(--border); border-radius: 4px; padding: 7px 10px; background: white; resize: vertical; width: 100%; }
+.mod-pensum .fg input:focus, .mod-pensum .fg textarea:focus, .mod-pensum .fg select:focus { outline: none; border-color: var(--navy); }
+.mod-pensum .fg input:disabled { background: rgba(35,39,64,.04); color: var(--ink-soft); }
+.mod-pensum .fg textarea { min-height: 64px; line-height: 1.5; }
+.mod-pensum .hint { font-size: .76rem; color: var(--ink-soft); font-style: italic; }
+.mod-pensum .lst, .mod-pensum .lst-plain { display: flex; flex-direction: column; gap: 10px; }
+.mod-pensum .btn-add { align-self: flex-start; padding: 6px 14px; background: rgba(212,175,55,.18); color: var(--gold-ink); border: 1px solid rgba(212,175,55,.5); border-radius: 4px; font-family: var(--body); font-size: .82rem; font-weight: 700; cursor: pointer; }
+.mod-pensum .btn-add:hover { background: rgba(212,175,55,.3); }
+.mod-pensum .btn-mini { width: 28px; height: 28px; border: 1px solid var(--border); border-radius: 4px; background: white; cursor: pointer; font-size: .72rem; color: var(--ink-soft); display: flex; align-items: center; justify-content: center; flex: 0 0 auto; }
+.mod-pensum .btn-mini:hover { background: rgba(35,39,64,.06); color: var(--navy); }
+.mod-pensum .btn-mini.x { color: var(--maroon); border-color: rgba(118,17,15,.25); }
+.mod-pensum .btn-mini.x:hover { background: rgba(118,17,15,.06); }
+.mod-pensum .drag-handle { cursor: grab; color: var(--ink-soft); font-size: 1rem; padding: 2px; user-select: none; flex: 0 0 auto; align-self: center; }
+
+/* generiske rad-lister (str-lister: meta/punkter/smakebiter, og tracks/programs-kort) */
+.mod-pensum .lrow { background: rgba(35,39,64,.025); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; display: flex; gap: 10px; align-items: flex-start; }
+.mod-pensum .lrow .lrow-fields { flex: 1; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.mod-pensum .lrow .lrow-ctrls { display: flex; flex-direction: column; gap: 4px; flex: 0 0 auto; }
+.mod-pensum .str-row { gap: 8px; }
+.mod-pensum .str-ctrls { display: flex; gap: 4px; flex: 0 0 auto; align-items: flex-start; }
+.mod-pensum .seg-row { display: flex; align-items: center; gap: 14px; margin: 4px 0; flex-wrap: wrap; }
+.mod-pensum .seg-lbl { font-size: .63rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-soft); }
+.mod-pensum .seg-opt { display: inline-flex; align-items: center; gap: 5px; font-size: .86rem; cursor: pointer; }
+
+/* seksjons-fargemerker (matcher pensum.html-badgene) */
+.mod-pensum .ps-badge { display: inline-flex; align-items: center; font-size: .64rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #fff; background: #5a5e74; border-radius: 3px; padding: .32em .7em; white-space: nowrap; }
+.mod-pensum .ps-badge--felles { background: var(--gold-ink); }
+.mod-pensum .ps-badge--filosofi { background: var(--navy); }
+.mod-pensum .ps-badge--etikk { background: var(--maroon); }
+.mod-pensum .ps-badge--master { background: #3d2b6e; }
+.mod-pensum .ps-badge--annet { background: #5a5e74; }
+
+/* emnegruppe (én per seksjon) */
+.mod-pensum .ps-group { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.mod-pensum .ps-group + .ps-group { margin-top: 4px; }
+.mod-pensum .ps-group__head { display: flex; align-items: center; gap: 10px; padding: 11px 14px; background: rgba(35,39,64,.035); border-bottom: 1px solid var(--border); border-left: 3px solid var(--gold-ink); }
+.mod-pensum .ps-group[data-sec="filosofi"] .ps-group__head { border-left-color: var(--navy); }
+.mod-pensum .ps-group[data-sec="etikk"] .ps-group__head { border-left-color: var(--maroon); }
+.mod-pensum .ps-group[data-sec="master"] .ps-group__head { border-left-color: #3d2b6e; }
+.mod-pensum .ps-group__label { font-family: var(--display); font-size: 1.1rem; font-weight: 600; color: var(--navy); }
+.mod-pensum .ps-group__count { font-size: .72rem; color: var(--ink-soft); background: rgba(35,39,64,.07); border-radius: 999px; padding: 2px 9px; }
+.mod-pensum .ps-group__list { display: flex; flex-direction: column; gap: 8px; padding: 12px; }
+.mod-pensum .ps-group__list:empty::before { content: "Ingen emner i denne seksjonen ennå."; color: var(--ink-soft); font-style: italic; font-size: .82rem; padding: 4px 2px; }
+.mod-pensum .ps-group__add { margin: 0 12px 14px; }
+
+/* sammenleggbart emnekort */
+.mod-pensum .ps-cc { background: #fff; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; transition: box-shadow .15s, border-color .15s; }
+.mod-pensum .ps-cc.is-open { border-color: rgba(212,175,55,.6); box-shadow: 0 6px 20px -12px rgba(35,39,64,.4); }
+.mod-pensum .ps-cc__head { display: flex; align-items: center; gap: 8px; padding: 7px 10px; }
+.mod-pensum .ps-cc__toggle { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; background: none; border: none; cursor: pointer; font-family: var(--body); text-align: left; padding: 3px 2px; color: var(--ink); }
+.mod-pensum .ps-cc__code { font-weight: 700; font-size: .8rem; color: var(--navy); flex: 0 0 auto; }
+.mod-pensum .ps-cc__name { flex: 1; min-width: 0; font-size: .9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mod-pensum .ps-cc__toggle:hover .ps-cc__name { color: var(--gold-ink); }
+.mod-pensum .ps-cc__meta { font-size: .72rem; color: var(--ink-soft); flex: 0 0 auto; white-space: nowrap; }
+.mod-pensum .ps-cc__arrow { flex: 0 0 auto; color: var(--ink-soft); font-size: .8rem; transition: transform .18s; }
+.mod-pensum .ps-cc.is-open .ps-cc__arrow { transform: rotate(180deg); }
+.mod-pensum .ps-cc__ctrls { display: flex; gap: 4px; flex: 0 0 auto; }
+.mod-pensum .ps-cc__body { display: none; padding: 4px 14px 16px; border-top: 1px dashed var(--border); flex-direction: column; gap: 12px; }
+.mod-pensum .ps-cc.is-open .ps-cc__body { display: flex; }
+.mod-pensum .ps-cc__placeholder { font-size: .72rem; color: var(--ink-soft); font-style: italic; flex: 0 0 auto; }
+
+/* «legg ut / fold sammen alle» verktøylinje */
+.mod-pensum .ps-courses-tools { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.mod-pensum .ps-courses-tools .ps-link-btn { background: none; border: none; padding: 0; font-family: var(--body); font-size: .8rem; color: var(--gold-ink); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+.mod-pensum .ps-courses-tools .ps-link-btn:hover { color: var(--navy); }
+.mod-pensum .ps-courses-tools .ps-tools-spacer { flex: 1; }
+.mod-pensum .ps-books-host { display: flex; flex-direction: column; gap: 8px; }
+/* seksjons-redigerer (Seksjoner / studieretninger) */
+.mod-pensum .ps-sec-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.mod-pensum .ps-sec-id { font-family: ui-monospace, monospace; font-size: .68rem; color: var(--ink-soft); background: rgba(35,39,64,.06); border-radius: 4px; padding: 1px 7px; }
+.mod-pensum .ps-sec-count { font-size: .72rem; color: var(--ink-soft); }
+.mod-pensum .ps-color-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.mod-pensum .ps-color-lbl { font-size: .63rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-soft); }
+.mod-pensum .ps-swatches { display: flex; gap: 6px; flex-wrap: wrap; }
+.mod-pensum .ps-swatch { width: 22px; height: 22px; border-radius: 50%; border: 2px solid rgba(255,255,255,.9); box-shadow: 0 0 0 1px var(--border); cursor: pointer; padding: 0; }
+.mod-pensum .ps-swatch:hover { box-shadow: 0 0 0 2px var(--ink-soft); }
+.mod-pensum .ps-swatch.on { box-shadow: 0 0 0 2px var(--gold-ink); transform: scale(1.06); }
+@media (max-width: 620px) {
+  .mod-pensum .ps-cc__meta { display: none; }
+  .mod-pensum .frow { gap: 8px; }
 }

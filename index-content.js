@@ -24,11 +24,7 @@ window.INDEX_CONTENT = {
       "label": "Se hva som skjer",
       "href": "#oppslagstavla-teaser"
     },
-    "bridge": "Ny her? Bli kjent med Apeiron",
-    "wip": {
-      "show": false,
-      "text": "⚠ Siden er under oppbygging — innholdet er foreløpig og ikke endelig ⚠"
-    }
+    "bridge": "Ny her? Bli kjent med Apeiron"
   },
   "arr": {
     "eyebrow": "Hva skjer",

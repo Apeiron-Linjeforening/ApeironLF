@@ -15,6 +15,8 @@ window.MERCH_SUBHERO = {"back":"Tilbake til forsiden","title":"Merch","lede":"BÃ
 
 window.MERCH_INFO = "Her kommer det mye snacks!";
 
+window.MERCH_INFO_LABEL = "Merk";
+
 window.MERCH_PRODUCTS = [
   {
     "id": "segl-pin",

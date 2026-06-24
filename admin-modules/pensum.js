@@ -38,13 +38,18 @@
             + '<div class="lst-plain" id="lst-meta"></div><button class="btn-add" type="button" data-addmeta>+ Nytt punkt</button>'
           + '</div>'
         + '</div>'
-        + '<div class="panel"><h2>Seksjoner <small>overskriftene over emnegruppene</small></h2>'
-          + '<div class="panel-body"><div id="lst-sections"></div>'
-            + '<p class="hint">Fargemerket (Felles/Filosofi/Etikk/Master) bestemmes av seksjonen — bare overskriftsteksten redigeres her.</p>'
+        + '<div class="panel"><h2>Seksjoner / studieretninger <small>gruppene emnene deles inn i</small></h2>'
+          + '<div class="panel-body">'
+            + '<p class="hint">Hver seksjon blir en egen gruppe i emnekatalogen, et fargemerke og en filter-fane på nettsiden. Vil du f.eks. skille Master i filosofi fra Master i etikk, eller årsstudium fra bachelor? Legg til en ny seksjon og flytt emnene dit (via «Seksjon» på hvert emne). Rekkefølgen her styrer rekkefølgen på siden.</p>'
+            + '<div class="lst" id="lst-sections"></div>'
+            + '<button class="btn-add" type="button" data-addsection>+ Ny seksjon</button>'
           + '</div>'
         + '</div>'
-        + '<div class="panel"><h2>Emner <small>emnekatalogen</small></h2>'
-          + '<div class="panel-body"><div class="lst" id="lst-courses"></div><button class="btn-add" type="button" data-addcourse>+ Nytt emne</button></div>'
+        + '<div class="panel"><h2>Emner <small>emnekatalogen — gruppert per seksjon</small></h2>'
+          + '<div class="panel-body">'
+            + '<div class="ps-courses-tools"><button class="ps-link-btn" type="button" data-expand-all>Åpne alle</button><button class="ps-link-btn" type="button" data-collapse-all>Fold sammen alle</button><span class="ps-tools-spacer"></span></div>'
+            + '<div id="lst-courses"></div>'
+          + '</div>'
         + '</div>'
         + '<div class="panel"><h2>Studieretningene <small>«Hva du kan studere»</small></h2>'
           + '<div class="panel-body">'
@@ -104,6 +109,15 @@
         data.teaser = Object.assign({}, f.teaser, data.teaser);
         data.tracksIntro = Object.assign({}, f.tracksIntro, data.tracksIntro);
         if (!Array.isArray(data.sections)) data.sections = f.sections;
+        else {
+          var defById = {}; (f.sections || []).forEach(function (s) { defById[s.id] = s; });
+          var pal = ['#a07820', '#232740', '#76110f', '#3d2b6e', '#1f6b4f', '#7a4a12', '#2a5d86'];
+          data.sections.forEach(function (s, i) {
+            var d0 = defById[s.id] || {};
+            if (s.short == null || s.short === '') s.short = d0.short || s.label || s.id;
+            if (!s.color) s.color = d0.color || pal[i % pal.length];
+          });
+        }
         if (!Array.isArray(data.courses)) data.courses = [];
         if (!Array.isArray(data.tracks)) data.tracks = [];
         if (!Array.isArray(data.programs)) data.programs = [];
@@ -158,14 +172,59 @@
 
       function renderMeta() { strList(q('lst-meta'), data.subhero.meta, 'f.eks. **15** emner'); }
 
+      var SECTION_COLORS = ['#a07820', '#232740', '#76110f', '#3d2b6e', '#1f6b4f', '#7a4a12', '#2a5d86'];
+      function slugify(s) { return String(s || '').toLowerCase().replace(/[æä]/g, 'a').replace(/[øö]/g, 'o').replace(/å/g, 'a').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 24) || 'seksjon'; }
+      function uniqueSecId(base) { var taken = {}; data.sections.forEach(function (s) { taken[s.id] = 1; }); var id = base, n = 2; while (taken[id]) id = base + '-' + (n++); return id; }
+
       function renderSections() {
         var hostEl = q('lst-sections'); hostEl.innerHTML = '';
-        data.sections.forEach(function (s) {
+        data.sections.forEach(function (s, i) {
+          if (!s.color) s.color = SECTION_COLORS[i % SECTION_COLORS.length];
+          var count = data.courses.filter(function (c) { return c.level === s.id; }).length;
           var row = document.createElement('div');
-          row.className = 'frow';
-          row.innerHTML = '<div class="fg narrow"><label>Nivå</label><input type="text" value="' + esc(s.id) + '" disabled></div>'
-            + '<div class="fg"><label>Overskrift</label><input type="text" data-lbl value="' + esc(s.label) + '"></div>';
-          row.querySelector('[data-lbl]').addEventListener('input', function () { s.label = this.value; lazySave(); });
+          row.className = 'lrow'; row.setAttribute('data-id', 'sec' + i);
+          row.innerHTML =
+            '<span class="drag-handle" title="Dra for å sortere">⠿</span>'
+            + '<div class="lrow-fields">'
+              + '<div class="frow"><div class="fg narrow"><label>Kortnavn <small>(fane + merke)</small></label><input type="text" data-k="short" value="' + esc(s.short || '') + '"></div>'
+              + '<div class="fg"><label>Overskrift <small>(over emnegruppen)</small></label><input type="text" data-k="label" value="' + esc(s.label || '') + '"></div></div>'
+              + '<div class="ps-sec-meta"><span class="ps-badge ps-sec-badge" style="background:' + esc(s.color) + '">' + esc(s.short || s.label || '') + '</span>'
+                + '<span class="ps-sec-id">id: ' + esc(s.id) + '</span>'
+                + '<span class="ps-sec-count">' + count + (count === 1 ? ' emne' : ' emner') + '</span></div>'
+              + '<div class="ps-color-row"><span class="ps-color-lbl">Farge</span><span class="ps-swatches"></span></div>'
+            + '</div>'
+            + ctrls();
+          var sw = row.querySelector('.ps-swatches');
+          SECTION_COLORS.forEach(function (col) {
+            var b = document.createElement('button'); b.type = 'button';
+            b.className = 'ps-swatch' + (String(s.color).toLowerCase() === col.toLowerCase() ? ' on' : '');
+            b.style.background = col; b.title = col;
+            b.addEventListener('click', function () { s.color = col; renderSections(); renderCourses(); lazySave(); });
+            sw.appendChild(b);
+          });
+          row.querySelectorAll('[data-k]').forEach(function (inp) {
+            inp.addEventListener('input', function () {
+              s[inp.getAttribute('data-k')] = inp.value;
+              var bdg = row.querySelector('.ps-sec-badge'); if (bdg) bdg.textContent = s.short || s.label || '';
+              // oppdater tilsvarende gruppe-overskrift i Emner-panelet uten full re-render
+              var grp = q('lst-courses').querySelector('.ps-group[data-sec="' + (window.CSS && CSS.escape ? CSS.escape(s.id) : s.id) + '"]');
+              if (grp) {
+                var gl = grp.querySelector('.ps-group__label'); if (gl) gl.textContent = s.label || '';
+                var gb = grp.querySelector('.ps-group__head .ps-badge'); if (gb) gb.textContent = s.short || s.label || '';
+              }
+              lazySave();
+            });
+          });
+          row.querySelector('.up').addEventListener('click', function () { moveArr(data.sections, i, -1); renderSections(); renderCourses(); lazySave(); });
+          row.querySelector('.dn').addEventListener('click', function () { moveArr(data.sections, i, 1); renderSections(); renderCourses(); lazySave(); });
+          row.querySelector('.x').addEventListener('click', function () {
+            var c2 = data.courses.filter(function (c) { return c.level === s.id; }).length;
+            var msg = c2 > 0
+              ? 'Slette seksjonen «' + (s.label || s.id) + '»?\n\n' + c2 + (c2 === 1 ? ' emne ligger' : ' emner ligger') + ' her og blir skjult på nettsiden til du flytter dem til en annen seksjon.'
+              : 'Slette seksjonen «' + (s.label || s.id) + '»?';
+            if (!confirm(msg)) return;
+            data.sections.splice(i, 1); renderSections(); renderCourses(); lazySave();
+          });
           hostEl.appendChild(row);
         });
       }
@@ -175,77 +234,179 @@
       }
       function courseMode(c) { if (c._mode) return c._mode; if (c.empty && !(Array.isArray(c.books) && c.books.length)) return 'empty'; return 'books'; }
 
+      var SECTION_BADGE = { felles: 'Felles', filosofi: 'Filosofi', etikk: 'Etikk', master: 'Master' };
+      function bookCount(c) { return (Array.isArray(c.books) ? c.books : []).filter(function (b) { return (b.title && b.title.trim()) || (b.author && b.author.trim()); }).length; }
+      function courseMeta(c) {
+        var parts = [];
+        if (c.semester && c.semester.trim()) parts.push(c.semester.trim());
+        if (courseMode(c) === 'empty') parts.push('melding');
+        else { var n = bookCount(c); parts.push(n === 1 ? '1 bok' : n + ' bøker'); }
+        return parts.join(' · ');
+      }
+      function updateCardSummary(flatIdx, c) {
+        var card = q('lst-courses').querySelector('.ps-cc[data-id="course' + flatIdx + '"]');
+        if (!card) return;
+        card.querySelector('.ps-cc__code').textContent = (c.code && c.code.trim()) ? c.code : '(uten kode)';
+        card.querySelector('.ps-cc__name').textContent = (c.name && c.name.trim()) ? c.name : 'Nytt emne';
+        card.querySelector('.ps-cc__meta').textContent = courseMeta(c);
+      }
+
+      // Full redigeringsskjema for ett emne — bygges først når kortet åpnes (lazy).
+      function buildCourseBody(bodyEl, c, flatIdx) {
+        var mode = courseMode(c);
+        bodyEl.innerHTML =
+          '<div class="frow"><div class="fg narrow"><label>Seksjon</label><select data-k="level">' + levelOptions(c.level) + '</select></div>'
+          + '<div class="fg narrow"><label>Emnekode</label><input type="text" data-k="code" value="' + esc(c.code) + '"></div>'
+          + '<div class="fg narrow"><label>Semester</label><input type="text" data-k="semester" value="' + esc(c.semester) + '"></div></div>'
+          + '<div class="fg"><label>Emnenavn</label><input type="text" data-k="name" value="' + esc(c.name) + '"></div>'
+          + '<div class="fg"><label>Beskrivelse</label><textarea data-k="desc">' + esc(c.desc) + '</textarea></div>'
+          + '<div class="fg"><label>Merknad <small>(valgfri, gul ⚠-linje)</small></label><input type="text" data-k="note" value="' + esc(c.note || '') + '"></div>'
+          + '<div class="frow"><div class="fg"><label>ntnu.no-lenke — tekst</label><input type="text" data-k="ntnuLabel" value="' + esc(c.ntnuLabel || '') + '" placeholder="Se emne på ntnu.no"></div>'
+          + '<div class="fg"><label>ntnu.no-lenke — adresse</label><input type="text" data-k="ntnuHref" value="' + esc(c.ntnuHref || '') + '"></div></div>'
+          + '<div class="seg-row"><label class="seg-lbl">Pensum-felt:</label>'
+            + '<label class="seg-opt"><input type="radio" name="pmode' + flatIdx + '" value="books"' + (mode === 'books' ? ' checked' : '') + '> Bokliste</label>'
+            + '<label class="seg-opt"><input type="radio" name="pmode' + flatIdx + '" value="empty"' + (mode === 'empty' ? ' checked' : '') + '> Melding</label>'
+          + '</div>'
+          + '<div class="pmode-area"></div>';
+        bodyEl.querySelectorAll('[data-k]').forEach(function (inp) {
+          var ev = inp.tagName === 'SELECT' ? 'change' : 'input';
+          inp.addEventListener(ev, function () {
+            var key = inp.getAttribute('data-k');
+            c[key] = inp.value;
+            if (key === 'level') { renderCourses(); lazySave(); return; } // flyttet seksjon → bygg grupper på nytt
+            if (key === 'code' || key === 'name' || key === 'semester') updateCardSummary(flatIdx, c);
+            lazySave();
+          });
+        });
+        var area = bodyEl.querySelector('.pmode-area');
+        function renderArea() {
+          var m = courseMode(c);
+          area.innerHTML = '';
+          if (m === 'empty') {
+            if (!c.empty) c.empty = { title: '', body: '' };
+            var ev = document.createElement('div'); ev.className = 'fg-stack'; ev.style.display = 'flex'; ev.style.flexDirection = 'column'; ev.style.gap = '12px';
+            ev.innerHTML = '<div class="fg"><label>Melding — tittel</label><input type="text" data-e="title" value="' + esc(c.empty.title) + '"></div>'
+              + '<div class="fg"><label>Melding — tekst <small>(støtter [lenke](adresse))</small></label><textarea data-e="body">' + esc(c.empty.body) + '</textarea></div>';
+            ev.querySelectorAll('[data-e]').forEach(function (inp) { inp.addEventListener('input', function () { c.empty[inp.getAttribute('data-e')] = inp.value; lazySave(); }); });
+            area.appendChild(ev);
+          } else {
+            if (!Array.isArray(c.books)) c.books = [];
+            var lbl = document.createElement('div'); lbl.className = 'sub-h'; lbl.textContent = 'Bøker'; area.appendChild(lbl);
+            var booksHost = document.createElement('div'); booksHost.className = 'ps-books-host'; area.appendChild(booksHost);
+            function renderBooks() {
+              booksHost.innerHTML = '';
+              c.books.forEach(function (bk, j) {
+                var br = document.createElement('div'); br.className = 'frow str-row';
+                br.innerHTML = '<div class="fg"><input type="text" data-b="title" value="' + esc(bk.title) + '" placeholder="Tittel"></div>'
+                  + '<div class="fg"><input type="text" data-b="author" value="' + esc(bk.author) + '" placeholder="Forfatter"></div>'
+                  + '<div class="fg"><input type="text" data-b="detail" value="' + esc(bk.detail || '') + '" placeholder="Detalj (valgfri)"></div>'
+                  + '<div class="str-ctrls"><button class="btn-mini x" type="button" title="Fjern bok">✕</button></div>';
+                br.querySelectorAll('[data-b]').forEach(function (inp) { inp.addEventListener('input', function () { bk[inp.getAttribute('data-b')] = inp.value; updateCardSummary(flatIdx, c); lazySave(); }); });
+                br.querySelector('.x').addEventListener('click', function () { c.books.splice(j, 1); renderBooks(); updateCardSummary(flatIdx, c); lazySave(); });
+                booksHost.appendChild(br);
+              });
+            }
+            renderBooks();
+            var add = document.createElement('button'); add.className = 'btn-add'; add.type = 'button'; add.textContent = '+ Ny bok';
+            add.addEventListener('click', function () { c.books.push({ title: '', author: '', detail: '' }); renderBooks(); updateCardSummary(flatIdx, c); lazySave(); });
+            area.appendChild(add);
+          }
+        }
+        bodyEl.querySelectorAll('input[name="pmode' + flatIdx + '"]').forEach(function (rb) {
+          rb.addEventListener('change', function () { if (this.checked) { c._mode = this.value; renderArea(); updateCardSummary(flatIdx, c); lazySave(); } });
+        });
+        renderArea();
+        bodyEl.setAttribute('data-built', '1');
+      }
+
+      // Ett sammenleggbart emnekort. entries = {c,idx}-liste for seksjonen, pos = plassering i den.
+      function buildCourseCard(c, flatIdx, entries, pos) {
+        var row = document.createElement('div');
+        row.className = 'ps-cc' + (c._open ? ' is-open' : '');
+        row.setAttribute('data-id', 'course' + flatIdx);
+        row.innerHTML =
+          '<div class="ps-cc__head">'
+            + '<span class="drag-handle" title="Dra for å sortere">⠿</span>'
+            + '<button class="ps-cc__toggle" type="button" aria-expanded="' + (c._open ? 'true' : 'false') + '">'
+              + '<span class="ps-cc__code">' + esc((c.code && c.code.trim()) ? c.code : '(uten kode)') + '</span>'
+              + '<span class="ps-cc__name">' + esc((c.name && c.name.trim()) ? c.name : 'Nytt emne') + '</span>'
+              + '<span class="ps-cc__meta">' + esc(courseMeta(c)) + '</span>'
+              + '<span class="ps-cc__arrow" aria-hidden="true">▾</span>'
+            + '</button>'
+            + '<div class="ps-cc__ctrls"><button class="btn-mini up" type="button" title="Flytt opp">↑</button><button class="btn-mini dn" type="button" title="Flytt ned">↓</button><button class="btn-mini x" type="button" title="Slett">✕</button></div>'
+          + '</div>'
+          + '<div class="ps-cc__body"></div>';
+        var bodyEl = row.querySelector('.ps-cc__body');
+        var toggle = row.querySelector('.ps-cc__toggle');
+        toggle.addEventListener('click', function () {
+          c._open = !c._open;
+          row.classList.toggle('is-open', c._open);
+          toggle.setAttribute('aria-expanded', c._open ? 'true' : 'false');
+          if (c._open && !bodyEl.getAttribute('data-built')) buildCourseBody(bodyEl, c, flatIdx);
+        });
+        row.querySelector('.up').addEventListener('click', function () {
+          if (pos <= 0) return;
+          var a = entries[pos].idx, b = entries[pos - 1].idx, t = data.courses[a];
+          data.courses[a] = data.courses[b]; data.courses[b] = t; renderCourses(); lazySave();
+        });
+        row.querySelector('.dn').addEventListener('click', function () {
+          if (pos >= entries.length - 1) return;
+          var a = entries[pos].idx, b = entries[pos + 1].idx, t = data.courses[a];
+          data.courses[a] = data.courses[b]; data.courses[b] = t; renderCourses(); lazySave();
+        });
+        row.querySelector('.x').addEventListener('click', function () {
+          AC.undoDelete(data.courses, flatIdx, '«' + (c.code || c.name || 'Emne') + '» fjernet', renderCourses, lazySave);
+        });
+        if (c._open) buildCourseBody(bodyEl, c, flatIdx);
+        return row;
+      }
+
+      function addCourse(level) {
+        data.courses.push({ level: level, code: '', name: '', semester: '', desc: '', ntnuHref: '', books: [], _mode: 'books', _open: true });
+        renderCourses(); lazySave();
+      }
+
+      function enableGroupDrag(listEl) {
+        AC.enableDragSort(listEl, {
+          itemSelector: '.ps-cc', handleSelector: '.drag-handle',
+          onReorder: function (ids) {
+            var flatIdxs = ids.map(function (id) { return parseInt(id.replace(/^\D+/, ''), 10); });
+            var objs = flatIdxs.map(function (i) { return data.courses[i]; });
+            var slots = flatIdxs.slice().sort(function (a, b) { return a - b; });
+            slots.forEach(function (slot, k) { data.courses[slot] = objs[k]; });
+            renderCourses(); lazySave();
+          }
+        });
+      }
+
       function renderCourses() {
         var hostEl = q('lst-courses'); hostEl.innerHTML = '';
-        data.courses.forEach(function (c, i) {
-          var row = document.createElement('div');
-          row.className = 'lrow'; row.setAttribute('data-id', 'course' + i);
-          var mode = courseMode(c);
-          row.innerHTML =
-            '<span class="drag-handle" title="Dra for å sortere">⠿</span>'
-            + '<div class="lrow-fields">'
-              + '<div class="frow"><div class="fg narrow"><label>Nivå</label><select data-k="level">' + levelOptions(c.level) + '</select></div>'
-              + '<div class="fg narrow"><label>Emnekode</label><input type="text" data-k="code" value="' + esc(c.code) + '"></div>'
-              + '<div class="fg narrow"><label>Semester</label><input type="text" data-k="semester" value="' + esc(c.semester) + '"></div></div>'
-              + '<div class="fg"><label>Emnenavn</label><input type="text" data-k="name" value="' + esc(c.name) + '"></div>'
-              + '<div class="fg"><label>Beskrivelse</label><textarea data-k="desc">' + esc(c.desc) + '</textarea></div>'
-              + '<div class="fg"><label>Merknad (valgfri, gul ⚠-linje)</label><input type="text" data-k="note" value="' + esc(c.note || '') + '"></div>'
-              + '<div class="frow"><div class="fg"><label>ntnu.no-lenke — tekst</label><input type="text" data-k="ntnuLabel" value="' + esc(c.ntnuLabel || '') + '" placeholder="Se emne på ntnu.no"></div>'
-              + '<div class="fg"><label>ntnu.no-lenke — adresse</label><input type="text" data-k="ntnuHref" value="' + esc(c.ntnuHref || '') + '"></div></div>'
-              + '<div class="seg-row"><label class="seg-lbl">Pensum-felt:</label>'
-                + '<label class="seg-opt"><input type="radio" name="pmode' + i + '" value="books"' + (mode === 'books' ? ' checked' : '') + '> Bokliste</label>'
-                + '<label class="seg-opt"><input type="radio" name="pmode' + i + '" value="empty"' + (mode === 'empty' ? ' checked' : '') + '> Melding</label>'
-              + '</div>'
-              + '<div class="pmode-area"></div>'
-            + '</div>'
-            + ctrls();
-          row.querySelectorAll('[data-k]').forEach(function (inp) {
-            var ev = inp.tagName === 'SELECT' ? 'change' : 'input';
-            inp.addEventListener(ev, function () { c[inp.getAttribute('data-k')] = inp.value; lazySave(); });
-          });
-          row.querySelector('.up').addEventListener('click', function () { moveArr(data.courses, i, -1); renderCourses(); lazySave(); });
-          row.querySelector('.dn').addEventListener('click', function () { moveArr(data.courses, i, 1); renderCourses(); lazySave(); });
-          row.querySelector('.x').addEventListener('click', function () { AC.undoDelete(data.courses, i, '«' + (c.code || c.name || 'Emne') + '» fjernet', renderCourses, lazySave); });
+        var known = {}; data.sections.forEach(function (s) { known[s.id] = true; });
+        var groups = data.sections.map(function (s) { return { id: s.id, label: s.label }; });
+        if (data.courses.some(function (c) { return !known[c.level]; })) groups.push({ id: '__annet', label: 'Uten seksjon', orphan: true });
 
-          var area = row.querySelector('.pmode-area');
-          function renderArea() {
-            var m = courseMode(c);
-            area.innerHTML = '';
-            if (m === 'empty') {
-              if (!c.empty) c.empty = { title: '', body: '' };
-              var ev = document.createElement('div');
-              ev.innerHTML = '<div class="fg"><label>Melding — tittel</label><input type="text" data-e="title" value="' + esc(c.empty.title) + '"></div>'
-                + '<div class="fg"><label>Melding — tekst <small style="font-weight:400;text-transform:none;letter-spacing:0">(støtter [lenke](adresse))</small></label><textarea data-e="body">' + esc(c.empty.body) + '</textarea></div>';
-              ev.querySelectorAll('[data-e]').forEach(function (inp) { inp.addEventListener('input', function () { c.empty[inp.getAttribute('data-e')] = inp.value; lazySave(); }); });
-              area.appendChild(ev);
-            } else {
-              if (!Array.isArray(c.books)) c.books = [];
-              var lbl = document.createElement('div'); lbl.className = 'sub-h'; lbl.style.marginTop = '4px'; lbl.textContent = 'Bøker'; area.appendChild(lbl);
-              var booksHost = document.createElement('div'); area.appendChild(booksHost);
-              function renderBooks() {
-                booksHost.innerHTML = '';
-                c.books.forEach(function (bk, j) {
-                  var br = document.createElement('div'); br.className = 'frow str-row';
-                  br.innerHTML = '<div class="fg"><input type="text" data-b="title" value="' + esc(bk.title) + '" placeholder="Tittel"></div>'
-                    + '<div class="fg"><input type="text" data-b="author" value="' + esc(bk.author) + '" placeholder="Forfatter"></div>'
-                    + '<div class="fg"><input type="text" data-b="detail" value="' + esc(bk.detail || '') + '" placeholder="Detalj (valgfri)"></div>'
-                    + '<div class="str-ctrls"><button class="btn-mini x" type="button" title="Fjern bok">✕</button></div>';
-                  br.querySelectorAll('[data-b]').forEach(function (inp) { inp.addEventListener('input', function () { bk[inp.getAttribute('data-b')] = inp.value; lazySave(); }); });
-                  br.querySelector('.x').addEventListener('click', function () { c.books.splice(j, 1); renderBooks(); lazySave(); });
-                  booksHost.appendChild(br);
-                });
-              }
-              renderBooks();
-              var add = document.createElement('button'); add.className = 'btn-add'; add.type = 'button'; add.textContent = '+ Ny bok';
-              add.addEventListener('click', function () { c.books.push({ title: '', author: '', detail: '' }); renderBooks(); lazySave(); });
-              area.appendChild(add);
-            }
-          }
-          row.querySelectorAll('input[name="pmode' + i + '"]').forEach(function (rb) {
-            rb.addEventListener('change', function () { if (this.checked) { c._mode = this.value; renderArea(); lazySave(); } });
-          });
-          renderArea();
-          hostEl.appendChild(row);
+        groups.forEach(function (g) {
+          var entries = data.courses.map(function (c, idx) { return { c: c, idx: idx }; })
+            .filter(function (o) { return g.orphan ? !known[o.c.level] : o.c.level === g.id; });
+          var secObj = g.orphan ? null : data.sections.filter(function (s) { return s.id === g.id; })[0];
+          var color = (secObj && secObj.color) ? secObj.color : '#5a5e74';
+          var badge = g.orphan ? 'Annet' : ((secObj && secObj.short) ? secObj.short : (SECTION_BADGE[g.id] || g.label));
+          var grp = document.createElement('div');
+          grp.className = 'ps-group'; grp.setAttribute('data-sec', g.orphan ? 'annet' : g.id);
+          grp.innerHTML =
+            '<div class="ps-group__head" style="border-left-color:' + esc(color) + '">'
+              + '<span class="ps-badge" style="background:' + esc(color) + '">' + esc(badge) + '</span>'
+              + '<span class="ps-group__label">' + esc(g.label) + '</span>'
+              + '<span class="ps-group__count">' + entries.length + (entries.length === 1 ? ' emne' : ' emner') + '</span>'
+            + '</div>'
+            + '<div class="ps-group__list" data-sec="' + (g.orphan ? 'annet' : esc(g.id)) + '"></div>'
+            + (g.orphan ? '' : '<button class="btn-add ps-group__add" type="button">+ Nytt emne i ' + esc(g.label) + '</button>');
+          var listEl = grp.querySelector('.ps-group__list');
+          entries.forEach(function (o, pos) { listEl.appendChild(buildCourseCard(o.c, o.idx, entries, pos)); });
+          var addBtn = grp.querySelector('.ps-group__add');
+          if (addBtn) addBtn.addEventListener('click', function () { addCourse(g.id); });
+          hostEl.appendChild(grp);
+          enableGroupDrag(listEl);
         });
       }
 
@@ -299,7 +460,13 @@
       }
 
       host.querySelector('[data-addmeta]').addEventListener('click', function () { data.subhero.meta.push(''); renderMeta(); lazySave(); });
-      host.querySelector('[data-addcourse]').addEventListener('click', function () { data.courses.push({ level: (data.sections[0] || {}).id || 'felles', code: '', name: '', semester: '', desc: '', ntnuHref: '', books: [], _mode: 'books' }); renderCourses(); lazySave(); });
+      host.querySelector('[data-addsection]').addEventListener('click', function () {
+        var id = uniqueSecId(slugify('seksjon'));
+        data.sections.push({ id: id, label: 'Ny seksjon', short: 'Ny', color: SECTION_COLORS[data.sections.length % SECTION_COLORS.length] });
+        renderSections(); renderCourses(); lazySave();
+      });
+      host.querySelector('[data-expand-all]').addEventListener('click', function () { data.courses.forEach(function (c) { c._open = true; }); renderCourses(); });
+      host.querySelector('[data-collapse-all]').addEventListener('click', function () { data.courses.forEach(function (c) { c._open = false; }); renderCourses(); });
       host.querySelector('[data-addtrack]').addEventListener('click', function () { data.tracks.push({ glyph: '', level: 'Studieretning', title: '', body: '', points: [] }); renderTracks(); lazySave(); });
       host.querySelector('[data-addprogram]').addEventListener('click', function () { data.programs.push({ num: '', level: '', sp: '', title: '', desc: '', chips: [] }); renderPrograms(); lazySave(); });
 
@@ -322,7 +489,7 @@
         (out.courses || []).forEach(function (c) {
           var m = c._mode || (c.empty && !(Array.isArray(c.books) && c.books.length) ? 'empty' : 'books');
           if (m === 'empty') { delete c.books; } else { delete c.empty; }
-          delete c._mode;
+          delete c._mode; delete c._open;
           if (Array.isArray(c.books)) c.books = c.books.filter(function (b) { return (b.title && b.title.trim()) || (b.author && b.author.trim()); });
           if (!c.note) delete c.note;
           if (!c.ntnuLabel) delete c.ntnuLabel;
@@ -366,7 +533,7 @@
       if (pvFrame) pvFrame.addEventListener('load', fitPreview);
 
       loadData(); renderAll(); wireFields();
-      wireDrag('lst-courses', function () { return data.courses; }, renderCourses);
+      wireDrag('lst-sections', function () { return data.sections; }, function () { renderSections(); renderCourses(); });
       wireDrag('lst-tracks', function () { return data.tracks; }, renderTracks);
       wireDrag('lst-programs', function () { return data.programs; }, renderPrograms);
       fitPreview(); setTimeout(fitPreview, 80);

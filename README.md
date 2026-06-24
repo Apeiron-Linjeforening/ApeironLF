@@ -6,10 +6,7 @@ Statisk side (HTML/CSS/JS) på Cloudflare Pages — ingen byggesteg, ingen avhen
 
 [![Live](https://img.shields.io/badge/live-apeironlf.pages.dev-2ea44f?style=flat-square)](https://apeironlf.pages.dev)
 [![Admin](https://img.shields.io/badge/admin-senteret-d4af37?style=flat-square)](https://apeironlf.pages.dev/admin.html)
-[![Status](https://img.shields.io/badge/status-under%20oppbygging-orange?style=flat-square)](#)
 [![Lisens](https://img.shields.io/badge/lisens-MIT-blue?style=flat-square)](LICENSE)
-
-> ⚠️ **Under oppbygging.** Innholdet på den publiserte siden er foreløpig — ta det som plassholdere.
 
 ---
 
@@ -222,9 +219,13 @@ inni esker. Hopper du over et nivå, vises ikke bildene.
 
 ## 6. Trenger du noe mer avansert?
 
-Pensumlister, lesesalsbildene på forsiden, oppsett av merch-bestilling, hele
-filstrukturen og hvordan publiseringen fungerer under panseret — alt det ligger i
+Lesesalsbildene på forsiden, oppsett av merch-bestilling, hele filstrukturen og hvordan
+publiseringen fungerer under panseret — alt det ligger i
 **[VEDLIKEHOLD.md](VEDLIKEHOLD.md)**, ment for de som drifter koden.
+
+> 💡 **Pensum & studieretninger** redigeres nå i **Admin → Pensum**: emnene er gruppert per
+> studieretning (Felles · Filosofi · Etikk · Master), og du kan legge til, dele opp eller
+> gi nye farger til seksjonene — fanene og merkene på siden følger automatisk med.
 
 Lurer du på noe som ikke står her, spør styret, den KI modellen som er best på koding i den tid du leser dette eller den som vedlikeholder nettsiden.
 
@@ -288,7 +289,6 @@ Lav:
 Må gjøres før vi slapper av med å bygge nettsiden:
 - [ ] Sjekke at alle admin sider fungerer.
 - [ ] Sjekke på nytt hvordan alt oppfører seg på mobil og smalere skjermer.
-- [ ] Fjern WIP banneret.
 
 Page-builder Prosjekt:
 - [ ] Gjøre om prosjektet til et nytt repo som kan klones og lett gjøres om til andre linjeforeninger.

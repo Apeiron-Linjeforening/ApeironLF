@@ -59,19 +59,46 @@
 }
 
 /* Redigerbar info-tekst øverst i butikken (window.MERCH_INFO) */
+#butikk { padding-top: 32px; }
 .merch-info {
-  background: rgba(212,175,55,.12);
-  border: 1px solid rgba(212,175,55,.4);
-  border-left: 4px solid var(--gold);
-  border-radius: 6px;
-  padding: 14px 18px;
-  margin-bottom: 32px;
+  position: relative;
+  display: grid;
+  gap: .55em;
+  background:
+    radial-gradient(130% 150% at 0% 0%, rgba(212,175,55,.10), transparent 58%),
+    var(--card);
+  border: 1px solid var(--gold-deep);
+  border-radius: 7px;
+  padding: 26px 34px 28px;
+  margin-bottom: 44px;
   color: var(--ink);
-  font-size: .98rem;
-  line-height: 1.55;
+  font-family: var(--body);
+  font-size: 1.12rem;
+  line-height: 1.62;
+  box-shadow:
+    0 24px 54px -36px rgba(35,39,64,.6),
+    inset 0 1px 0 rgba(244,236,217,.05);
 }
-.merch-info p { margin: 0 0 .5em; }
-.merch-info p:last-child { margin-bottom: 0; }
+/* Tynt gull-skjær langs venstre kant — diskret, ikke en blokk-border */
+.merch-info::after {
+  content: "";
+  position: absolute;
+  left: 0; top: 14px; bottom: 14px;
+  width: 2px;
+  background: linear-gradient(180deg, transparent, var(--gold), transparent);
+  border-radius: 2px;
+}
+/* Eyebrow-merkelapp med ornament, i tråd med .apo-kortet */
+.merch-info__eyebrow {
+  font-family: var(--body);
+  font-size: .68rem;
+  font-weight: 600;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.merch-info p { margin: 0; }
+.merch-info p + p { margin-top: .5em; }
 
 .product {
   background: var(--card);
@@ -331,7 +358,7 @@ html[data-mode="marine"] .bglow-solid::before { background-image: linear-gradien
 
 /* ── Handlekurv ── */
 .cart-fab {
-  position: fixed; right: 22px; bottom: 22px; z-index: 400;
+  position: fixed; right: 22px; bottom: 84px; z-index: 400;
   width: 56px; height: 56px; border-radius: 50%; border: none; cursor: pointer;
   background: var(--maroon); color: #fff; display: flex; align-items: center; justify-content: center;
   box-shadow: 0 14px 30px -10px rgba(0,0,0,.5); transition: transform .15s ease, background .2s;
@@ -439,7 +466,7 @@ html[data-mode="marine"] .cart-item__rm:hover { color: var(--navy); background: 
 /* ── Mobil ── */
 @media (max-width: 560px) {
   .cart-drawer { width: 100vw; padding: 76px 16px 24px; }
-  .cart-fab { right: 16px; bottom: 16px; width: 52px; height: 52px; }
+  .cart-fab { right: 16px; bottom: 74px; width: 52px; height: 52px; }
   /* 16px hindrer at iOS zoomer inn når man fokuserer et felt */
   .cart-checkout input, .cart-checkout textarea { font-size: 16px; }
   .product__variant { min-width: 84px; }
@@ -573,8 +600,11 @@ html[data-mode="marine"] .cart-item__rm:hover { color: var(--navy); background: 
     if (!box) return;
     var txt = (window.MERCH_INFO || '').trim();
     if (!txt) { box.hidden = true; box.innerHTML = ''; return; }
+    // Valgfri eyebrow-merkelapp (window.MERCH_INFO_LABEL). Tom = skjul den.
+    var label = (window.MERCH_INFO_LABEL == null ? 'Merk' : String(window.MERCH_INFO_LABEL)).trim();
+    var eyebrow = label ? '<span class="merch-info__eyebrow">\u2726\u2002\u2002' + esc(label) + '</span>' : '';
     // Trygt: escape og gjør doble linjeskift om til avsnitt.
-    box.innerHTML = txt.split(/\n{2,}/).map(function (para) {
+    box.innerHTML = eyebrow + txt.split(/\n{2,}/).map(function (para) {
       return '<p>' + esc(para).replace(/\n/g, '<br>') + '</p>';
     }).join('');
     box.hidden = false;
@@ -771,6 +801,7 @@ html[data-mode="marine"] .cart-item__rm:hover { color: var(--navy); background: 
       if (!d || d.type !== 'apeiron-merch-preview') return;
       if (Array.isArray(d.products)) window.MERCH_PRODUCTS = d.products;
       window.MERCH_INFO = (d.info != null ? d.info : '');
+      if (d.infoLabel != null) window.MERCH_INFO_LABEL = d.infoLabel;
       if (d.subhero != null) { window.MERCH_SUBHERO = d.subhero; renderBanner(); }
       renderInfo();
       renderMerch();

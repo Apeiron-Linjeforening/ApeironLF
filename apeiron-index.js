@@ -52,14 +52,6 @@
     if (hero.cta2) { setText('ix-hero-cta2-label', hero.cta2.label); setHref('ix-hero-cta2', hero.cta2.href); }
     setText('ix-hero-bridge', hero.bridge);
 
-    var wipBanner = document.getElementById('wip-banner');
-    if (wipBanner && hero.wip) {
-      setText('ix-wip-text', hero.wip.text);
-      // show=false skjuler banneret helt
-      if (hero.wip.show === false) wipBanner.style.display = 'none';
-      else wipBanner.style.display = '';
-    }
-
     /* ── BLI MEDLEM (intro-kolonnen) ── */
     setText('ix-m-eyebrow', medlem.eyebrow);
     setText('ix-m-heading', medlem.heading);

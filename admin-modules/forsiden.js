@@ -44,10 +44,6 @@
             + '<div class="frow"><div class="fg"><label>Knapp 2 — tekst</label><input type="text" id="hero-cta2-label"></div>'
             + '<div class="fg narrow"><label>Knapp 2 — lenke</label><input type="text" id="hero-cta2-href" placeholder="#arrangementer"></div></div>'
             + '<div class="fg"><label>«Ny her?»-bro-lenke (tekst under knappene)</label><input type="text" id="hero-bridge"></div>'
-            + '<div class="sub-h">«Under oppbygging»-banner</div>'
-            + '<div class="toggle-row"><span class="t-lbl"><b>Vis banneret</b><span>Den gule advarselen nederst i hero. Skru av når siden er ferdig.</span></span>'
-            + '<label class="switch"><input type="checkbox" id="hero-wip-show"><span class="sl"></span></label></div>'
-            + '<div class="fg"><label>Banner-tekst</label><input type="text" id="hero-wip-text"></div>'
           + '</div>'
         + '</div>'
         + '<div class="panel"><h2>Arrangementer <small>seksjons-intro på Hjem</small></h2>'
@@ -116,7 +112,6 @@
         d.hero = d.hero || {};
         d.hero.cta1 = d.hero.cta1 || { label: '', href: '' };
         d.hero.cta2 = d.hero.cta2 || { label: '', href: '' };
-        d.hero.wip = d.hero.wip || { show: true, text: '' };
         d.hero.wordmark = d.hero.wordmark || { pre: '', mid: '', post: '' };
         d.arr = d.arr || {};
         d.apo = d.apo || {};
@@ -139,7 +134,6 @@
         data.hero = Object.assign({}, f.hero, data.hero);
         data.hero.cta1 = Object.assign({}, f.hero.cta1, data.hero.cta1);
         data.hero.cta2 = Object.assign({}, f.hero.cta2, data.hero.cta2);
-        data.hero.wip = Object.assign({}, f.hero.wip, data.hero.wip);
         data.hero.wordmark = Object.assign({}, f.hero.wordmark, data.hero.wordmark);
         data.arr = Object.assign({}, f.arr, data.arr);
         data.apo = Object.assign({}, f.apo, data.apo);
@@ -159,7 +153,7 @@
         'hero-eyebrow': 'hero.eyebrow', 'hero-tag': 'hero.tag', 'hero-lede': 'hero.lede',
         'hero-cta1-label': 'hero.cta1.label', 'hero-cta1-href': 'hero.cta1.href',
         'hero-cta2-label': 'hero.cta2.label', 'hero-cta2-href': 'hero.cta2.href',
-        'hero-wip-text': 'hero.wip.text', 'hero-bridge': 'hero.bridge',
+        'hero-bridge': 'hero.bridge',
         'hero-wm-pre': 'hero.wordmark.pre', 'hero-wm-mid': 'hero.wordmark.mid', 'hero-wm-post': 'hero.wordmark.post',
         'arr-eyebrow': 'arr.eyebrow', 'arr-heading': 'arr.heading', 'arr-lede': 'arr.lede',
         'apo-eyebrow': 'apo.eyebrow', 'apo-title': 'apo.title', 'apo-lede': 'apo.lede',
@@ -185,11 +179,9 @@
       }
       function renderFields() {
         Object.keys(FIELD_MAP).forEach(function (id) { var el = q(id); if (el) el.value = getPath(FIELD_MAP[id]) || ''; });
-        q('hero-wip-show').checked = data.hero.wip.show !== false;
       }
       function wireFields() {
         Object.keys(FIELD_MAP).forEach(function (id) { var el = q(id); if (!el) return; el.addEventListener('input', function () { setPath(FIELD_MAP[id], el.value); lazySave(); }); });
-        q('hero-wip-show').addEventListener('change', function () { data.hero.wip.show = this.checked; lazySave(); });
       }
 
       function renderSocials() {

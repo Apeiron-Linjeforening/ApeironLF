@@ -201,11 +201,22 @@ Om oss-siden i `om-content.js`. Begge redigeres i Admin-senteret med live previe
 
 ## Pensum
 
-Pensum har **ingen admin-modul** ennå — `pensum.html` redigeres direkte. Hver emneblokk
-er en `<div class="course-block">` med tittel, emnekode og pensumliste.
+Pensum redigeres i **Admin-senteret → Pensum** (eget panel siden 21.06.26). Innholdet
+ligger i `pensum-content.js` (`window.PENSUM_CONTENT`) og gjengis av `apeiron-pensum.js`;
+søk/filter/trekkspill-logikken bor i `pensum.html`.
 
-> Ambisjon: koble mot en NTNU-API slik at pensum oppdateres automatisk. Inntil da er
-> dette en drifter-oppgave.
+- **Emner** er gruppert per **seksjon** og redigeres som sammenleggbare kort (kode, navn,
+  semester, beskrivelse, ntnu-lenke + enten bokliste eller en «melding/tom-tilstand»).
+- **Seksjonene** (`sections`-lista: `{ id, label, short, color }`) er studieretningene
+  emnene deles inn i. De kan legges til, slettes, endre navn, sorteres og farges i panelet.
+  Vil man skille f.eks. årsstudium fra bachelor, eller master i etikk fra master i filosofi,
+  legger man bare til en ny seksjon og flytter emnene dit (via «Seksjon» på hvert emne).
+- Filter-fanene, fargemerkene og gruppeoverskriftene på `pensum.html` **bygges dynamisk**
+  fra `sections` — nye/delte seksjoner får sin egen fane og merke automatisk, ingen
+  kodeendring nødvendig.
+
+> Ambisjon: koble mot en NTNU-API slik at emnene oppdateres automatisk. Inntil da
+> vedlikeholdes pensum i admin.
 
 ---
 
@@ -417,7 +428,7 @@ function doPost(e) {
 | `om-oss.html` | «Om oss»-siden (fra `om-content.js`) |
 | `nyheter.html` | Nyhetsside med arkiv |
 | `oppslagstavla.html` | Oppslagstavla — plakater (fra `oppslag-content.js`) |
-| `pensum.html` | Pensum-oversikt (redigeres direkte) |
+| `pensum.html` | Pensum-oversikt (fra `pensum-content.js`) |
 | `styret.html` | Styret og styreverv (fra `styret-content.js`) |
 | `styret-arkiv.html` | Arkiv over tidligere styrer (fra `archive[]` i `styret-content.js`) |
 | `begrep.html` | Begrep-tidsskriftet (fra `begrep-content.js`) |

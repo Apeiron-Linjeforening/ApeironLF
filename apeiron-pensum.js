@@ -48,25 +48,39 @@
     el.innerHTML = html;
   }
 
-  var BADGE = {
-    felles:   { cls: 'felles', label: 'Felles' },
-    filosofi: { cls: 'fil',    label: 'Filosofi' },
-    etikk:    { cls: 'etikk',  label: 'Etikk' },
-    master:   { cls: 'master', label: 'Master' }
-  };
+  // Faste fallback-kortnavn hvis en seksjon mangler «short» (eldre data).
+  var SECTION_FALLBACK = { felles: 'Felles', filosofi: 'Filosofi', etikk: 'Etikk', master: 'Master' };
+
+  // Filtrer-fanene bygges fra seksjonene (single source of truth), så nye/delte
+  // seksjoner får sin egen fane automatisk. Beholder aktiv fane over re-render.
+  function renderTabs(sections) {
+    var wrap = document.querySelector('.ps-tabs');
+    if (!wrap) return;
+    if (!(IS_PREVIEW || sections.length)) return;
+    var active = wrap.querySelector('.ps-tab.is-active');
+    var cur = active ? active.getAttribute('data-filter') : 'alle';
+    var valid = { alle: 1 }; sections.forEach(function (s) { valid[s.id] = 1; });
+    if (!valid[cur]) cur = 'alle';
+    var html = '<button class="ps-tab' + (cur === 'alle' ? ' is-active' : '') + '" data-filter="alle" type="button">Alle emner</button>';
+    sections.forEach(function (s) {
+      html += '<button class="ps-tab' + (cur === s.id ? ' is-active' : '') + '" data-filter="' + esc(s.id) + '" type="button">' + esc(s.short || s.label || s.id) + '</button>';
+    });
+    wrap.innerHTML = html;
+  }
 
   function renderCatalog(C) {
     var grid = document.getElementById('psGrid');
     if (!grid) return;
     var sections = Array.isArray(C.sections) ? C.sections : [];
     var courses = Array.isArray(C.courses) ? C.courses : [];
-    if (!(IS_PREVIEW || courses.length)) return;
+    if (!(IS_PREVIEW || courses.length)) { renderTabs(sections); return; }
     var html = '';
     sections.forEach(function (sec) {
       var inSec = courses.filter(function (c) { return c.level === sec.id; });
+      var badgeLbl = sec.short || sec.label || SECTION_FALLBACK[sec.id] || sec.id || '';
+      var badgeStyle = sec.color ? ' style="background:' + esc(sec.color) + '"' : '';
       html += '<div class="ps-section-divider reveal" data-section="' + esc(sec.id) + '"><h2>' + esc(sec.label) + '</h2></div>';
       inSec.forEach(function (c, i) {
-        var b = BADGE[c.level] || { cls: 'felles', label: c.level || '' };
         var delay = (i % 2 === 1) ? ' d1' : '';
         var booksHtml = '';
         if (Array.isArray(c.books) && c.books.length) {
@@ -84,7 +98,7 @@
         var ntnu = c.ntnuHref ? '<a class="ps-ntnu-link" href="' + esc(c.ntnuHref) + '" target="_blank" rel="noopener">' + esc(ntnuLabel) + ' →</a>' : '';
         html += '<article class="ps-course reveal' + delay + '" data-level="' + esc(c.level) + '">'
           + '<button class="ps-course__toggle" type="button" aria-expanded="false">'
-          + '<div class="ps-course__badges"><span class="ps-badge ps-badge--' + b.cls + '">' + esc(b.label) + '</span></div>'
+          + '<div class="ps-course__badges"><span class="ps-badge"' + badgeStyle + '>' + esc(badgeLbl) + '</span></div>'
           + '<span class="ps-course__code">' + esc(c.code) + '</span>'
           + '<span class="ps-course__name">' + esc(c.name) + '</span>'
           + '<span class="ps-semester">' + esc(c.semester) + '</span>'
@@ -98,6 +112,7 @@
       });
     });
     grid.innerHTML = html;
+    renderTabs(sections);
   }
 
   function render() {
@@ -171,6 +186,7 @@
       if (d.content) window.PENSUM_CONTENT = d.content;
       render();
       document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+      if (typeof window.__pensumRefresh === 'function') window.__pensumRefresh();
       notify();
     });
     document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });

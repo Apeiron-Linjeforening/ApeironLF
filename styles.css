@@ -4,35 +4,6 @@
    Palett hentet fra logoen: marineblå · gull · vinrød · pergament
    ============================================================ */
 
-/* ============================================================
-   UNDER CONSTRUCTION — fjern hele denne blokken (og #wip-banner i index.html)
-   for å skjule "under oppbygging"-banneret.
-   ============================================================ */
-#wip-banner {
-  position: absolute; bottom: 0; left: 0; right: 0;
-  z-index: 10;
-  background: transparent;
-  display: flex; align-items: center; justify-content: center;
-  padding: .5rem 1rem;
-  pointer-events: none;
-}
-#wip-banner span {
-  background: rgba(10,10,10,.72);
-  color: #f5c518;
-  font-family: var(--body, sans-serif);
-  font-size: .75rem;
-  font-weight: 700;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  padding: .3em 1em;
-  border: 1px solid rgba(245,197,24,.55);
-  border-radius: 2px;
-  backdrop-filter: blur(4px);
-  white-space: nowrap;
-  pointer-events: auto;
-}
-/* ============ SLUTT UNDER CONSTRUCTION ============ */
-
 :root {
   /* Brand */
   --navy:   #232740;
@@ -1398,6 +1369,13 @@ html[data-mode="marine"] .faq__q{ color:var(--ink); }
 html[data-mode="marine"] .tag{ color:var(--gold); }
 /* «Bli medlem»-båndet mørkt (i stedet for maroon) så det mørke kortet passer */
 html[data-mode="marine"] .join{ background:var(--navy); }
+/* Page Builder accent-seksjon (Om oss «Bli medlem») skal også bli navy i marine,
+   ikke maroon — ellers blir det rød bakgrunn med blått kort (dårlig kombinasjon). */
+html[data-mode="marine"] #page .section[data-tone="accent"]{ background:var(--navy); }
+/* maroon CTA-knapp → gull på navy i marine (samme grep som chips/ev-signup) */
+html[data-mode="marine"] .join .btn--maroon{ --bg:var(--gold); --fg:var(--navy); border-color:var(--gold); }
+/* kortets innfelte kant er maroon i lys modus — gjøres lys i marine (ikke rød på blått) */
+html[data-mode="marine"] .join__card::after{ border-color:rgba(244,236,217,.18); }
 /* fylte maroon-chips → gull-fyll med navy tekst */
 html[data-mode="marine"] .prog__level,
 html[data-mode="marine"] .ev-signup{ background:var(--gold); color:var(--navy); }
@@ -1995,30 +1973,30 @@ a.now__row:hover{ background:#efe5cd; }
 #page .section[data-tone="paper-2"]{ background:var(--paper-2); border-top:1px solid rgba(35,39,64,.1); border-bottom:1px solid rgba(35,39,64,.1); }
 
 /* — MØRK (navy) — mørk bakgrunn + lys tekst, kort får mørk variant */
-#page .section[data-tone="navy"]{ background:var(--navy); color:var(--paper); border-top:0; border-bottom:0; }
+#page .section[data-tone="navy"]{ background:var(--navy); color:var(--on-dark); border-top:0; border-bottom:0; }
 #page .section[data-tone="navy"] .eyebrow{ color:var(--gold); }
 #page .section[data-tone="navy"] .h-section,
 #page .section[data-tone="navy"] h2,
 #page .section[data-tone="navy"] h3,
-#page .section[data-tone="navy"] h4{ color:var(--paper); }
+#page .section[data-tone="navy"] h4{ color:var(--on-dark); }
 #page .section[data-tone="navy"] .lede,
 #page .section[data-tone="navy"] > .wrap > p,
 #page .section[data-tone="navy"] .lesesal__lede{ color:rgba(244,236,217,.82); }
 /* «ally»-kort på mørk bakgrunn (samme behandling som marine-modus) */
 #page .section[data-tone="navy"] .ally{ background:#2a2e4a; border-color:rgba(244,236,217,.16); border-top-color:var(--gold); }
-#page .section[data-tone="navy"] .ally h3{ color:var(--paper); }
+#page .section[data-tone="navy"] .ally h3{ color:var(--on-dark); }
 #page .section[data-tone="navy"] .ally > p{ color:rgba(244,236,217,.8); }
 #page .section[data-tone="navy"] .ally__link{ color:var(--gold); }
-#page .section[data-tone="navy"] .ally__link:hover{ color:var(--paper); }
+#page .section[data-tone="navy"] .ally__link:hover{ color:var(--on-dark); }
 #page .section[data-tone="navy"] .ally__glyph{ color:var(--gold); }
 /* lesesal-funksjonsliste + om-avsnitt på mørk */
-#page .section[data-tone="navy"] .lesesal__features li strong{ color:var(--paper); }
+#page .section[data-tone="navy"] .lesesal__features li strong{ color:var(--on-dark); }
 #page .section[data-tone="navy"] .lesesal__features li span{ color:rgba(244,236,217,.72); }
 #page .section[data-tone="navy"] .lesesal__features svg{ color:var(--gold); }
 
 /* — AKSENT (maroon) — fremhevet bånd, lys tekst */
-#page .section[data-tone="accent"]{ background:var(--maroon); color:var(--paper); border-top:0; border-bottom:0; }
+#page .section[data-tone="accent"]{ background:var(--maroon); color:var(--on-dark); border-top:0; border-bottom:0; }
 #page .section[data-tone="accent"] .eyebrow{ color:var(--gold); }
 #page .section[data-tone="accent"] .h-section,
 #page .section[data-tone="accent"] h2,
-#page .section[data-tone="accent"] h3{ color:var(--paper); }
+#page .section[data-tone="accent"] h3{ color:var(--on-dark); }

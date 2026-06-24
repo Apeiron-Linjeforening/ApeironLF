@@ -1,5 +1,31 @@
 ## Siste endringer
 
+**22.06.26 — Mørk modus: fikset usynlig tekst på Om oss + rød-på-blå i «Bli medlem»**
+- **Usynlige overskrifter på Om oss.** De mørke («navy») seksjonene på Om oss (Fellesskap & samarbeid, Møt styret) hadde overskrifter i `var(--paper)` — som i mørk modus (marine) flippes til mørk navy, så de ble nesten usynlige på den navy bakgrunnen. Tone-reglene for navy/accent bruker nå `var(--on-dark)` (konstant lys, flippes ikke), så overskriftene er lyse i begge moduser. Lys modus er uendret (`--on-dark` = samme pergamentfarge der).
+- **Kort-titlene inni de samme seksjonene** (Unionen, Dionysos, styremedlemmene osv.) hadde samme feil: `.ally h3`, `.ally__link:hover` og lesesal-listas `strong` brukte `var(--paper)` i navy-tonen og forsvant i marine. Endret til `var(--on-dark)` — nå lyse på de mørke kortene i begge moduser.
+- **«Bli medlem» rød-på-blå.** På index ble båndet allerede navy i marine, men Om oss-varianten (Page Builder accent-seksjon) ble værende **maroon** mens kortet flippet til **blått** — rødt bånd med blått kort. Accent-seksjonen blir nå navy i marine på begge sider, den maroon CTA-knappen blir **gull med navy tekst** (samme grep som chips/ev-signup ellers), og kortets innfelte maroon-kant gjøres lys. Konsistent navy/gull-uttrykk i mørk modus; lys modus uendret (maroon bånd, maroon knapp, lyst kort).
+- Berørt fil: `styles.css`.
+
+**22.06.26 — WIP-banneret fjernet helt**
+- «Under oppbygging»-banneret er fjernet fra hele prosjektet (ikke bare skrudd av): markup i `index.html`, `#wip-banner`-stilen i `styles.css`, gjengivelsen i `apeiron-index.js`, `wip`-feltet i `index-content.js`, og «Vis banneret»-bryteren + feltene i Admin → Forsiden (`admin-modules/forsiden.js`). README mistet «under oppbygging»-merket + varselet, og to-do-punktet er hukket av.
+- Berørte filer: `index.html`, `styles.css`, `apeiron-index.js`, `index-content.js`, `admin-modules/forsiden.js`, `README.md`.
+
+**22.06.26 — Pensum-admin: oversiktlig emnekatalog + studieretninger kan deles**
+- **Emnene er nå gruppert per seksjon** (Felles · Filosofi · Etikk · Master) i stedet for én lang rad med 15 fullt utfoldede skjemaer. Hvert emne er et **sammenleggbart kort** (kode · navn · semester · antall bøker) som åpnes ved klikk — med «Åpne alle / Fold sammen alle» øverst. Hver gruppe har egen **«+ Nytt emne»**-knapp (nye emner havner rett i riktig seksjon), dra-sortering innen gruppa, og en «Seksjon»-velger i kortet for å flytte et emne mellom retninger. Skjemaet bygges først når kortet åpnes (lazy), så panelet er raskt selv med mange emner.
+- **Seksjonene er nå fullt redigerbare** (tidligere kunne man bare endre overskriftsteksten). «Seksjoner / studieretninger»-panelet lar deg **legge til, slette, endre navn, sortere og velge farge** per seksjon. Dette er forberedt for fremtidige behov: vil man skille **årsstudium fra bachelor**, eller **master i etikk fra master i filosofi**, legger man bare til en ny seksjon og flytter emnene dit — uten å røre kode.
+- **Nettsidens filter-faner og fargemerker bygges nå dynamisk fra seksjonene** (`apeiron-pensum.js`). Nye/delte seksjoner får sin egen fane, sitt fargemerke og sin gruppeoverskrift automatisk. `pensum-content.js` fikk `short` (kortnavn til fane/merke) + `color` per seksjon; eldre utkast uten feltene oppgraderes automatisk i `normalize()`.
+- Polert kort-styling for hele Pensum-panelet (`.mod-pensum` i `admin-modules.css`) på linje med Om oss / Forsiden — panelet var tidligere helt ustylet. Datamodellen er bakoverkompatibel; siden ser uendret ut for dagens fire seksjoner.
+- Berørte filer: `admin-modules/pensum.js`, `admin-modules.css`, `apeiron-pensum.js`, `pensum-content.js`, `pensum.html`.
+
+**22.06.26 — Fikset forhåndsvisningene i Pensum, Galleri og Marked**
+- **Buggy live-preview rettet.** Disse tre panelene manglet CSS for forhåndsvisnings-rammen, så `<iframe>`-en skalerte fra midten (`transform-origin: 50% 50%`) og fløt ut av en uklippet boks — previewen så ødelagt ut. La til en **generisk `.pv-board-wrap`-regel** (klipping + `transform-origin: top left` + ramme) i `admin-modules.css` som dekker alle tre på én gang; per-modul-regler overstyrer fortsatt der de finnes.
+- **Trekkspillene i Pensum-previewen åpnet seg ikke.** Kontrolleren i `pensum.html` bandt klikk-håndterere til emnekortene *én gang* ved sidelast, men previewen bygger kortene på nytt ved hver endring — så de nye kortene mistet håndtererne. Skrevet om til **hendelses-delegering** (trekkspill + faner + søk overlever re-gjengivelse) pluss en `window.__pensumRefresh()`-krok som `apeiron-pensum.js` kaller etter hver preview-oppdatering. Den ekte siden virker som før.
+- Berørte filer: `admin-modules.css`, `pensum.html`, `apeiron-pensum.js`.
+
+**22.06.26 — Synk: hentet inn styrets publiserte endringer fra repoet**
+- Sammenlignet arbeidskopien med `main` og hentet inn endringene styret hadde publisert via Admin → ☁ Publiser: **forsiden** (`index-content.js` — «under oppbygging»-banneret skrudd **av**, NTNU-domenet lagt til i kontakt-feltet), **nyheter** (`news-content.js` — «God sommer!», påmeldingslenken fjernet), **merch** (`merch-products.js`), **utmerkelser** (`utmerkelser-content.js` — trimmet til ett eksempelkort), **Om oss** (`om.page.js`), den auto-genererte `search-index.js`, og et nytt styreportrett (`assets/styret/mmqo20nkwex9.webp`) som manglet lokalt.
+- Verifisert at de øvrige data-filene var uendret, og at Pensum-arbeidet over ikke kolliderer (styret hadde ikke rørt `pensum-content.js`). Pensum-/preview-endringene over er ennå **ikke publisert** — de venter på neste ☁ Publiser.
+
 **21.06.26 — «Akkurat nå»: kalender-raden glir inn (slutt på synlig pop)**
 - Kalender-raden i «Akkurat nå»-kortet kommer fra et API et lite øyeblikk etter resten av kortet, så den «poppet» synlig inn. Nå animeres den inn (høyde + fade, `nowEventIn` .38s) **kun første gang** den dukker opp — så reflowen glir på plass i stedet for å hoppe. Respekterer `prefers-reduced-motion`.
 - De tre kalenderne (aktivitet/aporetisk/fadder) melder seg inn hver for seg; render-en **debounces (60 ms)** så panelet tegnes én gang når de har satt seg, og animasjonen ikke avbrytes midt i.

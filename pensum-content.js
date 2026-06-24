@@ -32,10 +32,10 @@ window.PENSUM_CONTENT = {
   },
 
   "sections": [
-    { "id": "felles", "label": "Felles for begge retninger" },
-    { "id": "filosofi", "label": "Filosofi" },
-    { "id": "etikk", "label": "Etikk" },
-    { "id": "master", "label": "Master" }
+    { "id": "felles", "label": "Felles for begge retninger", "short": "Felles", "color": "#a07820" },
+    { "id": "filosofi", "label": "Filosofi", "short": "Filosofi", "color": "#232740" },
+    { "id": "etikk", "label": "Etikk", "short": "Etikk", "color": "#76110f" },
+    { "id": "master", "label": "Master", "short": "Master", "color": "#3d2b6e" }
   ],
 
   "courses": [
