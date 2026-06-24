@@ -1,0 +1,145 @@
+/* ============================================================
+   hero-gallery.css — Admin-styrte galleribilder på forsiden (Hjem).
+   Fire stiler: A (rullende bånd), B (mosaikk), C (polaroider),
+   D (svevende bilder bak hero). Rendres av apeiron-hero-gallery.js
+   ut fra INDEX_CONTENT.heroGallery. Av som standard.
+   ============================================================ */
+
+/* ---- Felles ---- */
+.hg-anchor:empty { display: none; }
+
+/* ============ D — svevende bilder bak hero ============ */
+.hg-d-floats {
+  position: absolute; left: 0; right: 0; top: 0; bottom: 0;
+  z-index: 1; overflow: hidden; pointer-events: none;
+}
+.hg-d-floats.hg-clip { top: var(--hg-clip, 72px); }
+.hg-d-veil {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(90deg,
+    rgba(26, 29, 51, .74) 0%, rgba(26, 29, 51, .42) 46%, rgba(26, 29, 51, .12) 100%);
+}
+.hg-fp {
+  position: absolute; border-radius: 5px; overflow: hidden;
+  opacity: var(--o, .8); will-change: transform;
+  box-shadow: 0 20px 44px -18px rgba(0, 0, 0, .7);
+}
+.hg-fp img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hg-fp::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(158deg, rgba(35, 39, 64, .10), rgba(26, 29, 51, .34));
+}
+
+/* Drift (diagonal/loddrett) — konstant opasitet, klippes av kanten */
+.hg-mode-diagonal .hg-fp,
+.hg-mode-vertical .hg-fp {
+  animation: hg-drift var(--d, 34s) linear infinite;
+  animation-delay: var(--dl, 0s);
+}
+@keyframes hg-drift {
+  0%   { transform: translate(var(--tx0), var(--ty0)) rotate(var(--r, 0deg)); }
+  100% { transform: translate(var(--tx1), var(--ty1)) rotate(var(--r, 0deg)); }
+}
+/* Ken Burns — faste plasser, sakte zoom */
+.hg-mode-kenburns .hg-fp {
+  animation: hg-kb var(--d, 26s) ease-in-out infinite alternate;
+  animation-delay: var(--dl, 0s);
+}
+@keyframes hg-kb {
+  0%   { transform: scale(1) translate(0, 0) rotate(var(--r, 0deg)); }
+  100% { transform: scale(var(--kbs, 1.18)) translate(var(--kbx, -4%), var(--kby, -4%)) rotate(var(--r, 0deg)); }
+}
+/* Krysstoning — faste plasser, fader inn/ut (JS bytter bilde i bunnen) */
+.hg-mode-crossfade .hg-fp {
+  opacity: 0;
+  animation: hg-fade var(--d, 12s) ease-in-out infinite;
+  animation-delay: var(--dl, 0s);
+}
+@keyframes hg-fade {
+  0%, 100% { opacity: 0; }
+  14%, 86% { opacity: var(--o, .8); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hg-fp { animation: none !important; opacity: var(--o, .6) !important; transform: none !important; }
+}
+
+/* D — DVD-sprett: bilderamme som spretter mellom kantene (dobbel buffer) */
+.hg-dvd {
+  position: absolute; top: 0; left: 0; box-sizing: border-box;
+  background: #fbf9f2; padding: 8px; border-radius: 4px; overflow: hidden;
+  box-shadow: 0 18px 40px -16px rgba(0, 0, 0, .6); will-change: transform;
+}
+.hg-dvd__img {
+  position: absolute; top: 8px; left: 8px;
+  width: calc(100% - 16px); height: calc(100% - 16px);
+  object-fit: cover; display: block; border-radius: 2px;
+  transform: translateZ(0); backface-visibility: hidden;
+}
+/* Logo-motiv (segl): «bar» logo uten kort, med myk skygge */
+.hg-dvd--logo { background: transparent; padding: 0; box-shadow: none; overflow: visible; }
+.hg-dvd--logo .hg-dvd__img {
+  top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; border-radius: 0;
+  filter: drop-shadow(0 3px 7px rgba(0, 0, 0, .13));
+}
+/* Timeglass-logo: lyst kort bak (logoen har mørk tekst på gjennomsiktig) */
+.hg-dvd--card { background: #f4ecd9; padding: 14px 14px 16px; border-radius: 6px; }
+.hg-dvd--card .hg-dvd__img {
+  top: 14px; left: 14px; width: calc(100% - 28px); height: calc(100% - 30px);
+  object-fit: contain; border-radius: 0;
+}
+
+/* ============ A — rullende bånd ============ */
+.hg-band {
+  background: var(--navy); overflow: hidden; padding: 16px 0 18px;
+  position: relative; z-index: 1;
+}
+.hg-band__track { display: flex; width: max-content; animation: hg-marquee var(--d, 60s) linear infinite; will-change: transform; transform: translateZ(0); backface-visibility: hidden; }
+.hg-band.hg-rev .hg-band__track { animation-direction: reverse; }
+.hg-band:hover .hg-band__track { animation-play-state: paused; }
+.hg-band__item {
+  flex: 0 0 auto; margin-right: 12px; width: 208px; height: 156px;
+  border-radius: 5px; overflow: hidden; cursor: pointer; opacity: var(--o, 1);
+}
+.hg-band__item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .4s ease; }
+.hg-band__item:hover img { transform: scale(1.06); }
+@keyframes hg-marquee { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
+.hg-band__cta { text-align: center; padding: 22px 0 4px; }
+
+/* ============ B / C — egne seksjoner ============ */
+.hg-section { padding: 60px 0 64px; }
+.hg-section--paper { background: var(--paper); }
+.hg-section--paper2 { background: var(--paper-2); }
+.hg-section__head { text-align: center; max-width: 60ch; margin: 0 auto 36px; padding: 0 28px; }
+.hg-section__head h2 { font-family: var(--display); font-weight: 600; font-size: clamp(2.2rem, 4vw, 3rem); color: var(--ink); margin: .15em 0 .35em; }
+.hg-section__head p { font-family: var(--body); font-size: 1.12rem; color: var(--ink-soft); line-height: 1.6; margin: 0 auto; }
+.hg-section__cta { text-align: center; margin-top: 34px; }
+
+/* B — mosaikk */
+.hg-mosaic { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 140px; gap: 10px; grid-auto-flow: dense; }
+.hg-mosaic .cell { position: relative; border-radius: 4px; overflow: hidden; cursor: pointer; background: var(--navy); opacity: var(--o, 1); }
+.hg-mosaic .cell--big { grid-column: span 2; grid-row: span 2; }
+.hg-mosaic .cell--wide { grid-column: span 2; }
+.hg-mosaic img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .45s ease; }
+.hg-mosaic .cell:hover img { transform: scale(1.05); }
+
+/* C — polaroider */
+.hg-pola-row { display: grid; grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr)); gap: 24px; justify-items: center; align-items: start; padding: 0 28px; }
+.hg-pola { position: relative; width: 100%; max-width: 218px; background: #fbf9f2; padding: 12px 12px 18px; box-shadow: 0 12px 26px -12px rgba(35, 39, 64, .55); cursor: pointer; transition: transform .25s ease, box-shadow .25s ease; }
+.hg-pola:hover { transform: translateY(-6px) rotate(0deg) !important; box-shadow: 0 22px 40px -14px rgba(35, 39, 64, .6); z-index: 5; }
+.hg-pola img { width: 100%; aspect-ratio: 1; height: auto; object-fit: cover; display: block; }
+.hg-pola__tape { position: absolute; top: -12px; left: 50%; transform: translateX(-50%) rotate(-3deg); width: 76px; height: 25px; background: rgba(212, 175, 55, .32); border: 1px solid rgba(212, 175, 55, .45); }
+.hg-pola--clean { background: transparent; padding: 0; border-radius: 5px; overflow: hidden; box-shadow: 0 16px 34px -16px rgba(35, 39, 64, .6); }
+.hg-pola--clean .hg-pola__tape { display: none; }
+.hg-pola--clean img { border-radius: 5px; }
+
+@media (max-width: 760px) {
+  .hg-mosaic { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 120px; }
+  .hg-pola-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* ============ Felles lightbox ============ */
+.hg-lb { position: fixed; inset: 0; z-index: 9000; background: rgba(5, 7, 18, .92); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .22s; }
+.hg-lb.is-open { opacity: 1; pointer-events: all; }
+.hg-lb img { max-width: 88vw; max-height: 86vh; object-fit: contain; border-radius: 3px; box-shadow: 0 24px 80px rgba(0, 0, 0, .6); }
+.hg-lb__x { position: fixed; top: 20px; right: 24px; width: 46px; height: 46px; border-radius: 50%; background: rgba(255, 255, 255, .12); border: 1px solid rgba(255, 255, 255, .2); color: #fff; font-size: 1.4rem; cursor: pointer; }

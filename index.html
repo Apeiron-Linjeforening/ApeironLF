@@ -17,6 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="hero-gallery.css" />
 <style>
 /* Kapittelskiller — ligger NÅ inne i seksjonen det introduserer, så det deler
    nøyaktig samme bakgrunn (ingen fargeskjøt). Kompakt sentrert merke, ingen
@@ -90,6 +91,10 @@ samtale &amp; vin
 </div>
 
 </div><!-- /.topnews-anchor (slutt på sticky-sonen for topp-stripa) -->
+
+<!-- Galleribilder på forsiden (Admin → Forsiden). Stil A/B/C kan plasseres her;
+     stil D legges som bakgrunn i hero. Av som standard. -->
+<div id="hg-top" class="hg-anchor"></div>
 
 <!-- ============ OPPSLAGSTAVLA (teaser) ============ -->
 <section class="section board-teaser" id="oppslagstavla-teaser" data-screen-label="Oppslagstavla">
@@ -213,6 +218,7 @@ samtale &amp; vin
 </section>
 
 <!-- ============ BLI MEDLEM ============ -->
+<div id="hg-before-medlem" class="hg-anchor"></div>
 <section class="section join" id="bli-medlem" data-screen-label="Bli medlem">
   <div class="chapbreak chapbreak--on-dark" aria-hidden="true">
     <span class="chapbreak__mid"><span class="chapbreak__num">III</span><span class="chapbreak__label">Bli med</span></span>
@@ -332,6 +338,7 @@ samtale &amp; vin
 <script src="image-slot.js"></script>
 <script src="index-content.js"></script>
 <script src="apeiron-index.js"></script>
+<script src="apeiron-hero-gallery.js"></script>
 <script src="app.js"></script>
 <script src="apeiron-events.js"></script>
 <script src="aporetisk-cal.js"></script>

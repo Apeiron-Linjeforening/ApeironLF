@@ -1,5 +1,5 @@
 /* Produktdata for Apeiron merch-siden.
-   Sist oppdatert: 24.6.2026
+   Sist oppdatert: 22.6.2026
    Rediger direkte her, eller åpne Admin-senteret → Merch.
 
    badgeType: "bestseller" | "new" | "limited" | null
@@ -15,7 +15,7 @@ window.MERCH_SUBHERO = {"back":"Tilbake til forsiden","title":"Merch","lede":"B�
 
 window.MERCH_INFO = "Her kommer det mye snacks!";
 
-window.MERCH_INFO_LABEL = "";
+window.MERCH_INFO_LABEL = "Merk";
 
 window.MERCH_PRODUCTS = [
   {

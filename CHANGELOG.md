@@ -1,5 +1,14 @@
 ## Siste endringer
 
+**25.06.26 — Nytt: galleribilder på forsiden (admin-styrt, live fra Drive)**
+- **Nytt admin-panel «Galleribilder på forsiden»** (Admin → Forsiden, øverst). **Av som standard** — den live siden er uendret til styret slår det på. Bildene hentes **tilfeldig fra hele Drive-galleriet** (samme `ROOT_FOLDER_ID` som Galleri-siden), stokkes og plukkes tilfeldig, og bufres i nettleseren i 6 t. Uten API-nøkkel (lokalt) brukes reservebilder fra `assets/` så forhåndsvisningen alltid viser effekten.
+- **Fire stiler:** A — rullende bånd, B — mosaikk (egen seksjon, fyller alltid rutenettet), C — polaroider (fulle rader, hvit ramme eller rene bilder), D — svevende bilder bak hero.
+- **Fem animasjoner for stil D:** diagonal drift, loddrett, sakte zoom (Ken Burns), krysstoning og «sprett mellom kantene (DVD)». Drift kommer fra tilfeldige steder over hele flaten (overlapp tillatt); Ken Burns/krysstoning plasseres tilfeldig, men aldri mer enn ¼ overlapp med et annet bilde.
+- **DVD-motiv:** galleribilder, **blå logo-utkast** (bytter mellom de 7 seglvariantene), **vanlig + svart logo**, og **timeglass-logo**. Logoene er nedskalert til ~450 px og ligger i `assets/dvd-logos/`. DVD bruker forhåndslastede, stablede lag (z-index-bytte), så bildebyttet er hakkfritt.
+- **Kontroller:** stil, plassering, antall bilder/rammer, synlighet (kun D), hastighet, retning (A/D-diagonal), animasjon, nav-klipp (D), motiv + størrelse-når-én-ramme (DVD), bildestørrelser (B), polaroid-stil (C) og seksjonstekst (B/C). Panelet er gruppert og kontroller vises/skjules etter valgt stil.
+- **Live forhåndsvisning overlever navigasjon:** motoren leser admin-utkastet fra `localStorage` på vanlige sidelastinger (samme mønster som oppslagstavla), så bildene blir værende når man klikker seg frem og tilbake, og «Se nettsiden» speiler utkastet.
+- Nye filer: `hero-gallery.css`, `apeiron-hero-gallery.js`, `assets/dvd-logos/*.png` (10 logoer). Berørte filer: `index.html` (CSS/JS-lenke + injeksjonspunkter), `index-content.js` (`heroGallery`-standard, av), `admin-modules/forsiden.js` (panelet).
+
 **22.06.26 — Mørk modus: fikset usynlig tekst på Om oss + rød-på-blå i «Bli medlem»**
 - **Usynlige overskrifter på Om oss.** De mørke («navy») seksjonene på Om oss (Fellesskap & samarbeid, Møt styret) hadde overskrifter i `var(--paper)` — som i mørk modus (marine) flippes til mørk navy, så de ble nesten usynlige på den navy bakgrunnen. Tone-reglene for navy/accent bruker nå `var(--on-dark)` (konstant lys, flippes ikke), så overskriftene er lyse i begge moduser. Lys modus er uendret (`--on-dark` = samme pergamentfarge der).
 - **Kort-titlene inni de samme seksjonene** (Unionen, Dionysos, styremedlemmene osv.) hadde samme feil: `.ally h3`, `.ally__link:hover` og lesesal-listas `strong` brukte `var(--paper)` i navy-tonen og forsvant i marine. Endret til `var(--on-dark)` — nå lyse på de mørke kortene i begge moduser.

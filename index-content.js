@@ -7,6 +7,23 @@
 */
 
 window.INDEX_CONTENT = {
+  "heroGallery": {
+    "enabled": false,
+    "style": "D",
+    "placement": "top",
+    "count": 10,
+    "opacity": 0.8,
+    "speed": 100,
+    "direction": "up-left",
+    "animation": "diagonal",
+    "navClip": true,
+    "dvdMotif": "photos",
+    "dvdSize": 100,
+    "mosaicSizes": "varied",
+    "polaStyle": "framed",
+    "heading": "Livet i Apeiron",
+    "lede": "Glimt fra det sosiale livet i Apeiron — fester, fagkvelder og alt imellom."
+  },
   "hero": {
     "wordmark": {
       "pre": "Apeir",

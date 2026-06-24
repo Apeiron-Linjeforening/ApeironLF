@@ -30,6 +30,99 @@
           + '</ol>'
           + '<div class="tip-note">💾 Endringer lagres automatisk i nettleseren din. Dette panelet styrer <b>tekstene på Hjem</b> (hero, seksjons-introer, «Bli medlem»-intro og kontakt). «Om oss» + FAQ ligger i Om oss-panelet. Arrangementene, nyheter, oppslagstavla og medlemspriser hentes/redigeres andre steder.</div>'
         + '</div>'
+        + '<div class="panel"><h2>Galleribilder på forsiden <small>live fra Drive-galleriet</small></h2>'
+          + '<div class="panel-body">'
+            + '<style>'
+              + '.hg-master{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:13px 15px;background:rgba(35,39,64,.04);border:1px solid var(--border);border-radius:8px}'
+              + '.hg-master__txt b{display:block;font-size:.95rem;color:var(--navy)}'
+              + '.hg-master__txt span{display:block;font-size:.76rem;color:var(--ink-soft);line-height:1.45;margin-top:3px;max-width:48ch}'
+              + '.hg-switch{position:relative;flex:0 0 auto;width:46px;height:27px;cursor:pointer}'
+              + '.hg-switch input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer}'
+              + '.hg-switch i{position:absolute;inset:0;background:#c4c8d4;border-radius:999px;transition:background .18s}'
+              + '.hg-switch i::after{content:"";position:absolute;top:3px;left:3px;width:21px;height:21px;background:#fff;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,.28);transition:transform .18s}'
+              + '.hg-switch input:checked + i{background:var(--gold,#d4af37)}'
+              + '.hg-switch input:checked + i::after{transform:translateX(19px)}'
+              + '.hg-body{margin-top:18px;transition:opacity .2s}'
+              + '.hg-body.is-off{opacity:.4;pointer-events:none}'
+              + '.hg-grp{margin-bottom:20px}'
+              + '.hg-grp:last-child{margin-bottom:0}'
+              + '.hg-grp__h{font-size:.64rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);padding-bottom:7px;margin-bottom:12px;border-bottom:1px solid var(--border)}'
+              + '.hg-body input[type=range]{width:100%;accent-color:var(--navy,#232740)}'
+              + '.hg-toggle{display:flex;align-items:center;gap:9px;font-size:.88rem;color:var(--navy);cursor:pointer;margin:2px 0}'
+              + '.hg-toggle input{width:17px;height:17px;accent-color:var(--navy,#232740)}'
+              + '.hg-hidden{display:none!important}'
+              + '.hg-help{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;background:#cdd2e0;color:#2b2c33;font-size:10px;font-weight:700;margin-left:6px;cursor:help;vertical-align:middle}'
+              + '[data-hg="size"].is-locked{opacity:.4}'
+              + '[data-hg="size"].is-locked input{cursor:not-allowed}'
+            + '</style>'
+            + '<div class="hg-master">'
+              + '<div class="hg-master__txt"><b>Vis galleribilder på forsiden</b><span>Av som standard. Bildene hentes tilfeldig fra hele Drive-galleriet og oppdaterer seg selv.</span></div>'
+              + '<label class="hg-switch" title="Slå galleribildene på eller av"><input type="checkbox" id="hg-enabled"><i></i></label>'
+            + '</div>'
+            + '<div class="hg-body" id="hg-body">'
+              + '<div class="hg-grp">'
+                + '<div class="hg-grp__h">Stil &amp; plassering</div>'
+                + '<div class="fg"><label>Stil</label><select id="hg-style">'
+                  + '<option value="A">A — Rullende bånd</option>'
+                  + '<option value="B">B — Mosaikk (egen seksjon)</option>'
+                  + '<option value="C">C — Polaroider (egen seksjon)</option>'
+                  + '<option value="D">D — Svevende bilder bak hero</option>'
+                + '</select></div>'
+                + '<div class="fg" data-hg="placement"><label>Plassering</label><select id="hg-placement">'
+                  + '<option value="top">Rett under hero</option>'
+                  + '<option value="before-medlem">Like før «Bli medlem»</option>'
+                + '</select></div>'
+              + '</div>'
+              + '<div class="hg-grp">'
+                + '<div class="hg-grp__h">Bevegelse &amp; utseende</div>'
+                + '<div class="frow">'
+                  + '<div class="fg narrow" data-hg="count"><label><span id="hg-count-label">Antall bilder</span>: <output id="hg-count-v"></output></label><input type="range" id="hg-count" min="3" max="16" step="1"></div>'
+                  + '<div class="fg narrow" data-hg="opacity"><label>Synlighet: <output id="hg-opacity-v"></output></label><input type="range" id="hg-opacity" min="10" max="100" step="5"></div>'
+                + '</div>'
+                + '<div class="frow">'
+                  + '<div class="fg narrow" data-hg="speed"><label>Hastighet: <output id="hg-speed-v"></output></label><input type="range" id="hg-speed" min="50" max="150" step="10"></div>'
+                  + '<div class="fg narrow" data-hg="size"><label>Størrelse: <output id="hg-size-v"></output><span class="hg-help" title="Størrelsen kan bare justeres når du har én ramme. Med flere rammer får de varierte, tilfeldige størrelser.">?</span></label><input type="range" id="hg-size" min="50" max="200" step="10"></div>'
+                  + '<div class="fg narrow" data-hg="direction"><label>Retning</label><select id="hg-direction">'
+                    + '<option value="up-left">Opp mot venstre</option>'
+                    + '<option value="up-right">Opp mot høyre</option>'
+                    + '<option value="up">Rett opp</option>'
+                    + '<option value="left">Mot venstre</option>'
+                    + '<option value="right">Mot høyre</option>'
+                  + '</select></div>'
+                + '</div>'
+                + '<div class="fg" data-hg="animation"><label>Animasjon</label><select id="hg-animation">'
+                  + '<option value="diagonal">Diagonal drift</option>'
+                  + '<option value="vertical">Rett opp / loddrett</option>'
+                  + '<option value="kenburns">Sakte zoom (Ken Burns)</option>'
+                  + '<option value="crossfade">Krysstoning</option>'
+                  + '<option value="dvd">Sprett mellom kantene (DVD)</option>'
+                + '</select></div>'
+              + '</div>'
+              + '<div class="hg-grp" data-hg="extras">'
+                + '<div class="hg-grp__h">Stil-spesifikt</div>'
+                + '<div class="fg" data-hg="motif"><label>Motiv</label><select id="hg-motif">'
+                  + '<option value="photos">Galleribilder</option>'
+                  + '<option value="blueLogos">Blå logo-utkast (bytter mellom variantene)</option>'
+                  + '<option value="logoBW">Logo — vanlig &amp; svart</option>'
+                  + '<option value="hourglass">Timeglass-logo</option>'
+                + '</select></div>'
+                + '<label class="hg-toggle" data-hg="navclip"><input type="checkbox" id="hg-navclip"> Klipp bildene ved navigasjonsbaren</label>'
+                + '<div class="fg" data-hg="mosaic"><label>Bildestørrelser</label><select id="hg-mosaic">'
+                  + '<option value="varied">Varierte (ett stort + flere små)</option>'
+                  + '<option value="uniform">Like store</option>'
+                + '</select></div>'
+                + '<div class="fg" data-hg="pola"><label>Polaroid-stil</label><select id="hg-pola">'
+                  + '<option value="framed">Hvit polaroid-ramme</option>'
+                  + '<option value="clean">Rene bilder (ingen ramme)</option>'
+                + '</select></div>'
+                + '<div data-hg="section">'
+                  + '<div class="fg"><label>Seksjonsoverskrift</label><input type="text" id="hg-heading"></div>'
+                  + '<div class="fg"><label>Ingress</label><textarea id="hg-lede"></textarea></div>'
+                + '</div>'
+              + '</div>'
+            + '</div>'
+          + '</div>'
+        + '</div>'
         + '<div class="panel"><h2>Hero <small>øverst på Hjem</small></h2>'
           + '<div class="panel-body">'
             + '<div class="frow"><div class="fg narrow"><label>Tittel (før)</label><input type="text" id="hero-wm-pre"></div>'
@@ -121,6 +214,12 @@
         d.kontakt = d.kontakt || {};
         d.kontakt.socials = Array.isArray(d.kontakt.socials) ? d.kontakt.socials : [];
         d.kontakt.faq = Array.isArray(d.kontakt.faq) ? d.kontakt.faq : [];
+        d.heroGallery = Object.assign({
+          enabled: false, style: 'D', placement: 'top', count: 10, opacity: 0.8, speed: 100,
+          direction: 'up-left', animation: 'diagonal', navClip: true, dvdMotif: 'photos',
+          mosaicSizes: 'varied', polaStyle: 'framed', dvdSize: 100,
+          heading: 'Livet i Apeiron', lede: 'Glimt fra det sosiale livet i Apeiron — fester, fagkvelder og alt imellom.'
+        }, d.heroGallery || {});
         return d;
       }
       function loadData() {
@@ -143,6 +242,7 @@
         data.kontakt = Object.assign({}, f.kontakt, data.kontakt);
         if (!Array.isArray(data.kontakt.socials)) data.kontakt.socials = [];
         if (!Array.isArray(data.kontakt.faq)) data.kontakt.faq = [];
+        data.heroGallery = Object.assign({}, f.heroGallery, data.heroGallery);
       }
       function saveData() { localStorage.setItem(LS_KEY, JSON.stringify(data)); pushPreview(); }
       var saveTimer = null;
@@ -264,10 +364,100 @@
           }
         });
       }
-      function renderAll() { renderFields(); renderBenefits(); renderSocials(); renderHjemFaq(); }
+      function renderHeroGallery() {
+        var g = data.heroGallery || {};
+        q('hg-enabled').checked = !!g.enabled;
+        q('hg-style').value = g.style || 'D';
+        q('hg-placement').value = g.placement || 'top';
+        q('hg-count').value = g.count; q('hg-count-v').textContent = g.count;
+        var op = Math.round((g.opacity != null ? g.opacity : 0.8) * 100);
+        q('hg-opacity').value = op; q('hg-opacity-v').textContent = op + '%';
+        q('hg-speed').value = g.speed; q('hg-speed-v').textContent = g.speed + '%';
+        q('hg-direction').value = g.direction || 'up-left';
+        q('hg-animation').value = g.animation || 'diagonal';
+        q('hg-navclip').checked = !!g.navClip;
+        q('hg-motif').value = g.dvdMotif || 'photos';
+        q('hg-size').value = g.dvdSize != null ? g.dvdSize : 100; q('hg-size-v').textContent = (g.dvdSize != null ? g.dvdSize : 100) + '%';
+        q('hg-mosaic').value = g.mosaicSizes || 'varied';
+        q('hg-pola').value = g.polaStyle || 'framed';
+        q('hg-heading').value = g.heading || '';
+        q('hg-lede').value = g.lede || '';
+        setBodyDim();
+        updateHgVis();
+      }
+      function updateHgVis() {
+        var style = q('hg-style').value, anim = q('hg-animation').value, isD = style === 'D';
+        setDirectionOptions(style);
+        setCountRange();
+        function show(name, on) { host.querySelectorAll('[data-hg="' + name + '"]').forEach(function (el) { el.classList.toggle('hg-hidden', !on); }); }
+        show('placement', !isD);
+        show('animation', isD);
+        show('navclip', isD);
+        show('motif', isD && anim === 'dvd');
+        show('extras', style !== 'A');
+        show('size', isD && anim === 'dvd');
+        var sizeOn = isD && anim === 'dvd' && parseInt(q('hg-count').value, 10) === 1;
+        q('hg-size').disabled = !sizeOn;
+        var sizeFg = host.querySelector('[data-hg="size"]'); if (sizeFg) sizeFg.classList.toggle('is-locked', !sizeOn);
+        show('count', style !== 'A');
+        show('opacity', isD);
+        show('speed', isD || style === 'A');
+        show('direction', style === 'A' || (isD && anim === 'diagonal'));
+        show('mosaic', style === 'B');
+        show('pola', style === 'C');
+        show('section', style === 'B' || style === 'C');
+      }
+      // Retnings-alternativene er ulike per stil: A ruller bare venstre/høyre,
+      // mens D har fem unike drift-retninger. Vis kun de relevante.
+      // Antall-slideren tilpasses stilen: D+DVD bruker 1–4 rammer, ellers 3–16 bilder.
+      function setCountRange() {
+        var style = q('hg-style').value, anim = q('hg-animation').value;
+        var slider = q('hg-count'), lbl = q('hg-count-label');
+        var isDvd = (style === 'D' && anim === 'dvd');
+        var min = isDvd ? 1 : 3, max = isDvd ? 4 : 16;
+        slider.min = min; slider.max = max;
+        var cur = parseInt(slider.value, 10);
+        if (isNaN(cur)) cur = (data.heroGallery && data.heroGallery.count) || min;
+        if (cur < min) cur = min; if (cur > max) cur = max;
+        slider.value = cur;
+        q('hg-count-v').textContent = cur;
+        if (lbl) lbl.textContent = isDvd ? 'Antall rammer' : 'Antall bilder';
+        if (data.heroGallery) data.heroGallery.count = cur;
+      }
+      function setDirectionOptions(style) {
+        var sel = q('hg-direction');
+        var optsD = [['up-left', 'Opp mot venstre'], ['up-right', 'Opp mot høyre'], ['up', 'Rett opp'], ['left', 'Mot venstre'], ['right', 'Mot høyre']];
+        var optsA = [['left', 'Mot venstre'], ['right', 'Mot høyre']];
+        var opts = style === 'A' ? optsA : optsD;
+        var cur = sel.value || (data.heroGallery && data.heroGallery.direction);
+        sel.innerHTML = opts.map(function (o) { return '<option value="' + o[0] + '">' + o[1] + '</option>'; }).join('');
+        if (opts.some(function (o) { return o[0] === cur; })) { sel.value = cur; }
+        else { sel.value = (style === 'A' ? 'left' : 'up-left'); if (data.heroGallery) data.heroGallery.direction = sel.value; }
+      }
+      function setBodyDim() { var b = q('hg-body'); if (b) b.classList.toggle('is-off', !q('hg-enabled').checked); }
+      function wireHeroGallery() {
+        function bindToggle(id, key) { q(id).addEventListener('change', function () { data.heroGallery[key] = this.checked; lazySave(); }); }
+        function bindSelect(id, key, after) { q(id).addEventListener('change', function () { data.heroGallery[key] = this.value; if (after) after(); lazySave(); }); }
+        q('hg-enabled').addEventListener('change', function () { data.heroGallery.enabled = this.checked; setBodyDim(); lazySave(); });
+        bindToggle('hg-navclip', 'navClip');
+        bindSelect('hg-style', 'style', updateHgVis);
+        bindSelect('hg-placement', 'placement');
+        bindSelect('hg-direction', 'direction');
+        bindSelect('hg-animation', 'animation', updateHgVis);
+        bindSelect('hg-motif', 'dvdMotif');
+        q('hg-size').addEventListener('input', function () { data.heroGallery.dvdSize = parseInt(this.value, 10); q('hg-size-v').textContent = this.value + '%'; lazySave(); });
+        bindSelect('hg-mosaic', 'mosaicSizes');
+        bindSelect('hg-pola', 'polaStyle');
+        q('hg-count').addEventListener('input', function () { data.heroGallery.count = parseInt(this.value, 10); q('hg-count-v').textContent = this.value; updateHgVis(); lazySave(); });
+        q('hg-opacity').addEventListener('input', function () { data.heroGallery.opacity = parseInt(this.value, 10) / 100; q('hg-opacity-v').textContent = this.value + '%'; lazySave(); });
+        q('hg-speed').addEventListener('input', function () { data.heroGallery.speed = parseInt(this.value, 10); q('hg-speed-v').textContent = this.value + '%'; lazySave(); });
+        q('hg-heading').addEventListener('input', function () { data.heroGallery.heading = this.value; lazySave(); });
+        q('hg-lede').addEventListener('input', function () { data.heroGallery.lede = this.value; lazySave(); });
+      }
+      function renderAll() { renderFields(); renderBenefits(); renderSocials(); renderHjemFaq(); renderHeroGallery(); }
 
       function exportFile() {
-        var out = { hero: clone(data.hero || {}), arr: clone(data.arr || {}), apo: clone(data.apo || {}), fadder: clone(data.fadder || {}), medlem: clone(data.medlem || {}), kontakt: clone(data.kontakt || {}) };
+        var out = { heroGallery: clone(data.heroGallery || {}), hero: clone(data.hero || {}), arr: clone(data.arr || {}), apo: clone(data.apo || {}), fadder: clone(data.fadder || {}), medlem: clone(data.medlem || {}), kontakt: clone(data.kontakt || {}) };
         out.medlem.benefits = (out.medlem.benefits || []).filter(function (b) { return b && b.trim(); });
         out.kontakt.socials = (out.kontakt.socials || []).filter(function (s) { return (s.label && s.label.trim()) || (s.href && s.href.trim()); });
         out.kontakt.faq = (out.kontakt.faq || []).filter(function (it) { return (it.q && it.q.trim()) || (it.a && it.a.trim()); });
@@ -308,7 +498,7 @@
       window.addEventListener('resize', fitPreview);
       if (pvFrame) pvFrame.addEventListener('load', fitPreview);
 
-      loadData(); renderAll(); wireFields();
+      loadData(); renderAll(); wireFields(); wireHeroGallery();
       wireDrag('lst-socials', function () { return data.kontakt.socials; }, renderSocials);
       wireDrag('lst-benefits', function () { return data.medlem.benefits; }, renderBenefits);
       wireDrag('lst-hjemfaq', function () { return data.kontakt.faq; }, renderHjemFaq);

@@ -197,6 +197,18 @@ Google Sheet-systemet er borte.
 Forsidens tekster (toppbilde, om-seksjon, FAQ, kontakt) ligger i `index-content.js`;
 Om oss-siden i `om-content.js`. Begge redigeres i Admin-senteret med live preview.
 
+**Galleribilder på forsiden.** Admin → Forsiden har et eget panel som kan vise
+bilder fra galleriet på forsiden — **av som standard**. Innstillingene ligger i
+`heroGallery` i `index-content.js`; `apeiron-hero-gallery.js` (+ `hero-gallery.css`)
+rendrer dem og henter bilder **tilfeldig fra hele Drive-galleriet** (samme
+`ROOT_FOLDER_ID` som Galleri-siden), bufret 6 t i nettleseren. Fire stiler
+(A rullende bånd · B mosaikk · C polaroider · D svevende bak hero), fem D-animasjoner
+(diagonal, loddrett, Ken Burns, krysstoning, DVD-sprett) og DVD-motiv som kan bytte
+mellom logovarianter (`assets/dvd-logos/`). Injeksjonspunkter i `index.html`:
+`#hg-top` (under hero) og `#hg-before-medlem`; stil D legges rett i `.hero`. Motoren
+leser også admin-utkastet fra `localStorage` ved vanlige sidelastinger, så
+forhåndsvisningen overlever navigasjon.
+
 ---
 
 ## Pensum
@@ -466,6 +478,7 @@ function doPost(e) {
 | --- | --- |
 | `site-chrome.js` | Bygger meny + footer på alle sider |
 | `apeiron-index.js` | Rendrer forsiden fra `index-content.js` |
+| `apeiron-hero-gallery.js` | Galleribilder på forsiden (stil A/B/C/D + DVD), live fra Drive. Styres av `heroGallery` i `index-content.js`; krever `hero-gallery.css`. Av som standard |
 | `apeiron-om.js` | Rendrer Om oss-siden fra `om-content.js` |
 | `apeiron-news.js` | «Akkurat nå»-kort + beskjeder (leser `news-content.js`) |
 | `apeiron-events.js` | Henter arrangementer fra Google Kalender |
