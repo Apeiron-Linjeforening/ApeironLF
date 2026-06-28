@@ -247,7 +247,7 @@ html[data-mode="marine"] .akutt-card--life { background: #2e1c20; border-color: 
 <div id="site-nav"></div>
 
 <!-- ============ SUBPAGE HEADER ============ -->
-<section class="subhero">
+<section class="subhero" id="hero">
   <img class="subhero__seal" src="assets/apeiron-logo.png" alt="" aria-hidden="true" />
   <div class="subhero__inner">
     <a class="subhero__back" id="hero-back" href="index.html">Tilbake til forsiden</a>
@@ -353,6 +353,23 @@ html[data-mode="marine"] .akutt-card--life { background: #2e1c20; border-color: 
 (function () {
   var IS_PREVIEW = false;
   try { IS_PREVIEW = /[?&]preview\b/.test(location.search); } catch (e) {}
+
+  function applySectionOrder(order) {
+    var KEYS = ['hero', 'sifra', 'studier', 'helse', 'fysisk', 'akutt'];
+    var ord = (Array.isArray(order) ? order : []).filter(function (k) { return KEYS.indexOf(k) >= 0; });
+    KEYS.forEach(function (k) { if (ord.indexOf(k) < 0) ord.push(k); });
+    var els = ord.map(function (k) { return document.getElementById(k); }).filter(Boolean);
+    if (els.length < 2) return;
+    var parent = els[0].parentNode;
+    if (!els.every(function (e) { return e.parentNode === parent; })) return;
+    var kids = Array.prototype.slice.call(parent.children);
+    var maxIdx = Math.max.apply(null, els.map(function (e) { return kids.indexOf(e); }));
+    var endRef = kids[maxIdx + 1] || null;   // stabil node rett etter gruppen (f.eks. footer)
+    els.forEach(function (e) { parent.insertBefore(e, endRef); });
+    // vekslende bakgrunn på innholdsseksjonene (.section), uavhengig av hvor hero ligger
+    els.filter(function (e) { return e.classList.contains('section'); })
+      .forEach(function (e, i) { e.classList.toggle('section--alt', i % 2 === 1); });
+  }
 
   function renderHjelp() {
   var C = window.HJELP_CONTENT || {};
@@ -466,6 +483,7 @@ html[data-mode="marine"] .akutt-card--life { background: #2e1c20; border-color: 
       }).join('');
     }
   }
+  applySectionOrder(C.sectionOrder);
   } // /renderHjelp
 
   renderHjelp();

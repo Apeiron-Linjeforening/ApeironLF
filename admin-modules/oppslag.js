@@ -63,7 +63,7 @@
         if (raw) { try { data = JSON.parse(raw); normalize(); return; } catch (_) {} }
         data = fresh();
       }
-      function saveData() { localStorage.setItem(LS_KEY, JSON.stringify(data)); AC.toast('Lagret i nettleseren'); pushPreview(); }
+      function saveData() { AC.persistDraft(LS_KEY, data); AC.toast('Lagret i nettleseren'); pushPreview(); }
       var saveTimer = null;
       function lazySave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveData, 350); }
       function uid(pfx) { return pfx + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
@@ -218,6 +218,16 @@
             return { av: '📌', cls: 'sq', nm: p.title || '(uten tittel)', sub: p.date || 'Aktiv', dot: 'on' };
           },
           detail: function (p) { return posterCard(p); },
+          onReorder: function (ids) {
+            // Filter-railen viser kanskje bare et utvalg (Aktive/Arkiverte); flytt
+            // bare de viste plakatene og behold de skjulte i sine egne posisjoner.
+            var pos = {}; ids.forEach(function (id, i) { pos[id] = i; });
+            var shown = data.posters.filter(function (p) { return pos.hasOwnProperty(p.id); });
+            shown.sort(function (a, b) { return pos[a.id] - pos[b.id]; });
+            var qi = 0;
+            data.posters = data.posters.map(function (p) { return pos.hasOwnProperty(p.id) ? shown[qi++] : p; });
+            lazySave();
+          },
           onAdd: function () { add(); return data.posters[0] && data.posters[0].id; }
         }]
       });
@@ -329,7 +339,7 @@
         btn.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); openLocPicker(input); });
       }
 
-      loadData(); renderAll(); applyPanelLayout();
+      loadData(); AC.draftBaseline(LS_KEY, data); renderAll(); applyPanelLayout();
       AC.viewSwitch({ list: q('list-posters'), key: 'apeiron-oppslag-view-v1', help: 'Velg hvordan plakatkortene vises mens du redigerer her i admin. Påvirker bare redigeringsvisningen, ikke den publiserte siden.' });
       fitPreview(); setTimeout(fitPreview, 80);
       pushPreview(); setTimeout(pushPreview, 150);

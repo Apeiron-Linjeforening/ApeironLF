@@ -31,6 +31,25 @@
 .chapbreak--on-dark .chapbreak__label{ color:var(--gold); }
 @media (max-width:620px){ .chapbreak__label{ font-size:.7rem; letter-spacing:.24em; } }
 </style>
+<script>
+  /* Solo-forhåndsvisning: ?solo=<seksjons-id> viser KUN den seksjonen (brukt av
+     Admin → Medlemskap, som forhåndsviser bare «Bli medlem»-blokken). Kjøres i
+     <head> så ingenting blinker før seksjonene skjules. Forsiden-previewen
+     (uten solo) er upåvirket. */
+  (function () {
+    try {
+      var solo = new URLSearchParams(location.search).get('solo');
+      if (!solo) return;
+      var de = document.documentElement;
+      de.setAttribute('data-solo', solo);
+      var st = document.createElement('style');
+      st.textContent =
+        'html[data-solo] body > * { display: none !important; }'
+        + 'html[data-solo] body > #' + (window.CSS && CSS.escape ? CSS.escape(solo) : solo) + ' { display: block !important; }';
+      (document.head || de).appendChild(st);
+    } catch (e) {}
+  })();
+</script>
 </head>
 <body data-mode="paper">
 
@@ -99,7 +118,7 @@ samtale &amp; vin
 <!-- ============ OPPSLAGSTAVLA (teaser) ============ -->
 <section class="section board-teaser" id="oppslagstavla-teaser" data-screen-label="Oppslagstavla">
   <div class="chapbreak" aria-hidden="true">
-    <span class="chapbreak__mid"><span class="chapbreak__num">I</span><span class="chapbreak__label">Akkurat nå</span></span>
+    <span class="chapbreak__mid"><span class="chapbreak__label">Akkurat nå</span></span>
   </div>
   <div class="wrap">
     <div class="center" style="margin-bottom:40px">
@@ -153,7 +172,7 @@ samtale &amp; vin
 <!-- ============ APORETISK AFTEN ============ -->
 <section class="section section--tight aporetic" id="aporetisk" data-screen-label="Aporetisk Aften">
   <div class="chapbreak" aria-hidden="true">
-    <span class="chapbreak__mid"><span class="chapbreak__num">II</span><span class="chapbreak__label">Det du kan regne med</span></span>
+    <span class="chapbreak__mid"><span class="chapbreak__label">Det du kan regne med</span></span>
   </div>
   <div class="wrap">
     <div class="apo reveal">
@@ -221,7 +240,7 @@ samtale &amp; vin
 <div id="hg-before-medlem" class="hg-anchor"></div>
 <section class="section join" id="bli-medlem" data-screen-label="Bli medlem">
   <div class="chapbreak chapbreak--on-dark" aria-hidden="true">
-    <span class="chapbreak__mid"><span class="chapbreak__num">III</span><span class="chapbreak__label">Bli med</span></span>
+    <span class="chapbreak__mid"><span class="chapbreak__label">Bli med</span></span>
   </div>
   <div class="wrap">
     <div class="join__grid">

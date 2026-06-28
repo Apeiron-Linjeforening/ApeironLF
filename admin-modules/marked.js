@@ -91,7 +91,7 @@
         if (!Array.isArray(data.features)) data.features = [];
         data.interest = Object.assign({}, f.interest, data.interest);
       }
-      function saveData() { localStorage.setItem(LS_KEY, JSON.stringify(data)); pushPreview(); }
+      function saveData() { AC.persistDraft(LS_KEY, data); pushPreview(); }
       var saveTimer = null;
       function lazySave() { pushPreview(); clearTimeout(saveTimer); saveTimer = setTimeout(function () { saveData(); AC.toast('Lagret i nettleseren'); }, 300); }
       function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
@@ -221,7 +221,7 @@
       window.addEventListener('resize', fitPreview);
       if (pvFrame) pvFrame.addEventListener('load', fitPreview);
 
-      loadData(); renderAll(); wireFields();
+      loadData(); AC.draftBaseline(LS_KEY, data); renderAll(); wireFields();
       wireDrag('lst-pills', function () { return data.subhero.pills; }, renderPills);
       wireDrag('lst-features', function () { return data.features; }, renderFeatures);
       fitPreview(); setTimeout(fitPreview, 80);

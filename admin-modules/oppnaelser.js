@@ -71,7 +71,7 @@
         if (raw) { try { data = JSON.parse(raw); normalize(); return; } catch (_) {} }
         data = fresh(); normalize();
       }
-      function saveData() { localStorage.setItem(LS_KEY, JSON.stringify(data)); AC.toast('Lagret i nettleseren'); pushPreview(); }
+      function saveData() { AC.persistDraft(LS_KEY, data); AC.toast('Lagret i nettleseren'); pushPreview(); }
       var saveTimer = null;
       function lazySave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveData, 350); }
       function uid(pfx) { return pfx + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
@@ -187,6 +187,7 @@
           items: function () { return data.awards; },
           meta: function (a) { return { av: a.medal ? a.medal.charAt(0).toUpperCase() : '🏆', cls: 'sq', nm: a.title || '(uten tittel)', sub: [a.medal, a.year].filter(Boolean).join(' · ') || 'Oppnåelse' }; },
           detail: function (a) { return awardCard(a); },
+          onReorder: function (ids) { data.awards.sort(function (a, b) { return ids.indexOf(a.id) - ids.indexOf(b.id); }); lazySave(); },
           onAdd: function () { add(); return data.awards[data.awards.length - 1] && data.awards[data.awards.length - 1].id; }
         }]
       });
@@ -194,7 +195,7 @@
       function applyPanelLayout() { shell.layoutChanged(); }
       window.addEventListener('apeiron-panellayout', applyPanelLayout);
 
-      loadData(); renderAll(); applyPanelLayout();
+      loadData(); AC.draftBaseline(LS_KEY, data); renderAll(); applyPanelLayout();
       AC.viewSwitch({ list: host.querySelector('[data-list]'), key: 'apeiron-oppnaelser-view-v1', help: 'Velg hvordan oppnåelses-kortene vises mens du redigerer her i admin. Påvirker bare redigeringsvisningen, ikke den publiserte siden.' });
 
       /* ── live forhåndsvisning (oppnaelser.html?preview=1) ── */

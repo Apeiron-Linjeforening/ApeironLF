@@ -34,7 +34,7 @@
           + '</ol>'
           + '<div class="tip-note">💾 Endringer lagres automatisk i nettleseren din. Tomme avsnitt i beskrivelser lages med en blank linje mellom dem.</div>'
         + '</div>'
-        + '<div class="panel"><div class="panel-title">Topp / hurtignav <small>øverst på siden</small></div>'
+        + '<div class="panel" data-sec-key="hero"><div class="panel-title">Topp / hurtignav <small>øverst på siden</small></div>'
           + '<div class="meta-panel">'
             + '<div class="meta-grid"><div class="fg narrow"><label>Tilbake-tekst</label><input type="text" id="hero-back"></div>'
             + '<div class="fg narrow"><label>Tilbake-lenke</label><input type="text" id="hero-backHref"></div></div>'
@@ -43,7 +43,7 @@
           + '</div>'
           + '<div class="sec"><div class="sec-head"><h2>Hurtignav-kort</h2><span class="count" id="count-nav"></span><button class="btn-add" type="button" data-add-nav>+ Nytt kort</button></div><div class="list" id="list-nav"></div></div>'
         + '</div>'
-        + '<div class="panel"><div class="panel-title">Si fra</div>'
+        + '<div class="panel" data-sec-key="sifra"><div class="panel-title">Si fra</div>'
           + '<div class="meta-panel">'
             + '<div class="meta-grid"><div class="fg narrow"><label data-help="Liten etikett som vises over overskriften i seksjonen.">Eyebrow</label><input type="text" id="sifra-eyebrow"></div>'
             + '<div class="fg"><label>Overskrift</label><input type="text" id="sifra-heading"></div></div>'
@@ -58,25 +58,25 @@
           + '<div class="sec"><div class="sec-head"><h2>«Si fra»-kort</h2><span class="count" id="count-items"></span><button class="btn-add" type="button" data-add-items>+ Nytt kort</button></div><div class="list" id="list-items"></div></div>'
           + '<div class="sec"><div class="sec-head"><h2>Rådgivere &amp; ombud</h2><span class="count" id="count-sifracards"></span><button class="btn-add" type="button" data-add-cards="sifra">+ Nytt kort</button></div><div class="list" id="list-sifracards"></div></div>'
         + '</div>'
-        + '<div class="panel" data-section="studier"><div class="panel-title">Faglig hjelp</div>'
+        + '<div class="panel" data-section="studier" data-sec-key="studier"><div class="panel-title">Faglig hjelp</div>'
           + '<div class="meta-panel"><div class="meta-grid"><div class="fg narrow"><label data-help="Liten etikett som vises over overskriften i seksjonen.">Eyebrow</label><input type="text" id="studier-eyebrow"></div>'
           + '<div class="fg"><label>Overskrift</label><input type="text" id="studier-heading"></div></div>'
           + '<div class="meta-grid" style="margin-top:10px"><div class="fg"><label>Ingress</label><textarea id="studier-lede"></textarea></div></div></div>'
           + '<div class="sec"><div class="sec-head"><h2>Kort</h2><span class="count" id="count-studiercards"></span><button class="btn-add" type="button" data-add-cards="studier">+ Nytt kort</button></div><div class="list" id="list-studiercards"></div></div>'
         + '</div>'
-        + '<div class="panel" data-section="helse"><div class="panel-title">Psykisk helse</div>'
+        + '<div class="panel" data-section="helse" data-sec-key="helse"><div class="panel-title">Psykisk helse</div>'
           + '<div class="meta-panel"><div class="meta-grid"><div class="fg narrow"><label data-help="Liten etikett som vises over overskriften i seksjonen.">Eyebrow</label><input type="text" id="helse-eyebrow"></div>'
           + '<div class="fg"><label>Overskrift</label><input type="text" id="helse-heading"></div></div>'
           + '<div class="meta-grid" style="margin-top:10px"><div class="fg"><label>Ingress</label><textarea id="helse-lede"></textarea></div></div></div>'
           + '<div class="sec"><div class="sec-head"><h2>Kort</h2><span class="count" id="count-helsecards"></span><button class="btn-add" type="button" data-add-cards="helse">+ Nytt kort</button></div><div class="list" id="list-helsecards"></div></div>'
         + '</div>'
-        + '<div class="panel" data-section="fysisk"><div class="panel-title">Fysisk helse</div>'
+        + '<div class="panel" data-section="fysisk" data-sec-key="fysisk"><div class="panel-title">Fysisk helse</div>'
           + '<div class="meta-panel"><div class="meta-grid"><div class="fg narrow"><label data-help="Liten etikett som vises over overskriften i seksjonen.">Eyebrow</label><input type="text" id="fysisk-eyebrow"></div>'
           + '<div class="fg"><label>Overskrift</label><input type="text" id="fysisk-heading"></div></div>'
           + '<div class="meta-grid" style="margin-top:10px"><div class="fg"><label>Ingress</label><textarea id="fysisk-lede"></textarea></div></div></div>'
           + '<div class="sec"><div class="sec-head"><h2>Kort</h2><span class="count" id="count-fysiskcards"></span><button class="btn-add" type="button" data-add-cards="fysisk">+ Nytt kort</button></div><div class="list" id="list-fysiskcards"></div></div>'
         + '</div>'
-        + '<div class="panel"><div class="panel-title">Akutt hjelp <small>nødnumre</small></div>'
+        + '<div class="panel" data-sec-key="akutt"><div class="panel-title">Akutt hjelp <small>nødnumre</small></div>'
           + '<div class="meta-panel"><div class="meta-grid"><div class="fg narrow"><label data-help="Liten etikett som vises over overskriften i seksjonen.">Eyebrow</label><input type="text" id="akutt-eyebrow"></div>'
           + '<div class="fg"><label>Overskrift</label><input type="text" id="akutt-heading"></div></div>'
           + '<div class="meta-grid" style="margin-top:10px"><div class="fg"><label>Ingress</label><textarea id="akutt-lede"></textarea></div></div></div>'
@@ -86,6 +86,8 @@
       /* ─── original editor-logikk (uendret bortsett fra auth/eksport/destroy) ─── */
       var LS_KEY = 'apeiron-hjelp-v1';
       var CARD_SECTIONS = ['sifra', 'studier', 'helse', 'fysisk'];
+      // Seksjoner som kan endre rekkefølge på siden (rail-en + den publiserte siden).
+      var SECTION_KEYS = ['hero', 'sifra', 'studier', 'helse', 'fysisk', 'akutt'];
 
       var data = {};
       function clone(x) { return JSON.parse(JSON.stringify(x == null ? null : x)); }
@@ -98,6 +100,10 @@
         data.sifra.cards = data.sifra.cards || [];
         ['studier', 'helse', 'fysisk'].forEach(function (k) { data[k] = data[k] || {}; data[k].cards = data[k].cards || []; });
         data.akutt = data.akutt || {}; data.akutt.cards = data.akutt.cards || [];
+        // Seksjonsrekkefølge: behold gyldige nøkler i lagret rådekkefølge, fyll på manglende.
+        var ord = (Array.isArray(data.sectionOrder) ? data.sectionOrder : []).filter(function (k) { return SECTION_KEYS.indexOf(k) >= 0; });
+        SECTION_KEYS.forEach(function (k) { if (ord.indexOf(k) < 0) ord.push(k); });
+        data.sectionOrder = ord;
         cardLists().forEach(function (arr) {
           arr.forEach(function (c) { if (!Array.isArray(c.resp)) c.resp = []; if (!Array.isArray(c.contacts)) c.contacts = []; });
         });
@@ -108,7 +114,7 @@
         if (raw) { try { data = JSON.parse(raw); normalize(); return; } catch (_) {} }
         data = fresh(); normalize();
       }
-      function saveData() { localStorage.setItem(LS_KEY, JSON.stringify(data)); showToast('Lagret i nettleseren'); pushPreview(); }
+      function saveData() { AC.persistDraft(LS_KEY, data); showToast('Lagret i nettleseren'); pushPreview(); }
       var saveTimer = null;
       function lazySave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveData, 350); }
       function showToast(msg) { AC.toast(msg); }
@@ -362,7 +368,7 @@
       window.addEventListener('resize', fitPreview);
       if (pvFrame) pvFrame.addEventListener('load', fitPreview);
 
-      loadData(); wireMeta(); renderAll();
+      loadData(); AC.draftBaseline(LS_KEY, data); wireMeta(); renderAll();
       ['list-nav', 'list-items', 'list-sifracards', 'list-studiercards', 'list-helsecards', 'list-fysiskcards', 'list-akutt'].forEach(function (lid) {
         var el = host.querySelector('#' + lid);
         if (el) AC.viewSwitch({ list: el, key: 'apeiron-hjelp-view-' + lid + '-v1', help: 'Velg hvordan kortene i denne lista vises mens du redigerer her i admin. Påvirker bare redigeringsvisningen, ikke den publiserte siden.' });
@@ -371,7 +377,27 @@
       pushPreview(); setTimeout(pushPreview, 150);
 
       /* ── delt «Liste + detalj»-skall (sections: hver .panel blir en rad) ── */
-      var shell = AC.PanelShell.mount(host, AC, { rail: 'sections', title: 'Hjelp', subtitle: 'Seksjoner', remember: 'apeiron-hjelp-shell-sel' });
+      function shellSections() {
+        return data.sectionOrder.map(function (key) {
+          var node = host.querySelector('.panel[data-sec-key="' + key + '"]');
+          if (!node) return null;
+          var title = node.querySelector('.panel-title');
+          var label = '', sub = '';
+          if (title) { var sm = title.querySelector('small'); sub = sm ? sm.textContent.trim() : ''; label = (title.textContent || '').replace(sub, '').trim(); }
+          return { id: key, label: label, sub: sub, node: node, av: '✎', fixed: key === 'hero' };
+        }).filter(Boolean);
+      }
+      var shell = AC.PanelShell.mount(host, AC, {
+        rail: 'sections', title: 'Hjelp', subtitle: 'Seksjoner', remember: 'apeiron-hjelp-shell-sel',
+        page: { href: 'hjelp.html', id: 'hjelp', label: 'Hjelp', ico: '🆘' },
+        sections: shellSections,
+        onSectionReorder: function (keys) {
+          // «Topp / hurtignav» (hero) er låst øverst — hold den alltid først.
+          keys = (keys || []).filter(function (k) { return k !== 'hero'; });
+          keys.unshift('hero');
+          data.sectionOrder = keys; lazySave();
+        }
+      });
       function applyPanelLayout() { shell.layoutChanged(); }
       window.addEventListener('apeiron-panellayout', applyPanelLayout);
       applyPanelLayout();

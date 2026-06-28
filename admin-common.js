@@ -86,12 +86,36 @@
     container.addEventListener('pointerdown', function (e) {
       if (e.button != null && e.button !== 0) return;
       var handle = e.target.closest && e.target.closest(handleSel);
-      if (!handle || !container.contains(handle)) return;
-      var dragEl = handle.closest(itemSel);
+      var dragEl, longPress = false, fieldHold = false;
+      if (handle && container.contains(handle)) {
+        dragEl = handle.closest(itemSel);            // håndtak → umiddelbar dra
+      } else {
+        dragEl = e.target.closest && e.target.closest(itemSel);
+        if (!dragEl || !container.contains(dragEl)) return;
+        // Hele blokken kan dras. Starter trykket PÅ et skjemafelt/knapp inne i
+        // kortet, krever vi et lite «hold» først (så klikk/skriving/markering
+        // fortsatt virker), og da AVBRYTER bevegelse draget (rull/marker).
+        var ctrl = e.target.closest && e.target.closest('input,textarea,select,button,a,[contenteditable],label,.img-zone,.help-tip,[data-accent-host]');
+        // holdToDrag: hele raden gripes ved å trykke og HOLDE (~150ms), uansett om
+        // trykket starter på et felt. Da er det IKKE fieldHold — små skjelvinger
+        // skal ikke avbryte grepet; bare tidtakeren armerer det. Et rent, kort
+        // trykk slipper igjennom som klikk/fokus.
+        if (opts.holdToDrag) { longPress = true; fieldHold = false; }
+        else if (ctrl && ctrl !== dragEl && dragEl.contains(ctrl)) { longPress = true; fieldHold = true; }
+      }
       if (!dragEl) return;
+      // Låste elementer (f.eks. en seksjon som alltid skal ligge øverst) kan ikke dras.
+      if (dragEl.hasAttribute && dragEl.hasAttribute('data-fixed')) return;
 
       var startX = e.clientX, startY = e.clientY;
       var dragging = false, ph = null, offX = 0, offY = 0, lastY = startY, raf = null;
+      var startOrder = null;
+      var armed = !longPress, holdTimer = null;
+      var HOLD_MS = opts.holdToDrag ? 150 : 320, HOLD_CANCEL = 10;
+
+      function currentIds() {
+        return Array.prototype.map.call(container.querySelectorAll(itemSel), function (el) { return el.getAttribute(idAttr); });
+      }
 
       // Plasser plassholderen ut fra pekerens y-posisjon (ekskluderer dratt kort/ph).
       function positionPlaceholder(y) {
@@ -108,6 +132,8 @@
 
       function begin() {
         dragging = true;
+        if (dragEl) dragEl.classList.remove('drag-pending');
+        startOrder = currentIds().join('\u0001');
         var r = dragEl.getBoundingClientRect();
         offX = startX - r.left; offY = startY - r.top;
         ph = document.createElement('div');
@@ -138,6 +164,27 @@
 
       function onMove(ev) {
         if (ev.pointerId !== e.pointerId) return;
+        if (!armed) {
+          var dx = Math.abs(ev.clientX - startX), dy = Math.abs(ev.clientY - startY);
+          if (fieldHold) {
+            // Trykk startet på et felt/knapp inne i kortet: bevegelse = rull/marker → avbryt.
+            if (dx > HOLD_CANCEL || dy > HOLD_CANCEL) {
+              clearTimeout(holdTimer);
+              if (dragEl) dragEl.classList.remove('drag-pending');
+              document.removeEventListener('pointermove', onMove);
+              document.removeEventListener('pointerup', end);
+              document.removeEventListener('pointercancel', end);
+            }
+            return;
+          }
+          // holdToDrag: tidtakeren (~150ms) er det ENESTE som armerer grepet.
+          // Bevegelse verken avbryter eller starter draget før da — det gjør
+          // grepet skjelvefast og jevnt, i stedet for klikk-følsomt.
+          if (opts.holdToDrag) return;
+          // (Ikke-holdToDrag) bevegelse forbi terskelen = dra-intensjon.
+          if (dx > THRESH || dy > THRESH) { clearTimeout(holdTimer); armed = true; }
+          else return;
+        }
         if (!dragging) {
           if (Math.abs(ev.clientX - startX) < THRESH && Math.abs(ev.clientY - startY) < THRESH) return;
           begin();
@@ -151,6 +198,8 @@
 
       function end(ev) {
         if (ev && ev.pointerId != null && ev.pointerId !== e.pointerId) return;
+        clearTimeout(holdTimer);
+        if (dragEl) dragEl.classList.remove('drag-pending');
         document.removeEventListener('pointermove', onMove);
         document.removeEventListener('pointerup', end);
         document.removeEventListener('pointercancel', end);
@@ -162,15 +211,35 @@
           dragEl.classList.remove('drag-active');
           ['position', 'zIndex', 'width', 'height', 'left', 'top', 'margin', 'pointerEvents', 'boxSizing']
             .forEach(function (p) { dragEl.style[p] = ''; });
-          var ids = Array.prototype.map.call(container.querySelectorAll(itemSel), function (el) {
-            return el.getAttribute(idAttr);
-          });
-          onReorder(ids);
+          var ids = currentIds();
+          // Bare meld fra om rekkefølgen FAKTISK endret seg — et rent klikk eller et
+          // dra som havner på samme plass skal ikke utløse lagring/endringsvarsel.
+          if (ids.join('\u0001') !== startOrder) onReorder(ids);
+          // Undertrykk klikket som ellers ville valgt raden rett etter et dra.
+          var supp = function (ce) { ce.stopPropagation(); ce.preventDefault(); document.removeEventListener('click', supp, true); };
+          document.addEventListener('click', supp, true);
+          setTimeout(function () { document.removeEventListener('click', supp, true); }, 350);
         }
         dragEl = null;
       }
 
-      e.preventDefault();
+      // I «hold»-modus (trykk startet på et felt/knapp inne i kortet) venter vi på
+      // hold-tidtakeren før draget tar over, så klikk/skriving/markering virker.
+      // Ellers drar man umiddelbart. preventDefault hindrer tekstmarkering mens man
+      // drar — men ikke når blokken SELV er en knapp/lenke (rail-rad), så det vanlige
+      // klikket (velg rad) fortsatt går igjennom.
+      if (longPress) {
+        if (opts.holdToDrag) dragEl.classList.add('drag-pending');
+        holdTimer = setTimeout(function () {
+          armed = true;
+          if (dragEl) dragEl.classList.remove('drag-pending');
+          try { var ae = document.activeElement; if (ae && ae.blur && dragEl.contains(ae)) ae.blur(); } catch (_) {}
+          try { var s = window.getSelection && window.getSelection(); if (s && s.removeAllRanges) s.removeAllRanges(); } catch (_) {}
+          begin();
+        }, HOLD_MS);
+      } else if (!(dragEl.matches && dragEl.matches('a,button,input,textarea,select,[contenteditable]'))) {
+        e.preventDefault();
+      }
       // Lytterne ligger på document (ikke handle): da overlever de at det dratte
       // kortet får position:fixed + pointer-events:none, som tidligere fikk
       // peker-fangsten til å slippe og «frøs» dra-operasjonen. pointerId-filteret
@@ -523,6 +592,32 @@
     setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
   }
 
+  /* ─── REN-TILSTAND vs. UTKAST ───
+     draftBaseline(key, data) lagrer én gang per økt hvordan det PUBLISERTE
+     innholdet ser ut når et panel åpnes rent. persistDraft(key, data) lagrer
+     utkastet — men fjerner heller nøkkelen når innholdet er identisk med
+     basislinjen, så «upublisert endring»-varselet forsvinner når man angrer eller
+     flytter noe tilbake til utgangspunktet (også ved Ctrl+Z). Basislinjen ligger
+     i sessionStorage: den overlever en sideoppdatering, men nullstilles i en ny
+     økt (der utkastene uansett tømmes). */
+  var DRAFT_BASE_PFX = '__apbase:';
+  function draftBaseline(key, data) {
+    try {
+      var bk = DRAFT_BASE_PFX + key;
+      if (sessionStorage.getItem(bk) != null) return;     // basislinje alt fanget i denne økten
+      if (localStorage.getItem(key) != null) return;       // et utkast finnes alt → dette er ikke ren publisert tilstand
+      sessionStorage.setItem(bk, JSON.stringify(data));
+    } catch (_) {}
+  }
+  function persistDraft(key, data) {
+    var json; try { json = JSON.stringify(data); } catch (_) { return; }
+    try {
+      var b = sessionStorage.getItem(DRAFT_BASE_PFX + key);
+      if (b != null && b === json) { localStorage.removeItem(key); return; }
+    } catch (_) {}
+    try { localStorage.setItem(key, json); } catch (_) {}
+  }
+
   /* ─── DELT DATALAGER (for C-moduler) ───
      createStore(lsKey, freshFn) gir et lite datalager som alle admin-moduler
      deler oppførsel gjennom: utkast lagres automatisk i localStorage, og kan
@@ -536,11 +631,12 @@
     function load() {
       try { var raw = localStorage.getItem(lsKey); if (raw) { store.data = JSON.parse(raw); return; } } catch (_) {}
       store.data = freshFn();
+      draftBaseline(lsKey, store.data);
     }
     load();
     var t = null;
     store.save = function () {
-      try { localStorage.setItem(lsKey, JSON.stringify(store.data)); } catch (_) {}
+      try { persistDraft(lsKey, store.data); } catch (_) {}
       toast('Lagret i nettleseren');
     };
     store.lazySave = function () { clearTimeout(t); t = setTimeout(store.save, 350); };
@@ -828,6 +924,8 @@
     dataUrlToBytes: dataUrlToBytes,
     zipFiles: zipFiles,
     enableDragSort: enableDragSort,
+    draftBaseline: draftBaseline,
+    persistDraft: persistDraft,
     undoable: undoable,
     createStore: createStore,
     readDraftOr: readDraftOr,

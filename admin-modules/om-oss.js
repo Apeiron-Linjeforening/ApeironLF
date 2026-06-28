@@ -509,11 +509,17 @@
         rail: 'sections',
         title: 'Om oss', subtitle: 'Bygg siden',
         remember: 'apeiron-om-oss-shell-sel',
+        page: { href: 'om-oss.html', id: 'om-oss', label: 'Om oss', ico: '📖' },
+        onSectionReorder: function (ids) {
+          ids = ids.filter(function (id) { return id && id !== '__builder'; });
+          data.sections.sort(function (a, b) { return ids.indexOf(a.id) - ids.indexOf(b.id); });
+          renderBuilder(); renderEditors(); pushFull(); persist();
+        },
         sections: function () {
           var out = [];
           var bnode = document.getElementById('lst-sections');
           bnode = bnode ? bnode.closest('.panel') : null;
-          if (bnode) out.push({ id: '__builder', label: 'Seksjoner', sub: 'Legg til, fjern, omsorter', node: bnode, av: '☰' });
+          if (bnode) out.push({ id: '__builder', label: 'Seksjoner', sub: 'Legg til, fjern, omsorter', node: bnode, av: '☰', fixed: true });
           (data.sections || []).forEach(function (s) {
             var lbl = SectionTypes.get(s.type) ? SectionTypes.get(s.type).label : s.type;
             out.push({ id: s.id, label: secLabel(s), sub: lbl, av: '✎',

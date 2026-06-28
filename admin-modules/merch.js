@@ -91,7 +91,7 @@
         var rawSh = localStorage.getItem(LS_SUBHERO_KEY);
         try { subhero = rawSh != null ? (JSON.parse(rawSh) || {}) : Object.assign({}, window.MERCH_SUBHERO || {}); } catch (_) { subhero = Object.assign({}, window.MERCH_SUBHERO || {}); }
       }
-      function saveData() { localStorage.setItem(LS_KEY, JSON.stringify(products)); localStorage.setItem(LS_INFO_KEY, info); localStorage.setItem(LS_INFO_LABEL_KEY, infoLabel); localStorage.setItem(LS_SUBHERO_KEY, JSON.stringify(subhero)); AC.toast('Lagret i nettleseren'); pushPreview(); }
+      function saveData() { AC.persistDraft(LS_KEY, products); localStorage.setItem(LS_INFO_KEY, info); localStorage.setItem(LS_INFO_LABEL_KEY, infoLabel); localStorage.setItem(LS_SUBHERO_KEY, JSON.stringify(subhero)); AC.toast('Lagret i nettleseren'); pushPreview(); }
       var saveTimer = null;
       function lazySave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveData, 350); }
       function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
@@ -507,6 +507,7 @@
           items: function () { return products; },
           meta: function (p) { return { av: (p.category ? p.category.charAt(0).toUpperCase() : '🛍'), cls: 'sq', nm: p.name || '(uten navn)', sub: [p.price ? (p.price + ' kr') : '', p.category].filter(Boolean).join(' · ') || 'Produkt' }; },
           detail: function (p) { return makeCard(p); },
+          onReorder: function (ids) { products.sort(function (a, b) { return ids.indexOf(a.id) - ids.indexOf(b.id); }); lazySave(); },
           onAdd: function () { add(); return products[products.length - 1] && products[products.length - 1].id; }
         }]
       });
@@ -534,7 +535,7 @@
       window.addEventListener('resize', fitShop);
       if (pvFrame) pvFrame.addEventListener('load', fitShop);
 
-      loadData(); renderInfo(); renderSubhero(); renderAll(); applyPanelLayout();
+      loadData(); AC.draftBaseline(LS_KEY, products); renderInfo(); renderSubhero(); renderAll(); applyPanelLayout();
       AC.viewSwitch({ list: q('plist'), key: 'apeiron-merch-view-v1', modes: [
         { id: 'cols-1', n: 1, label: '1 i bredden', title: 'Ett produkt per rad' },
         { id: 'cols-2', n: 2, label: '2 i bredden', title: 'To produkter i bredden' }

@@ -69,7 +69,7 @@
         if (raw) { try { data = JSON.parse(raw); return; } catch (_) {} }
         data = fresh();
       }
-      function saveData() { localStorage.setItem(LS_KEY, JSON.stringify(data)); AC.toast('Lagret i nettleseren'); pushPreview(); }
+      function saveData() { AC.persistDraft(LS_KEY, data); AC.toast('Lagret i nettleseren'); pushPreview(); }
       var saveTimer = null;
       function lazySave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveData, 350); }
       function uid(pfx) { return pfx + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
@@ -268,7 +268,7 @@
       window.addEventListener('resize', fitPreview);
       if (pvFrame) pvFrame.addEventListener('load', fitPreview);
 
-      loadData(); renderAll();
+      loadData(); AC.draftBaseline(LS_KEY, data); renderAll();
 
       /* ── delt «Liste + detalj»-skall (collections: 3 samlinger + banner) ── */
       function bMeta(list, item) {
@@ -289,6 +289,7 @@
             items: function () { return data[list]; },
             meta: function (item) { return bMeta(list, item); },
             detail: function (item) { return makeCard(list, item); },
+            onReorder: function (ids) { data[list].sort(function (a, b) { return ids.indexOf(a.id) - ids.indexOf(b.id); }); lazySave(); },
             onAdd: function () { add(list); return data[list][data[list].length - 1] && data[list][data[list].length - 1].id; }
           };
         })

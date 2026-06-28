@@ -5,10 +5,10 @@
 <script src="theme.js"></script>
 <script>try{if(/[?&]preview\b/.test(location.search))document.documentElement.classList.add('is-preview');}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Merch — Apeiron · NTNU</title>
-<meta name="description" content="Apeiron-merch i begrenset opplag — pins, gensere og mer med linjeforeningens segl. Bestill via e-post og hent på lesesalen på Dragvoll." />
-<meta property="og:title" content="Merch — Apeiron · NTNU" />
-<meta property="og:description" content="Apeiron-merch i begrenset opplag — pins, gensere og mer. Bestill via e-post, hent på lesesalen." />
+<title>Merch · Apeiron · NTNU</title>
+<meta name="description" content="Apeiron-merch i begrenset opplag: pins, gensere og mer med linjeforeningens segl. Bestill via e-post og hent på lesesalen på Dragvoll." />
+<meta property="og:title" content="Merch · Apeiron · NTNU" />
+<meta property="og:description" content="Apeiron-merch i begrenset opplag: pins, gensere og mer. Bestill via e-post, hent på lesesalen." />
 <meta property="og:image" content="assets/apeiron-logo.png" />
 <meta property="og:type" content="website" />
 <meta name="theme-color" content="#232740" />
@@ -60,6 +60,7 @@
 
 /* Redigerbar info-tekst øverst i butikken (window.MERCH_INFO) */
 #butikk { padding-top: 32px; }
+.merch-info[hidden] { display: none; }
 .merch-info {
   position: relative;
   display: grid;
@@ -484,7 +485,7 @@ html[data-mode="marine"] .cart-item__rm:hover { color: var(--navy); background: 
   <div class="subhero__inner">
     <a class="subhero__back" href="index.html" id="ix-mc-back">Tilbake til forsiden</a>
     <h1 id="ix-mc-title">Merch</h1>
-    <p class="subhero__lede" id="ix-mc-lede">Bær filosofien med deg. Alt av Apeiron-merch lages i begrenset opplag — bestill via Vipps og hent på lesesalen.</p>
+    <p class="subhero__lede" id="ix-mc-lede">Bær filosofien med deg. Alt av Apeiron-merch lages i begrenset opplag. Bestill via Vipps og hent på lesesalen.</p>
   </div>
 </section>
 
@@ -512,7 +513,7 @@ html[data-mode="marine"] .cart-item__rm:hover { color: var(--navy); background: 
       <div>
         <span class="eyebrow">Slik bestiller du</span>
         <h2 class="h-section" style="font-size:clamp(1.9rem,3.5vw,2.8rem);">Enkel bestilling<br/>via Vipps</h2>
-        <p>All merch bestilles direkte fra Apeiron — legg det du vil ha i handlekurven og send bestillingen. Betaling skjer via Vipps etter at vi har bekreftet. Vi svarer innen et par dager og avtaler henting på Dragvoll.</p>
+        <p>All merch bestilles direkte fra Apeiron. Legg det du vil ha i handlekurven og send bestillingen. Betaling skjer via Vipps etter at vi har bekreftet. Vi svarer innen et par dager og avtaler henting på Dragvoll.</p>
         <p>Spørsmål? Send oss en mail på <a href="mailto:apeironlinjeforening@gmail.com" style="color:var(--gold);">apeironlinjeforening@gmail.com</a> eller stikk innom lesesalen.</p>
       </div>
       <ol class="order-steps">
@@ -541,7 +542,7 @@ html[data-mode="marine"] .cart-item__rm:hover { color: var(--navy); background: 
           <span class="order-step__n">4</span>
           <div class="order-step__body">
             <h4>Hent på Dragvoll</h4>
-            <p>Vi avtaler tid og sted — som regel Låven eller lesesalen.</p>
+            <p>Vi avtaler tid og sted, som regel Låven eller lesesalen.</p>
           </div>
         </li>
       </ol>

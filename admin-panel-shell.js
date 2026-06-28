@@ -75,6 +75,7 @@
 
     var wrap = null, sel = null, filterSeg = (cfg.filter && cfg.filter.def) || (cfg.filter && cfg.filter.segments[0] && cfg.filter.segments[0].key) || null;
     var launchpadShown = false;
+    var overview = false;   // «Oversikt»-knappen: vis panelets egen oversikt i detaljruten
     var SET_KEY = '__settings';
     var SEC_KEY = '__section';
     var LIST_KEY = '__list';
@@ -118,6 +119,7 @@
 
     /* ── primær-/sist-valgt oppløsning ── */
     function resolveSel() {
+      if (overview) return null;
       if (isSectionSel(sel)) { if (findSection(sel.id)) return sel; }
       if (isSettingsSel(sel)) return sel;
       if (isListSel(sel)) return sel;
@@ -148,7 +150,7 @@
           + '<span class="aps__ttl">' + esc(cfg.title || '') + '</span>'
           + '<span class="aps__sub">' + esc(cfg.subtitle || '') + '</span>'
           + '<span class="aps__sp"></span>'
-          + (useLaunchpad ? '<button type="button" class="aps__home" data-aps-home>🗂 Oversikt</button>' : '')
+          + '<button type="button" class="aps__home" data-aps-home>🗂 Oversikt</button>'
           + '<button type="button" class="aps__preview" data-aps-preview hidden><span class="ic">👁</span> Forhåndsvisning</button>'
           + '<span class="aps__hint" data-aps-hint hidden>↩ Husker hvor du var</span>'
         + '</div>'
@@ -183,10 +185,10 @@
       det.addEventListener('input', function () { clearTimeout(wrap._t); wrap._t = setTimeout(syncActiveRow, 150); });
       det.addEventListener('change', syncActiveRow);
       det.addEventListener('click', function (e) {
-        if (e.target.closest('[data-aps-back]')) { sel = null; writeRemember(); renderDetail(); paintActive(); }
+        if (e.target.closest('[data-aps-back]')) { overview = true; renderDetail(); paintActive(); }
       });
       var homeBtn = wrap.querySelector('[data-aps-home]');
-      if (homeBtn) homeBtn.addEventListener('click', function () { sel = null; writeRemember(); renderDetail(); paintActive(); });
+      if (homeBtn) homeBtn.addEventListener('click', function () { overview = true; renderDetail(); paintActive(); });
       var pvBtn = wrap.querySelector('[data-aps-preview]');
       if (pvBtn) {
         var pvTop = host.querySelector(PREVIEW_SEL);
@@ -318,11 +320,30 @@
       var scroll = wrap.querySelector('[data-aps-scroll]');
       if (isSections) {
         var secs = sectionList();
+        var canReorderSecs = typeof cfg.onSectionReorder === 'function';
         scroll.innerHTML = secs.map(function (s) {
-          return '<button type="button" class="aps__item" data-aps-item="' + SEC_KEY + '\u0001' + esc(s.id) + '">'
+          var fixed = canReorderSecs && !!s.fixed;
+          // Låste/faste rader vises som en INNSTILLING (gull ramme + ikon-boks),
+          // likt «Info-tekst & banner» i Merch — så det er tydelig at de ikke er
+          // flyttbare seksjoner, men innstillinger/faste deler.
+          if (fixed) {
+            return '<button type="button" class="aps__item aps__item--setting" data-aps-item="' + SEC_KEY + '\u0001' + esc(s.id) + '" data-id="' + esc(s.id) + '" data-fixed>'
+              + '<span class="ic">' + esc(s.av || '⚙') + '</span>'
+              + '<span class="meta"><span class="nm">' + esc(s.label || '') + '</span><span class="ro">' + esc(s.sub || 'Innstilling') + '</span></span></button>';
+          }
+          var lead = canReorderSecs ? '<span class="aps__drag" title="Dra her, eller trykk og hold på raden, for å flytte" aria-hidden="true">⠿</span>' : '';
+          return '<button type="button" class="aps__item' + (canReorderSecs ? ' aps__item--drag' : '') + '" data-aps-item="' + SEC_KEY + '\u0001' + esc(s.id) + '" data-id="' + esc(s.id) + '">'
+            + lead
             + '<span class="av sq">' + esc(s.av || '✎') + '</span>'
             + '<span class="meta"><span class="nm">' + esc(s.label || '') + '</span><span class="ro">' + esc(s.sub || '') + '</span></span></button>';
         }).join('');
+        if (canReorderSecs) {
+          AC.enableDragSort(scroll, {
+            itemSelector: '.aps__item', handleSelector: '.aps__drag', idAttr: 'data-id', holdToDrag: true,
+            onReorder: function (ids) { try { cfg.onSectionReorder(ids.filter(function (x) { return x; })); } catch (_) {} renderNav(); }
+          });
+          Array.prototype.forEach.call(scroll.querySelectorAll('.aps__drag'), function (h) { h.addEventListener('click', function (e) { e.stopPropagation(); }); });
+        }
         var foot0 = wrap.querySelector('[data-aps-foot]'); if (foot0) foot0.innerHTML = '';
         paintActive();
         return;
@@ -394,19 +415,28 @@
     function paintActive() {
       Array.prototype.forEach.call(wrap.querySelectorAll('.aps__item, .aps__setrow'), function (b) {
         var p = b.getAttribute('data-aps-item').split('\u0001');
-        b.classList.toggle('active', !!sel && p[0] === sel.group && p[1] === sel.id);
+        b.classList.toggle('active', !overview && !!sel && p[0] === sel.group && p[1] === sel.id);
       });
-      var hint = wrap.querySelector('[data-aps-hint]'); if (hint) hint.hidden = !sel;
+      var hint = wrap.querySelector('[data-aps-hint]'); if (hint) hint.hidden = overview || !sel;
     }
 
     /* ── detalj ── */
     function launchpadHTML() {
-      var cards = groups.map(function (g) {
-        var n = itemsOf(g).length;
-        return '<button type="button" class="aps-ovw__card" data-aps-open="' + esc(g.key) + '">'
-          + '<span class="oc-nm">' + esc(g.label) + '</span><span class="oc-c">' + n + ' element</span>'
-          + '<span class="oc-act">Åpne' + (g.addLabel ? ' <span class="oc-add" data-aps-add="' + esc(g.key) + '">+ Nytt</span>' : '') + '</span></button>';
-      }).join('');
+      var cards;
+      if (isSections) {
+        cards = sectionList().map(function (s) {
+          return '<button type="button" class="aps-ovw__card" data-aps-sec="' + esc(s.id) + '">'
+            + '<span class="oc-nm">' + esc(s.label || '') + '</span><span class="oc-c">' + esc(s.sub || (s.fixed ? 'Innstilling' : 'Sideseksjon')) + '</span>'
+            + '<span class="oc-act">Åpne</span></button>';
+        }).join('');
+      } else {
+        cards = groups.map(function (g) {
+          var n = itemsOf(g).length;
+          return '<button type="button" class="aps-ovw__card" data-aps-open="' + esc(g.key) + '">'
+            + '<span class="oc-nm">' + esc(g.label) + '</span><span class="oc-c">' + n + ' element</span>'
+            + '<span class="oc-act">Åpne' + (g.addLabel ? ' <span class="oc-add" data-aps-add="' + esc(g.key) + '">+ Nytt</span>' : '') + '</span></button>';
+        }).join('');
+      }
       var rem = readRemember(); var recent = '';
       if (rem) { var it = findItem(rem.group, rem.id); if (it) { var g = groupByKey(rem.group); var m = g.meta(it) || {};
         recent = '<div class="aps-ovw__recent"><div class="orr-lbl">Sist redigert</div>'
@@ -423,8 +453,28 @@
         var s = findSection(r.id);
         det.innerHTML = '';
         if (s) {
+          var secBack = document.createElement('button'); secBack.type = 'button'; secBack.className = 'aps__back'; secBack.setAttribute('data-aps-back', '1'); secBack.textContent = '← Oversikt'; det.appendChild(secBack);
           var sh2 = document.createElement('div'); sh2.className = 'aps__detail-h';
           sh2.innerHTML = '<span class="av sq">' + esc(s.av || '✎') + '</span><div class="dt"><div class="nm">' + esc(s.label || '') + '</div><div class="ro">' + esc(s.sub || 'Sideseksjon') + '</div></div>';
+          // «Legg til som snarvei» — for alle flyttbare seksjoner i paneler som
+          // har oppgitt sin side (cfg.page). Snarveien peker til seksjonen
+          // (side.html#seksjon-id) og deles globalt med alle redaktører via Git.
+          if (!s.fixed && cfg.page && cfg.page.href && window.AdminShortcuts && window.AdminShortcuts.addTarget) {
+            var scHref0 = cfg.page.href + '#' + s.id;
+            var scTarget = { id: (cfg.page.id || 'sec') + '-' + s.id, href: scHref0, label: s.label || cfg.page.label, ico: cfg.page.ico || '🔗' };
+            var added0 = window.AdminShortcuts.hasHref(scHref0);
+            var sbtn = document.createElement('button');
+            sbtn.type = 'button';
+            sbtn.className = 'aps__scbtn' + (added0 ? ' is-added' : '');
+            sbtn.textContent = added0 ? '✓ Snarvei lagt til' : '🔗 Legg til som snarvei';
+            sbtn.title = 'Vises som snarvei på Oversikt-siden i admin (delt med alle redaktører)';
+            sbtn.addEventListener('click', function () {
+              var on = window.AdminShortcuts.toggleTarget(scTarget);
+              sbtn.classList.toggle('is-added', on);
+              sbtn.textContent = on ? '✓ Snarvei lagt til' : '🔗 Legg til som snarvei';
+            });
+            sh2.appendChild(sbtn);
+          }
           det.appendChild(sh2);
           if (s.node) { adoptIntoDetail(s.node, det); }
           else if (s.build) { var sbox = document.createElement('div'); sbox.className = 'aps__sec-built'; try { s.build(sbox); } catch (_) {} det.appendChild(sbox); }
@@ -435,7 +485,7 @@
       }
       if (isSettingsSel(r)) {
         det.innerHTML = '';
-        if (useLaunchpad) { var sb = document.createElement('button'); sb.type = 'button'; sb.className = 'aps__back'; sb.setAttribute('data-aps-back', '1'); sb.textContent = '← Oversikt'; det.appendChild(sb); }
+        { var sb = document.createElement('button'); sb.type = 'button'; sb.className = 'aps__back'; sb.setAttribute('data-aps-back', '1'); sb.textContent = '← Oversikt'; det.appendChild(sb); }
         var sh = document.createElement('div'); sh.className = 'aps__detail-h'; sh.innerHTML = '<span class="av sq">⚙</span><div class="dt"><div class="nm">' + esc(cfg.banner.label || 'Sidetekster & banner') + '</div><div class="ro">' + esc(cfg.banner.sub || 'Topptekst og banner øverst på siden') + '</div></div>';
         det.appendChild(sh);
         showBannerInDetail(det);
@@ -445,6 +495,7 @@
       if (isListSel(r)) {
         var lg = groupByKey(r.group);
         det.innerHTML = '';
+        { var lback = document.createElement('button'); lback.type = 'button'; lback.className = 'aps__back'; lback.setAttribute('data-aps-back', '1'); lback.textContent = '← Oversikt'; det.appendChild(lback); }
         var lh = document.createElement('div'); lh.className = 'aps__detail-h';
         lh.innerHTML = '<span class="av sq">' + esc(lg.icon || '≡') + '</span><div class="dt"><div class="nm">' + esc(lg.label || '') + '</div><div class="ro">Dra i ⠿ for å sortere</div></div>';
         det.appendChild(lh);
@@ -465,27 +516,28 @@
         return;
       }
       if (!r) {
-        if (useLaunchpad) {
-          det.innerHTML = launchpadHTML();
-          det.querySelectorAll('[data-aps-open]').forEach(function (b) {
-            b.addEventListener('click', function (e) {
-              if (e.target.closest('[data-aps-add]')) { doAdd(e.target.closest('[data-aps-add]').getAttribute('data-aps-add')); return; }
-              var g = wrap.querySelector('.aps__group[data-group="' + b.getAttribute('data-aps-open') + '"]'); if (g) g.classList.remove('collapsed');
-              var first = g && g.querySelector('.aps__item'); if (first) { var p = first.getAttribute('data-aps-item').split('\u0001'); select(p[0], p[1]); }
-            });
+        det.innerHTML = launchpadHTML();
+        det.querySelectorAll('[data-aps-sec]').forEach(function (b) {
+          b.addEventListener('click', function () { select(SEC_KEY, b.getAttribute('data-aps-sec')); });
+        });
+        det.querySelectorAll('[data-aps-open]').forEach(function (b) {
+          b.addEventListener('click', function (e) {
+            if (e.target.closest('[data-aps-add]')) { doAdd(e.target.closest('[data-aps-add]').getAttribute('data-aps-add')); return; }
+            var g = wrap.querySelector('.aps__group[data-group="' + b.getAttribute('data-aps-open') + '"]'); if (g) g.classList.remove('collapsed');
+            var first = g && g.querySelector('.aps__item'); if (first) { var p = first.getAttribute('data-aps-item').split('\u0001'); select(p[0], p[1]); }
+            else { var lg = groupByKey(b.getAttribute('data-aps-open')); if (lg && lg.listDetail) select(lg.key, LIST_KEY); }
           });
-          det.querySelectorAll('.aps-orr[data-aps-item]').forEach(function (b) {
-            b.addEventListener('click', function () { var p = b.getAttribute('data-aps-item').split('\u0001'); select(p[0], p[1]); });
-          });
-        } else {
-          det.innerHTML = '<div class="aps__empty">' + esc(cfg.emptyText || 'Ingenting å redigere ennå. Bruk «+»-knappen for å legge til.') + '</div>';
-        }
+        });
+        det.querySelectorAll('.aps-orr[data-aps-item]').forEach(function (b) {
+          b.addEventListener('click', function () { var p = b.getAttribute('data-aps-item').split('\u0001'); select(p[0], p[1]); });
+        });
+        det.scrollTop = 0;
         return;
       }
       var g = groupByKey(r.group); var item = findItem(r.group, r.id);
       if (!g || !item) { det.innerHTML = '<div class="aps__empty">Fant ikke valgt element.</div>'; return; }
       det.innerHTML = '';
-      if (useLaunchpad) { var back = document.createElement('button'); back.type = 'button'; back.className = 'aps__back'; back.setAttribute('data-aps-back', '1'); back.textContent = '← Oversikt'; det.appendChild(back); }
+      { var back = document.createElement('button'); back.type = 'button'; back.className = 'aps__back'; back.setAttribute('data-aps-back', '1'); back.textContent = '← Oversikt'; det.appendChild(back); }
       var node;
       try { node = g.detail(item); } catch (e) { node = null; }
       if (node) det.appendChild(node);
@@ -537,7 +589,7 @@
     }
 
     /* ── handlinger ── */
-    function select(gk, id) { sel = { group: gk, id: id }; writeRemember(); paintActive(); renderDetail(); }
+    function select(gk, id) { overview = false; sel = { group: gk, id: id }; writeRemember(); paintActive(); renderDetail(); }
     function doAdd(gk) {
       var g = groupByKey(gk); if (!g || typeof g.onAdd !== 'function') return;
       var id = g.onAdd();

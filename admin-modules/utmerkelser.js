@@ -71,7 +71,7 @@
         if (raw) { try { data = JSON.parse(raw); normalize(); return; } catch (_) {} }
         data = fresh(); normalize();
       }
-      function saveData() { localStorage.setItem(LS_KEY, JSON.stringify(data)); AC.toast('Lagret i nettleseren'); pushPreview(); }
+      function saveData() { AC.persistDraft(LS_KEY, data); AC.toast('Lagret i nettleseren'); pushPreview(); }
       var saveTimer = null;
       function lazySave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveData, 350); }
       function uid(pfx) { return pfx + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
@@ -216,6 +216,7 @@
           items: function () { return data.people; },
           meta: function (p) { return { av: p.initials || (p.name ? p.name.charAt(0).toUpperCase() : '🎖'), cls: '', nm: p.name || '(uten navn)', sub: [p.honor, p.year].filter(Boolean).join(' · ') || 'Utmerkelse' }; },
           detail: function (p) { return personCard(p); },
+          onReorder: function (ids) { data.people.sort(function (a, b) { return ids.indexOf(a.id) - ids.indexOf(b.id); }); lazySave(); },
           onAdd: function () { add(); return data.people[data.people.length - 1] && data.people[data.people.length - 1].id; }
         }]
       });
@@ -223,7 +224,7 @@
       function applyPanelLayout() { shell.layoutChanged(); }
       window.addEventListener('apeiron-panellayout', applyPanelLayout);
 
-      loadData(); renderAll(); applyPanelLayout();
+      loadData(); AC.draftBaseline(LS_KEY, data); renderAll(); applyPanelLayout();
       AC.viewSwitch({ list: host.querySelector('[data-list]'), key: 'apeiron-utmerkelser-view-v1', help: 'Velg hvordan utmerkelses-kortene vises mens du redigerer her i admin. Påvirker bare redigeringsvisningen, ikke den publiserte siden.' });
 
       /* ── live forhåndsvisning (utmerkelser.html?preview=1) ── */

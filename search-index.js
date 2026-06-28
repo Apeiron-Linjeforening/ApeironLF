@@ -303,7 +303,7 @@ window.SEARCH_INDEX = [
   },
   {
     "t": "Om vervene (Styret)",
-    "d": "Beskrivelse av styrevervene i Apeiron: Leder, Nestleder, Økonomiansvarlig, Sosialansvarlig, PR-ansvarlig, Faddersjef, Fagansvarlig, Potet, S.A.K: Sosiale Arrangement Komité, H.I.V…",
+    "d": "Beskrivelse av styrevervene i Apeiron: Leder, Nestleder, Økonomiansvarlig, Sosialansvarlig, PR-ansvarlig, Faddersjef, Fagansvarlig, Potet, S.A.K: Sosiale Arrangement Komité, H.I.…",
     "u": "styret.html",
     "g": "Styret"
   },

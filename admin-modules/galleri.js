@@ -57,7 +57,7 @@
         data = Object.assign({}, f, data);
         data.subhero = Object.assign({}, f.subhero, data.subhero);
       }
-      function saveData() { localStorage.setItem(LS_KEY, JSON.stringify(data)); pushPreview(); }
+      function saveData() { AC.persistDraft(LS_KEY, data); pushPreview(); }
       var saveTimer = null;
       function lazySave() { pushPreview(); clearTimeout(saveTimer); saveTimer = setTimeout(function () { saveData(); AC.toast('Lagret i nettleseren'); }, 300); }
 
@@ -116,7 +116,7 @@
       window.addEventListener('resize', fitPreview);
       if (pvFrame) pvFrame.addEventListener('load', fitPreview);
 
-      loadData(); renderFields(); wireFields();
+      loadData(); AC.draftBaseline(LS_KEY, data); renderFields(); wireFields();
       fitPreview(); setTimeout(fitPreview, 80);
       pushPreview(); setTimeout(pushPreview, 150);
 

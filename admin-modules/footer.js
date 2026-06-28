@@ -92,7 +92,7 @@
         }
         data = fresh();
       }
-      function saveData() { localStorage.setItem(LS_KEY, JSON.stringify(data)); AC.toast('Lagret i nettleseren'); }
+      function saveData() { AC.persistDraft(LS_KEY, data); AC.toast('Lagret i nettleseren'); }
       var saveTimer = null;
       function lazySave() { clearTimeout(saveTimer); saveTimer = setTimeout(function () { saveData(); renderPreview(); }, 300); }
       function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
@@ -268,7 +268,7 @@
       function applyPanelLayout() { shell.layoutChanged(); }
       window.addEventListener('apeiron-panellayout', applyPanelLayout);
 
-      loadData();
+      loadData(); AC.draftBaseline(LS_KEY, data);
       bind('m-name', function (v) { data.name = v; });
       bind('m-tagline', function (v) { data.tagline = v; });
       bind('m-fine', function (v) { data.fine = v; });

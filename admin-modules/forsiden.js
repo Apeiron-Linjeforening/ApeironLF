@@ -16,7 +16,7 @@
       host.innerHTML =
         '<section class="preview-top">'
           + '<h3>Forhåndsvisning</h3>'
-          + '<p class="pp-sub">Live fra den ekte forsiden (Hjem). Endringene dine vises umiddelbart. Dette panelet styrer <b>tekstene på Hjem</b> (hero, seksjons-introer, «Bli medlem» og kontakt). «Om oss» og FAQ redigeres i <b>Om oss</b>.</p>'
+          + '<p class="pp-sub">Live fra den ekte forsiden (Hjem). Endringene dine vises umiddelbart. Dette panelet styrer <b>tekstene på Hjem</b> (hero, seksjons-introer og kontakt). «Om oss» og FAQ redigeres i <b>Om oss</b>.</p>'
           + '<div class="pv-board-wrap"><iframe id="pv-board" src="index.html?preview=1" title="Forhåndsvisning av forsiden"></iframe></div>'
         + '</section>'
         + '<div class="tip">'
@@ -28,9 +28,9 @@
             + '<li><em>(Reserve hvis publisering svikter: «↓ Last ned alle endrede» nederst i Oversikt-fanen, og legg fila i GitHub.)</em></li>'
             + '<li>Cloudflare oppdaterer nettsiden automatisk innen et minutt</li>'
           + '</ol>'
-          + '<div class="tip-note">💾 Endringer lagres automatisk i nettleseren din. Dette panelet styrer <b>tekstene på Hjem</b> (hero, seksjons-introer, «Bli medlem»-intro og kontakt). «Om oss» + FAQ ligger i Om oss-panelet. Arrangementene, nyheter, oppslagstavla og medlemspriser hentes/redigeres andre steder.</div>'
+          + '<div class="tip-note">💾 Endringer lagres automatisk i nettleseren din. Dette panelet styrer <b>tekstene på Hjem</b> (hero, seksjons-introer og kontakt). «Om oss» + FAQ ligger i Om oss-panelet. «Bli medlem», arrangementer, nyheter, oppslagstavla og medlemspriser hentes/redigeres andre steder.</div>'
         + '</div>'
-        + '<div class="panel"><h2>Galleribilder på forsiden <small>live fra Drive-galleriet</small></h2>'
+        + '<div class="panel" data-sec-key="__gallery"><h2>Galleribilder på forsiden <small>live fra Drive-galleriet</small></h2>'
           + '<div class="panel-body">'
             + '<style>'
               + '.hg-master{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:9px 13px;background:rgba(35,39,64,.04);border:1px solid var(--border);border-radius:8px}'
@@ -124,7 +124,7 @@
             + '</div>'
           + '</div>'
         + '</div>'
-        + '<div class="panel"><h2>Hero <small>øverst på Hjem</small></h2>'
+        + '<div class="panel" data-sec-key="hero"><h2>Hero <small>øverst på Hjem</small></h2>'
           + '<div class="panel-body">'
             + '<div class="frow"><div class="fg narrow"><label>Tittel (før)</label><input type="text" id="hero-wm-pre"></div>'
             + '<div class="fg narrow"><label>Spesial-bokstav</label><input type="text" id="hero-wm-mid"></div>'
@@ -140,7 +140,12 @@
             + '<div class="fg"><label>«Ny her?»-bro-lenke (tekst under knappene)</label><input type="text" id="hero-bridge"></div>'
           + '</div>'
         + '</div>'
-        + '<div class="panel"><h2>Arrangementer <small>seksjons-intro på Hjem</small></h2>'
+        + '<div class="panel" data-sec-key="oppslagstavla-teaser"><h2>Oppslagstavla <small>teaser på Hjem</small></h2>'
+          + '<div class="panel-body">'
+            + '<div class="tip-note">📌 Denne seksjonen viser de nyeste plakatene fra oppslagstavla. <b>Innholdet</b> — tittel, ingress og plakatene — redigeres i <b>Oppslagstavla</b>-panelet. Her bestemmer du bare <b>hvor</b> seksjonen ligger på Hjem: dra den dit du vil.</div>'
+          + '</div>'
+        + '</div>'
+        + '<div class="panel" data-sec-key="arrangementer"><h2>Arrangementer <small>seksjons-intro på Hjem</small></h2>'
           + '<div class="panel-body">'
             + '<div class="fg"><label>Eyebrow (liten etikett over tittelen)</label><input type="text" id="arr-eyebrow"></div>'
             + '<div class="fg"><label>Overskrift</label><input type="text" id="arr-heading"></div>'
@@ -148,7 +153,7 @@
             + '<p class="hint">Selve arrangementene hentes fra Google Kalender. Her styrer du bare overskriften og teksten over dem.</p>'
           + '</div>'
         + '</div>'
-        + '<div class="panel"><h2>Aporetisk Aften <small>seksjons-intro på Hjem</small></h2>'
+        + '<div class="panel" data-sec-key="aporetisk"><h2>Aporetisk Aften <small>seksjons-intro på Hjem</small></h2>'
           + '<div class="panel-body">'
             + '<div class="fg"><label>Eyebrow (liten etikett over tittelen)</label><input type="text" id="apo-eyebrow"></div>'
             + '<div class="fg"><label>Overskrift</label><input type="text" id="apo-title"></div>'
@@ -160,7 +165,7 @@
             + '<div class="fg"><label>Notat under ordet</label><textarea id="apo-note"></textarea></div>'
           + '</div>'
         + '</div>'
-        + '<div class="panel"><h2>Fadderukene <small>seksjons-intro på Hjem</small></h2>'
+        + '<div class="panel" data-sec-key="fadderuke"><h2>Fadderukene <small>seksjons-intro på Hjem</small></h2>'
           + '<div class="panel-body">'
             + '<div class="fg"><label>Eyebrow (liten etikett over tittelen)</label><input type="text" id="fadder-eyebrow"></div>'
             + '<div class="fg"><label>Overskrift</label><input type="text" id="fadder-heading"></div>'
@@ -168,17 +173,12 @@
             + '<p class="hint">Selve programmet og datoene hentes fra fadderuke-kalenderen.</p>'
           + '</div>'
         + '</div>'
-        + '<div class="panel"><h2>Bli medlem <small>intro-teksten i «Bli medlem»-seksjonen</small></h2>'
+        + '<div class="panel" data-sec-key="bli-medlem"><h2>Bli medlem <small>seksjon på Hjem</small></h2>'
           + '<div class="panel-body">'
-            + '<div class="fg"><label>Eyebrow (liten etikett over tittelen)</label><input type="text" id="m-eyebrow"></div>'
-            + '<div class="fg"><label>Overskrift</label><input type="text" id="m-heading"></div>'
-            + '<div class="fg"><label>Ingress</label><textarea id="m-lede"></textarea></div>'
-            + '<div class="sub-h">Fordeler <small style="font-weight:400;text-transform:none;letter-spacing:0">(punktene med avhuking)</small></div>'
-            + '<p class="hint">Hvert punkt får automatisk et avhukings-ikon. Priser og innmeldingssteg redigeres i <b>Medlemskap</b>-panelet.</p>'
-            + '<div class="lst" id="lst-benefits"></div><button class="btn-add" type="button" data-add="benefits">+ Ny fordel</button>'
+            + '<div class="tip-note">📌 Denne seksjonen viser «Bli medlem»-blokken. <b>Innholdet</b> — intro-tekst, fordeler, Vipps, priser og innmeldingssteg — redigeres nå samlet i <b>Medlemskap</b>-panelet. Her bestemmer du bare <b>hvor</b> seksjonen ligger på Hjem: dra den dit du vil.</div>'
           + '</div>'
         + '</div>'
-        + '<div class="panel"><h2>Kontakt <small>nederst på Hjem</small></h2>'
+        + '<div class="panel" data-sec-key="kontakt"><h2>Kontakt <small>nederst på Hjem</small></h2>'
           + '<div class="panel-body">'
             + '<div class="fg"><label>Eyebrow (seksjons-etikett over «Ta kontakt…»)</label><input type="text" id="k-eyebrow"></div>'
             + '<div class="fg"><label>Overskrift</label><input type="text" id="k-heading"></div>'
@@ -223,6 +223,9 @@
         }, d.heroGallery || {});
         return d;
       }
+      // Innholdsseksjoner på Hjem som kan endre rekkefølge (hero ligger fast øverst;
+      // Galleribilder er en innstilling, ikke en seksjon).
+      var SECTION_KEYS = ['oppslagstavla-teaser', 'arrangementer', 'aporetisk', 'fadderuke', 'bli-medlem', 'kontakt'];
       function loadData() {
         var raw = localStorage.getItem(LS_KEY);
         if (raw) { try { data = JSON.parse(raw); normalize(); return; } catch (_) {} }
@@ -244,8 +247,11 @@
         if (!Array.isArray(data.kontakt.socials)) data.kontakt.socials = [];
         if (!Array.isArray(data.kontakt.faq)) data.kontakt.faq = [];
         data.heroGallery = Object.assign({}, f.heroGallery, data.heroGallery);
+        var ord = (Array.isArray(data.sectionOrder) ? data.sectionOrder : []).filter(function (k) { return SECTION_KEYS.indexOf(k) >= 0; });
+        SECTION_KEYS.forEach(function (k) { if (ord.indexOf(k) < 0) ord.push(k); });
+        data.sectionOrder = ord;
       }
-      function saveData() { localStorage.setItem(LS_KEY, JSON.stringify(data)); pushPreview(); }
+      function saveData() { AC.persistDraft(LS_KEY, data); pushPreview(); }
       var saveTimer = null;
       function lazySave() { pushPreview(); clearTimeout(saveTimer); saveTimer = setTimeout(function () { saveData(); AC.toast('Lagret i nettleseren'); }, 300); }
       function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
@@ -260,7 +266,6 @@
         'apo-eyebrow': 'apo.eyebrow', 'apo-title': 'apo.title', 'apo-lede': 'apo.lede',
         'apo-forwhom': 'apo.forWhom', 'apo-greek': 'apo.greek', 'apo-greek-sub': 'apo.greekSub', 'apo-note': 'apo.note',
         'fadder-eyebrow': 'fadder.eyebrow', 'fadder-heading': 'fadder.heading', 'fadder-lede': 'fadder.lede',
-        'm-eyebrow': 'medlem.eyebrow', 'm-heading': 'medlem.heading', 'm-lede': 'medlem.lede',
         'k-heading': 'kontakt.heading', 'k-eyebrow': 'kontakt.eyebrow', 'k-email': 'kontakt.email', 'k-address': 'kontakt.address',
         'k-web': 'kontakt.web', 'k-webHref': 'kontakt.webHref', 'k-faqHeading': 'kontakt.faqHeading'
       };
@@ -307,24 +312,6 @@
           hostEl.appendChild(row);
         });
       }
-      function renderBenefits() {
-        var hostEl = q('lst-benefits'); hostEl.innerHTML = '';
-        data.medlem.benefits.forEach(function (b, i) {
-          var row = document.createElement('div');
-          row.className = 'lrow'; row.setAttribute('data-id', 'ben' + i);
-          row.innerHTML =
-            '<span class="drag-handle" title="Dra for å sortere">⠿</span>'
-            + '<div class="lrow-fields">'
-              + '<div class="fg"><label>Fordel</label><input type="text" data-k="text" value="' + esc(b) + '" placeholder="f.eks. Rabattert inngang på alle arrangementer"></div>'
-            + '</div>'
-            + '<div class="lrow-ctrls"><button class="btn-mini up" type="button" title="Opp">↑</button><button class="btn-mini dn" type="button" title="Ned">↓</button><button class="btn-mini x" type="button" title="Slett">✕</button></div>';
-          row.querySelector('[data-k]').addEventListener('input', function () { data.medlem.benefits[i] = this.value; lazySave(); });
-          row.querySelector('.up').addEventListener('click', function () { moveArr(data.medlem.benefits, i, -1); renderBenefits(); lazySave(); });
-          row.querySelector('.dn').addEventListener('click', function () { moveArr(data.medlem.benefits, i, 1); renderBenefits(); lazySave(); });
-          row.querySelector('.x').addEventListener('click', function () { AC.undoDelete(data.medlem.benefits, i, 'Fordel fjernet', renderBenefits, lazySave); });
-          hostEl.appendChild(row);
-        });
-      }
       function renderHjemFaq() {
         var hostEl = q('lst-hjemfaq'); hostEl.innerHTML = '';
         data.kontakt.faq.forEach(function (it, i) {
@@ -349,7 +336,6 @@
       host.querySelectorAll('[data-add]').forEach(function (b) {
         b.addEventListener('click', function () {
           if (b.getAttribute('data-add') === 'socials') { data.kontakt.socials.push({ label: '', href: '', icon: 'web' }); renderSocials(); lazySave(); }
-          else if (b.getAttribute('data-add') === 'benefits') { data.medlem.benefits.push(''); renderBenefits(); lazySave(); }
           else if (b.getAttribute('data-add') === 'hjemfaq') { data.kontakt.faq.push({ q: '', a: '' }); renderHjemFaq(); lazySave(); }
         });
       });
@@ -455,11 +441,10 @@
         q('hg-heading').addEventListener('input', function () { data.heroGallery.heading = this.value; lazySave(); });
         q('hg-lede').addEventListener('input', function () { data.heroGallery.lede = this.value; lazySave(); });
       }
-      function renderAll() { renderFields(); renderBenefits(); renderSocials(); renderHjemFaq(); renderHeroGallery(); }
+      function renderAll() { renderFields(); renderSocials(); renderHjemFaq(); renderHeroGallery(); }
 
       function exportFile() {
-        var out = { heroGallery: clone(data.heroGallery || {}), hero: clone(data.hero || {}), arr: clone(data.arr || {}), apo: clone(data.apo || {}), fadder: clone(data.fadder || {}), medlem: clone(data.medlem || {}), kontakt: clone(data.kontakt || {}) };
-        out.medlem.benefits = (out.medlem.benefits || []).filter(function (b) { return b && b.trim(); });
+        var out = { heroGallery: clone(data.heroGallery || {}), hero: clone(data.hero || {}), arr: clone(data.arr || {}), apo: clone(data.apo || {}), fadder: clone(data.fadder || {}), kontakt: clone(data.kontakt || {}) };
         out.kontakt.socials = (out.kontakt.socials || []).filter(function (s) { return (s.label && s.label.trim()) || (s.href && s.href.trim()); });
         out.kontakt.faq = (out.kontakt.faq || []).filter(function (it) { return (it.q && it.q.trim()) || (it.a && it.a.trim()); });
         var content =
@@ -467,7 +452,8 @@
           + '   Sist oppdatert: ' + new Date().toLocaleDateString('no-NO') + '\n'
           + '   Rediger direkte her, eller åpne Admin-senteret → Forsiden.\n'
           + '\n'
-          + '   Dekker forsiden (Hjem): hero + seksjons-introer (arrangementer/aporetisk/fadderuke) + bli medlem (intro) + kontakt.\n'
+          + '   Dekker forsiden (Hjem): hero + seksjons-introer (arrangementer/aporetisk/fadderuke) + kontakt.\n'
+          + '   «Bli medlem» (intro, fordeler, priser) ligger nå i membership-config.js (Medlemskap-panelet).\n'
           + '   «Om oss» + FAQ ligger på om-oss.html → om-content.js (Om oss-panelet).\n'
           + '*/\n\n'
           + 'window.INDEX_CONTENT = ' + JSON.stringify(out, null, 2) + ';\n';
@@ -499,9 +485,8 @@
       window.addEventListener('resize', fitPreview);
       if (pvFrame) pvFrame.addEventListener('load', fitPreview);
 
-      loadData(); renderAll(); wireFields(); wireHeroGallery();
+      loadData(); AC.draftBaseline(LS_KEY, data); renderAll(); wireFields(); wireHeroGallery();
       wireDrag('lst-socials', function () { return data.kontakt.socials; }, renderSocials);
-      wireDrag('lst-benefits', function () { return data.medlem.benefits; }, renderBenefits);
       wireDrag('lst-hjemfaq', function () { return data.kontakt.faq; }, renderHjemFaq);
       AC.viewSwitch({ list: q('lst-socials'), key: 'apeiron-forsiden-socials-view-v1', help: 'Velg hvordan lenke-radene vises mens du redigerer her i admin. Påvirker bare redigeringsvisningen, ikke nettsiden.' });
       AC.viewSwitch({ list: q('lst-hjemfaq'), key: 'apeiron-forsiden-faq-view-v1', help: 'Velg hvordan FAQ-radene vises mens du redigerer her i admin. Påvirker bare redigeringsvisningen, ikke nettsiden.' });
@@ -513,14 +498,24 @@
         rail: 'sections',
         title: 'Forsiden', subtitle: 'Sidetekster',
         remember: 'apeiron-forsiden-shell-sel',
+        page: { href: 'index.html', id: 'forsiden', label: 'Forsiden', ico: '🏛️' },
+        onSectionReorder: function (keys) {
+          keys = (keys || []).filter(function (k) { return SECTION_KEYS.indexOf(k) >= 0; });
+          SECTION_KEYS.forEach(function (k) { if (keys.indexOf(k) < 0) keys.push(k); });
+          data.sectionOrder = keys; lazySave();
+        },
         sections: function () {
-          var out = [];
-          Array.prototype.forEach.call(host.querySelectorAll('.panel'), function (p, i) {
-            if (!p.getAttribute('data-aps-sec')) p.setAttribute('data-aps-sec', 's' + i);
-            var h2 = p.querySelector('h2'), label = '', sub = '';
+          function mk(key, fixed) {
+            var node = host.querySelector('.panel[data-sec-key="' + key + '"]');
+            if (!node) return null;
+            var h2 = node.querySelector('h2'), label = '', sub = '';
             if (h2) { var sm = h2.querySelector('small'); sub = sm ? sm.textContent.trim() : ''; label = (h2.textContent || '').replace(sub, '').trim(); }
-            out.push({ id: p.getAttribute('data-aps-sec'), label: label || ('Seksjon ' + (i + 1)), sub: sub, node: p, av: '✎' });
-          });
+            return { id: key, label: label || key, sub: sub, node: node, av: fixed ? '⚙' : '✎', fixed: !!fixed };
+          }
+          var out = [];
+          // Galleribilder (innstilling) + Hero ligger fast øverst og kan ikke flyttes.
+          ['__gallery', 'hero'].forEach(function (k) { var s = mk(k, true); if (s) out.push(s); });
+          (data.sectionOrder || SECTION_KEYS).forEach(function (k) { var s = mk(k, false); if (s) out.push(s); });
           return out;
         }
       });

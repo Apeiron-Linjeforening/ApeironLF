@@ -92,7 +92,7 @@
         data = fresh(); normItems();
       }
       var saveTimer = null;
-      function saveData() { localStorage.setItem(LS_KEY, JSON.stringify(data)); AC.toast('Lagret i nettleseren'); pushPreview(); }
+      function saveData() { AC.persistDraft(LS_KEY, data); AC.toast('Lagret i nettleseren'); pushPreview(); }
       function lazySave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveData, 300); }
       function uid() { return 'n' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
       function fmtPosted(iso) { if (!iso) return ''; var d = new Date(iso + 'T00:00:00'); return isNaN(d.getTime()) ? iso : d.toLocaleDateString('no-NO', { day: 'numeric', month: 'long', year: 'numeric' }); }
@@ -300,7 +300,7 @@
       window.addEventListener('resize', fitPreview);
       if (pvFrame) pvFrame.addEventListener('load', function () { fitPreview(); pushPreview(); });
 
-      loadData(); renderList(); applyPanelLayout();
+      loadData(); AC.draftBaseline(LS_KEY, data); renderList(); applyPanelLayout();
       (function () {
         var map = { 'sh-back': 'back', 'sh-title': 'title', 'sh-lede': 'lede' };
         Object.keys(map).forEach(function (id) {

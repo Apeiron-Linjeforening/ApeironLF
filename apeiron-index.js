@@ -52,17 +52,9 @@
     if (hero.cta2) { setText('ix-hero-cta2-label', hero.cta2.label); setHref('ix-hero-cta2', hero.cta2.href); }
     setText('ix-hero-bridge', hero.bridge);
 
-    /* ── BLI MEDLEM (intro-kolonnen) ── */
-    setText('ix-m-eyebrow', medlem.eyebrow);
-    setText('ix-m-heading', medlem.heading);
-    setText('ix-m-lede', medlem.lede);
-    var benHost = document.getElementById('ix-m-benefits');
-    if (benHost && Array.isArray(medlem.benefits) && (IS_PREVIEW || medlem.benefits.length)) {
-      var CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg>';
-      benHost.innerHTML = medlem.benefits.map(function (b) {
-        return '<li>' + CHECK + ' ' + esc(b) + '</li>';
-      }).join('');
-    }
+    /* ── BLI MEDLEM (intro-kolonnen) rendres nå av membership.js fra
+       MEMBERSHIP_CONFIG, slik at hele «Bli medlem»-blokken styres ett sted
+       (Admin → Medlemskap). Ikke rør #ix-m-* her. ── */
 
     /* ── SEKSJONS-INTROER (Arrangementer / Aporetisk / Fadderukene) ── */
     setText('ix-arr-eyebrow', arr.eyebrow);
@@ -114,6 +106,38 @@
           + '<span>' + esc(s.label) + '</span></a>';
       }).join('');
     }
+    applySectionOrder(C.sectionOrder);
+  }
+
+  /* Endrer rekkefølgen på innholdsseksjonene etter C.sectionOrder (settes i
+     Admin → Forsiden). Galleri-ankeret (.hg-anchor rett foran en seksjon, f.eks.
+     «Bli medlem») følger med seksjonen sin. Faller trygt tilbake til naturlig
+     rekkefølge om lista mangler eller er ufullstendig. Hero ligger fast øverst og
+     flyttes ikke; oppslagstavla-teaseren kan flyttes (ligger først som standard). */
+  function applySectionOrder(order) {
+    var KEYS = ['oppslagstavla-teaser', 'arrangementer', 'aporetisk', 'fadderuke', 'bli-medlem', 'kontakt'];
+    var ord = (order && order.length) ? order.filter(function (k) { return KEYS.indexOf(k) >= 0; }) : [];
+    KEYS.forEach(function (k) { if (ord.indexOf(k) < 0) ord.push(k); });
+    var units = [];
+    for (var i = 0; i < ord.length; i++) {
+      var sec = document.getElementById(ord[i]);
+      if (!sec) continue;
+      var nodes = [sec];
+      var prev = sec.previousElementSibling;
+      // Galleri-ankeret rett foran en seksjon følger med (f.eks. «Bli medlem»).
+      // «hg-top» er hero-galleriets faste plassering øverst og skal IKKE flytte med
+      // oppslagstavla-teaseren.
+      if (prev && prev.classList && prev.classList.contains('hg-anchor') && prev.id !== 'hg-top') nodes.unshift(prev);
+      units.push({ sec: sec, nodes: nodes });
+    }
+    if (units.length < 2) return;
+    var parent = units[0].sec.parentNode;
+    for (var j = 0; j < units.length; j++) { if (units[j].sec.parentNode !== parent) return; }
+    var kids = Array.prototype.slice.call(parent.children);
+    var maxIdx = -1;
+    units.forEach(function (u) { var ix = kids.indexOf(u.sec); if (ix > maxIdx) maxIdx = ix; });
+    var endRef = kids[maxIdx + 1] || null;
+    units.forEach(function (u) { u.nodes.forEach(function (n) { parent.insertBefore(n, endRef); }); });
   }
 
   // Minimal accordion-kobling — kun brukt i preview ved re-render (app.js har

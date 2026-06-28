@@ -1,5 +1,59 @@
 ## Siste endringer
 
+**28.06.26 · Admin: «🗂 Oversikt»-knapp i alle paneler**
+- **Alle panelene har nå Oversikt-knappen** øverst i redigeringsruten, ikke bare Styret og Begrep. Klikker du **🗂 Oversikt** får du panelets **egen oversikt** med kort for hver seksjon eller liste (f.eks. Pensum: Topp, Emnekatalog, Pensum-markedet, Studieretningene osv.). Klikk et kort for å åpne den delen.
+- **«← Oversikt»-lenke i hver detaljvisning**, så man kommer like enkelt tilbake fra en seksjon, et listeelement eller en innstilling — uansett paneltype (seksjoner, enkeltlister, filtre og samlinger).
+- **Standard-oppførselen er uendret:** panelene åpner fortsatt rett på første seksjon/element, oversikten er noe du går til via knappen.
+- Berørt fil: `admin-panel-shell.js`.
+
+**28.06.26 · Admin: medlemskap samlet i ett panel + likere de andre panelene**
+
+*Samlet medlemskap ett sted*
+- **Hele «Bli medlem»-blokken redigeres nå i Medlemskap-panelet.** Før var den delt: introteksten (etikett, overskrift, ingress) og fordelene lå i Forsiden-panelet, mens Vipps, priser og innmeldingssteg lå i Medlemskap. Nå styres alt samlet fra Medlemskap, lagret i `membership-config.js`. På Forsiden er «Bli medlem» igjen kun som en **plassholder** du drar for å bestemme rekkefølgen på Hjem (slik Oppslagstavla-teaseren fungerer).
+- **Migrering uten tap:** eldre lokale utkast får de nye intro-feltene seedet fra publisert config (med fallback til den gamle teksten), så ingenting forsvinner. Den utdaterte `medlem`-blokken i `index-content.js` er fjernet.
+
+*Forhåndsvisning og utseende*
+- **Medlemskap-forhåndsvisningen viser nå kun «Bli medlem»-blokken** i stedet for hele forsiden. Ny `?solo=<seksjon>`-modus i `index.html` isolerer seksjonen; Forsidens egen forhåndsvisning viser fortsatt hele siden i sammenheng.
+- **Panelet ser nå likt ut som de andre.** Det hadde en egen, tyngre kort-stil; nå bruker det samme «Liste + detalj»-språk som Forsiden/Om oss (panel-header med undertekst, slanke rader med ⠿-håndtak og ↑↓✕). Den klemte to-kolonners visningen på Prisnivåer og Innmeldingssteg er borte, alle lister er fullbredde.
+
+*Kjent problem*
+- **«Trykk og hold hvor som helst på en boks for å dra»-funksjonen i Medlemskap er fortsatt laggy** og må ses på senere.
+- Berørte filer: `admin.html`, `admin-common.js`, `admin-modules/medlemskap.js`, `admin-modules/forsiden.js`, `membership-config.js`, `membership.js`, `apeiron-index.js`, `index-content.js`, `index.html`.
+
+**28.06.26 · Admin-senteret: farger, dra-sortering, snarveier og tryggere endringer**
+
+*Fargetema*
+- **Tre fargetema** under ⚙ Innstillinger → Fargetema: **Varm** (pergament, standard), **Sval** (kjølig grå) og **Salvie** (dempet grønngrå). Ren hvit var slitsom å jobbe i over tid. Hele admin skifter samlet, valget huskes per nettleser og settes før første maling, så flatene aldri blinker hvitt. Forhåndsvisningene viser fortsatt nettsidens ekte farger.
+
+*Enklere å bruke*
+- **Innstillinger åpner direkte.** Tannhjulet åpner nå innstillings­vinduet med en gang (ikke en «innstilling inne i en innstilling»). Konto-boksen (innlogget som, sist publisert, logg ut) vises kun når du faktisk er innlogget — ingen «Ikke innlogget»-støy.
+- **Topplinja er ryddet:** «← Tilbake til nettsiden» ligger til venstre ved «Admin-senter»; status, «↺ Angre alle», «Logg inn» og ⚙ er samlet til høyre. Sidemenyen er gjort litt smalere.
+
+*Dra og sortere*
+- **Trykk og dra hvor som helst på et kort eller en rad for å flytte det** — du trenger ikke lenger treffe de seks prikkene (⠿). Et vanlig klikk velger som før; trykker du på et skjemafelt inni kortet, holder du bare et lite øyeblikk før draget tar over (så skriving og markering virker). ⠿-håndtaket virker fortsatt.
+- **Sideseksjoner kan omrokeres** på Forsiden, Hjelp, Om oss og Pensum: dra seksjonsradene i menyen, så endrer rekkefølgen seg på den publiserte siden. Faste deler (Hero, Galleribilder, Topp-banner, seksjons-oppsett m.m.) vises som tydelige **innstillinger** med gull ramme, så det er lett å skille dem fra flyttbare seksjoner. På Pensum kan Emnekatalog, Pensum-markedet, Studieretningene og Grader & løp flyttes; på Forsiden er Oppslagstavla lagt til som egen seksjon og de gamle kapittel-numrene (I/II/III) er fjernet.
+- **Dra-sortering i lister** virker nå også i «Liste + detalj» for Oppslagstavla, Oppnåelser, Utmerkelser, Begrep og Merch.
+
+*Snarveier*
+- **Egendefinerte snarveier på Oversikt, delt med alle.** «Se nettsiden» og «Nyhetssiden» er erstattet av snarveier du lager selv — til en hvilken som helst side eller seksjon, enten med **«+ Legg til snarvei»** på Oversikt eller **«🔗 Legg til som snarvei»** inne i en seksjon. De deles globalt med alle redaktører (publiseres som `admin-shortcuts.js` via Git) og kan fjernes med «×». Veiledning (README) står fast.
+
+*Tryggere endringer*
+- **Fikset falskt «upublisert endring»-varsel:** et rent klikk, et dra som havner på samme plass, eller å angre (flytte tilbake / Ctrl+Z) teller ikke lenger som endring. Utkastet sammenliknes mot den publiserte versjonen og ryddes bort når de er like.
+- **Klikk på «x upubliserte endringer»** for å se nøyaktig hva som er endret — på blokk-nivå (ikke bare «Forsiden», men «Forsiden → Hero, Kontakt»). Git-publiseringsmeldingen viser det samme.
+
+*Bugfikser*
+- Løs telefon-ramme som ble hengende etter mobil-forhåndsvisning er borte; ikoner og tekst flukter symmetrisk på alle menyrader; Styret-panelet tåler sen bildelast i smal visning.
+- Berørte filer: `admin.html`, `admin-common.js`, `admin-common.css`, `admin-modules.css`, `admin-panel-shell.js`, samtlige `admin-modules/*.js`, `admin-shortcuts.js` (ny), `index.html`, `hjelp.html`, `pensum.html`, `apeiron-index.js`, `apeiron-pensum.js`.
+
+**28.06.26 · Admin: ryddet topplinje (tre soner: merkevare · publisering · konto)**
+- **Topplinja delt i tre rolige soner.** Den var før en rad med ~7 løse elementer som konkurrerte om plassen og hoppet sidelengs når publiser-knappene dukket opp. Nå: **merkevare** til venstre (logo + «Admin-senter»), **publisering** på fast plass (upublisert-teller → «↺ Angre alle» → «☁ Publiser»), og **konto/system** samlet helt til høyre.
+- **Fjernet den doble «se siden»-lenka.** Den kontekstavhengige «Se [siden] ↗» (som åpnet den siden du redigerte) er tatt bort helt, forhåndsvisningen i hvert panel og «Tilbake til nettsiden» dekker behovet. Da står det igjen kun **én** global utgang.
+- **«Se nettsiden ↗» → «← Tilbake til nettsiden».** Navigerer nå **direkte i samme fane** (ikke ny fane). Lukkevakten (`beforeunload`) fyrer fortsatt hvis du har upubliserte endringer, så man ikke forlater admin ved et uhell.
+- **Konto/system samlet i ⚙-menyen.** Tannhjulet åpner nå en meny med «Innlogget som «navn»», «Sist publisert «navn · tidspunkt»» (flyttet hit fra baren som dempet støttetekst), «↪ Logg ut» og «⚙ Innstillinger». Lukkes ved klikk utenfor eller Esc.
+- **«Logg inn» løftet ut i selve baren.** Siden innlogging er en forutsetning for å publisere, vises en tydelig gull **«Logg inn»**-knapp i toppen så lenge man ikke er innlogget, umulig å overse. Etter innlogging forsvinner den og «☁ Publiser» tar samme plass (når det finnes endringer). «Logg ut» bor i ⚙-menyen.
+- **Tannhjulet byttet til et SVG-ikon** som sentreres matematisk i knappen (unicode-glyfen ⚙ satt litt skjevt og varierte mellom plattformer).
+- Berørt fil: `admin.html`.
+
 **28.06.26 · Admin: «Angre siste publisering» (rull tilbake forrige commit) + ryddet topptekst**
 - **Ny knapp «↩ Angre siste publisering»** på Oversikt, nederst i «Slik publiserer du»-kortet (vises kun når du er innlogget på GitHub). Den ruller hele nettsiden tilbake til slik den var **før den siste publiseringen**. GitHub beholder all historikk: angringen blir selv en publisering, så den kan **angres på nytt** (klikk igjen for å hente endringen tilbake). Som vanlig utløser den en Cloudflare-deploy, live innen ~1 minutt.
 - **Bekreftelses-varsel før den kjører**, i samme røde «danger»-stil som de andre publiser-dialogene. Boksen viser **de tre siste publiseringene**: hvilken som angres («Angrer»), hvilken versjon du lander på («Tilbake til»), og en tredje rad som dempet kontekst («Tidligere»), hver med melding, redaktør og tidspunkt, så man ser nøyaktig hva som skjer før man trykker.

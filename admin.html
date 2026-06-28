@@ -8,6 +8,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Spectral:wght@400;600&display=swap" rel="stylesheet">
+<script>
+  /* Sett fargetema FØR første maling, så flatene aldri blinker hvitt. */
+  (function () {
+    var t = 'varm';
+    try { var s = localStorage.getItem('apeiron-admin-theme'); if (['varm','sval','salvie'].indexOf(s) >= 0) t = s; } catch (_) {}
+    document.documentElement.setAttribute('data-admin-theme', t);
+  })();
+</script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -15,8 +23,16 @@
   --paper:#f4ecd9; --ink:#1a1d2e; --ink-soft:rgba(26,29,46,.62); --border:rgba(35,39,64,.15);
   --display:'Cormorant Garamond',Georgia,serif; --body:'Spectral',Georgia,serif;
 }
+/* ── Fargetema for admin ──
+   --app-bg : bakgrunnen bak panelene (siden/«skrivebordet»)
+   --surface: kort, paneler og skjemafelt (tidligere ren hvit)
+   Settes via data-admin-theme på <html>. Standard = varm pergament. */
+:root { --app-bg:#e4dcc8; --surface:#ffffff; }
+:root[data-admin-theme="varm"]   { --app-bg:#e7ddc6; --surface:#faf5e9; }
+:root[data-admin-theme="sval"]   { --app-bg:#dde2e7; --surface:#f6f8fa; }
+:root[data-admin-theme="salvie"] { --app-bg:#e1e5dc; --surface:#f6f8f1; }
 html, body { height: 100%; }
-body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display: flex; flex-direction: column; }
+body { font-family: var(--body); background: var(--app-bg); color: var(--ink); display: flex; flex-direction: column; }
 
 #gate { display: none; }
 
@@ -28,7 +44,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
   display: flex; align-items: center; gap: 14px; flex: 0 0 auto;
 }
 .a-header img { width: 30px; opacity: .85; }
-.a-header h1 { font-family: var(--display); font-size: 1.3rem; letter-spacing: .04em; margin-right: auto; }
+.a-header h1 { font-family: var(--display); font-size: 1.3rem; letter-spacing: .04em; }
 .a-header .hint { font-size: .76rem; color: rgba(244,236,217,.6); }
 .a-header a { color: rgba(244,236,217,.7); font-size: .76rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; text-decoration: none; }
 .a-header a:hover { color: var(--gold); }
@@ -83,7 +99,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
   display: grid; grid-template-columns: 1.4fr 1fr; gap: 18px; margin-bottom: 30px;
 }
 .dash-wrap > :last-child { margin-bottom: 0; }
-.info-card { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
+.info-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
 .info-card.is-flow { border-left: 3px solid var(--gold); }
 .info-card h3 { font-family: var(--display); font-size: 1.3rem; color: var(--navy); margin-bottom: 8px; }
 .flow-intro { font-size: .9rem; color: var(--ink-soft); line-height: 1.5; margin-bottom: 12px; }
@@ -103,7 +119,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 .pub-btn--backup:disabled { opacity: .55; cursor: progress; }
 /* ── «Angre siste publisering» (rull tilbake forrige commit) ── */
 .undo-pub { margin: 14px 0 2px; padding: 13px 15px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; border: 1px solid rgba(118,17,15,.28); border-radius: 8px; background: rgba(118,17,15,.045); }
-.undo-pub-btn { flex: 0 0 auto; padding: 8px 15px; background: #fff; color: #76110f; border: 1px solid rgba(118,17,15,.4); border-radius: 6px; font-family: var(--body); font-size: .82rem; font-weight: 700; cursor: pointer; transition: border-color .15s, background .15s; }
+.undo-pub-btn { flex: 0 0 auto; padding: 8px 15px; background: var(--surface); color: #76110f; border: 1px solid rgba(118,17,15,.4); border-radius: 6px; font-family: var(--body); font-size: .82rem; font-weight: 700; cursor: pointer; transition: border-color .15s, background .15s; }
 .undo-pub-btn:hover { border-color: #76110f; background: rgba(118,17,15,.06); }
 .undo-pub-btn:disabled { opacity: .55; cursor: progress; }
 .undo-pub-hint { flex: 1; min-width: 180px; font-size: .76rem; color: var(--ink-soft); line-height: 1.45; }
@@ -152,20 +168,41 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 .quick-links a:hover { background: rgba(212,175,55,.1); border-color: rgba(212,175,55,.5); }
 .quick-links .ql-ico { font-size: 1.1rem; }
 .quick-links .ql-sub { font-weight: 400; color: var(--ink-soft); font-size: .8rem; margin-left: auto; }
+/* Egendefinerte snarveier (kan fjernes) + «legg til»-knapp */
+.quick-links .ql-item { display: flex; align-items: stretch; gap: 6px; }
+.quick-links .ql-item .ql-link { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 10px 13px; border: 1px solid var(--border); border-radius: 8px; text-decoration: none; color: var(--ink); font-size: .9rem; font-weight: 600; transition: background .15s, border-color .15s; }
+.quick-links .ql-item .ql-link:hover { background: rgba(212,175,55,.1); border-color: rgba(212,175,55,.5); }
+.quick-links .ql-item .ql-link .ql-nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.quick-links .ql-item .ql-rm { flex: 0 0 auto; width: 34px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--ink-soft); cursor: pointer; font-size: 1.15rem; line-height: 1; transition: background .15s, color .15s, border-color .15s; }
+.quick-links .ql-item .ql-rm:hover { background: rgba(118,17,15,.08); color: #76110f; border-color: rgba(118,17,15,.4); }
+.ql-add { margin-top: 10px; width: 100%; padding: 9px 13px; border: 1px dashed rgba(212,175,55,.6); border-radius: 8px; background: rgba(212,175,55,.06); color: var(--gold-ink); font-family: var(--body); font-weight: 700; font-size: .86rem; cursor: pointer; transition: background .15s; }
+.ql-add:hover { background: rgba(212,175,55,.14); }
+/* Snarvei-velger (modal) */
+.ql-pick { display: flex; flex-direction: column; gap: 5px; margin-top: 4px; }
+.ql-pick__grp { font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; font-weight: 700; color: var(--ink-soft); margin: 10px 0 3px; }
+.ql-pick__grp:first-child { margin-top: 0; }
+.ql-pick__opt { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); cursor: pointer; font-family: var(--body); font-size: .9rem; font-weight: 600; color: var(--ink); text-align: left; transition: background .15s, border-color .15s; }
+.ql-pick__opt:hover:not(:disabled) { background: rgba(212,175,55,.12); border-color: rgba(212,175,55,.55); }
+.ql-pick__opt:disabled { opacity: .5; cursor: default; }
+.ql-pick__opt .chk { margin-left: auto; color: #1f8a5b; font-weight: 700; }
+/* «Legg til som snarvei» inne i en seksjon */
+.aps__scbtn { margin-left: auto; flex: 0 0 auto; align-self: center; padding: 7px 12px; border: 1px solid rgba(212,175,55,.5); border-radius: 7px; background: rgba(212,175,55,.12); color: var(--gold-ink); font-family: var(--body); font-weight: 700; font-size: .8rem; cursor: pointer; white-space: nowrap; transition: background .15s, border-color .15s, color .15s; }
+.aps__scbtn:hover { background: rgba(212,175,55,.22); border-color: rgba(212,175,55,.7); }
+.aps__scbtn.is-added { background: rgba(31,138,91,.12); border-color: rgba(31,138,91,.45); color: #1f8a5b; }
 
 .dash-section-label {
   font-size: .68rem; letter-spacing: .18em; text-transform: uppercase; font-weight: 700;
   color: var(--ink-soft); margin: 4px 0 14px;
 }
 /* ── Panelvisning-innstilling (Klassisk ↔ Liste + detalj) ── */
-.layout-setting { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; margin-bottom: 30px; display: grid; grid-template-columns: 1.3fr 1fr; gap: 16px 26px; align-items: center; }
+.layout-setting { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; margin-bottom: 30px; display: grid; grid-template-columns: 1.3fr 1fr; gap: 16px 26px; align-items: center; }
 .layout-setting__txt h3 { font-family: var(--display); font-size: 1.3rem; color: var(--navy); margin-bottom: 6px; }
 .layout-setting__txt p { font-size: .86rem; color: var(--ink-soft); line-height: 1.55; }
 .layout-setting__txt p b { color: var(--gold-ink); }
 .layout-seg { display: flex; gap: 10px; }
 .layout-seg__opt { flex: 1; display: flex; flex-direction: column; gap: 2px; align-items: flex-start; text-align: left; background: rgba(35,39,64,.025); border: 1px solid var(--border); border-radius: 9px; padding: 11px 13px; cursor: pointer; font-family: var(--body); transition: border-color .15s, background .15s, box-shadow .15s; }
 .layout-seg__opt:hover { border-color: rgba(212,175,55,.6); }
-.layout-seg__opt.active { border-color: var(--navy); background: #fff; box-shadow: 0 8px 22px -14px rgba(35,39,64,.5); }
+.layout-seg__opt.active { border-color: var(--navy); background: var(--surface); box-shadow: 0 8px 22px -14px rgba(35,39,64,.5); }
 .layout-seg__opt .ls-name { font-family: var(--display); font-size: 1.12rem; font-weight: 600; color: var(--navy); }
 .layout-seg__opt.active .ls-name { color: var(--gold-ink); }
 .layout-seg__opt .ls-sub { font-size: .73rem; color: var(--ink-soft); line-height: 1.3; }
@@ -178,13 +215,20 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 .layout-seg__opt.active .ls-ico i, .layout-seg__opt.active .ls-ico b { background: var(--gold); }
 .layout-seg__opt.active .ls-ico--md i { background: rgba(212,175,55,.4); }
 @media (max-width: 720px) { .layout-setting { grid-template-columns: 1fr; } }
+/* Fargetema-velger: liten forhåndsvisning av bakgrunn (i) + kort (b) */
+.theme-sw { position: relative; width: 34px; height: 23px; border-radius: 5px; overflow: hidden; margin-bottom: 6px; border: 1px solid var(--border); }
+.theme-sw i { position: absolute; inset: 0; }
+.theme-sw b { position: absolute; left: 6px; right: 6px; top: 6px; bottom: 5px; border-radius: 3px; box-shadow: 0 1px 2px rgba(0,0,0,.14); }
+.theme-sw--varm i { background: #e7ddc6; } .theme-sw--varm b { background: #faf5e9; }
+.theme-sw--sval i { background: #dde2e7; } .theme-sw--sval b { background: #f6f8fa; }
+.theme-sw--salvie i { background: #e1e5dc; } .theme-sw--salvie b { background: #f6f8f1; }
 .reset-all-box { margin: 0 0 22px; padding: 12px 14px; border: 1px dashed rgba(118,17,15,.4); border-radius: 8px; background: rgba(118,17,15,.04); display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
 .reset-all-box__txt { flex: 1; min-width: 200px; font-size: .82rem; color: var(--ink-soft); line-height: 1.5; }
 .reset-all-btn { padding: 7px 14px; background: transparent; color: #76110f; border: 1px solid rgba(118,17,15,.5); border-radius: 4px; font-family: var(--body); font-size: .8rem; font-weight: 700; cursor: pointer; white-space: nowrap; }
 .reset-all-btn:hover { background: #76110f; color: #fff; }
 .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(232px, 1fr)); gap: 14px; }
 .panel-card {
-  text-align: left; background: white; border: 1px solid var(--border); border-radius: 10px;
+  text-align: left; background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
   padding: 16px 17px; cursor: pointer; font-family: var(--body); transition: box-shadow .18s, transform .12s, border-color .18s;
   display: flex; flex-direction: column; gap: 5px;
 }
@@ -196,7 +240,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 .panel-card .pc-open { margin-top: 4px; font-size: .8rem; font-weight: 700; color: var(--gold-ink); }
 
 /* ── Editor-ramme (eldre paneler, midlertidig iframe) ── */
-.frame-wrap { position: absolute; inset: 0; background: #e4dcc8; display: none; }
+.frame-wrap { position: absolute; inset: 0; background: var(--app-bg); display: none; }
 .frame-wrap.show { display: block; }
 #admin-frame { width: 100%; height: 100%; border: 0; display: block; }
 .loading { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--ink-soft); font-style: italic; pointer-events: none; }
@@ -214,13 +258,16 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 .ctx .pub-btn:hover { filter: brightness(1.08); }
 .ctx .pub-btn:disabled { opacity: .6; cursor: progress; }
 .ctx .pub-btn--git { background: #1f8a4c; color: #fff; }
-.gh-auth { display: inline-flex; align-items: center; gap: 8px; font-size: .8rem; color: rgba(244,236,217,.8); }
-.gh-auth .gh-dot { width: 8px; height: 8px; border-radius: 50%; background: #41d07f; box-shadow: 0 0 0 2px rgba(65,208,127,.25); flex: 0 0 auto; }
-.gh-auth .gh-who { font-weight: 600; color: #f4ecd9; }
-.gh-auth .gh-link { background: none; border: 1px solid rgba(244,236,217,.3); color: rgba(244,236,217,.85); border-radius: 4px; padding: 4px 9px; font-family: var(--body); font-size: .76rem; cursor: pointer; white-space: nowrap; }
-.gh-auth .gh-link:hover { border-color: var(--gold); color: var(--gold); }
-.gh-auth .gh-note { font-size: .7rem; color: rgba(244,236,217,.5); white-space: nowrap; }
-@media (max-width: 720px) { .gh-auth .gh-who { display: none; } }
+/* ── GitHub-auth (vises inne i konto-menyen) ── */
+.gh-auth { display: flex; flex-direction: column; gap: 2px; font-size: .85rem; color: var(--navy); }
+.gh-auth .gh-id { display: inline-flex; align-items: center; gap: 9px; padding: 6px 11px 8px; }
+.gh-auth .gh-dot { width: 8px; height: 8px; border-radius: 50%; background: #1f8a4c; box-shadow: 0 0 0 3px rgba(31,138,76,.16); flex: 0 0 auto; }
+.gh-auth .gh-dot--off { background: #b9912f; box-shadow: 0 0 0 3px rgba(185,145,47,.16); }
+.gh-auth .gh-who { font-weight: 600; color: var(--navy); }
+.gh-auth .gh-who b { font-weight: 800; }
+.gh-auth .gh-link { display: flex; align-items: center; gap: 9px; width: 100%; text-align: left; background: none; border: none; border-radius: 7px; padding: 9px 11px; font-family: var(--body); font-size: .9rem; font-weight: 600; color: var(--navy); cursor: pointer; }
+.gh-auth .gh-link:hover { background: rgba(35,39,64,.05); }
+.gh-auth .gh-note { font-size: .72rem; color: var(--ink-soft); }
 
 /* ── Modul-vert (C: paneler som mountes inline i skallet) ── */
 .panel-host { position: absolute; inset: 0; overflow-y: auto; padding: 28px 22px 80px; display: none; }
@@ -229,7 +276,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 
 /* ── Flytende seksjonsmeny i panelene (åpen som standard, høyre side) ── */
 .sec-nav { position: fixed; z-index: 360; right: 22px; width: 224px;
-  background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 9px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 9px;
   box-shadow: 0 20px 46px -24px rgba(20,20,35,.5); display: none; flex-direction: column; }
 .sec-nav.show { display: flex; }
 .sec-nav__top { display: flex; align-items: center; gap: 8px; padding: 4px 8px 9px; flex: 0 0 auto; }
@@ -269,7 +316,18 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 .panel-host.shell-on .aps__scroll { max-height: none; flex: 1 1 auto; min-height: 0; }
 .panel-host.shell-on .aps__detail { max-height: none; height: auto; }
 /* Forhåndsvisningen er skjult inline i skall-modus, men åpnes som overlay via «👁». */
-.panel-host.shell-on .ph-wrap:not(.pv-full) > .preview-top { display: none; }
+.panel-host.shell-on .ph-wrap:not(.pv-full) > .preview-top { display: none !important; }
+/* I shell-modus («Liste + detalj») er forhåndsvisningen et overlay (åpnes med 👁).
+   Nøytraliser ALL inline-preview-layout (mobil-grid, align-items:start, maks-bredde,
+   grid-plassering) så ingenting henger igjen — løs telefon-ramme ELLER en tom kolonne
+   på høyre side — når man lukker overlayet, uansett enhet eller vindusbredde. */
+.panel-host.shell-on .ph-wrap:not(.pv-full) {
+  grid-template-columns: none !important; grid-template-rows: none !important;
+  align-items: stretch !important; max-width: none !important;
+}
+.panel-host.shell-on .ph-wrap:not(.pv-full) > .pv-editor {
+  grid-column: auto !important; grid-row: auto !important; min-width: 0; width: auto;
+}
 /* Kolonnebredde-velgeren («Visning: 1/2/3 i bredden») gir ikke mening i «Liste + detalj»
    (ett kort om gangen) og kan ellers henge igjen som en stripe. Skjul den i skall-modus. */
 .panel-host.shell-on .lay-switch { display: none !important; }
@@ -280,7 +338,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 .ph-wrap.pv-split > .pv-editor { min-width: 0; }
 .ph-wrap.pv-split.pv-sticky:not(.pv-mobile) > .preview-top {
   position: sticky; top: 0; z-index: 330;
-  background: #e4dcc8; padding-top: 6px; padding-bottom: 10px; margin-bottom: 8px;
+  background: var(--app-bg); padding-top: 6px; padding-bottom: 10px; margin-bottom: 8px;
   box-shadow: 0 12px 18px -14px rgba(35,39,64,.55);
 }
 /* Festet topp-preview holdes kompakt så editoren får plass:
@@ -373,17 +431,17 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 
 /* Verktøylinje (enhets-veksler, full størrelse, fest) */
 .pv-tools { display: inline-flex; align-items: center; gap: 7px; }
-.pv-seg { display: inline-flex; border: 1px solid var(--border); border-radius: 999px; overflow: hidden; background: white; }
+.pv-seg { display: inline-flex; border: 1px solid var(--border); border-radius: 999px; overflow: hidden; background: var(--surface); }
 .pv-seg-btn { border: none; background: none; cursor: pointer; font-size: .76rem; font-weight: 600; line-height: 1; padding: 5px 12px; color: var(--ink-soft); display: inline-flex; align-items: center; gap: 6px; }
 .pv-seg-btn + .pv-seg-btn { border-left: 1px solid var(--border); }
 .pv-seg-btn .pv-seg-ico { font-size: .9rem; }
 .pv-seg-btn.on { background: var(--navy); color: var(--paper); }
-.pv-tool-btn { width: 26px; height: 25px; border: 1px solid var(--border); border-radius: 6px; background: white; cursor: pointer; font-size: .8rem; color: var(--ink-soft); display: inline-flex; align-items: center; justify-content: center; }
+.pv-tool-btn { width: 26px; height: 25px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); cursor: pointer; font-size: .8rem; color: var(--ink-soft); display: inline-flex; align-items: center; justify-content: center; }
 .pv-tool-btn:hover { border-color: rgba(212,175,55,.6); color: var(--navy); }
 .pv-stick {
   display: inline-flex; align-items: center; gap: 6px;
   font-size: .72rem; font-weight: 600; color: var(--ink-soft); white-space: nowrap;
-  background: white; border: 1px solid var(--border); border-radius: 999px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 999px;
   padding: 4px 11px 4px 9px; cursor: pointer; user-select: none;
 }
 .pv-stick:hover { border-color: rgba(212,175,55,.6); color: var(--navy); }
@@ -426,7 +484,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 .panel-host .tip-help__bubble .hb-note b { color: var(--gold); }
 
 /* Eldre, alltid-synlig .tip (kun fallback hvis tidyTip ikke har kjørt) */
-.panel-host .tip { background: white; border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: 6px; padding: 16px 20px; margin-bottom: 22px; font-size: .88rem; }
+.panel-host .tip { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: 6px; padding: 16px 20px; margin-bottom: 22px; font-size: .88rem; }
 .panel-host .tip strong { color: var(--navy); font-size: .95rem; display: block; margin-bottom: 8px; }
 .panel-host .tip ol { padding-left: 18px; }
 .panel-host .tip li { margin: 5px 0; color: var(--ink-soft); line-height: 1.55; }
@@ -435,30 +493,53 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 .panel-host .tip-reset { float: right; font-size: .76rem; color: var(--ink-soft); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; border: none; background: none; padding: 0; }
 .panel-host .tip-reset:hover { color: var(--maroon); }
 .panel-host code { background: rgba(35,39,64,.07); padding: 1px 5px; border-radius: 3px; font-size: .86em; }
-.mod-medlemskap .panel { background: white; border: 1px solid var(--border); border-radius: 6px; padding: 18px 20px; margin-bottom: 22px; }
+.mod-medlemskap .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 22px; overflow: hidden; }
+.mod-medlemskap .panel > h2 { font-family: var(--display); font-size: 1.5rem; color: var(--navy); padding: 15px 20px 13px; background: rgba(35,39,64,.03); border-bottom: 1px solid var(--border); display: flex; align-items: baseline; gap: 10px; margin: 0; }
+.mod-medlemskap .panel > h2 small { font-family: var(--body); font-size: .76rem; font-weight: 400; color: var(--ink-soft); letter-spacing: 0; text-transform: none; }
 .panel-host .sec-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
 .panel-host .sec-head h2 { font-family: var(--display); font-size: 1.5rem; color: var(--navy); margin-right: auto; }
 .panel-host .btn-add { padding: 7px 14px; background: rgba(212,175,55,.18); color: var(--gold-ink); border: 1px solid rgba(212,175,55,.5); border-radius: 4px; font-family: var(--body); font-size: .82rem; font-weight: 700; cursor: pointer; transition: background .15s; }
 .panel-host .btn-add:hover { background: rgba(212,175,55,.3); }
 .panel-host .list { display: flex; flex-direction: column; gap: 14px; }
-.mod-medlemskap .card { background: #fbf7ec; border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px; }
 .panel-host .card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
 .panel-host .card-title { font-family: var(--display); font-size: 1.05rem; color: var(--navy); flex: 1; font-weight: 600; }
 .panel-host .order-btns { display: flex; gap: 3px; }
-.panel-host .btn-ord { width: 26px; height: 26px; border: 1px solid var(--border); border-radius: 3px; background: white; cursor: pointer; font-size: .7rem; color: var(--ink-soft); display: flex; align-items: center; justify-content: center; }
+.panel-host .btn-ord { width: 26px; height: 26px; border: 1px solid var(--border); border-radius: 3px; background: var(--surface); cursor: pointer; font-size: .7rem; color: var(--ink-soft); display: flex; align-items: center; justify-content: center; }
 .panel-host .btn-ord:hover { background: rgba(35,39,64,.06); color: var(--navy); }
 .panel-host .btn-del { padding: 4px 10px; border: 1px solid rgba(118,17,15,.25); border-radius: 3px; background: transparent; color: var(--maroon); font-size: .76rem; font-family: var(--body); cursor: pointer; }
 .panel-host .btn-del:hover { background: rgba(118,17,15,.06); }
 .panel-host .frow { display: flex; gap: 10px; flex-wrap: wrap; }
 .panel-host .fg { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 120px; margin-bottom: 10px; }
 .panel-host .fg label { font-size: .63rem; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; color: var(--ink-soft); }
-.panel-host .fg input, .panel-host .fg textarea, .panel-host .fg select { font-family: var(--body); font-size: .88rem; color: var(--ink); border: 1px solid var(--border); border-radius: 3px; padding: 6px 9px; background: white; resize: none; width: 100%; }
+.panel-host .fg input, .panel-host .fg textarea, .panel-host .fg select { font-family: var(--body); font-size: .88rem; color: var(--ink); border: 1px solid var(--border); border-radius: 3px; padding: 6px 9px; background: var(--surface); resize: none; width: 100%; }
 .panel-host .fg input:focus, .panel-host .fg textarea:focus, .panel-host .fg select:focus { outline: none; border-color: var(--navy); }
 .panel-host .fg.narrow { flex: 0 0 130px; min-width: 100px; }
+/* ── Medlemskap: samme «liste + detalj»-språk som Forsiden/Om oss ── */
+.mod-medlemskap .panel-body { padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; }
+.mod-medlemskap .panel-body .hint { font-size: .76rem; color: var(--ink-soft); font-style: italic; margin: 0; }
+.mod-medlemskap .panel-body .frow { display: flex; gap: 12px; flex-wrap: wrap; }
+.mod-medlemskap .panel-body .fg { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 150px; margin: 0; }
+.mod-medlemskap .panel-body .fg.narrow { flex: 0 0 130px; min-width: 110px; }
+.mod-medlemskap .panel-body .fg label { font-size: .63rem; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; color: var(--ink-soft); }
+.mod-medlemskap .panel-body .fg input, .mod-medlemskap .panel-body .fg textarea { font-family: var(--body); font-size: .9rem; color: var(--ink); border: 1px solid var(--border); border-radius: 4px; padding: 8px 10px; background: var(--surface); width: 100%; resize: vertical; }
+.mod-medlemskap .panel-body .fg input:focus, .mod-medlemskap .panel-body .fg textarea:focus { outline: none; border-color: var(--navy); }
+.mod-medlemskap .panel-body .fg textarea { min-height: 70px; line-height: 1.5; }
+.mod-medlemskap .lst { display: flex; flex-direction: column; gap: 10px; }
+.mod-medlemskap .lrow { background: rgba(35,39,64,.025); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; display: flex; gap: 10px; align-items: flex-start; }
+.mod-medlemskap .lrow .drag-handle { cursor: grab; color: var(--ink-soft); font-size: 1rem; padding: 4px 2px; user-select: none; flex: 0 0 auto; }
+.mod-medlemskap .lrow .lrow-fields { flex: 1; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.mod-medlemskap .lrow .lrow-ctrls { display: flex; flex-direction: column; gap: 4px; flex: 0 0 auto; }
+.mod-medlemskap .lrow .btn-mini { width: 28px; height: 28px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface); cursor: pointer; font-size: .72rem; color: var(--ink-soft); display: flex; align-items: center; justify-content: center; }
+.mod-medlemskap .lrow .btn-mini:hover { background: rgba(35,39,64,.06); color: var(--navy); }
+.mod-medlemskap .lrow .btn-mini.x { color: var(--maroon); border-color: rgba(118,17,15,.25); }
+.mod-medlemskap .lrow .btn-mini.x:hover { background: rgba(118,17,15,.06); }
+.mod-medlemskap .lrow.drag-pending { box-shadow: 0 5px 18px rgba(35,39,64,.18); border-color: var(--navy); cursor: grabbing; transition: box-shadow .12s ease, border-color .12s ease; }
+.mod-medlemskap .panel-body .btn-add { align-self: flex-start; padding: 6px 14px; background: rgba(212,175,55,.18); color: var(--gold-ink); border: 1px solid rgba(212,175,55,.5); border-radius: 4px; font-family: var(--body); font-size: .82rem; font-weight: 700; cursor: pointer; }
+.mod-medlemskap .panel-body .btn-add:hover { background: rgba(212,175,55,.3); }
 
 @media (max-width: 720px) {
   .info-panel { grid-template-columns: 1fr; }
-  .a-header h1 { display: none; } .a-header .hint { display: none; } .ctx .pub-count { display: none; } .a-header .last-pub { display: none; }
+  .a-header h1 { display: none; } .a-header .hint { display: none; } .ctx .pub-count { display: none; } .a-back__txt { display: none; }
 }
 
 /* ── Advarsel ved lukking (nullstilling til publisert versjon) ── */
@@ -488,7 +569,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 /* ── Gruppert venstre-sidemeny (1A) + modusbytte ── */
 .admin-main { flex: 1 1 auto; display: flex; min-height: 0; }
 .content { min-width: 0; }
-.sidenav { width: 242px; flex: 0 0 auto; background: #1c1f33; display: none; flex-direction: column; overflow-y: auto; padding: 10px 9px 30px; box-shadow: inset -1px 0 0 rgba(244,236,217,.08); }
+.sidenav { width: 214px; flex: 0 0 auto; background: #1c1f33; display: none; flex-direction: column; overflow-y: auto; padding: 10px 9px 30px; box-shadow: inset -1px 0 0 rgba(244,236,217,.08); }
 #admin.nav-side .sidenav { display: flex; }
 #admin.nav-side .tabbar-shell { display: none; }
 #admin.nav-tabs .sidenav { display: none; }
@@ -523,8 +604,26 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 }
 
 /* ── ⚙ Innstillinger-knapp + modal (flyttet ut av oversikten) ── */
-.a-gear { width: 32px; height: 32px; flex: 0 0 auto; border: 1px solid rgba(244,236,217,.3); background: none; color: rgba(244,236,217,.8); border-radius: 7px; cursor: pointer; font-size: 1rem; line-height: 1; display: inline-flex; align-items: center; justify-content: center; }
-.a-gear:hover { border-color: var(--gold); color: var(--gold); }
+.a-gear { width: 32px; height: 32px; flex: 0 0 auto; border: 1px solid rgba(244,236,217,.3); background: none; color: rgba(244,236,217,.85); border-radius: 7px; cursor: pointer; line-height: 0; display: inline-flex; align-items: center; justify-content: center; padding: 0; }
+.a-gear svg { width: 17px; height: 17px; display: block; }
+.a-gear:hover, .a-gear[aria-expanded="true"] { border-color: var(--gold); color: var(--gold); }
+
+/* ── «Logg inn for å publisere» — alltid synlig i baren når man IKKE er innlogget ── */
+.a-login { padding: 7px 15px; background: var(--gold); color: var(--navy); border: none; border-radius: 4px; font-family: var(--body); font-size: .82rem; font-weight: 700; cursor: pointer; white-space: nowrap; flex: 0 0 auto; }
+.a-login:hover { filter: brightness(1.08); }
+
+/* «Tilbake til nettsiden» (direkte, samme fane) — ligger ved siden av tittelen,
+   og dytter resten (status/angre/logg inn/⚙) helt til høyre. */
+.a-back { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; margin-right: auto; }
+
+/* ── Konto/system-meny (tannhjul) ── */
+.acct { position: relative; flex: 0 0 auto; }
+.acct-menu { position: absolute; top: calc(100% + 9px); right: 0; z-index: 1500; min-width: 236px; background: var(--surface); color: var(--navy); border: 1px solid var(--border); border-radius: 11px; box-shadow: 0 16px 44px rgba(20,22,38,.24); padding: 7px; display: flex; flex-direction: column; gap: 2px; }
+.acct-menu[hidden] { display: none; }
+.acct-sep { height: 1px; background: var(--border); margin: 4px 4px; }
+.acct-item { display: flex; align-items: center; gap: 9px; width: 100%; text-align: left; background: none; border: none; border-radius: 7px; padding: 9px 11px; font-family: var(--body); font-size: .9rem; font-weight: 600; color: var(--navy); cursor: pointer; }
+.acct-item:hover { background: rgba(35,39,64,.05); }
+.acct-last-pub { font-size: .78rem; color: var(--ink-soft); line-height: 1.4; padding: 1px 11px 7px; }
 
 /* Kompakt «Angre alle» i toppen — vises bare når det finnes upubliserte endringer */
 .ctx .reset-link { background: none; border: 1px solid rgba(244,236,217,.28); color: rgba(244,236,217,.82); border-radius: 4px; padding: 5px 11px; font-family: var(--body); font-size: .8rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
@@ -538,6 +637,11 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 .settings-modal__close { width: 30px; height: 30px; flex: 0 0 auto; border: none; background: rgba(35,39,64,.06); color: var(--ink-soft); border-radius: 7px; font-size: .9rem; cursor: pointer; }
 .settings-modal__close:hover { background: rgba(35,39,64,.12); color: var(--navy); }
 .settings-modal__intro { font-size: .86rem; color: var(--ink-soft); line-height: 1.5; margin-bottom: 18px; }
+.settings-acct { display: flex; flex-direction: column; gap: 7px; padding: 12px 14px; margin-bottom: 20px; border: 1px solid var(--border); border-radius: 10px; background: rgba(35,39,64,.025); }
+.settings-acct:empty { display: none; }
+.settings-acct .acct-last-pub { padding: 0 1px; }
+.settings-acct .acct-item { align-self: flex-start; width: auto; padding: 7px 13px; border: 1px solid var(--border); font-weight: 600; }
+.settings-acct .acct-item:hover { background: rgba(35,39,64,.06); }
 .settings-modal .layout-setting { grid-template-columns: 1fr; gap: 13px; margin-bottom: 14px; }
 .settings-modal .layout-setting:last-child { margin-bottom: 0; }
 
@@ -560,12 +664,18 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 .ap-modal__btn--danger:hover { filter: brightness(1.12); }
 
 .ap-chg-list { list-style: none; margin: 2px 0 4px; padding: 0; border: 1px solid var(--border); border-radius: 9px; overflow: hidden; }
-.ap-chg { display: flex; align-items: center; gap: 11px; padding: 10px 13px; background: #fff; }
+.ap-chg { display: flex; align-items: flex-start; gap: 11px; padding: 10px 13px; background: var(--surface); }
 .ap-chg + .ap-chg { border-top: 1px solid var(--border); }
-.ap-chg__ico { font-size: 1.12rem; flex: 0 0 auto; }
-.ap-chg__name { font-family: var(--display); font-size: 1.08rem; font-weight: 600; color: var(--navy); flex: 1 1 auto; }
-.ap-chg__see { font-size: .8rem; font-weight: 700; color: var(--gold-ink); text-decoration: none; white-space: nowrap; }
+.ap-chg__ico { font-size: 1.12rem; flex: 0 0 auto; line-height: 1.5; }
+.ap-chg__meta { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.ap-chg__name { font-family: var(--display); font-size: 1.08rem; font-weight: 600; color: var(--navy); }
+.ap-chg__blocks { font-size: .8rem; color: var(--ink-soft); line-height: 1.45; }
+.ap-chg__see { font-size: .8rem; font-weight: 700; color: var(--gold-ink); text-decoration: none; white-space: nowrap; margin-top: 2px; }
 .ap-chg__see:hover { text-decoration: underline; text-underline-offset: 2px; }
+/* «x upubliserte endringer» er klikkbar — åpner en oversikt over hva som er endret */
+.ctx .pub-count { cursor: pointer; transition: filter .12s, box-shadow .12s; }
+.ctx .pub-count:hover { filter: brightness(1.06); box-shadow: 0 0 0 3px rgba(212,175,55,.25); }
+.ctx .pub-count:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(212,175,55,.45); }
 </style>
 <link rel="stylesheet" href="admin-common.css">
 <link rel="stylesheet" href="admin-modules.css?v=20260627i">
@@ -576,16 +686,16 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
   <header class="a-header">
     <img src="assets/apeiron-logo.png" alt="">
     <h1>Admin-senter</h1>
+    <a class="a-back" href="index.html" data-keep-token data-self><span class="a-back__ico">←</span> <span class="a-back__txt">Tilbake til nettsiden</span></a>
     <div class="ctx" id="ctx">
-      <a id="ctx-see" href="#" target="_blank" rel="noopener" data-keep-token>Se siden ↗</a>
       <span class="pub-count" id="pub-count"></span>
       <button class="reset-link" id="reset-all-btn" type="button" style="display:none" title="Tilbakestill alle upubliserte endringer til siste publiserte versjon">↺ Angre alle</button>
-      <button class="pub-btn pub-btn--git" id="gh-pub-btn" type="button" style="display:none">☁ Publiser til GitHub</button>
+      <button class="pub-btn pub-btn--git" id="gh-pub-btn" type="button" style="display:none">☁ Publiser</button>
     </div>
-    <span class="last-pub" id="last-pub" style="display:none"></span>
-    <span class="gh-auth" id="gh-auth"></span>
-    <button class="a-gear" id="settings-btn" type="button" title="Innstillinger" aria-label="Innstillinger">⚙</button>
-    <a href="index.html" target="_blank" rel="noopener" data-keep-token>Se nettsiden ↗</a>
+    <button class="a-login" id="gh-login-bar" type="button" style="display:none">Logg inn</button>
+    <div class="acct" id="acct">
+      <button class="a-gear" id="settings-btn" type="button" aria-haspopup="dialog" aria-expanded="false" title="Innstillinger" aria-label="Innstillinger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></button>
+    </div>
   </header>
 
   <div class="tabbar-shell">
@@ -648,11 +758,10 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
           </div>
           <div class="info-card">
             <h3>Snarveier</h3>
-            <div class="quick-links">
-              <a href="index.html" target="_blank" rel="noopener" data-keep-token><span class="ql-ico">🌐</span> Se nettsiden <span class="ql-sub">forsiden</span></a>
-              <a href="nyheter.html" target="_blank" rel="noopener" data-keep-token><span class="ql-ico">📰</span> Nyhetssiden <span class="ql-sub">med arkiv</span></a>
+            <div class="quick-links" id="quick-links">
               <a href="README.md" target="_blank" rel="noopener" data-keep-token><span class="ql-ico">📘</span> Veiledning <span class="ql-sub">README.md</span></a>
             </div>
+            <button type="button" class="ql-add" id="ql-add-btn">+ Legg til snarvei</button>
           </div>
         </div>
       </div>
@@ -675,6 +784,11 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
       <button class="settings-modal__close" id="settings-close" type="button" aria-label="Lukk innstillinger">✕</button>
     </div>
     <p class="settings-modal__intro">Disse valgene styrer bare hvordan admin-senteret ser ut for deg. De lagres i din egen nettleser og endrer ingenting på selve nettsiden.</p>
+    <div class="settings-acct" id="settings-acct" style="display:none">
+      <div class="gh-auth" id="gh-auth"></div>
+      <div class="acct-last-pub" id="last-pub" style="display:none"></div>
+      <button class="acct-item" id="gh-logout-item" type="button" style="display:none">↪ Logg ut</button>
+    </div>
     <div class="layout-setting" id="nav-setting">
       <div class="layout-setting__txt">
         <h3>Navigasjon</h3>
@@ -711,13 +825,36 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
         </button>
       </div>
     </div>
+    <div class="layout-setting" id="theme-setting">
+      <div class="layout-setting__txt">
+        <h3>Fargetema</h3>
+        <p>Mykere flater enn ren hvit, så det blir behageligere å jobbe i admin over tid. <b>Varm</b> følger pergament-stilen på nettsiden, <b>Sval</b> er kjølig og nøytral, <b>Salvie</b> er en dempet grønngrå. Valget lagres i nettleseren din.</p>
+      </div>
+      <div class="layout-seg" role="radiogroup" aria-label="Fargetema">
+        <button type="button" class="layout-seg__opt" data-theme="varm" role="radio" aria-checked="false">
+          <span class="theme-sw theme-sw--varm"><i></i><b></b></span>
+          <span class="ls-name">Varm</span>
+          <span class="ls-sub">Pergament, som nettsiden</span>
+        </button>
+        <button type="button" class="layout-seg__opt" data-theme="sval" role="radio" aria-checked="false">
+          <span class="theme-sw theme-sw--sval"><i></i><b></b></span>
+          <span class="ls-name">Sval</span>
+          <span class="ls-sub">Kjølig og nøytral</span>
+        </button>
+        <button type="button" class="layout-seg__opt" data-theme="salvie" role="radio" aria-checked="false">
+          <span class="theme-sw theme-sw--salvie"><i></i><b></b></span>
+          <span class="ls-name">Salvie</span>
+          <span class="ls-sub">Dempet grønngrå</span>
+        </button>
+      </div>
+    </div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 <div id="bulk-host" class="ph-wrap" aria-hidden="true" style="position:fixed;left:-10000px;top:0;width:880px;height:1px;overflow:hidden;opacity:0;pointer-events:none;"></div>
 
-<script src="admin-common.js"></script>
+<script src="admin-common.js?v=20260628b"></script>
 <script src="admin-panel-shell.js?v=20260627b"></script>
 <script src="admin-github.js"></script>
 <!-- C-moduler: paneler som mountes inline i skallet (erstatter frittstående *-admin.html etter hvert) -->
@@ -726,6 +863,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 <script src="membership-config.js"></script>
 <script src="footer-icons.js"></script>
 <script src="site-content.js"></script>
+<script src="admin-shortcuts.js"></script>
 <script src="hjelp-content.js"></script>
 <script src="news-content.js"></script>
 <script src="nav-content.js"></script>
@@ -742,13 +880,14 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 <script src="marked-content.js"></script>
 <script src="galleri-content.js"></script>
 <script src="pensum-content.js"></script>
-<script src="admin-modules/medlemskap.js"></script>
+<script src="admin-modules/medlemskap.js?v=20260628f"></script>
 <script src="admin-modules/footer.js"></script>
 <script src="admin-modules/hjelp.js"></script>
 <script src="admin-modules/oppnaelser.js"></script>
 <script src="admin-modules/utmerkelser.js"></script>
 <script src="admin-modules/om-oss.js"></script>
-<script src="admin-modules/forsiden.js"></script>
+<script src="admin-modules/forsiden.js?v=20260628a"></script>
+<script src="admin-modules/shortcuts.js"></script>
 <script src="admin-modules/styret.js?v=20260627c"></script>
 <script src="admin-modules/begrep.js"></script>
 <script src="admin-modules/oppslag.js"></script>
@@ -775,13 +914,16 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
     { id: 'utmerkelser',  ico: '🎖️', label: 'Utmerkelser',   module: true, ls: ['apeiron-utmerkelser-v1'],               desc: 'Priser og utmerkelser.' },
     { id: 'begrep',       ico: '📓', label: 'Begrep',        module: true, ls: ['apeiron-begrep-v1'],                    desc: 'Utgaver, podkast, film og julekalender.' },
     { id: 'merch',        ico: '🛍️', label: 'Merch',         module: true, ls: ['apeiron-merch-v1', 'apeiron-merch-info-v1', 'apeiron-merch-subhero-v1'], desc: 'Produktene i nettbutikken.' },
-    { id: 'medlemskap',   ico: '🎟️', label: 'Medlemskap',    module: true, ls: ['apeiron-membership-v1'],               desc: 'Priser og innmeldingssteg.' },
+    { id: 'medlemskap',   ico: '🎟️', label: 'Medlemskap',    module: true, ls: ['apeiron-membership-v1'],               desc: 'Hele «Bli medlem»-blokken: intro, fordeler, Vipps, priser og innmeldingssteg.' },
     { id: 'hjelp',        ico: '🆘', label: 'Hjelp',         module: true, ls: ['apeiron-hjelp-v1'],                     desc: 'Ressurser og kontakter på Hjelp-siden.' },
     { id: 'meny',         ico: '🧭', label: 'Meny',          module: true, ls: ['apeiron-nav-v1', 'apeiron-nav-align-v1'], desc: 'Lenkene i hovedmenyen.' },
     { id: 'footer',       ico: '👣', label: 'Footer',        module: true, ls: ['apeiron-footer-v1'],                    desc: 'Bunntekst, lenker og sosiale ikoner.' },
     { id: 'marked',       ico: '⇄', label: 'Marked',        module: true, ls: ['apeiron-marked-v1'],                    desc: 'Teksten på «Pensum-markedet»-siden (kommer snart).' },
     { id: 'galleri',      ico: '🖼️', label: 'Galleri',       module: true, ls: ['apeiron-galleri-v1'],                   desc: 'Topp-banneret på Galleri-siden (bildene styres i Google Drive).' },
-    { id: 'pensum',       ico: '📚', label: 'Pensum',        module: true, ls: ['apeiron-pensum-v1'],                    desc: 'Emnekatalogen, studieretninger og grader.' }
+    { id: 'pensum',       ico: '📚', label: 'Pensum',        module: true, ls: ['apeiron-pensum-v1'],                    desc: 'Emnekatalogen, studieretninger og grader.' },
+    // Usynlig (hidden): har ingen egen side i menyen — finnes kun for å publisere
+    // de egendefinerte snarveiene (admin-shortcuts.js) gjennom den vanlige flyten.
+    { id: 'shortcuts',    ico: '🔗', label: 'Snarveier',     module: true, ls: ['apeiron-shortcuts-v1'], hidden: true,  desc: 'Egendefinerte snarveier i Admin-senteret.' }
   ];
 
   // Gruppering av panelene for sidemenyen (1A). Dekker alle 16 id-er over.
@@ -913,7 +1055,6 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
   var sidenav = document.getElementById('sidenav');
   var adminEl = document.getElementById('admin');
   var ctx = document.getElementById('ctx');
-  var ctxSee = document.getElementById('ctx-see');
   var hint = document.getElementById('hint');
   var homeBtn = null;
   var current = null;
@@ -1272,15 +1413,234 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
     });
   }
 
+  /* ─── BLOKK-NIVÅ ENDRINGER ───
+     Sammenligner panelets utkast (localStorage) mot den publiserte baseline-globalen
+     (lastet i admin via *-content.js) og lister hvilke BLOKKER som avviker. Brukes i
+     «upubliserte endringer»-oversikten og i git-meldingen. Faller stille tilbake til
+     panel-nivå om baseline mangler/ukjent. */
+  var LS_BASELINE = {
+    'apeiron-index-v1':        function () { return window.INDEX_CONTENT; },
+    'apeiron-news-v1':         function () { return window.NEWS_CONTENT; },
+    'apeiron-oppslag-v1':      function () { return window.OPPSLAG_CONTENT; },
+    'apeiron-om-page-v1':      function () { return window.OM_PAGE; },
+    'apeiron-styret-v1':       function () { return window.STYRET_CONTENT; },
+    'apeiron-oppnaelser-v1':   function () { return window.OPPNAELSER_CONTENT; },
+    'apeiron-utmerkelser-v1':  function () { return window.UTMERKELSER_CONTENT; },
+    'apeiron-begrep-v1':       function () { return window.BEGREP_CONTENT; },
+    'apeiron-merch-v1':        function () { return window.MERCH_PRODUCTS; },
+    'apeiron-merch-info-v1':   function () { return { info: window.MERCH_INFO, label: window.MERCH_INFO_LABEL }; },
+    'apeiron-merch-subhero-v1':function () { return window.MERCH_SUBHERO; },
+    'apeiron-membership-v1':   function () { return window.MEMBERSHIP_CONFIG; },
+    'apeiron-hjelp-v1':        function () { return window.HJELP_CONTENT; },
+    'apeiron-nav-v1':          function () { return window.SITE_NAV; },
+    'apeiron-nav-align-v1':    function () { return window.SITE_NAV_CONFIG; },
+    'apeiron-footer-v1':       function () { return window.SITE_FOOTER; },
+    'apeiron-marked-v1':       function () { return window.MARKED_CONTENT; },
+    'apeiron-galleri-v1':      function () { return window.GALLERI_CONTENT; },
+    'apeiron-pensum-v1':       function () { return window.PENSUM_CONTENT; }
+  };
+  var BLOCK_LABELS = {
+    hero: 'Hero', kontakt: 'Kontakt', arrangementer: 'Arrangementer', aporetisk: 'Aporetisk Aften',
+    fadderuke: 'Fadderukene', 'bli-medlem': 'Bli medlem', 'oppslagstavla-teaser': 'Oppslagstavla',
+    sectionOrder: 'Seksjonsrekkefølge', heroGallery: 'Galleribilder', intro: 'Tittel/ingress',
+    posters: 'Plakater', items: 'Saker', members: 'Styremedlemmer', sections: 'Seksjoner',
+    faq: 'Spørsmål og svar', subhero: 'Topptekst', meta: 'Innstillinger', awards: 'Oppnåelser',
+    people: 'Utmerkelser', courses: 'Emner', emner: 'Emner', tracks: 'Studieretninger',
+    degrees: 'Grader', sifra: 'Si fra', studier: 'Faglig hjelp', helse: 'Psykisk helse',
+    fysisk: 'Fysisk helse', akutt: 'Akutt hjelp', cards: 'Kort', links: 'Lenker',
+    social: 'Sosiale lenker', steps: 'Innmeldingssteg', prices: 'Priser', tiers: 'Priser',
+    info: 'Infotekst', label: 'Etikett', align: 'Justering'
+  };
+  function _chgIsObj(v) { return v && typeof v === 'object' && !Array.isArray(v); }
+  function _chgEq(a, b) { try { return JSON.stringify(a) === JSON.stringify(b); } catch (_) { return a === b; } }
+  function _chgEsc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function _chgName(item, fallback) {
+    if (_chgIsObj(item)) {
+      var ks = ['title', 'tittel', 'heading', 'navn', 'name', 'label', 'question', 'spm', 'term', 'word', 'honor', 'role', 'rolle'];
+      for (var i = 0; i < ks.length; i++) { var v = item[ks[i]]; if (typeof v === 'string' && v.trim()) return v.trim(); }
+    }
+    return fallback;
+  }
+  function _chgPretty(k) {
+    if (BLOCK_LABELS[k]) return BLOCK_LABELS[k];
+    var s = String(k).replace(/[-_]/g, ' ');
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  }
+  function diffBlocks(draft, base) {
+    var out = [];
+    function add(x) { if (x && out.indexOf(x) < 0) out.push(x); }
+    if (Array.isArray(draft) && Array.isArray(base)) {
+      var max = Math.max(draft.length, base.length);
+      for (var i = 0; i < max; i++) {
+        if (i >= base.length) add(_chgName(draft[i], 'nytt element'));
+        else if (i >= draft.length) add(_chgName(base[i], 'fjernet element'));
+        else if (!_chgEq(draft[i], base[i])) add(_chgName(draft[i], 'element ' + (i + 1)));
+      }
+    } else if (_chgIsObj(draft) && _chgIsObj(base)) {
+      var keys = {};
+      Object.keys(draft).forEach(function (k) { keys[k] = 1; });
+      Object.keys(base).forEach(function (k) { keys[k] = 1; });
+      Object.keys(keys).forEach(function (k) { if (!_chgEq(draft[k], base[k])) add(_chgPretty(k)); });
+    } else if (!_chgEq(draft, base)) { add('Innhold'); }
+    return out;
+  }
+  // Endrede blokker for ett panel (samlet over alle dets localStorage-nøkler).
+  function panelBlocks(p) {
+    var blocks = [];
+    (p.ls || []).forEach(function (k) {
+      var raw; try { raw = localStorage.getItem(k); } catch (_) { return; }
+      if (raw == null) return;
+      var draft; try { draft = JSON.parse(raw); } catch (_) { return; }
+      var bfn = LS_BASELINE[k]; var base = bfn ? bfn() : undefined;
+      if (base == null) return;
+      diffBlocks(draft, base).forEach(function (b) { if (blocks.indexOf(b) < 0) blocks.push(b); });
+    });
+    return blocks;
+  }
+
   // Liste over endrede paneler til modalene. withLinks=true legger til en
-  // «Se siden ↗»-lenke (forhåndsvis før publisering).
+  // «Se siden ↗»-lenke (forhåndsvis før publisering). Hver rad viser også hvilke
+  // BLOKKER i panelet som er endret.
   function changeListHTML(list, withLinks) {
     return '<ul class="ap-chg-list">' + list.map(function (p) {
       var def = window.AdminPanels && window.AdminPanels.get(p.id);
       var see = def && def.see;
       var link = (withLinks && see) ? '<a class="ap-chg__see" href="' + see.href + '" target="_blank" rel="noopener" data-keep-token>Se siden ↗</a>' : '';
-      return '<li class="ap-chg"><span class="ap-chg__ico">' + p.ico + '</span><span class="ap-chg__name">' + p.label + '</span>' + link + '</li>';
+      var blocks = panelBlocks(p);
+      var sub = blocks.length
+        ? '<span class="ap-chg__blocks">' + blocks.slice(0, 12).map(_chgEsc).join(', ') + (blocks.length > 12 ? ' +' + (blocks.length - 12) + ' flere' : '') + '</span>'
+        : '';
+      return '<li class="ap-chg"><span class="ap-chg__ico">' + p.ico + '</span>'
+        + '<span class="ap-chg__meta"><span class="ap-chg__name">' + p.label + '</span>' + sub + '</span>'
+        + link + '</li>';
     }).join('') + '</ul>';
+  }
+
+  /* ─── EGENDEFINERTE SNARVEIER (delt globalt via Git) ───
+     Lagres som utkast i localStorage (apeiron-shortcuts-v1) og publiseres som
+     admin-shortcuts.js gjennom den skjulte «shortcuts»-panelet. Veiledning
+     (README) er fast og kan ikke fjernes. */
+  var SC_LS = 'apeiron-shortcuts-v1';
+  // Kjente seksjoner som kan gjøres til snarvei fra «+ Legg til snarvei» på Oversikt.
+  // (Inne i en seksjon kommer knappen «Legg til som snarvei» uansett — den henter
+  //  målet fra panelets egen side, så ALLE seksjoner i alle paneler dekkes.)
+  var SHORTCUT_SECTIONS = [
+    { group: 'Forsiden', page: 'index.html', id: 'oppslagstavla-teaser', label: 'Oppslagstavla', ico: '📌' },
+    { group: 'Forsiden', page: 'index.html', id: 'arrangementer', label: 'Arrangementer', ico: '📅' },
+    { group: 'Forsiden', page: 'index.html', id: 'aporetisk', label: 'Aporetisk Aften', ico: '🍷' },
+    { group: 'Forsiden', page: 'index.html', id: 'fadderuke', label: 'Fadderukene', ico: '🎓' },
+    { group: 'Forsiden', page: 'index.html', id: 'bli-medlem', label: 'Bli medlem', ico: '✍️' },
+    { group: 'Forsiden', page: 'index.html', id: 'kontakt', label: 'Kontakt', ico: '✉️' },
+    { group: 'Hjelp', page: 'hjelp.html', id: 'sifra', label: 'Si fra', ico: '🗣️' },
+    { group: 'Hjelp', page: 'hjelp.html', id: 'studier', label: 'Faglig hjelp', ico: '📚' },
+    { group: 'Hjelp', page: 'hjelp.html', id: 'helse', label: 'Psykisk helse', ico: '💚' },
+    { group: 'Hjelp', page: 'hjelp.html', id: 'fysisk', label: 'Fysisk helse', ico: '🩺' },
+    { group: 'Hjelp', page: 'hjelp.html', id: 'akutt', label: 'Akutt hjelp', ico: '🚨' },
+    { group: 'Pensum', page: 'pensum.html', id: 'ps-katalog', label: 'Emnekatalog', ico: '📚' },
+    { group: 'Pensum', page: 'pensum.html', id: 'ps-marked', label: 'Pensum-markedet', ico: '⇄' },
+    { group: 'Pensum', page: 'pensum.html', id: 'ps-tracks', label: 'Studieretningene', ico: '🧭' },
+    { group: 'Pensum', page: 'pensum.html', id: 'ps-grader', label: 'Grader & løp', ico: '🎓' }
+  ];
+  // Hele sider (alle paneler med en egen side) — utledet fra PANELS + panelets «see».
+  function pageShortcuts() {
+    var seen = {};
+    return PANELS.filter(function (p) { return !p.hidden; }).map(function (p) {
+      var def = window.AdminPanels && window.AdminPanels.get(p.id);
+      var href = def && def.see && def.see.href;
+      if (!href || seen[_scNorm(href)]) return null;
+      seen[_scNorm(href)] = 1;
+      return { group: 'Hele sider', id: 'side-' + p.id, label: p.label, href: href, ico: p.ico || '🔗' };
+    }).filter(Boolean);
+  }
+  function getShortcuts() {
+    try { var raw = localStorage.getItem(SC_LS); if (raw != null) { var a = JSON.parse(raw); if (Array.isArray(a)) return a; } } catch (_) {}
+    return (window.ADMIN_SHORTCUTS || []).slice();
+  }
+  function setShortcuts(arr) {
+    var base = JSON.stringify(window.ADMIN_SHORTCUTS || []);
+    try {
+      if (JSON.stringify(arr) === base) localStorage.removeItem(SC_LS);
+      else localStorage.setItem(SC_LS, JSON.stringify(arr));
+    } catch (_) {}
+    renderShortcuts(); refreshStatus();
+  }
+  function _scNorm(h) { return String(h || '').replace(/^\.?\//, ''); }
+  function renderShortcuts() {
+    var box = document.getElementById('quick-links');
+    if (!box) return;
+    Array.prototype.slice.call(box.querySelectorAll('.ql-item')).forEach(function (n) { n.remove(); });
+    getShortcuts().forEach(function (s) {
+      var item = document.createElement('div'); item.className = 'ql-item';
+      var a = document.createElement('a'); a.className = 'ql-link';
+      a.href = s.href; a.target = '_blank'; a.rel = 'noopener'; a.setAttribute('data-keep-token', '');
+      a.innerHTML = '<span class="ql-ico">' + (s.ico || '🔗') + '</span><span class="ql-nm">' + _chgEsc(s.label) + '</span>';
+      var rm = document.createElement('button'); rm.type = 'button'; rm.className = 'ql-rm'; rm.textContent = '×';
+      rm.title = 'Fjern snarvei'; rm.setAttribute('aria-label', 'Fjern snarvei ' + s.label);
+      rm.addEventListener('click', function () { window.AdminShortcuts.removeHref(s.href); });
+      item.appendChild(a); item.appendChild(rm); box.appendChild(item);
+    });
+  }
+  function openShortcutPicker() {
+    var have = {}; getShortcuts().forEach(function (s) { have[_scNorm(s.href)] = 1; });
+    // Hele sider først, deretter kjente seksjoner gruppert per side.
+    var opts = pageShortcuts().concat(SHORTCUT_SECTIONS.map(function (s) {
+      return { group: s.group, id: s.id, label: s.label, href: s.page + '#' + s.id, ico: s.ico };
+    }));
+    var groups = {};
+    opts.forEach(function (o) { (groups[o.group] = groups[o.group] || []).push(o); });
+    var order = ['Hele sider'].concat(Object.keys(groups).filter(function (g) { return g !== 'Hele sider'; }));
+    var html = '<p>Velg en side eller seksjon å lage en snarvei til. Snarveien vises her på Oversikt for <b>alle redaktører</b> (deles ved publisering).</p><div class="ql-pick">';
+    order.forEach(function (g) {
+      if (!groups[g]) return;
+      html += '<div class="ql-pick__grp">' + _chgEsc(g) + '</div>';
+      groups[g].forEach(function (o) {
+        var added = !!have[_scNorm(o.href)];
+        html += '<button type="button" class="ql-pick__opt" data-href="' + _chgEsc(o.href) + '" data-label="' + _chgEsc(o.label) + '" data-ico="' + _chgEsc(o.ico || '🔗') + '"' + (added ? ' disabled' : '') + '>'
+          + '<span>' + (o.ico || '🔗') + '</span><span>' + _chgEsc(o.label) + '</span>'
+          + (added ? '<span class="chk">✓ lagt til</span>' : '') + '</button>';
+      });
+    });
+    html += '</div>';
+    apModal({ title: 'Legg til snarvei', bodyHTML: html, okLabel: 'Ferdig', cancelLabel: null });
+    setTimeout(function () {
+      var ov = document.querySelector('.ap-modal-ov');
+      if (!ov) return;
+      ov.querySelectorAll('.ql-pick__opt').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          if (btn.disabled) return;
+          window.AdminShortcuts.addTarget({ label: btn.getAttribute('data-label'), href: btn.getAttribute('data-href'), ico: btn.getAttribute('data-ico') });
+          btn.disabled = true;
+          if (!btn.querySelector('.chk')) { var c = document.createElement('span'); c.className = 'chk'; c.textContent = '✓ lagt til'; btn.appendChild(c); }
+        });
+      });
+    }, 30);
+  }
+  // Snarvei-API. Nøkkel = href (så samme seksjon/side ikke kan legges til to ganger).
+  window.AdminShortcuts = {
+    hasHref: function (href) { var n = _scNorm(href); return getShortcuts().some(function (s) { return _scNorm(s.href) === n; }); },
+    addTarget: function (t) {
+      if (!t || !t.href) return false;
+      if (this.hasHref(t.href)) return true;
+      var arr = getShortcuts();
+      arr.push({ id: t.id || ('sc-' + Date.now()), label: t.label || t.href, href: t.href, ico: t.ico || '🔗' });
+      setShortcuts(arr);
+      window.AdminCommon.toast('Snarvei lagt til: ' + (t.label || t.href));
+      return true;
+    },
+    removeHref: function (href) { var n = _scNorm(href); setShortcuts(getShortcuts().filter(function (s) { return _scNorm(s.href) !== n; })); return false; },
+    toggleTarget: function (t) { return this.hasHref(t.href) ? this.removeHref(t.href) : this.addTarget(t); }
+  };
+
+  // Klikk på «x upubliserte endringer» → oversikt over hva som er endret (read-only).
+  function showChangesOverview() {
+    var list = changedPanels();
+    if (!list.length) { window.AdminCommon.toast('Ingen upubliserte endringer'); return; }
+    apModal({
+      title: list.length === 1 ? '1 upublisert endring' : list.length + ' upubliserte endringer',
+      bodyHTML: '<p>Dette er endringene som ennå ikke er publisert. De ligger lagret i din nettleser til du publiserer — ingen ser dem før det.</p>'
+        + changeListHTML(list, false),
+      okLabel: 'Lukk', cancelLabel: null
+    });
   }
 
   var bulkBusy = false;
@@ -1470,22 +1830,40 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
     if (ghPubBtn) ghPubBtn.style.display = (authed && n > 0) ? '' : 'none';
     refreshUndoVisibility();
   }
+  function acctMenuEl() { return document.getElementById('acct-menu'); }
+  function closeAcctMenu() {
+    var m = acctMenuEl(); var g = document.getElementById('settings-btn');
+    if (m) m.hidden = true;
+    if (g) g.setAttribute('aria-expanded', 'false');
+  }
+  function openAcctMenu() {
+    var m = acctMenuEl(); var g = document.getElementById('settings-btn');
+    if (m) m.hidden = false;
+    if (g) g.setAttribute('aria-expanded', 'true');
+  }
+  function toggleAcctMenu() {
+    var m = acctMenuEl();
+    if (m && m.hidden) openAcctMenu(); else closeAcctMenu();
+  }
   function renderAuth() {
     if (!ghAuth) return;
     var s = (window.AdminGitHub && window.AdminGitHub.state) || { authenticated: false };
+    var loginBar = document.getElementById('gh-login-bar');
+    var logoutItem = document.getElementById('gh-logout-item');
+    var acctBox = document.getElementById('settings-acct');
+    // Vis konto-boksen i Innstillinger bare når man ER innlogget (da finnes det noe
+    // å gjøre: «Logg ut» + sist publisert). Ellers skjuler vi den helt — ingen
+    // «Ikke innlogget»-status. Innlogging skjer via «Logg inn» oppe i headeren.
+    if (acctBox) acctBox.style.display = s.authenticated ? '' : 'none';
     if (s.authenticated) {
-      ghAuth.innerHTML = '<span class="gh-dot"></span><span class="gh-who">' + (s.login || 'innlogget') + '</span><button class="gh-link" id="gh-logout" type="button">Logg ut</button>';
-      var lo = document.getElementById('gh-logout');
-      if (lo) lo.addEventListener('click', function () { window.AdminGitHub.logout().then(function () { renderAuth(); updateGhVisibility(changedPanels().length); }); });
+      ghAuth.innerHTML = '<div class="gh-id"><span class="gh-dot"></span><span class="gh-who">Innlogget som <b>' + (s.login || 'ukjent') + '</b></span></div>';
+      if (loginBar) loginBar.style.display = 'none';
+      if (logoutItem) logoutItem.style.display = '';
     } else {
-      var unavailable = !!(s.offline || s.unavailable);
-      var label = (s.error === 'not_allowed') ? ('GitHub: ingen tilgang (' + (s.login || '') + ')') : '☁ Logg inn for å publisere';
-      ghAuth.innerHTML = '<button class="gh-link" id="gh-login" type="button">' + label + '</button>';
-      var li = document.getElementById('gh-login');
-      if (li) li.addEventListener('click', function () {
-        if (unavailable) { window.AdminCommon.toast('GitHub-publisering virker kun på den publiserte siden (Cloudflare), ikke når du åpner filene lokalt.'); return; }
-        window.AdminGitHub.login();
-      });
+      var notAllowed = (s.error === 'not_allowed');
+      ghAuth.innerHTML = '<div class="gh-id"><span class="gh-dot gh-dot--off"></span><span class="gh-who">' + (notAllowed ? ('Ingen tilgang (' + (s.login || '') + ')') : 'Ikke innlogget') + '</span></div>';
+      if (loginBar) { loginBar.style.display = ''; loginBar.textContent = notAllowed ? 'Ingen tilgang' : 'Logg inn'; }
+      if (logoutItem) logoutItem.style.display = 'none';
     }
     updateGhVisibility(changedPanels().length);
   }
@@ -1563,7 +1941,10 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
           if (hostDiv) hostDiv.innerHTML = '';
           if (!files.length) { resetBtns(); window.AdminCommon.toast('Ingenting å publisere'); return; }
           window.AdminCommon.toast('Publiserer ' + files.length + (files.length === 1 ? ' fil' : ' filer') + '…');
-          var msg = 'Admin: oppdater ' + list.map(function (p) { return p.label; }).join(', ');
+          var msg = 'Admin: oppdater ' + list.map(function (p) {
+            var b = panelBlocks(p);
+            return p.label + (b.length ? ' (' + b.slice(0, 6).join(', ') + (b.length > 6 ? ', +' + (b.length - 6) : '') + ')' : '');
+          }).join('; ');
           window.AdminGitHub.commit(files, msg).then(function (res) {
             resetBtns();
             if (res && res.ok) {
@@ -1617,7 +1998,6 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
   }
   function showCtx(on) {
     panelOn = !!on;
-    if (!on && ctxSee) ctxSee.style.display = 'none';
     syncHeader();
   }
 
@@ -1663,8 +2043,6 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
       activeCtrl = ctrl;
       applyPreviewLayout(panelHostInner);
       applyShellChrome();
-      if (def.see) { ctxSee.href = def.see.href; ctxSee.textContent = def.see.label; ctxSee.style.display = ''; }
-      else ctxSee.style.display = 'none';
       showCtx(true);
       panelHost.scrollTop = 0;
     } else {
@@ -1871,6 +2249,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
     tabBtns = {}; cardEls = {}; sideBtns = {};
     var btns = tabBtns;
     PANELS.forEach(function (p) {
+      if (p.hidden) return;
       var b = document.createElement('button');
       b.type = 'button'; b.className = 'tab';
       b.innerHTML = '<span class="ico">' + p.ico + '</span>' + p.label + '<span class="tab-dot" title="Ulagrede endringer"></span>';
@@ -1910,6 +2289,39 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
     paint();
   }
 
+  var ADMIN_THEME_KEY = 'apeiron-admin-theme';
+  function adminTheme() {
+    try { var t = localStorage.getItem(ADMIN_THEME_KEY); return ['varm', 'sval', 'salvie'].indexOf(t) >= 0 ? t : 'varm'; } catch (_) { return 'varm'; }
+  }
+  function setAdminTheme(v) {
+    var val = ['varm', 'sval', 'salvie'].indexOf(v) >= 0 ? v : 'varm';
+    try { localStorage.setItem(ADMIN_THEME_KEY, val); } catch (_) {}
+    document.documentElement.setAttribute('data-admin-theme', val);
+    return val;
+  }
+  function initThemeSetting() {
+    var box = document.getElementById('theme-setting');
+    if (!box) return;
+    var opts = box.querySelectorAll('[data-theme]');
+    var names = { varm: 'Varm', sval: 'Sval', salvie: 'Salvie' };
+    function paint() {
+      var cur = adminTheme();
+      Array.prototype.forEach.call(opts, function (b) {
+        var on = b.getAttribute('data-theme') === cur;
+        b.classList.toggle('active', on);
+        b.setAttribute('aria-checked', on ? 'true' : 'false');
+      });
+    }
+    Array.prototype.forEach.call(opts, function (b) {
+      b.addEventListener('click', function () {
+        setAdminTheme(b.getAttribute('data-theme'));
+        paint();
+        window.AdminCommon.toast('Fargetema: ' + (names[adminTheme()] || ''));
+      });
+    });
+    paint();
+  }
+
   function init() {
     // Nullstill upubliserte utkast til publisert versjon når admin åpnes i en ny
     // økt — MÅ kjøre før build()/panel-mount, så modulene leser publisert data.
@@ -1935,11 +2347,22 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
       var tok = '';
       try { var p = new URLSearchParams(location.search); if (p.get('t')) tok = p.get('t'); } catch (_) {}
       var url = href + (tok ? ((href.indexOf('?') >= 0 ? '&' : '?') + 't=' + encodeURIComponent(tok)) : '') + hash;
-      window.open(url, '_blank', 'noopener');
+      if (a.hasAttribute('data-self')) { window.location.href = url; }
+      else { window.open(url, '_blank', 'noopener'); }
     });
   pubBtn = document.getElementById('pub-btn');
     pubCount = document.getElementById('pub-count');
+    if (pubCount) {
+      pubCount.setAttribute('role', 'button');
+      pubCount.setAttribute('tabindex', '0');
+      pubCount.setAttribute('title', 'Se hva som er endret');
+      pubCount.addEventListener('click', showChangesOverview);
+      pubCount.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showChangesOverview(); } });
+    }
     if (pubBtn) pubBtn.addEventListener('click', bulkExport);
+    var qlAdd = document.getElementById('ql-add-btn');
+    if (qlAdd) qlAdd.addEventListener('click', openShortcutPicker);
+    renderShortcuts();
     ghPubBtn = document.getElementById('gh-pub-btn');
     ghAuth = document.getElementById('gh-auth');
     if (ghPubBtn) ghPubBtn.addEventListener('click', bulkPublish);
@@ -1959,13 +2382,33 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
     var settingsBtn = document.getElementById('settings-btn');
     var settingsOv = document.getElementById('settings-ov');
     var settingsClose = document.getElementById('settings-close');
-    function openSettings() { if (settingsOv) { settingsOv.classList.add('show'); settingsOv.setAttribute('aria-hidden', 'false'); } }
+    var acctSettings = document.getElementById('acct-settings');
+    var loginBar = document.getElementById('gh-login-bar');
+    if (loginBar) loginBar.addEventListener('click', function () {
+      var s = (window.AdminGitHub && window.AdminGitHub.state) || {};
+      if (!window.AdminGitHub) { window.AdminCommon.toast('GitHub-publisering er ikke tilgjengelig her.'); return; }
+      if (s.offline || s.unavailable) { window.AdminCommon.toast('GitHub-publisering virker kun på den publiserte siden (Cloudflare), ikke når du åpner filene lokalt.'); return; }
+      window.AdminGitHub.login();
+    });
+    var logoutItem = document.getElementById('gh-logout-item');
+    if (logoutItem) logoutItem.addEventListener('click', function () {
+      closeAcctMenu();
+      if (window.AdminGitHub) window.AdminGitHub.logout().then(function () { renderAuth(); updateGhVisibility(changedPanels().length); });
+    });
+    function openSettings() { closeAcctMenu(); if (settingsOv) { settingsOv.classList.add('show'); settingsOv.setAttribute('aria-hidden', 'false'); } }
     function closeSettings() { if (settingsOv) { settingsOv.classList.remove('show'); settingsOv.setAttribute('aria-hidden', 'true'); } }
-    if (settingsBtn) settingsBtn.addEventListener('click', openSettings);
+    if (settingsBtn) settingsBtn.addEventListener('click', function (e) { e.stopPropagation(); openSettings(); });
+    if (acctSettings) acctSettings.addEventListener('click', openSettings);
     if (settingsClose) settingsClose.addEventListener('click', closeSettings);
     if (settingsOv) settingsOv.addEventListener('click', function (e) { if (e.target === settingsOv) closeSettings(); });
+    document.addEventListener('click', function (e) {
+      var acct = document.getElementById('acct');
+      if (acct && !acct.contains(e.target)) closeAcctMenu();
+    });
     document.addEventListener('keydown', function (e) {
       if (e.key !== 'Escape') return;
+      var menu = document.getElementById('acct-menu');
+      if (menu && !menu.hidden) { closeAcctMenu(); return; }
       var f = document.querySelector('.ph-wrap.pv-full');
       if (f) { f.classList.remove('pv-full'); kickResize(); }
       else closeSettings();
@@ -1976,6 +2419,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
     build();
     initNavSetting();
     initLayoutSetting();
+    initThemeSetting();
     initTabScroll();
     refreshStatus();
     setInterval(refreshStatus, 2500);

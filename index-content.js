@@ -1,5 +1,5 @@
 /* Innhold for forsiden (index.html / «Hjem») — TEKST-delene som endres ofte.
-   Sist oppdatert: 28.6.2026
+   Sist oppdatert: 22.6.2026
    Rediger direkte her, eller åpne Admin-senteret → Forsiden.
 
    Dekker forsiden (Hjem): hero + seksjons-introer (arrangementer/aporetisk/fadderuke) + bli medlem (intro) + kontakt.
@@ -18,9 +18,9 @@ window.INDEX_CONTENT = {
     "animation": "diagonal",
     "navClip": true,
     "dvdMotif": "photos",
+    "dvdSize": 100,
     "mosaicSizes": "varied",
     "polaStyle": "framed",
-    "dvdSize": 100,
     "heading": "Livet i Apeiron",
     "lede": "Glimt fra det sosiale livet i Apeiron: fester, fagkvelder og alt imellom."
   },
@@ -49,9 +49,9 @@ window.INDEX_CONTENT = {
     "lede": "Fra dyptpløyende fagkvelder til legendariske symposion. Se hele semesterprogrammet som liste, rutenett eller helhetlig oversikt, og legg det rett inn i din egen kalender."
   },
   "apo": {
-    "eyebrow": "Hver måned",
+    "eyebrow": "Fast hver måned",
     "title": "Aporetisk Aften",
-    "lede": "Én kveld i måneden samler vi oss rundt spørsmål noen presenterer, uten pensum og uten fasit. Vi tenker høyt, er uenige i godt selskap, og går hjem med flere spørsmål enn vi kom med. Ferskinger og veteraner er like velkomne.",
+    "lede": "Én kveld i måneden samler vi oss rundt ett eneste spørsmål, uten pensum og uten fasit. Vi tenker høyt, er uenige i godt selskap, og går hjem med flere spørsmål enn vi kom med. Ferskinger og veteraner er like velkomne.",
     "forWhom": "Åpent for alle",
     "greek": "ἀπορία",
     "greekSub": "a-po-ri-a · «rådvillhet»",
@@ -61,17 +61,6 @@ window.INDEX_CONTENT = {
     "eyebrow": "Velkommen til Dragvoll",
     "heading": "Fadderukene",
     "lede": "Studiestartens beste uker. Bli kjent med faget, byen og hverandre. Velg en dag for å se programmet."
-  },
-  "medlem": {
-    "eyebrow": "Bli en av oss",
-    "heading": "Bli medlem i Apeiron",
-    "lede": "Studerer du filosofi eller etikk ved NTNU? Da hører du hjemme her. Ett medlemskap, et helt fellesskap.",
-    "benefits": [
-      "Rabattert inngang på alle arrangementer",
-      "Gratis kaffe på lesesalen, og rabatt på Apeiron-pins",
-      "Et fellesskap av nysgjerrige folk på tvers av kull",
-      "Mulighet til å sitte i komité eller styre"
-    ]
   },
   "kontakt": {
     "eyebrow": "Kontakt",

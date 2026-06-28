@@ -171,6 +171,25 @@
     }).join(''), Array.isArray(C.programs) && C.programs.length);
 
     setText('ix-ps-note2', C.note2);
+
+    applySectionOrder(C.sectionOrder);
+  }
+
+  /* Endrer rekkefølgen på de fire innholdsblokkene på Pensum etter C.sectionOrder
+     (settes i Admin → Pensum). Topp-banner, seksjons-oppsettet og ansvarsfra-
+     skrivelsene ligger fast. Faller trygt tilbake til naturlig rekkefølge. */
+  function applySectionOrder(order) {
+    var KEYS = ['ps-katalog', 'ps-marked', 'ps-tracks', 'ps-grader'];
+    var ord = (Array.isArray(order) ? order : []).filter(function (k) { return KEYS.indexOf(k) >= 0; });
+    KEYS.forEach(function (k) { if (ord.indexOf(k) < 0) ord.push(k); });
+    var els = ord.map(function (k) { return document.getElementById(k); }).filter(Boolean);
+    if (els.length < 2) return;
+    var parent = els[0].parentNode;
+    if (!els.every(function (e) { return e.parentNode === parent; })) return;
+    var kids = Array.prototype.slice.call(parent.children);
+    var maxIdx = Math.max.apply(null, els.map(function (e) { return kids.indexOf(e); }));
+    var endRef = kids[maxIdx + 1] || null;
+    els.forEach(function (e) { parent.insertBefore(e, endRef); });
   }
 
   render();

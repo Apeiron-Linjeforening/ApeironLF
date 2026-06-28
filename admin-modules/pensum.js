@@ -29,7 +29,7 @@
           + '</ol>'
           + '<div class="tip-note">💾 Endringer lagres automatisk i nettleseren din.</div>'
         + '</div>'
-        + '<div class="panel"><h2>Topp-banner <small>øverst på siden</small></h2>'
+        + '<div class="panel" data-sec-key="topp"><h2>Topp-banner <small>øverst på siden</small></h2>'
           + '<div class="panel-body">'
             + '<div class="fg"><label>Tilbake-lenke (tekst)</label><input type="text" id="ps-back"></div>'
             + '<div class="fg"><label>Tittel</label><input type="text" id="ps-title"></div>'
@@ -38,20 +38,20 @@
             + '<div class="lst-plain" id="lst-meta"></div><button class="btn-add" type="button" data-addmeta>+ Nytt punkt</button>'
           + '</div>'
         + '</div>'
-        + '<div class="panel"><h2>Seksjoner / studieretninger <small>gruppene emnene deles inn i</small></h2>'
+        + '<div class="panel" data-sec-key="seksjoner"><h2>Seksjoner / studieretninger <small>gruppene emnene deles inn i</small></h2>'
           + '<div class="panel-body">'
             + '<p class="hint">Hver seksjon blir en egen gruppe i emnekatalogen, et fargemerke og en filter-fane på nettsiden. Vil du f.eks. skille Master i filosofi fra Master i etikk, eller årsstudium fra bachelor? Legg til en ny seksjon og flytt emnene dit (via «Seksjon» på hvert emne). Rekkefølgen her styrer rekkefølgen på siden.</p>'
             + '<div class="lst" id="lst-sections"></div>'
             + '<button class="btn-add" type="button" data-addsection>+ Ny seksjon</button>'
           + '</div>'
         + '</div>'
-        + '<div class="panel"><h2>Emner <small>emnekatalogen, gruppert per seksjon</small></h2>'
+        + '<div class="panel" data-sec-key="ps-katalog"><h2>Emner <small>emnekatalogen, gruppert per seksjon</small></h2>'
           + '<div class="panel-body">'
             + '<div class="ps-courses-tools"><button class="ps-link-btn" type="button" data-expand-all>Åpne alle</button><button class="ps-link-btn" type="button" data-collapse-all>Fold sammen alle</button><span class="ps-tools-spacer"></span></div>'
             + '<div id="lst-courses"></div>'
           + '</div>'
         + '</div>'
-        + '<div class="panel"><h2>Studieretningene <small>«Hva du kan studere»</small></h2>'
+        + '<div class="panel" data-sec-key="ps-tracks"><h2>Studieretningene <small>«Hva du kan studere»</small></h2>'
           + '<div class="panel-body">'
             + '<div class="frow"><div class="fg narrow"><label>Eyebrow</label><input type="text" id="ps-ti-eyebrow"></div>'
             + '<div class="fg"><label>Overskrift</label><input type="text" id="ps-ti-heading"></div></div>'
@@ -59,13 +59,13 @@
             + '<div class="sub-h">Retninger</div><div class="lst" id="lst-tracks"></div><button class="btn-add" type="button" data-addtrack>+ Ny retning</button>'
           + '</div>'
         + '</div>'
-        + '<div class="panel"><h2>Grader &amp; løp <small>studieprogrammene</small></h2>'
+        + '<div class="panel" data-sec-key="ps-grader"><h2>Grader &amp; løp <small>studieprogrammene</small></h2>'
           + '<div class="panel-body">'
             + '<div class="fg"><label>Seksjonsoverskrift</label><input type="text" id="ps-graderHeading"></div>'
             + '<div class="sub-h">Programmer</div><div class="lst" id="lst-programs"></div><button class="btn-add" type="button" data-addprogram>+ Nytt program</button>'
           + '</div>'
         + '</div>'
-        + '<div class="panel"><h2>Pensum-markedet <small>teaser-banneret</small></h2>'
+        + '<div class="panel" data-sec-key="ps-marked"><h2>Pensum-markedet <small>teaser-banneret</small></h2>'
           + '<div class="panel-body">'
             + '<div class="frow"><div class="fg narrow"><label>Merkelapp</label><input type="text" id="ps-teaser-tag"></div>'
             + '<div class="fg"><label>Overskrift</label><input type="text" id="ps-teaser-heading"></div></div>'
@@ -74,7 +74,7 @@
             + '<div class="fg"><label>Knapp: lenke</label><input type="text" id="ps-teaser-ctaHref"></div></div>'
           + '</div>'
         + '</div>'
-        + '<div class="panel"><h2>Ansvarsfraskrivelser <small>de to notisene nederst</small></h2>'
+        + '<div class="panel" data-sec-key="ansvar"><h2>Ansvarsfraskrivelser <small>de to notisene nederst</small></h2>'
           + '<div class="panel-body">'
             + '<div class="fg"><label>Notis 1 (under emnelista)</label><textarea id="ps-note1"></textarea></div>'
             + '<div class="fg"><label>Notis 2 (helt nederst)</label><textarea id="ps-note2"></textarea></div>'
@@ -100,7 +100,7 @@
       function loadData() {
         var raw = localStorage.getItem(LS_KEY);
         if (raw) { try { data = JSON.parse(raw); normalize(); return; } catch (_) {} }
-        data = fresh();
+        data = fresh(); normalize();
       }
       function normalize() {
         var f = fresh();
@@ -121,8 +121,13 @@
         if (!Array.isArray(data.courses)) data.courses = [];
         if (!Array.isArray(data.tracks)) data.tracks = [];
         if (!Array.isArray(data.programs)) data.programs = [];
+        // Rekkefølge på de fire flyttbare innholdsblokkene på siden.
+        var SK = ['ps-katalog', 'ps-marked', 'ps-tracks', 'ps-grader'];
+        var ord = (Array.isArray(data.sectionOrder) ? data.sectionOrder : []).filter(function (k) { return SK.indexOf(k) >= 0; });
+        SK.forEach(function (k) { if (ord.indexOf(k) < 0) ord.push(k); });
+        data.sectionOrder = ord;
       }
-      function saveData() { localStorage.setItem(LS_KEY, JSON.stringify(data)); pushPreview(); }
+      function saveData() { AC.persistDraft(LS_KEY, data); pushPreview(); }
       var saveTimer = null;
       function lazySave() { pushPreview(); clearTimeout(saveTimer); saveTimer = setTimeout(function () { saveData(); AC.toast('Lagret i nettleseren'); }, 300); }
       function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
@@ -532,7 +537,7 @@
       window.addEventListener('resize', fitPreview);
       if (pvFrame) pvFrame.addEventListener('load', fitPreview);
 
-      loadData(); renderAll(); wireFields();
+      loadData(); AC.draftBaseline(LS_KEY, data); renderAll(); wireFields();
       wireDrag('lst-sections', function () { return data.sections; }, function () { renderSections(); renderCourses(); });
       wireDrag('lst-tracks', function () { return data.tracks; }, renderTracks);
       wireDrag('lst-programs', function () { return data.programs; }, renderPrograms);
@@ -540,7 +545,33 @@
       pushPreview(); setTimeout(pushPreview, 150);
 
       /* ── delt «Liste + detalj»-skall (sections: hver .panel blir en rad) ── */
-      var shell = AC.PanelShell.mount(host, AC, { rail: 'sections', title: 'Pensum', subtitle: 'Sidetekster & katalog', remember: 'apeiron-pensum-shell-sel' });
+      // Flyttbare innholdsblokker (matcher wrapper-id-ene i pensum.html). Topp-banner,
+      // seksjons-oppsettet og ansvarsfraskrivelsene vises som faste innstillinger.
+      var SECTION_KEYS = ['ps-katalog', 'ps-marked', 'ps-tracks', 'ps-grader'];
+      function shellSections() {
+        function mk(key, fixed) {
+          var node = host.querySelector('.panel[data-sec-key="' + key + '"]');
+          if (!node) return null;
+          var h2 = node.querySelector('h2'), label = '', sub = '';
+          if (h2) { var sm = h2.querySelector('small'); sub = sm ? sm.textContent.trim() : ''; label = (h2.textContent || '').replace(sub, '').trim(); }
+          return { id: key, label: label || key, sub: sub, node: node, av: fixed ? '⚙' : '✎', fixed: !!fixed };
+        }
+        var out = [];
+        ['topp', 'seksjoner'].forEach(function (k) { var s = mk(k, true); if (s) out.push(s); });
+        (data.sectionOrder || SECTION_KEYS).forEach(function (k) { var s = mk(k, false); if (s) out.push(s); });
+        var ans = mk('ansvar', true); if (ans) out.push(ans);
+        return out;
+      }
+      var shell = AC.PanelShell.mount(host, AC, {
+        rail: 'sections', title: 'Pensum', subtitle: 'Sidetekster & katalog', remember: 'apeiron-pensum-shell-sel',
+        page: { href: 'pensum.html', id: 'pensum', label: 'Pensum', ico: '📚' },
+        sections: shellSections,
+        onSectionReorder: function (keys) {
+          keys = (keys || []).filter(function (k) { return SECTION_KEYS.indexOf(k) >= 0; });
+          SECTION_KEYS.forEach(function (k) { if (keys.indexOf(k) < 0) keys.push(k); });
+          data.sectionOrder = keys; lazySave();
+        }
+      });
       function applyPanelLayout() { shell.layoutChanged(); }
       window.addEventListener('apeiron-panellayout', applyPanelLayout);
       applyPanelLayout();

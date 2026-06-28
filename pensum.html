@@ -154,6 +154,9 @@
 }
 
 /* ── Course cards (accordion) ── */
+/* Innholdsblokker (kan endre rekkefølge via Admin → Pensum). display:contents gjør
+   wrapperen usynlig for layout, så avstand/stil er uendret — kun DOM-rekkefølgen styres. */
+.ps-block { display: contents; }
 .ps-grid { display: flex; flex-direction: column; gap: 0; }
 
 .ps-course {
@@ -377,6 +380,7 @@
 <section class="section studier" id="pensum">
   <div class="wrap">
 
+    <div id="ps-katalog" class="ps-block">
     <div class="ps-toolbar reveal">
       <div class="ps-tabs" role="tablist" aria-label="Filtrer etter studieretning">
         <button class="ps-tab is-active" data-filter="alle" type="button">Alle emner</button>
@@ -855,6 +859,9 @@
       <button type="button" id="psNoresultsReset">Nullstill søk</button>
     </div>
 
+    </div><!-- /ps-katalog -->
+
+    <div id="ps-marked" class="ps-block">
     <!-- ── Kjøp & bytte teaser ── -->
     <div class="marked-teaser reveal">
       <div class="marked-teaser__left">
@@ -869,6 +876,9 @@
 
     <p class="studier__note reveal" id="ix-ps-note1" style="margin-top:52px;">Pensumlister er ikke offisielle. Sjekk alltid emnesidene på Canvas for oppdatert og bindende informasjon. Feil eller mangler? Send oss en mail.</p>
 
+    </div><!-- /ps-marked -->
+
+    <div id="ps-tracks" class="ps-block">
     <!-- ── Studieretningene (flyttet fra forsiden) ── -->
     <div class="center" style="margin-top:84px;margin-bottom:44px">
       <span class="eyebrow eyebrow--center" id="ix-ps-tracks-eyebrow">Hva du kan studere</span>
@@ -901,6 +911,9 @@
       </article>
     </div>
 
+    </div><!-- /ps-tracks -->
+
+    <div id="ps-grader" class="ps-block">
     <h3 class="studier__subhead" id="grader" style="margin-top:72px;">Grader &amp; løp</h3>
 
     <div class="prog__list" id="ix-ps-programs">
@@ -1012,6 +1025,7 @@
     </div>
 
     <p class="studier__note reveal" id="ix-ps-note2">Studiepoeng og normert studietid følger NTNUs studieplaner (2025/26). Emnelistene er et utvalg. Se ntnu.no for fullstendig pensum og oppdaterte krav.</p>
+    </div><!-- /ps-grader -->
 
   </div>
 </section>

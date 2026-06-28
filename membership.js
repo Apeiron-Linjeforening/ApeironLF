@@ -16,6 +16,19 @@
     var cfg = window.MEMBERSHIP_CONFIG;
     if (!cfg) return;
 
+    // Intro-kolonnen (eyebrow / overskrift / ingress / fordeler)
+    function setText(id, val) { var el = document.getElementById(id); if (el && val != null && val !== '') el.textContent = val; }
+    setText('ix-m-eyebrow', cfg.eyebrow);
+    setText('ix-m-heading', cfg.heading);
+    setText('ix-m-lede', cfg.lede);
+    var benHost = document.getElementById('ix-m-benefits');
+    if (benHost && Array.isArray(cfg.benefits) && (IS_PREVIEW || cfg.benefits.length)) {
+      var CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg>';
+      benHost.innerHTML = cfg.benefits.map(function (b) {
+        return '<li>' + CHECK + ' ' + esc(b) + '</li>';
+      }).join('');
+    }
+
     // Prisnivåer
     var tiersEl = document.getElementById('joinTiers');
     if (tiersEl && Array.isArray(cfg.tiers) && cfg.tiers.length) {

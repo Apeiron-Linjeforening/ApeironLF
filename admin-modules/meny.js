@@ -91,7 +91,7 @@
         }
         data = fresh();
       }
-      function saveData() { localStorage.setItem(LS_KEY, JSON.stringify(data)); AC.toast('Lagret i nettleseren'); }
+      function saveData() { AC.persistDraft(LS_KEY, data); AC.toast('Lagret i nettleseren'); }
       var saveTimer = null;
       function lazySave() { clearTimeout(saveTimer); saveTimer = setTimeout(function () { saveData(); renderPreview(); pushHistory(); }, 350); }
 
@@ -117,7 +117,7 @@
         });
         navAlign = snapAlign(s.align);
         renderItems(); applyAlignUI(); renderPreview();
-        localStorage.setItem(LS_KEY, JSON.stringify(data));
+        AC.persistDraft(LS_KEY, data);
         localStorage.setItem(LS_ALIGN, String(navAlign));
       }
       function undo() { if (histIndex <= 0) return; histIndex--; restoreSnap(histStack[histIndex]); updateHistButtons(); AC.toast('Angret'); }
@@ -398,7 +398,7 @@
         btn.addEventListener('click', function (e) { e.preventDefault(); openLocPicker(input); });
       }
 
-      loadData(); loadAlign(); renderItems(); applyAlignUI(); renderPreview();
+      loadData(); AC.draftBaseline(LS_KEY, data); loadAlign(); renderItems(); applyAlignUI(); renderPreview();
       measureLayout(); setTimeout(measureLayout, 120);
       pushHistory(); buildPicker(); enrichLive();
       AC.enhanceHelp(host);

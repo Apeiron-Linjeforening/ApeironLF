@@ -160,7 +160,7 @@
         if (raw) { try { data = JSON.parse(raw); normalize(); migrateInline(); return; } catch (_) {} }
         data = fresh(); normalize();
       }
-      function saveData() { localStorage.setItem(LS_KEY, JSON.stringify(data)); AC.toast('Lagret i nettleseren'); pushPreview(); }
+      function saveData() { AC.persistDraft(LS_KEY, data); AC.toast('Lagret i nettleseren'); pushPreview(); }
       var saveTimer = null;
       function lazySave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveData, 350); }
       function uid(pfx) { return pfx + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
@@ -638,7 +638,8 @@
 
       /* ───────────────────── RENDER ───────────────────── */
       function renderList(list) {
-        var el = q('list-' + list); el.innerHTML = '';
+        var el = q('list-' + list); if (!el) return;
+        el.innerHTML = '';
         if (list === 'members') el.className = 'list lay-' + viewMode;
         var maker = list === 'members' ? memberCard : roleCard;
         data[list].forEach(function (item) { el.appendChild(maker(item)); });
@@ -879,7 +880,7 @@
       window.addEventListener('resize', fitPreview);
       if (pvFrame) pvFrame.addEventListener('load', function () { fitPreview(); pushPreview(); });
 
-      loadData(); renderAll(); updateLaySwitch();
+      loadData(); AC.draftBaseline(LS_KEY, data); renderAll(); updateLaySwitch();
       applyPanelLayout();
       window.addEventListener('apeiron-panellayout', applyPanelLayout);
       AC.viewSwitch({ list: q('list-roles'), key: 'apeiron-styret-roles-view-v1', help: 'Velg hvordan rolle-kortene vises mens du redigerer her i admin. Påvirker bare redigeringsvisningen, ikke den publiserte siden.' });
