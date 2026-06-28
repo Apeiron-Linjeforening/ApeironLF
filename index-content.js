@@ -1,26 +1,27 @@
 /* Innhold for forsiden (index.html / «Hjem») — TEKST-delene som endres ofte.
-   Sist oppdatert: 22.6.2026
+   Sist oppdatert: 28.6.2026
    Rediger direkte her, eller åpne Admin-senteret → Forsiden.
 
-   Dekker forsiden (Hjem): hero + seksjons-introer (arrangementer/aporetisk/fadderuke) + bli medlem (intro) + kontakt.
+   Dekker forsiden (Hjem): hero + seksjons-introer (arrangementer/aporetisk/fadderuke) + kontakt.
+   «Bli medlem» (intro, fordeler, priser) ligger nå i membership-config.js (Medlemskap-panelet).
    «Om oss» + FAQ ligger på om-oss.html → om-content.js (Om oss-panelet).
 */
 
 window.INDEX_CONTENT = {
   "heroGallery": {
-    "enabled": false,
+    "enabled": true,
     "style": "D",
     "placement": "top",
-    "count": 10,
+    "count": 3,
     "opacity": 0.8,
     "speed": 100,
     "direction": "up-left",
-    "animation": "diagonal",
-    "navClip": true,
+    "animation": "dvd",
+    "navClip": false,
     "dvdMotif": "photos",
-    "dvdSize": 100,
     "mosaicSizes": "varied",
     "polaStyle": "framed",
+    "dvdSize": 100,
     "heading": "Livet i Apeiron",
     "lede": "Glimt fra det sosiale livet i Apeiron: fester, fagkvelder og alt imellom."
   },
