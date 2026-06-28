@@ -20,7 +20,7 @@ window.OM_PAGE = {
         "back": "Til forsiden",
         "backHref": "index.html",
         "title": "Om oss",
-        "lede": "Hvem vi er, hvem vi henger med, og det lille tilfluktsstedet vårt på Dragvoll — alt om Apeiron, samlet på ett sted."
+        "lede": "Hvem vi er, hvem vi henger med, og det lille tilfluktsstedet vårt på Dragvoll: alt om Apeiron, samlet på ett sted."
       }
     },
     {
@@ -75,13 +75,13 @@ window.OM_PAGE = {
         "screenLabel": "Samarbeid",
         "eyebrow": "Større enn oss selv",
         "heading": "Fellesskap & samarbeid",
-        "lede": "Apeiron står ikke alene. Vi er del av et større studentmiljø på Dragvoll — tett på vår egen søsterforening, studenttidsskriftet og linjeforeningene rundt oss.",
+        "lede": "Apeiron står ikke alene. Vi er del av et større studentmiljø på Dragvoll, tett på vår egen søsterforening, studenttidsskriftet og linjeforeningene rundt oss.",
         "cards": [
           {
             "glyph": "⁋",
             "level": "Samarbeid",
             "title": "Unionen",
-            "body": "Apeiron er med i Unionen — samarbeidet mellom linjeforeningene på Dragvoll. Sammen arrangerer vi på tvers av fagene, deler erfaringer og gjør studentstemmen sterkere inn mot institutt og fakultet. Det gir flere fester, større arrangementer og et bredere nettverk enn étt studieprogram får til alene.",
+            "body": "Apeiron er med i Unionen, samarbeidet mellom linjeforeningene på Dragvoll. Sammen arrangerer vi på tvers av fagene, deler erfaringer og gjør studentstemmen sterkere inn mot institutt og fakultet. Det gir flere fester, større arrangementer og et bredere nettverk enn étt studieprogram får til alene.",
             "links": [
               {
                 "label": "Instagram",
@@ -93,7 +93,7 @@ window.OM_PAGE = {
             "glyph": "Δ",
             "level": "Søsterforening",
             "title": "Dionysos",
-            "body": "Vår nære søsterforening er Dionysos, linjeforeningen for religionsvitenskap. Vi deler institutt — Institutt for filosofi og religionsvitenskap (IFR) — og holder til på samme campus. Siden 2012 har de samlet religionsstudentene til faglige og sosiale treff, og vi finner ofte sammen om alt fra fagkvelder til fest.",
+            "body": "Vår nære søsterforening er Dionysos, linjeforeningen for religionsvitenskap. Vi deler institutt, Institutt for filosofi og religionsvitenskap (IFR), og holder til på samme campus. Siden 2012 har de samlet religionsstudentene til faglige og sosiale treff, og vi finner ofte sammen om alt fra fagkvelder til fest.",
             "links": [
               {
                 "label": "Instagram",
@@ -140,7 +140,7 @@ window.OM_PAGE = {
         "features": [
           {
             "title": "Eget bibliotek",
-            "body": "Hyllevis med filosofi, etikk og tilstøtende fag — pent sortert og fritt tilgjengelig."
+            "body": "Hyllevis med filosofi, etikk og tilstøtende fag, pent sortert og fritt tilgjengelig."
           },
           {
             "title": "Gratis kaffe for medlemmer",
@@ -161,7 +161,7 @@ window.OM_PAGE = {
         "screenLabel": "Møt styret",
         "eyebrow": "Folkene bak",
         "heading": "Møt styret",
-        "lede": "Apeiron drives av studenter som deg. Bli kjent med dem som holder hjulene i gang — og se hvordan du selv kan ta et verv.",
+        "lede": "Apeiron drives av studenter som deg. Bli kjent med dem som holder hjulene i gang, og se hvordan du selv kan ta et verv.",
         "cards": [
           {
             "glyph": "Σ",
@@ -179,7 +179,7 @@ window.OM_PAGE = {
             "glyph": "Ψ",
             "level": "Tillitsvalgte",
             "title": "Tillitsvalgte",
-            "body": "Studentenes stemme inn mot institutt og program — de som tar med seg tilbakemeldingene dine dit beslutningene tas.",
+            "body": "Studentenes stemme inn mot institutt og program, de som tar med seg tilbakemeldingene dine dit beslutningene tas.",
             "links": [
               {
                 "label": "Se tillitsvalgte",
@@ -191,7 +191,7 @@ window.OM_PAGE = {
             "glyph": "Δ",
             "level": "Engasjer deg",
             "title": "Verv & komiteer",
-            "body": "Lyst til å bidra? Det finnes mange måter å engasjere seg på — fra komité til styreverv. Se hva som finnes og hvordan du blir med.",
+            "body": "Lyst til å bidra? Det finnes mange måter å engasjere seg på, fra komité til styreverv. Se hva som finnes og hvordan du blir med.",
             "links": [
               {
                 "label": "Se vervene",
@@ -234,8 +234,8 @@ window.OM_PAGE = {
             "a": "Nei! Vi favner bredt. Studerer du filosofi eller etikk er du selvsagt midt i målgruppa, men er du bare nysgjerrig på de store spørsmålene, er du like velkommen."
           },
           {
-            "q": "Jeg er fersk student — passer det for meg?",
-            "a": "Absolutt. Mange blir med allerede i fadderuka. Du trenger ingen forkunnskaper — bare møt opp på et arrangement, så finner du fort noen å prate med."
+            "q": "Jeg er fersk student, passer det for meg?",
+            "a": "Absolutt. Mange blir med allerede i fadderuka. Du trenger ingen forkunnskaper, bare møt opp på et arrangement, så finner du fort noen å prate med."
           },
           {
             "q": "Hvordan kan jeg engasjere meg mer?",
@@ -243,15 +243,15 @@ window.OM_PAGE = {
           },
           {
             "q": "Er dere et fadderlag også?",
-            "a": "Ja — vi arrangerer fadderuke for de nye studentene hver høst. Det er den beste måten å bli kjent med både studiet og folka på."
+            "a": "Ja, vi arrangerer fadderuke for de nye studentene hver høst. Det er den beste måten å bli kjent med både studiet og folka på."
           },
           {
             "q": "Hva er S.A.K?",
-            "a": "S.A.K — Sosiale Arrangement Komité — er styrets hjelpemiddel for å gi studenter en lavterskel måte å ta del i planlegging og gjennomføring av det sosiale på. Vil du engasjere deg uten å sitte i styret, er dette den enkleste veien inn. Si fra til en i styret eller skriv til oss på Instagram."
+            "a": "S.A.K (Sosiale Arrangement Komité) er styrets hjelpemiddel for å gi studenter en lavterskel måte å ta del i planlegging og gjennomføring av det sosiale på. Vil du engasjere deg uten å sitte i styret, er dette den enkleste veien inn. Si fra til en i styret eller skriv til oss på Instagram."
           },
           {
             "q": "Hva er Begrep?",
-            "a": "Begrep er et studentdrevet filosofitidsskrift laget av nåværende og tidligere filosofi- og etikkstudenter. Det er ikke en del av Apeiron, men springer ut av det samme studentmiljøet. Begrep gir ut et tidsskrift i semesteret — alle kan sende inn bidrag og få redaksjonell tilbakemelding."
+            "a": "Begrep er et studentdrevet filosofitidsskrift laget av nåværende og tidligere filosofi- og etikkstudenter. Det er ikke en del av Apeiron, men springer ut av det samme studentmiljøet. Begrep gir ut et tidsskrift i semesteret, og alle kan sende inn bidrag og få redaksjonell tilbakemelding."
           }
         ]
       }

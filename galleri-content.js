@@ -9,6 +9,6 @@ window.GALLERI_CONTENT = {
   "subhero": {
     "back": "Tilbake",
     "title": "Galleri",
-    "lede": "Øyeblikk fra det sosiale livet i Apeiron — fester, fagkvelder og alt imellom."
+    "lede": "Øyeblikk fra det sosiale livet i Apeiron: fester, fagkvelder og alt imellom."
   }
 };

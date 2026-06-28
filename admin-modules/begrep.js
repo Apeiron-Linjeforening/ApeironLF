@@ -24,14 +24,14 @@
       host.innerHTML =
         '<section class="preview-top">'
           + '<h3>Forhåndsvisning</h3>'
-          + '<p class="pp-sub">Live fra den ekte Begrep-siden — bla i ruta for å se hele siden (utgaver, podkast og film). Endringene dine vises umiddelbart.</p>'
+          + '<p class="pp-sub">Live fra den ekte Begrep-siden. Bla i ruta for å se hele siden (utgaver, podkast og film). Endringene dine vises umiddelbart.</p>'
           + '<div class="pv-page-wrap"><iframe id="pv-page" src="begrep.html?preview=1" title="Forhåndsvisning av Begrep-siden"></iframe></div>'
         + '</section>'
         + '<div class="tip">'
           + '<button class="tip-reset" id="reset-btn" type="button">Tilbakestill til siste publiserte versjon</button>'
           + '<strong>Slik oppdaterer du Begrep-siden</strong>'
           + '<ol>'
-            + '<li>Rediger innholdet nedenfor — klikk på et felt for å redigere det</li>'
+            + '<li>Rediger innholdet nedenfor. Klikk på et felt for å redigere det</li>'
             + '<li>Last opp omslag/plakat ved å <b>klikke på bildefeltet</b> eller dra et bilde inn</li>'
             + '<li>Trykk <b>☁ Publiser til GitHub</b> oppe til høyre</li>'
             + '<li><em>(Reserve hvis publisering svikter: «↓ Last ned alle endrede» nederst i Oversikt-fanen, og legg fila i GitHub.)</em></li>'
@@ -210,12 +210,13 @@
         data[list].push(DEFAULTS[list]()); renderList(list); lazySave();
         setTimeout(function () { var last = host.querySelector('#list-' + list + ' .card:last-child'); if (last) last.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60);
       }
-      function del(list, id) { var arr = data[list], i = arr.findIndex(function (x) { return x.id === id; }); if (i < 0) return; var it = arr[i]; var nm = it.title || it.name || it.label || 'element'; AC.undoDelete(arr, i, '«' + nm + '» slettet', function () { renderList(list); }, lazySave); }
+      function del(list, id) { var arr = data[list], i = arr.findIndex(function (x) { return x.id === id; }); if (i < 0) return; var it = arr[i]; var nm = it.title || it.name || it.label || 'element'; AC.undoDelete(arr, i, '«' + nm + '» slettet', function () { shellRender(list); }, lazySave); }
       function move(list, id, dir) {
         var arr = data[list], i = arr.findIndex(function (x) { return x.id === id; });
         if (i < 0) return; var j = i + dir; if (j < 0 || j >= arr.length) return;
-        var t = arr[i]; arr[i] = arr[j]; arr[j] = t; renderList(list); lazySave();
+        var t = arr[i]; arr[i] = arr[j]; arr[j] = t; shellRender(list); lazySave();
       }
+      function shellRender(list) { renderList(list); if (typeof shell !== 'undefined' && shell && shell.isActive()) shell.refresh(); }
 
       q('meta-founded').addEventListener('input', function () { data.meta.founded = this.value === '' ? null : Number(this.value); lazySave(); });
       q('meta-jul').addEventListener('input', function () { data.meta.julekalenderEpisodes = this.value === '' ? null : Number(this.value); lazySave(); });
@@ -232,7 +233,7 @@
           + '   Tall i statistikk-stripen telles automatisk fra listene. */\n\n'
           + 'window.BEGREP_CONTENT = ' + JSON.stringify(data, null, 2) + ';\n';
         AC.saveFile('begrep-content.js', content);
-        AC.toast('Fil lastet ned — erstatt i GitHub og push!');
+        AC.toast('Fil lastet ned. Erstatt i GitHub og push!');
       }
 
       q('reset-btn').addEventListener('click', function () {
@@ -268,6 +269,33 @@
       if (pvFrame) pvFrame.addEventListener('load', fitPreview);
 
       loadData(); renderAll();
+
+      /* ── delt «Liste + detalj»-skall (collections: 3 samlinger + banner) ── */
+      function bMeta(list, item) {
+        if (list === 'issues') return { av: item.roman || '📕', cls: 'sq', nm: item.title || '(uten tittel)', sub: [item.year, item.roman].filter(Boolean).join(' · ') || 'Utgave' };
+        if (list === 'podcasts') return { av: '🎙', cls: 'sq', nm: item.title || '(uten tittel)', sub: item.tag || 'Podkast' };
+        return { av: '🎬', cls: 'sq', nm: item.title || '(uten tittel)', sub: [item.kind, item.year].filter(Boolean).join(' · ') || 'Film' };
+      }
+      var shell = AC.PanelShell.mount(host, AC, {
+        rail: 'collections',
+        title: 'Begrep', subtitle: '3 samlinger',
+        remember: 'apeiron-begrep-shell-sel',
+        banner: { label: 'Tall & bestilling', sub: 'Grunnlagt, julekalender, bestillingslenke', current: function () { return null; }, adopt: function () { return host.querySelector('.meta-panel'); } },
+        groups: ['issues', 'podcasts', 'films'].map(function (list, idx) {
+          var labels = { issues: 'Utgaver', podcasts: 'Podkast', films: 'Film' };
+          var adds = { issues: 'Ny utgave', podcasts: 'Ny podkast/sesong', films: 'Ny film' };
+          return {
+            key: list, label: labels[list], addLabel: adds[list], primary: idx === 0,
+            items: function () { return data[list]; },
+            meta: function (item) { return bMeta(list, item); },
+            detail: function (item) { return makeCard(list, item); },
+            onAdd: function () { add(list); return data[list][data[list].length - 1] && data[list][data[list].length - 1].id; }
+          };
+        })
+      });
+      function applyPanelLayout() { shell.layoutChanged(); }
+      window.addEventListener('apeiron-panellayout', applyPanelLayout);
+      applyPanelLayout();
       ['issues', 'podcasts', 'films'].forEach(function (lst) {
         AC.viewSwitch({ list: q('list-' + lst), key: 'apeiron-begrep-view-' + lst + '-v1', help: 'Velg hvordan kortene i denne lista vises mens du redigerer her i admin. Påvirker bare redigeringsvisningen, ikke den publiserte siden.' });
       });
@@ -276,7 +304,7 @@
 
       return {
         export: exportFile,
-        destroy: function () { window.removeEventListener('message', onPreviewMsg); window.removeEventListener('resize', fitPreview); }
+        destroy: function () { window.removeEventListener('message', onPreviewMsg); window.removeEventListener('resize', fitPreview); window.removeEventListener('apeiron-panellayout', applyPanelLayout); if (shell) shell.destroy(); }
       };
     }
   });

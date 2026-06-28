@@ -128,12 +128,12 @@ window.HJELP_CONTENT = {
   "studier": {
     "eyebrow": "Studiene",
     "heading": "Faglig hjelp og studentdemokrati",
-    "lede": "Har du innspill til undervisning, pensum eller eksamensformer? Tillitsvalgte er studentenes stemme inn i NTNUs styrende organer — de er de første du bør kontakte om noe faglig ikke fungerer.",
+    "lede": "Har du innspill til undervisning, pensum eller eksamensformer? Tillitsvalgte er studentenes stemme inn i NTNUs styrende organer, og de er de første du bør kontakte om noe faglig ikke fungerer.",
     "cards": [
       {
         "eyebrow": "Programnivå",
         "accent": "navy",
-        "name": "PTV — Programtillitsvalgt",
+        "name": "PTV: Programtillitsvalgt",
         "desc": "Representerer studentene på programnivå ved filosofi og etikk. Sitter i programrådsmøter og er bindeleddet mellom studenter og programledelsen.",
         "resp": [
           "Innspill til undervisning, pensum og eksamensformer",
@@ -148,7 +148,7 @@ window.HJELP_CONTENT = {
       {
         "eyebrow": "Instituttnivå · IFR",
         "accent": "navy",
-        "name": "ITV — Institutt-tillitsvalgt",
+        "name": "ITV: Institutt-tillitsvalgt",
         "desc": "Representerer alle studenter ved Institutt for filosofi og religionsvitenskap. Sitter i instituttstyret og deltar i ansettelsesprosesser.",
         "resp": [
           "Saker som angår hele instituttet",
@@ -163,7 +163,7 @@ window.HJELP_CONTENT = {
       {
         "eyebrow": "Fakultetsnivå · HF",
         "accent": "maroon",
-        "name": "FTV — Fakultetstillitsvalgt",
+        "name": "FTV: Fakultetstillitsvalgt",
         "desc": "Representerer alle studenter ved Det humanistiske fakultet. Sitter i fakultetsstyret og er studentenes øverste talspersoner overfor HF-ledelsen.",
         "resp": [
           "Læringsmiljø og internasjonalisering på fakultetsnivå",
@@ -298,7 +298,7 @@ window.HJELP_CONTENT = {
       { "name": "Medisinsk nødtelefon", "num": "113", "numHref": "tel:113", "when": "Ved akutt og livstruende sykdom eller skade: bevisstløshet, store blødninger, pustestans, eller når noen står i umiddelbar fare for å ta sitt eget liv.", "life": true },
       { "name": "Politi, nød", "num": "112", "numHref": "tel:112", "when": "Ved akutt fare for liv og helse, vold, trusler eller andre farlige situasjoner som skjer akkurat nå.", "life": true },
       { "name": "Brann", "num": "110", "numHref": "tel:110", "when": "Ved brann, eksplosjonsfare, gasslekkasje eller farlige stoffer.", "life": true },
-      { "name": "Legevakt", "num": "116117", "numHref": "tel:116117", "when": "Når du trenger rask helsehjelp, men det ikke er livstruende. Sykdom eller skade på kveld, natt og helg når fastlegen er stengt. Gjelder også akutte psykiske plager og kriser — for eksempel sterk angst, selvmordstanker eller psykisk uro som ikke kan vente.", "life": false },
+      { "name": "Legevakt", "num": "116117", "numHref": "tel:116117", "when": "Når du trenger rask helsehjelp, men det ikke er livstruende. Sykdom eller skade på kveld, natt og helg når fastlegen er stengt. Gjelder også akutte psykiske plager og kriser, for eksempel sterk angst, selvmordstanker eller psykisk uro som ikke kan vente.", "life": false },
       { "name": "Mental Helse Hjelpetelefon", "num": "116123", "numHref": "tel:116123", "when": "Døgnåpen, gratis og anonym. Når du trenger noen å snakke med om psykisk helse eller vanskelige tanker. Du kan også skrive på sidetmedord.no.", "life": false },
       { "name": "Kirkens SOS", "num": "22 40 00 40", "numHref": "tel:22400040", "when": "Døgnåpen samtaletjeneste for alle aldre når livet er vanskelig. Tilbyr også chat og e-post via kirkens-sos.no.", "life": false },
       { "name": "Alarmtelefonen for barn og unge", "num": "116111", "numHref": "tel:116111", "when": "For deg under 18 år. Gratis og anonym hjelp hele døgnet hvis du har det vanskelig hjemme eller trenger noen å snakke med.", "life": false }

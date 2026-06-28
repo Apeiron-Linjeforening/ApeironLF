@@ -168,7 +168,7 @@ window.STYRET_CONTENT = {
       "id": "r1",
       "name": "Leder",
       "accent": "",
-      "desc": "Lederen har det overordnede ansvaret for linjeforeningen — holder i trådene, setter agendaen og er Apeirons ansikt utad.",
+      "desc": "Lederen har det overordnede ansvaret for linjeforeningen: holder i trådene, setter agendaen og er Apeirons ansikt utad.",
       "resp": [
         "Leder styremøter og sørger for at vedtak følges opp",
         "Representerer Apeiron overfor NTNU, IFR og andre aktører",
@@ -180,7 +180,7 @@ window.STYRET_CONTENT = {
       "id": "r2",
       "name": "Nestleder",
       "accent": "",
-      "desc": "Nestlederen støtter leder i det daglige og overtar ansvaret ved fravær — et allsidig verv med fingeren i mange gryter.",
+      "desc": "Nestlederen støtter leder i det daglige og overtar ansvaret ved fravær, et allsidig verv med fingeren i mange gryter.",
       "resp": [
         "Overtar lederrollen ved fravær",
         "Støtter leder i planlegging og koordinering",
@@ -192,7 +192,7 @@ window.STYRET_CONTENT = {
       "id": "r3",
       "name": "Økonomiansvarlig",
       "accent": "maroon",
-      "desc": "Økonomiansvarlig holder orden på kroner og øre — fra regnskap og budsjett til søknader om støtte.",
+      "desc": "Økonomiansvarlig holder orden på kroner og øre, fra regnskap og budsjett til søknader om støtte.",
       "resp": [
         "Fører regnskap og holder oversikt over budsjett",
         "Håndterer innbetalinger og Vipps-konto",
@@ -204,10 +204,10 @@ window.STYRET_CONTENT = {
       "id": "r4",
       "name": "Sosialansvarlig",
       "accent": "maroon",
-      "desc": "Sosialansvarlig har overordnet ansvar for det sosiale i Apeiron — fra ukentlige ølkvelder til koordinering av S.A.K.",
+      "desc": "Sosialansvarlig har overordnet ansvar for det sosiale i Apeiron, fra ukentlige ølkvelder til koordinering av S.A.K.",
       "resp": [
         "Har overordnet ansvar for S.A.K (Sosiale Arrangement Komité)",
-        "Arrangerer sosialstipendpilskvelder annenhver onsdag — to ganger i måneden",
+        "Arrangerer sosialstipendpilskvelder annenhver onsdag, to ganger i måneden",
         "Samarbeider tett med S.A.K om planlegging og gjennomføring",
         "Bidrar til godt sosialt miljø blant studentene"
       ]
@@ -216,7 +216,7 @@ window.STYRET_CONTENT = {
       "id": "r5",
       "name": "PR-ansvarlig",
       "accent": "",
-      "desc": "PR-ansvarlig sørger for at Apeiron synes — på sosiale medier, i plakater og i alt som kommuniserer hvem vi er.",
+      "desc": "PR-ansvarlig sørger for at Apeiron synes, på sosiale medier, i plakater og i alt som kommuniserer hvem vi er.",
       "resp": [
         "Driver Apeirons sosiale medier (Instagram m.fl.)",
         "Lager plakater, innhold og informasjonsmateriell for arrangementer",
@@ -240,9 +240,9 @@ window.STYRET_CONTENT = {
       "id": "r7",
       "name": "Fagansvarlig",
       "accent": "navy",
-      "desc": "Fagansvarlig holder det intellektuelle liv i Apeiron i gang — fra storstilte kveldsdebatter til praktisk faglig hjelp.",
+      "desc": "Fagansvarlig holder det intellektuelle liv i Apeiron i gang, fra storstilte kveldsdebatter til praktisk faglig hjelp.",
       "resp": [
-        "Ansvarlig for Aporetisk Aften — Apeirons flaggskiparrangement for åpne filosofiske diskusjoner",
+        "Ansvarlig for Aporetisk Aften, Apeirons flaggskiparrangement for åpne filosofiske diskusjoner",
         "Koordinerer Logikk Panikk hvert vårsemester: tidligere logikkstudenter hjelper nåværende med emnet",
         "Planlegger og gjennomfører andre faglige arrangementer gjennom semesteret",
         "Bygger bro mellom det faglige og sosiale i Apeiron"
@@ -252,34 +252,34 @@ window.STYRET_CONTENT = {
       "id": "r8",
       "name": "Potet",
       "accent": "",
-      "desc": "Poteten er styrets allrounder — alltid klar til å ta tak der det trengs, uten fast portefølje.",
+      "desc": "Poteten er styrets allrounder, alltid klar til å ta tak der det trengs, uten fast portefølje.",
       "resp": [
         "Bistår andre styremedlemmer ved behov",
-        "Tar tak i praktiske oppgaver der det trengs — ingen dag er lik",
+        "Tar tak i praktiske oppgaver der det trengs, for ingen dag er lik",
         "Kan involveres i arrangementer, kommunikasjon eller andre styreoppgaver"
       ]
     },
     {
       "id": "r9",
-      "name": "S.A.K — Sosiale Arrangement Komité",
+      "name": "S.A.K: Sosiale Arrangement Komité",
       "accent": "maroon",
-      "desc": "S.A.K er en åpen komité som gir alle studenter mulighet til å bidra til det sosiale livet — uten å sitte i styret. Grunnlagt mars 2026 av Fredrik og Iver for å bygge bro mellom studieretningene og holde et ellers godt studiemiljø samlet.",
+      "desc": "S.A.K er en åpen komité som gir alle studenter mulighet til å bidra til det sosiale livet, uten å sitte i styret. Grunnlagt mars 2026 av Fredrik og Iver for å bygge bro mellom studieretningene og holde et ellers godt studiemiljø samlet.",
       "resp": [
         "Organiserer spontane og lavterskel sosiale arrangementer",
         "Åpen for alle studenter på filosofi og etikk",
         "Samarbeider tett med sosialansvarlig i styret",
-        "Viser du engasjement, blir du en ekte ASAP — Apeirons Superdupre Ansvarlige Persons"
+        "Viser du engasjement, blir du en ekte ASAP, Apeirons Superdupre Ansvarlige Persons"
       ]
     },
     {
       "id": "r10",
       "name": "H.I.V",
       "accent": "",
-      "desc": "Hjerne, Intelligens, Verdiskapelse — Apeirons kreative komité. H.I.V har ansvaret for alt visuelt og kreativt i foreningen: identitet, design og gjenstander som bærer Apeiron ut i verden.",
+      "desc": "Hjerne, Intelligens, Verdiskapelse: Apeirons kreative komité. H.I.V har ansvaret for alt visuelt og kreativt i foreningen: identitet, design og gjenstander som bærer Apeiron ut i verden.",
       "resp": [
         "Utviklet den nye Apeiron-logoen (2026)",
         "Designet den nye Apeiron-pinnen",
-        "Arbeider med merch — gensere, kopper og muligens bøker",
+        "Arbeider med merch: gensere, kopper og muligens bøker",
         "Forvalter Apeirons visuelle identitet"
       ]
     },
@@ -287,7 +287,7 @@ window.STYRET_CONTENT = {
       "id": "rmqc29l8bvm7",
       "name": "Unionsrepresentant",
       "accent": "blue",
-      "desc": "Apeiron er med i Unionen — samarbeidet mellom linjeforeningene for klassiske fag på Dragvoll.\nLinjeforeningens unionsrepresentant har ansvaret for å møte med Unionen og være bindeleddet mellom Apeiron og de deltagende linjeforeningene.",
+      "desc": "Apeiron er med i Unionen, samarbeidet mellom linjeforeningene for klassiske fag på Dragvoll.\nLinjeforeningens unionsrepresentant har ansvaret for å møte med Unionen og være bindeleddet mellom Apeiron og de deltagende linjeforeningene.",
       "resp": [
         "Forbedre samarbeid mellom linjeforeningene"
       ]

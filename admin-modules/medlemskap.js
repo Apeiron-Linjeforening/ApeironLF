@@ -35,7 +35,7 @@
       host.innerHTML =
         '<section class="preview-top">'
           + '<h3>Forhåndsvisning</h3>'
-          + '<p class="pp-sub">Live fra forsiden — «Bli medlem»-kortet (priser og innmeldingssteg) oppdateres mens du skriver.</p>'
+          + '<p class="pp-sub">Live fra forsiden. «Bli medlem»-kortet (priser og innmeldingssteg) oppdateres mens du skriver.</p>'
           + '<div class="pv-frame-wrap"><iframe id="pv-frame" src="index.html?preview=1#bli-medlem" title="Forhåndsvisning av Bli medlem"></iframe></div>'
         + '</section>'
         + '<div class="tip">'
@@ -192,9 +192,15 @@
       fitPreview(); setTimeout(fitPreview, 80);
       pushPreview(); setTimeout(pushPreview, 200);
 
+      /* ── delt «Liste + detalj»-skall (sections: hver .panel blir en rad) ── */
+      var shell = AC.PanelShell.mount(host, AC, { rail: 'sections', title: 'Medlemskap', subtitle: 'Sidetekster', remember: 'apeiron-medlemskap-shell-sel' });
+      function applyPanelLayout() { shell.layoutChanged(); }
+      window.addEventListener('apeiron-panellayout', applyPanelLayout);
+      applyPanelLayout();
+
       return {
         export: exportFile,
-        destroy: function () { window.removeEventListener('message', onPreviewMsg); window.removeEventListener('resize', fitPreview); }
+        destroy: function () { window.removeEventListener('message', onPreviewMsg); window.removeEventListener('resize', fitPreview); window.removeEventListener('apeiron-panellayout', applyPanelLayout); if (shell) shell.destroy(); }
       };
     }
   });

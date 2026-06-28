@@ -52,7 +52,10 @@ funksjonene automatisk — ingen ekstra konfigurasjon. Etter neste deploy svarer
 - `GET /api/github/login` → starter innlogging
 - `GET /api/github/callback` → fullfører innlogging
 - `GET /api/github/me` → innloggingsstatus
+- `GET /api/github/latest` → siste commit (+ endrede filer) — driver «Sist publisert» + konfliktsjekk
+- `GET /api/github/history` → siste commits — driver «Angre siste publisering»
 - `POST /api/github/commit` → committer filer
+- `POST /api/github/revert` → angrer siste publisering (ruller branchen tilbake til forrige tre)
 - `POST /api/github/logout` → logg ut
 
 ---
@@ -64,15 +67,16 @@ funksjonene automatisk — ingen ekstra konfigurasjon. Etter neste deploy svarer
 3. Rediger som vanlig. Når du er fornøyd: **☁ Publiser til GitHub**.
 4. Cloudflare bygger siden på nytt automatisk — live innen ~1 minutt.
 
-**↓ Last ned alle endrede** finnes fortsatt som reserveløsning hvis du heller vil
-laste ned filene og pushe manuelt.
+**↓ Last ned alle endrede** (i Oversikt, bak «Publisering virker ikke?») finnes
+fortsatt som reserveløsning hvis du heller vil laste ned filene og pushe manuelt.
 
 ---
 
 ## Sikkerhet — kort
 
-- OAuth-tokenet lagres i en **httpOnly, Secure, SameSite=Lax-cookie**. Nettleser-JS
-  kan ikke lese det; alle commits går gjennom server-funksjonen.
+- OAuth-tokenet lagres i en **httpOnly, Secure, SameSite=Lax-cookie** med **30 dagers**
+  levetid (`callback.js`). Nettleser-JS kan ikke lese det; alle commits går gjennom
+  server-funksjonen. Vil du ha kortere/lengre økt, juster `Max-Age` i `setCookie`-kallet.
 - `ALLOWED_LOGINS` begrenser hvem som kan publisere, selv om de har GitHub-konto.
 - `GITHUB_SCOPE=public_repo` gir kun tilgang til offentlige repo. Bruk `repo` kun
   hvis repoet er privat (videre tilgang).

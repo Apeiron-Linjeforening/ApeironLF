@@ -13,7 +13,7 @@ window.OPPNAELSER_CONTENT = {
     "backHref": "index.html",
     "eyebrow": "Pokalhylla",
     "heading": "Oppnåelser",
-    "lede": "Filosofer er ikke bare flinke til å tenke. Her er premiene, pokalene og bragdene Apeiron har dratt i land — beviset på at vi også kan vinne ting."
+    "lede": "Filosofer er ikke bare flinke til å tenke. Her er premiene, pokalene og bragdene Apeiron har dratt i land, beviset på at vi også kan vinne ting."
   },
   "awards": [
     {

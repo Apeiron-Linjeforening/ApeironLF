@@ -44,7 +44,7 @@
           + '<button class="tip-reset" id="reset-btn" type="button">Tilbakestill til siste publiserte versjon</button>'
           + '<strong>Slik oppdaterer du Om oss</strong>'
           + '<ol>'
-            + '<li>Bygg og rediger nedenfor — endringer vises live i forhåndsvisningen</li>'
+            + '<li>Bygg og rediger nedenfor. Endringer vises live i forhåndsvisningen</li>'
             + '<li>Trykk <b>☁ Publiser til GitHub</b> oppe til høyre</li>'
             + '<li><em>(Reserve hvis publisering svikter: «↓ Last ned alle endrede» nederst i Oversikt-fanen, og legg fila i GitHub.)</em></li>'
             + '<li>Cloudflare oppdaterer nettsiden automatisk innen et minutt</li>'
@@ -156,7 +156,7 @@
           if (i > 0 && resolved[i] === resolved[i - 1] && (s.tone !== 'auto' || data.sections[i - 1].tone !== 'auto')) {
             var warn = document.createElement('div');
             warn.className = 'brow__warn';
-            warn.textContent = 'Samme tone (' + toneName(resolved[i]) + ') som seksjonen over — vil du bytte for litt kontrast?';
+            warn.textContent = 'Samme tone (' + toneName(resolved[i]) + ') som seksjonen over. Vil du bytte for litt kontrast?';
             hostEl.appendChild(warn);
           }
         });
@@ -176,7 +176,7 @@
             + '<b>' + esc(t.label) + '</b><span>' + esc(t.desc || '') + '</span></button>';
         }).join('');
         ph.innerHTML = '<div class="picker"><div class="picker__h">+ Ny seksjon</div>'
-          + '<div class="picker__sub">Velg en blokktype — den legges nederst med standardinnhold du kan redigere.</div>'
+          + '<div class="picker__sub">Velg en blokktype. Den legges nederst med standardinnhold du kan redigere.</div>'
           + '<div class="picker__grid">' + tiles + '</div></div>';
         ph.querySelectorAll('.ptile').forEach(function (b) {
           b.addEventListener('click', function () {
@@ -186,6 +186,7 @@
             openPicker = false;
             renderBuilder(); renderPicker(); renderEditors();
             pushFull(); persist();
+            regUndoAdd('Seksjon lagt til', function () { var i = data.sections.indexOf(s); if (i > -1) data.sections.splice(i, 1); renderBuilder(); renderPicker(); renderEditors(); pushFull(); persist(); });
             setTimeout(function () { scrollToEditor(s.id); }, 30);
           });
         });
@@ -218,6 +219,7 @@
           if (fn) fn(s, body, notify); else body.innerHTML = '<p class="hint">Ingen redigering for type «' + esc(s.type) + '» ennå.</p>';
           wrap.appendChild(panel);
         });
+        if (typeof shell !== 'undefined' && shell && shell.isActive()) shell.refresh();
       }
       function updateBuilderLabels() {
         data.sections.forEach(function (s) {
@@ -256,6 +258,7 @@
       }
       function subH(t) { var d = document.createElement('div'); d.className = 'sub-h'; d.textContent = t; return d; }
       function addBtn(label, onClick) { var b = document.createElement('button'); b.className = 'btn-add'; b.type = 'button'; b.textContent = label; b.addEventListener('click', onClick); return b; }
+      function regUndoAdd(label, undoFn) { if (AC.undoable) AC.undoable(label, function () { try { undoFn(); } catch (_) {} if (typeof shell !== 'undefined' && shell && shell.isActive()) shell.refresh(); }); }
       function frow(children) { var d = document.createElement('div'); d.className = 'frow'; children.forEach(function (c) { d.appendChild(c); }); return d; }
 
       function dragList(listEl, arr, rer, notify) {
@@ -284,7 +287,7 @@
         }
         rer();
         body.appendChild(listEl);
-        body.appendChild(addBtn('+ ' + label, function () { arr.push(''); rer(); notify(); }));
+        body.appendChild(addBtn('+ ' + label, function () { arr.push(''); var _i = arr.length - 1; rer(); notify(); regUndoAdd('Punkt lagt til', function () { if (_i < arr.length) arr.splice(_i, 1); rer(); notify(); }); }));
         dragList(listEl, arr, rer, notify);
       }
 
@@ -303,7 +306,7 @@
         }
         rer();
         body.appendChild(listEl);
-        body.appendChild(addBtn('+ ' + label, function () { arr.push(makeNew()); rer(); notify(); }));
+        body.appendChild(addBtn('+ ' + label, function () { var _o = makeNew(); arr.push(_o); rer(); notify(); regUndoAdd('Blokk lagt til', function () { var i = arr.indexOf(_o); if (i > -1) arr.splice(i, 1); rer(); notify(); }); }));
         dragList(listEl, arr, rer, notify);
       }
 
@@ -345,7 +348,7 @@
         }
         rer();
         body.appendChild(listEl);
-        body.appendChild(addBtn('+ Nytt kort', function () { arr.push({ glyph: '', level: '', title: '', body: '', links: [] }); rer(); notify(); }));
+        body.appendChild(addBtn('+ Nytt kort', function () { var _c = { glyph: '', level: '', title: '', body: '', links: [] }; arr.push(_c); rer(); notify(); regUndoAdd('Kort lagt til', function () { var i = arr.indexOf(_c); if (i > -1) arr.splice(i, 1); rer(); notify(); }); }));
         dragList(listEl, arr, rer, notify);
       }
 
@@ -454,7 +457,7 @@
           + '*/\n\n'
           + 'window.OM_PAGE = ' + JSON.stringify(out, null, 2) + ';\n';
         AC.downloadBlob('om.page.js', content);
-        AC.toast('Fil lastet ned — erstatt om.page.js i GitHub og push!');
+        AC.toast('Fil lastet ned. Erstatt om.page.js i GitHub og push!');
       }
 
       /* ════════ PREVIEW-RAMME (skalering) ════════ */
@@ -500,9 +503,32 @@
       fitPreview(); setTimeout(fitPreview, 80);
       pushFull(); setTimeout(pushFull, 150);
 
+      /* ── delt «Liste + detalj»-skall (sections: «Seksjoner»-bygger + én rad per
+         seksjon; hver seksjons-editor bygges på nytt i detalj-ruten via EDITORS) ── */
+      var shell = AC.PanelShell.mount(host, AC, {
+        rail: 'sections',
+        title: 'Om oss', subtitle: 'Bygg siden',
+        remember: 'apeiron-om-oss-shell-sel',
+        sections: function () {
+          var out = [];
+          var bnode = document.getElementById('lst-sections');
+          bnode = bnode ? bnode.closest('.panel') : null;
+          if (bnode) out.push({ id: '__builder', label: 'Seksjoner', sub: 'Legg til, fjern, omsorter', node: bnode, av: '☰' });
+          (data.sections || []).forEach(function (s) {
+            var lbl = SectionTypes.get(s.type) ? SectionTypes.get(s.type).label : s.type;
+            out.push({ id: s.id, label: secLabel(s), sub: lbl, av: '✎',
+              build: function (box) { var p = document.createElement('div'); p.className = 'panel-body'; box.appendChild(p); var fn = EDITORS[s.type]; var notify = function () { updateBuilderLabels(); pushSection(s.id); persist(); }; if (fn) fn(s, p, notify); else p.innerHTML = '<p class="hint">Ingen redigering for type «' + esc(s.type) + '» ennå.</p>'; } });
+          });
+          return out;
+        }
+      });
+      function applyPanelLayout() { shell.layoutChanged(); }
+      window.addEventListener('apeiron-panellayout', applyPanelLayout);
+      applyPanelLayout();
+
       return {
         export: exportFile,
-        destroy: function () { window.removeEventListener('message', onPreviewMsg); window.removeEventListener('resize', fitPreview); }
+        destroy: function () { window.removeEventListener('message', onPreviewMsg); window.removeEventListener('resize', fitPreview); window.removeEventListener('apeiron-panellayout', applyPanelLayout); if (shell) shell.destroy(); }
       };
     }
   });

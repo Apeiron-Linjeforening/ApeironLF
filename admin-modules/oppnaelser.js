@@ -18,7 +18,7 @@
       (d.awards || []).forEach(function (a) {
         if (!a || !a.title) return;
         var meta = [a.medal, a.giver, a.year].filter(Boolean).join(' · ');
-        out.push({ t: a.title, d: meta + (a.desc ? ' — ' + a.desc : ''), u: 'oppnaelser.html', g: 'Heder' });
+        out.push({ t: a.title, d: meta + (a.desc ? ': ' + a.desc : ''), u: 'oppnaelser.html', g: 'Heder' });
       });
       return out;
     },
@@ -27,14 +27,14 @@
       host.innerHTML =
         '<section class="preview-top">'
           + '<h3>Forhåndsvisning</h3>'
-          + '<p class="pp-sub">Live fra den ekte Oppnåelser-siden — endringene dine vises umiddelbart.</p>'
+          + '<p class="pp-sub">Live fra den ekte Oppnåelser-siden. Endringene dine vises umiddelbart.</p>'
           + '<div class="pv-frame-wrap"><iframe id="pv-frame" src="oppnaelser.html?preview=1" title="Forhåndsvisning av Oppnåelser-siden"></iframe></div>'
         + '</section>'
         + '<div class="tip">'
           + '<button class="tip-reset" data-reset type="button">Tilbakestill til siste publiserte versjon</button>'
           + '<strong>Slik oppdaterer du Oppnåelser-siden</strong>'
           + '<ol>'
-            + '<li>Rediger innholdet nedenfor — klikk på et felt for å redigere det</li>'
+            + '<li>Rediger innholdet nedenfor. Klikk på et felt for å redigere det</li>'
             + '<li>Last opp plakat / diplom ved å <b>klikke på bildefeltet</b> eller dra et bilde inn</li>'
             + '<li>Trykk <b>☁ Publiser til GitHub</b> oppe til høyre</li>'
             + '<li><em>(Reserve hvis publisering svikter: «↓ Last ned alle endrede» nederst i Oversikt-fanen, og legg fila i GitHub.)</em></li>'
@@ -107,7 +107,7 @@
           get: function () { return a.img || ''; },
           set: function (url) { a.img = url || null; },
           aspect: 16 / 10, outSize: 1100, quality: 0.85,
-          title: 'Rediger bilde — ' + (a.title || 'oppnåelse'),
+          title: 'Rediger bilde: ' + (a.title || 'oppnåelse'),
           afterChange: lazySave
         });
 
@@ -142,11 +142,11 @@
         renderList(); lazySave();
         setTimeout(function () { var last = host.querySelector('[data-list] .card:last-child'); if (last) last.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60);
       }
-      function del(id) { var i = data.awards.findIndex(function (x) { return x.id === id; }); if (i < 0) return; AC.undoDelete(data.awards, i, '«' + (data.awards[i].title || 'Oppnåelse') + '» slettet', renderList, lazySave); }
+      function del(id) { var i = data.awards.findIndex(function (x) { return x.id === id; }); if (i < 0) return; AC.undoDelete(data.awards, i, '«' + (data.awards[i].title || 'Oppnåelse') + '» slettet', shellRender, lazySave); }
       function move(id, dir) {
         var arr = data.awards, i = arr.findIndex(function (x) { return x.id === id; });
         if (i < 0) return; var j = i + dir; if (j < 0 || j >= arr.length) return;
-        var t = arr[i]; arr[i] = arr[j]; arr[j] = t; renderList(); lazySave();
+        var t = arr[i]; arr[i] = arr[j]; arr[j] = t; shellRender(); lazySave();
       }
 
       function exportFile() {
@@ -162,7 +162,7 @@
           + '   awards[].accent: fargestripe — palettnavn ("" = gull) eller { light, dark }. */\n\n'
           + 'window.OPPNAELSER_CONTENT = ' + JSON.stringify(out, null, 2) + ';\n';
         AC.saveFile('oppnaelser-content.js', content);
-        AC.toast('Fil lastet ned — erstatt i GitHub og push!');
+        AC.toast('Fil lastet ned. Erstatt i GitHub og push!');
       }
 
       host.querySelector('[data-reset]').addEventListener('click', function () {
@@ -176,7 +176,25 @@
         onReorder: function (ids) { data.awards.sort(function (a, b) { return ids.indexOf(a.id) - ids.indexOf(b.id); }); lazySave(); }
       });
 
-      loadData(); renderAll();
+      /* ── delt «Liste + detalj»-skall (enkeltliste + banner) ── */
+      var shell = AC.PanelShell.mount(host, AC, {
+        rail: 'single',
+        title: 'Oppnåelser', subtitle: 'Premier',
+        remember: 'apeiron-oppnaelser-shell-sel',
+        banner: { label: 'Overskrift øverst på siden', current: function () { return (data.intro && data.intro.heading) || ''; }, adopt: function () { return host.querySelector('.meta-panel'); } },
+        groups: [{
+          key: 'awards', label: 'Oppnåelser', addLabel: 'Ny oppnåelse',
+          items: function () { return data.awards; },
+          meta: function (a) { return { av: a.medal ? a.medal.charAt(0).toUpperCase() : '🏆', cls: 'sq', nm: a.title || '(uten tittel)', sub: [a.medal, a.year].filter(Boolean).join(' · ') || 'Oppnåelse' }; },
+          detail: function (a) { return awardCard(a); },
+          onAdd: function () { add(); return data.awards[data.awards.length - 1] && data.awards[data.awards.length - 1].id; }
+        }]
+      });
+      function shellRender() { renderList(); if (shell.isActive()) shell.refresh(); }
+      function applyPanelLayout() { shell.layoutChanged(); }
+      window.addEventListener('apeiron-panellayout', applyPanelLayout);
+
+      loadData(); renderAll(); applyPanelLayout();
       AC.viewSwitch({ list: host.querySelector('[data-list]'), key: 'apeiron-oppnaelser-view-v1', help: 'Velg hvordan oppnåelses-kortene vises mens du redigerer her i admin. Påvirker bare redigeringsvisningen, ikke den publiserte siden.' });
 
       /* ── live forhåndsvisning (oppnaelser.html?preview=1) ── */
@@ -203,7 +221,7 @@
 
       return {
         export: exportFile,
-        destroy: function () { window.removeEventListener('message', onPreviewMsg); window.removeEventListener('resize', fitPreview); }
+        destroy: function () { window.removeEventListener('message', onPreviewMsg); window.removeEventListener('resize', fitPreview); window.removeEventListener('apeiron-panellayout', applyPanelLayout); if (shell) shell.destroy(); }
       };
     }
   });

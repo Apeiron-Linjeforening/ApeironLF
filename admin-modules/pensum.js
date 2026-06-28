@@ -15,14 +15,14 @@
       host.innerHTML =
         '<section class="preview-top">'
           + '<h3>Forhåndsvisning</h3>'
-          + '<p class="pp-sub">Live fra den ekte Pensum-siden — endringene dine vises umiddelbart. Tips: bruk <code>**fet**</code> for uthevet tekst og <code>[tekst](adresse)</code> for lenker i meta-punkter og tom-tilstand-meldinger.</p>'
+          + '<p class="pp-sub">Live fra den ekte Pensum-siden. Endringene dine vises umiddelbart. Tips: bruk <code>**fet**</code> for uthevet tekst og <code>[tekst](adresse)</code> for lenker i meta-punkter og tom-tilstand-meldinger.</p>'
           + '<div class="pv-board-wrap"><iframe id="pv-board" src="pensum.html?preview=1" title="Forhåndsvisning av Pensum"></iframe></div>'
         + '</section>'
         + '<div class="tip">'
           + '<button class="tip-reset" id="reset-btn" type="button">Tilbakestill til siste publiserte versjon</button>'
           + '<strong>Slik oppdaterer du Pensum</strong>'
           + '<ol>'
-            + '<li>Rediger nedenfor — endringer vises live i forhåndsvisningen</li>'
+            + '<li>Rediger nedenfor. Endringer vises live i forhåndsvisningen</li>'
             + '<li>Trykk <b>☁ Publiser til GitHub</b> oppe til høyre</li>'
             + '<li><em>(Reserve hvis publisering svikter: «↓ Last ned alle endrede» nederst i Oversikt-fanen, og legg fila i GitHub.)</em></li>'
             + '<li>Cloudflare oppdaterer nettsiden automatisk innen et minutt</li>'
@@ -45,7 +45,7 @@
             + '<button class="btn-add" type="button" data-addsection>+ Ny seksjon</button>'
           + '</div>'
         + '</div>'
-        + '<div class="panel"><h2>Emner <small>emnekatalogen — gruppert per seksjon</small></h2>'
+        + '<div class="panel"><h2>Emner <small>emnekatalogen, gruppert per seksjon</small></h2>'
           + '<div class="panel-body">'
             + '<div class="ps-courses-tools"><button class="ps-link-btn" type="button" data-expand-all>Åpne alle</button><button class="ps-link-btn" type="button" data-collapse-all>Fold sammen alle</button><span class="ps-tools-spacer"></span></div>'
             + '<div id="lst-courses"></div>'
@@ -70,8 +70,8 @@
             + '<div class="frow"><div class="fg narrow"><label>Merkelapp</label><input type="text" id="ps-teaser-tag"></div>'
             + '<div class="fg"><label>Overskrift</label><input type="text" id="ps-teaser-heading"></div></div>'
             + '<div class="fg"><label>Tekst</label><textarea id="ps-teaser-body"></textarea></div>'
-            + '<div class="frow"><div class="fg"><label>Knapp — tekst</label><input type="text" id="ps-teaser-ctaLabel"></div>'
-            + '<div class="fg"><label>Knapp — lenke</label><input type="text" id="ps-teaser-ctaHref"></div></div>'
+            + '<div class="frow"><div class="fg"><label>Knapp: tekst</label><input type="text" id="ps-teaser-ctaLabel"></div>'
+            + '<div class="fg"><label>Knapp: lenke</label><input type="text" id="ps-teaser-ctaHref"></div></div>'
           + '</div>'
         + '</div>'
         + '<div class="panel"><h2>Ansvarsfraskrivelser <small>de to notisene nederst</small></h2>'
@@ -261,8 +261,8 @@
           + '<div class="fg"><label>Emnenavn</label><input type="text" data-k="name" value="' + esc(c.name) + '"></div>'
           + '<div class="fg"><label>Beskrivelse</label><textarea data-k="desc">' + esc(c.desc) + '</textarea></div>'
           + '<div class="fg"><label>Merknad <small>(valgfri, gul ⚠-linje)</small></label><input type="text" data-k="note" value="' + esc(c.note || '') + '"></div>'
-          + '<div class="frow"><div class="fg"><label>ntnu.no-lenke — tekst</label><input type="text" data-k="ntnuLabel" value="' + esc(c.ntnuLabel || '') + '" placeholder="Se emne på ntnu.no"></div>'
-          + '<div class="fg"><label>ntnu.no-lenke — adresse</label><input type="text" data-k="ntnuHref" value="' + esc(c.ntnuHref || '') + '"></div></div>'
+          + '<div class="frow"><div class="fg"><label>ntnu.no-lenke: tekst</label><input type="text" data-k="ntnuLabel" value="' + esc(c.ntnuLabel || '') + '" placeholder="Se emne på ntnu.no"></div>'
+          + '<div class="fg"><label>ntnu.no-lenke: adresse</label><input type="text" data-k="ntnuHref" value="' + esc(c.ntnuHref || '') + '"></div></div>'
           + '<div class="seg-row"><label class="seg-lbl">Pensum-felt:</label>'
             + '<label class="seg-opt"><input type="radio" name="pmode' + flatIdx + '" value="books"' + (mode === 'books' ? ' checked' : '') + '> Bokliste</label>'
             + '<label class="seg-opt"><input type="radio" name="pmode' + flatIdx + '" value="empty"' + (mode === 'empty' ? ' checked' : '') + '> Melding</label>'
@@ -285,8 +285,8 @@
           if (m === 'empty') {
             if (!c.empty) c.empty = { title: '', body: '' };
             var ev = document.createElement('div'); ev.className = 'fg-stack'; ev.style.display = 'flex'; ev.style.flexDirection = 'column'; ev.style.gap = '12px';
-            ev.innerHTML = '<div class="fg"><label>Melding — tittel</label><input type="text" data-e="title" value="' + esc(c.empty.title) + '"></div>'
-              + '<div class="fg"><label>Melding — tekst <small>(støtter [lenke](adresse))</small></label><textarea data-e="body">' + esc(c.empty.body) + '</textarea></div>';
+            ev.innerHTML = '<div class="fg"><label>Melding: tittel</label><input type="text" data-e="title" value="' + esc(c.empty.title) + '"></div>'
+              + '<div class="fg"><label>Melding: tekst <small>(støtter [lenke](adresse))</small></label><textarea data-e="body">' + esc(c.empty.body) + '</textarea></div>';
             ev.querySelectorAll('[data-e]').forEach(function (inp) { inp.addEventListener('input', function () { c.empty[inp.getAttribute('data-e')] = inp.value; lazySave(); }); });
             area.appendChild(ev);
           } else {
@@ -505,7 +505,7 @@
           + '*/\n\n'
           + 'window.PENSUM_CONTENT = ' + JSON.stringify(out, null, 2) + ';\n';
         AC.downloadBlob('pensum-content.js', content);
-        AC.toast('Fil lastet ned — erstatt i GitHub og push!');
+        AC.toast('Fil lastet ned. Erstatt i GitHub og push!');
       }
 
       q('reset-btn').addEventListener('click', function () {
@@ -539,9 +539,15 @@
       fitPreview(); setTimeout(fitPreview, 80);
       pushPreview(); setTimeout(pushPreview, 150);
 
+      /* ── delt «Liste + detalj»-skall (sections: hver .panel blir en rad) ── */
+      var shell = AC.PanelShell.mount(host, AC, { rail: 'sections', title: 'Pensum', subtitle: 'Sidetekster & katalog', remember: 'apeiron-pensum-shell-sel' });
+      function applyPanelLayout() { shell.layoutChanged(); }
+      window.addEventListener('apeiron-panellayout', applyPanelLayout);
+      applyPanelLayout();
+
       return {
         export: exportFile,
-        destroy: function () { window.removeEventListener('message', onPreviewMsg); window.removeEventListener('resize', fitPreview); }
+        destroy: function () { window.removeEventListener('message', onPreviewMsg); window.removeEventListener('resize', fitPreview); window.removeEventListener('apeiron-panellayout', applyPanelLayout); if (shell) shell.destroy(); }
       };
     }
   });

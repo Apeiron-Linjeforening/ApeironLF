@@ -15,14 +15,14 @@
       host.innerHTML =
         '<section class="preview-top">'
           + '<h3>Forhåndsvisning</h3>'
-          + '<p class="pp-sub">Live fra den ekte «Pensum-markedet»-siden — endringene dine vises umiddelbart. Dette panelet styrer all tekst på <code>marked.html</code> (den kommer-snart-siden lenket fra Pensum).</p>'
+          + '<p class="pp-sub">Live fra den ekte «Pensum-markedet»-siden. Endringene dine vises umiddelbart. Dette panelet styrer all tekst på <code>marked.html</code> (den kommer-snart-siden lenket fra Pensum).</p>'
           + '<div class="pv-board-wrap"><iframe id="pv-board" src="marked.html?preview=1" title="Forhåndsvisning av Marked"></iframe></div>'
         + '</section>'
         + '<div class="tip">'
           + '<button class="tip-reset" id="reset-btn" type="button">Tilbakestill til siste publiserte versjon</button>'
           + '<strong>Slik oppdaterer du Marked</strong>'
           + '<ol>'
-            + '<li>Rediger tekstene nedenfor — endringer vises live i forhåndsvisningen</li>'
+            + '<li>Rediger tekstene nedenfor. Endringer vises live i forhåndsvisningen</li>'
             + '<li>Trykk <b>☁ Publiser til GitHub</b> oppe til høyre</li>'
             + '<li><em>(Reserve hvis publisering svikter: «↓ Last ned alle endrede» nederst i Oversikt-fanen, og legg fila i GitHub.)</em></li>'
             + '<li>Cloudflare oppdaterer nettsiden automatisk innen et minutt</li>'
@@ -55,10 +55,10 @@
             + '<div class="frow"><div class="fg narrow"><label>Eyebrow</label><input type="text" id="mk-interest-eyebrow"></div>'
             + '<div class="fg"><label>Overskrift</label><input type="text" id="mk-interest-heading"></div></div>'
             + '<div class="fg"><label>Tekst</label><textarea id="mk-interest-body"></textarea></div>'
-            + '<div class="frow"><div class="fg"><label>Knapp 1 — tekst</label><input type="text" id="mk-cta1-label"></div>'
-            + '<div class="fg"><label>Knapp 1 — lenke</label><input type="text" id="mk-cta1-href" placeholder="mailto:…"></div></div>'
-            + '<div class="frow"><div class="fg"><label>Knapp 2 — tekst</label><input type="text" id="mk-cta2-label"></div>'
-            + '<div class="fg"><label>Knapp 2 — lenke</label><input type="text" id="mk-cta2-href" placeholder="https://…"></div></div>'
+            + '<div class="frow"><div class="fg"><label>Knapp 1: tekst</label><input type="text" id="mk-cta1-label"></div>'
+            + '<div class="fg"><label>Knapp 1: lenke</label><input type="text" id="mk-cta1-href" placeholder="mailto:…"></div></div>'
+            + '<div class="frow"><div class="fg"><label>Knapp 2: tekst</label><input type="text" id="mk-cta2-label"></div>'
+            + '<div class="fg"><label>Knapp 2: lenke</label><input type="text" id="mk-cta2-href" placeholder="https://…"></div></div>'
             + '<div class="fg"><label>Notis under knappene</label><input type="text" id="mk-interest-note"></div>'
           + '</div>'
         + '</div>';
@@ -194,7 +194,7 @@
           + '*/\n\n'
           + 'window.MARKED_CONTENT = ' + JSON.stringify(out, null, 2) + ';\n';
         AC.downloadBlob('marked-content.js', content);
-        AC.toast('Fil lastet ned — erstatt i GitHub og push!');
+        AC.toast('Fil lastet ned. Erstatt i GitHub og push!');
       }
 
       q('reset-btn').addEventListener('click', function () {
@@ -227,9 +227,15 @@
       fitPreview(); setTimeout(fitPreview, 80);
       pushPreview(); setTimeout(pushPreview, 150);
 
+      /* ── delt «Liste + detalj»-skall (sections: hver .panel blir en rad) ── */
+      var shell = AC.PanelShell.mount(host, AC, { rail: 'sections', title: 'Marked', subtitle: 'Sidetekster', remember: 'apeiron-marked-shell-sel' });
+      function applyPanelLayout() { shell.layoutChanged(); }
+      window.addEventListener('apeiron-panellayout', applyPanelLayout);
+      applyPanelLayout();
+
       return {
         export: exportFile,
-        destroy: function () { window.removeEventListener('message', onPreviewMsg); window.removeEventListener('resize', fitPreview); }
+        destroy: function () { window.removeEventListener('message', onPreviewMsg); window.removeEventListener('resize', fitPreview); window.removeEventListener('apeiron-panellayout', applyPanelLayout); if (shell) shell.destroy(); }
       };
     }
   });

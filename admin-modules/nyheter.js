@@ -29,7 +29,7 @@
       host.innerHTML =
         '<section class="preview-top">'
           + '<h3>Forhåndsvisning</h3>'
-          + '<p class="pp-sub">Live mens du skriver — bytt mellom forsidens «Akkurat nå»-kort og hele nyhetssiden (med arkiv).</p>'
+          + '<p class="pp-sub">Live mens du skriver. Bytt mellom forsidens «Akkurat nå»-kort og hele nyhetssiden (med arkiv).</p>'
           + '<div class="pv-page" id="pv-page"><button type="button" data-page="index.html?preview=1" class="pv-page-btn on">Forsiden</button><button type="button" data-page="nyheter.html?preview=1" class="pv-page-btn">Nyhetssiden</button></div>'
           + '<div class="pv-wrap"><iframe id="pv-frame" src="index.html?preview=1" title="Forhåndsvisning"></iframe></div>'
         + '</section>'
@@ -38,13 +38,13 @@
           + '<strong>Slik legger du ut en nyhet</strong>'
           + '<ol>'
             + '<li>Trykk <b>+ Ny nyhet</b> og velg <b>hvor</b> den skal vises (Forsiden, Arrangementer, Aporetisk eller Fadderuke)</li>'
-            + '<li>Skriv en kort <b>tittel</b> — og evt. litt brødtekst og en lenke (påmelding, skjema …)</li>'
+            + '<li>Skriv en kort <b>tittel</b>, og eventuelt litt brødtekst og en lenke (påmelding, skjema …)</li>'
             + '<li>Sett <b>⚑ Viktig</b> for tydelig vinrød hastemarkering</li>'
-            + '<li>Trykk <b>☁ Publiser til GitHub</b> oppe til høyre — siden oppdateres innen et minutt</li>'
+            + '<li>Trykk <b>☁ Publiser til GitHub</b> oppe til høyre. Siden oppdateres innen et minutt</li>'
           + '</ol>'
-          + '<div class="tip-note">💾 Lagres automatisk i nettleseren mens du jobber. Nyeste øverst — dra i ⠿ for å sortere. Gamle nyheter: trykk <b>● Aktiv → ✓ Arkivert</b> i stedet for å slette — da flyttes de til arkivet på nyhetssiden. «Neste arrangement» i panelet hentes automatisk fra kalenderen; det legger du ikke inn her.</div>'
+          + '<div class="tip-note">💾 Lagres automatisk i nettleseren mens du jobber. Nyeste øverst. Dra i ⠿ for å sortere. Gamle nyheter: trykk <b>● Aktiv → ✓ Arkivert</b> i stedet for å slette. Da flyttes de til arkivet på nyhetssiden. «Neste arrangement» i panelet hentes automatisk fra kalenderen; det legger du ikke inn her.</div>'
         + '</div>'
-        + '<div class="sec"><div class="sec-head"><h2>Topp-banner</h2></div>'
+        + '<div class="sec" data-news-banner><div class="sec-head"><h2>Topp-banner</h2></div>'
           + '<p class="sec-desc">Tittelen og teksten øverst på nyhetssiden.</p>'
           + '<div class="fields">'
             + '<div class="fg"><label>Tilbake-lenke (tekst)</label><input type="text" id="sh-back"></div>'
@@ -59,7 +59,7 @@
           + '<div class="lay-switch" id="news-arch-density">'
             + '<span class="lay-switch__lbl" data-help="Velg hvordan arkiverte nyheter vises mens du redigerer. Kompakt slår hver nyhet sammen til én rad (tittel + dato); Utvidet åpner full redigering. Pilen i kort-toppen åpner/lukker én enkelt.">Visning</span>'
             + '<div class="lay-switch__btns">'
-              + '<button type="button" data-density="kompakt" title="Sammenslåtte rader — rask oversikt"><span class="lay-ic ic-rows"><i></i><i></i><i></i></span>Kompakt</button>'
+              + '<button type="button" data-density="kompakt" title="Sammenslåtte rader: rask oversikt"><span class="lay-ic ic-rows"><i></i><i></i><i></i></span>Kompakt</button>'
               + '<button type="button" data-density="utvidet" title="Full redigering av hver arkiverte nyhet"><span class="lay-ic ic-one"><i></i></span>Utvidet</button>'
             + '</div>'
           + '</div>'
@@ -120,7 +120,7 @@
             + archWhen
             + '<div class="order-btns"><button class="btn-ord btn-up" type="button" title="Opp">↑</button><button class="btn-ord btn-dn" type="button" title="Ned">↓</button></div>'
             + '<button class="btn-toggle btn-urgent ' + (n.urgent ? 'btn-urgent--on' : 'btn-toggle--off') + '" type="button" title="Hastegrad">⚑ Viktig</button>'
-            + '<button class="btn-toggle btn-status btn-status--' + (n.done ? 'done' : 'active') + '" type="button" title="Aktiv / arkivert">' + (n.done ? '✓ Arkivert' : '● Aktiv') + '</button>'
+            + '<button class="btn-toggle btn-status btn-status--' + (n.done ? 'done' : 'active') + '" type="button" title="' + (n.done ? 'Hent tilbake til aktive nyheter' : 'Flytt til arkivet (Tidligere nyheter)') + '">' + (n.done ? '↩ Hent tilbake' : '🗄 Arkivér') + '</button>'
             + '<button class="btn-del" type="button">Slett</button></div>'
           + '<div class="fields">'
             + '<div class="frow">'
@@ -155,7 +155,10 @@
         });
         card.querySelector('.btn-status').addEventListener('click', function () {
           n.done = !n.done;
-          renderList(); lazySave();
+          // arkivdato settes ved første arkivering og endres ALDRI ved «Hent tilbake»
+          if (n.done && !n.archivedAt) n.archivedAt = Date.now();
+          AC.toast(n.done ? ('Arkivert ' + fmtArchived(n.archivedAt) + ', ligger nå under «Arkiverte»') : 'Hentet tilbake til aktive');
+          shellRender(); lazySave();
         });
         card.querySelector('.btn-up').addEventListener('click', function () { move(n.id, -1); });
         card.querySelector('.btn-dn').addEventListener('click', function () { move(n.id, 1); });
@@ -197,11 +200,11 @@
         renderList(); lazySave();
         setTimeout(function () { var f = host.querySelector('#list-items .card:first-child'); if (f) f.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60);
       }
-      function del(id) { var i = data.items.findIndex(function (x) { return x.id === id; }); if (i < 0) return; AC.undoDelete(data.items, i, '«' + (data.items[i].title || 'Nyhet') + '» slettet', renderList, lazySave); }
+      function del(id) { var i = data.items.findIndex(function (x) { return x.id === id; }); if (i < 0) return; AC.undoDelete(data.items, i, '«' + (data.items[i].title || 'Nyhet') + '» slettet', shellRender, lazySave); }
       function move(id, dir) {
         var a = data.items, i = a.findIndex(function (x) { return x.id === id; });
         if (i < 0) return; var j = i + dir; if (j < 0 || j >= a.length) return;
-        var t = a[i]; a[i] = a[j]; a[j] = t; renderList(); lazySave();
+        var t = a[i]; a[i] = a[j]; a[j] = t; shellRender(); lazySave();
       }
 
       function exportFile() {
@@ -219,7 +222,7 @@
           + '   ============================================================ */\n\n'
           + 'window.NEWS_CONTENT = ' + JSON.stringify({ subhero: data.subhero, items: data.items }, null, 2) + ';\n';
         AC.saveFile('news-content.js', header);
-        AC.toast('Fil lastet ned — erstatt i GitHub og push!');
+        AC.toast('Fil lastet ned. Erstatt i GitHub og push!');
       }
 
       q('add-item').addEventListener('click', add);
@@ -239,6 +242,37 @@
       }
       AC.enableDragSort(q('list-items'), { itemSelector: '.card', handleSelector: '.drag-handle', onReorder: applyOrderFromDom });
       AC.enableDragSort(q('list-arch'), { itemSelector: '.card', handleSelector: '.drag-handle', onReorder: applyOrderFromDom });
+
+      function fmtArchived(ts) { if (!ts) return ''; try { return new Date(ts).toLocaleDateString('no-NO', { day: 'numeric', month: 'short', year: 'numeric' }); } catch (_) { return ''; } }
+      /* ── delt «Liste + detalj»-skall (status-filter: Aktive / Arkiverte / Alle) ── */
+      var shell = AC.PanelShell.mount(host, AC, {
+        rail: 'filter',
+        title: 'Nyheter', subtitle: '1 samling',
+        remember: 'apeiron-nyheter-shell-sel',
+        banner: { label: 'Topp-banner', current: function () { return (data.subhero && data.subhero.title) || ''; }, adopt: function () { return host.querySelector('[data-news-banner]'); } },
+        filter: {
+          def: 'active',
+          segments: [
+            { key: 'active', label: 'Aktive', count: function () { return data.items.filter(function (n) { return !n.done; }).length; } },
+            { key: 'archived', label: 'Arkiverte', count: function () { return data.items.filter(function (n) { return n.done; }).length; } },
+            { key: 'all', label: 'Alle', count: function () { return data.items.length; } }
+          ]
+        },
+        groups: [{
+          key: 'items', label: 'Saker', addLabel: 'Ny nyhet',
+          items: function () { return data.items; },
+          matchFilter: function (n, seg) { return seg === 'all' ? true : seg === 'archived' ? !!n.done : !n.done; },
+          meta: function (n) {
+            var sub = n.done ? ('Arkivert ' + (fmtArchived(n.archivedAt) || fmtPosted(n.posted) || '')) : (n.kicker || 'Aktiv');
+            return { av: n.urgent ? '⚑' : '📰', cls: 'sq', nm: n.title || '(uten tittel)', sub: sub, dot: n.done ? 'off' : 'on' };
+          },
+          detail: function (n) { var c = itemCard(n); c.classList.remove('is-collapsed'); return c; },
+          onAdd: function () { add(); return data.items[0] && data.items[0].id; }
+        }]
+      });
+      function shellRender() { renderList(); if (shell.isActive()) shell.refresh(); }
+      function applyPanelLayout() { shell.layoutChanged(); }
+      window.addEventListener('apeiron-panellayout', applyPanelLayout);
 
       var pvFrame = q('pv-frame');
       function pushPreview() { if (!pvFrame || !pvFrame.contentWindow) return; try { pvFrame.contentWindow.postMessage({ type: 'apeiron-news-preview', items: data.items, subhero: data.subhero }, '*'); } catch (e) {} }
@@ -266,7 +300,7 @@
       window.addEventListener('resize', fitPreview);
       if (pvFrame) pvFrame.addEventListener('load', function () { fitPreview(); pushPreview(); });
 
-      loadData(); renderList();
+      loadData(); renderList(); applyPanelLayout();
       (function () {
         var map = { 'sh-back': 'back', 'sh-title': 'title', 'sh-lede': 'lede' };
         Object.keys(map).forEach(function (id) {
@@ -281,7 +315,7 @@
 
       return {
         export: exportFile,
-        destroy: function () { window.removeEventListener('message', onPreviewMsg); window.removeEventListener('resize', fitPreview); }
+        destroy: function () { window.removeEventListener('message', onPreviewMsg); window.removeEventListener('resize', fitPreview); window.removeEventListener('apeiron-panellayout', applyPanelLayout); if (shell) shell.destroy(); }
       };
     }
   });

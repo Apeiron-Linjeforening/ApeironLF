@@ -18,7 +18,7 @@
       (d.people || []).forEach(function (pp) {
         if (!pp || !pp.name || /Fornavn\s+Etternavn/i.test(pp.name)) return;
         var meta = [pp.honor, pp.year].filter(Boolean).join(' · ');
-        out.push({ t: pp.name, d: meta + (pp.desc ? ' — ' + pp.desc : ''), u: 'utmerkelser.html', g: 'Heder' });
+        out.push({ t: pp.name, d: meta + (pp.desc ? ': ' + pp.desc : ''), u: 'utmerkelser.html', g: 'Heder' });
       });
       return out;
     },
@@ -27,20 +27,20 @@
       host.innerHTML =
         '<section class="preview-top">'
           + '<h3>Forhåndsvisning</h3>'
-          + '<p class="pp-sub">Live fra den ekte Utmerkelser-siden — endringene dine vises umiddelbart.</p>'
+          + '<p class="pp-sub">Live fra den ekte Utmerkelser-siden. Endringene dine vises umiddelbart.</p>'
           + '<div class="pv-frame-wrap"><iframe id="pv-frame" src="utmerkelser.html?preview=1" title="Forhåndsvisning av Utmerkelser-siden"></iframe></div>'
         + '</section>'
         + '<div class="tip">'
           + '<button class="tip-reset" data-reset type="button">Tilbakestill til siste publiserte versjon</button>'
           + '<strong>Slik oppdaterer du Utmerkelser-siden</strong>'
           + '<ol>'
-            + '<li>Rediger innholdet nedenfor — klikk på et felt for å redigere det</li>'
+            + '<li>Rediger innholdet nedenfor. Klikk på et felt for å redigere det</li>'
             + '<li>Last opp portrett ved å <b>klikke på bildefeltet</b> eller dra et bilde inn</li>'
             + '<li>Trykk <b>☁ Publiser til GitHub</b> oppe til høyre</li>'
             + '<li><em>(Reserve hvis publisering svikter: «↓ Last ned alle endrede» nederst i Oversikt-fanen, og legg fila i GitHub.)</em></li>'
             + '<li>Cloudflare oppdaterer nettsiden automatisk innen et minutt</li>'
           + '</ol>'
-          + '<div class="tip-note">💾 Endringer lagres automatisk i nettleseren din. Eksempel­kortene er bare maler — bytt dem ut med ekte personer.</div>'
+          + '<div class="tip-note">💾 Endringer lagres automatisk i nettleseren din. Eksempel­kortene er bare maler. Bytt dem ut med ekte personer.</div>'
         + '</div>'
         + '<div class="meta-panel"><h3>Overskrift øverst på siden</h3>'
           + '<div class="meta-grid">'
@@ -129,7 +129,7 @@
           get: function () { return p.img || ''; },
           set: function (url) { p.img = url || null; },
           aspect: 1, outSize: 700, quality: 0.85,
-          title: 'Rediger bilde — ' + (p.name || 'person'),
+          title: 'Rediger bilde: ' + (p.name || 'person'),
           afterChange: lazySave
         });
 
@@ -172,11 +172,11 @@
         renderList(); lazySave();
         setTimeout(function () { var last = host.querySelector('[data-list] .card:last-child'); if (last) last.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60);
       }
-      function del(id) { var i = data.people.findIndex(function (x) { return x.id === id; }); if (i < 0) return; AC.undoDelete(data.people, i, '«' + (data.people[i].name || 'Utmerkelse') + '» slettet', renderList, lazySave); }
+      function del(id) { var i = data.people.findIndex(function (x) { return x.id === id; }); if (i < 0) return; AC.undoDelete(data.people, i, '«' + (data.people[i].name || 'Utmerkelse') + '» slettet', shellRender, lazySave); }
       function move(id, dir) {
         var arr = data.people, i = arr.findIndex(function (x) { return x.id === id; });
         if (i < 0) return; var j = i + dir; if (j < 0 || j >= arr.length) return;
-        var t = arr[i]; arr[i] = arr[j]; arr[j] = t; renderList(); lazySave();
+        var t = arr[i]; arr[i] = arr[j]; arr[j] = t; shellRender(); lazySave();
       }
 
       function exportFile() {
@@ -191,7 +191,7 @@
           + '   people[].accent: fargestripe — palettnavn ("" = gull) eller { light, dark }. */\n\n'
           + 'window.UTMERKELSER_CONTENT = ' + JSON.stringify(out, null, 2) + ';\n';
         AC.saveFile('utmerkelser-content.js', content);
-        AC.toast('Fil lastet ned — erstatt i GitHub og push!');
+        AC.toast('Fil lastet ned. Erstatt i GitHub og push!');
       }
 
       host.querySelector('[data-reset]').addEventListener('click', function () {
@@ -205,7 +205,25 @@
         onReorder: function (ids) { data.people.sort(function (a, b) { return ids.indexOf(a.id) - ids.indexOf(b.id); }); lazySave(); }
       });
 
-      loadData(); renderAll();
+      /* ── delt «Liste + detalj»-skall (enkeltliste + banner) ── */
+      var shell = AC.PanelShell.mount(host, AC, {
+        rail: 'single',
+        title: 'Utmerkelser', subtitle: 'Personer',
+        remember: 'apeiron-utmerkelser-shell-sel',
+        banner: { label: 'Overskrift øverst på siden', current: function () { return (data.intro && data.intro.heading) || ''; }, adopt: function () { return host.querySelector('.meta-panel'); } },
+        groups: [{
+          key: 'people', label: 'Utmerkelser', addLabel: 'Ny utmerkelse',
+          items: function () { return data.people; },
+          meta: function (p) { return { av: p.initials || (p.name ? p.name.charAt(0).toUpperCase() : '🎖'), cls: '', nm: p.name || '(uten navn)', sub: [p.honor, p.year].filter(Boolean).join(' · ') || 'Utmerkelse' }; },
+          detail: function (p) { return personCard(p); },
+          onAdd: function () { add(); return data.people[data.people.length - 1] && data.people[data.people.length - 1].id; }
+        }]
+      });
+      function shellRender() { renderList(); if (shell.isActive()) shell.refresh(); }
+      function applyPanelLayout() { shell.layoutChanged(); }
+      window.addEventListener('apeiron-panellayout', applyPanelLayout);
+
+      loadData(); renderAll(); applyPanelLayout();
       AC.viewSwitch({ list: host.querySelector('[data-list]'), key: 'apeiron-utmerkelser-view-v1', help: 'Velg hvordan utmerkelses-kortene vises mens du redigerer her i admin. Påvirker bare redigeringsvisningen, ikke den publiserte siden.' });
 
       /* ── live forhåndsvisning (utmerkelser.html?preview=1) ── */
@@ -232,7 +250,7 @@
 
       return {
         export: exportFile,
-        destroy: function () { window.removeEventListener('message', onPreviewMsg); window.removeEventListener('resize', fitPreview); }
+        destroy: function () { window.removeEventListener('message', onPreviewMsg); window.removeEventListener('resize', fitPreview); window.removeEventListener('apeiron-panellayout', applyPanelLayout); if (shell) shell.destroy(); }
       };
     }
   });

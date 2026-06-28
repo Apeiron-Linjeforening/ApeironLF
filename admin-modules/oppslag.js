@@ -18,20 +18,20 @@
       host.innerHTML =
         '<section class="preview-top">'
           + '<h3>Forhåndsvisning</h3>'
-          + '<p class="pp-sub">Live fra den ekte Oppslagstavla — endringene dine vises umiddelbart, akkurat slik plakatene henger på siden.</p>'
+          + '<p class="pp-sub">Live fra den ekte Oppslagstavla. Endringene dine vises umiddelbart, akkurat slik plakatene henger på siden.</p>'
           + '<div class="pv-board-wrap"><iframe id="pv-board" src="oppslagstavla.html?preview=1" title="Forhåndsvisning av Oppslagstavla"></iframe></div>'
         + '</section>'
         + '<div class="tip">'
           + '<button class="tip-reset" id="reset-btn" type="button">Tilbakestill til siste publiserte versjon</button>'
           + '<strong>Slik oppdaterer du Oppslagstavla</strong>'
           + '<ol>'
-            + '<li>Rediger plakatene nedenfor — klikk på et felt for å redigere det</li>'
-            + '<li>Last opp plakatbildet ved å <b>klikke på bildefeltet</b> eller dra et bilde inn — hover over bildet for å <b>↻ rotere</b> eller <b>⛶ beskjære/zoome</b></li>'
+            + '<li>Rediger plakatene nedenfor. Klikk på et felt for å redigere det</li>'
+            + '<li>Last opp plakatbildet ved å <b>klikke på bildefeltet</b> eller dra et bilde inn. Hold pekeren over bildet for å <b>↻ rotere</b> eller <b>⛶ beskjære/zoome</b></li>'
             + '<li>Trykk <b>☁ Publiser til GitHub</b> oppe til høyre</li>'
             + '<li><em>(Reserve hvis publisering svikter: «↓ Last ned alle endrede» nederst i Oversikt-fanen, og legg fila i GitHub.)</em></li>'
             + '<li>Cloudflare oppdaterer nettsiden automatisk innen et minutt</li>'
           + '</ol>'
-          + '<div class="tip-note">💾 Endringer lagres automatisk i nettleseren din. Nyeste plakat bør ligge øverst — dra i ⠿ for å sortere. Klikk <b>● Aktiv / ✓ Ferdig</b> på en plakat for å arkivere den — arkiverte plakater vises i «Tidligere oppslag» på oppslagstavla-siden, men ikke på forsiden.</div>'
+          + '<div class="tip-note">💾 Endringer lagres automatisk i nettleseren din. Nyeste plakat bør ligge øverst. Dra i ⠿ for å sortere. Klikk <b>● Aktiv / ✓ Ferdig</b> på en plakat for å arkivere den. Arkiverte plakater vises i «Tidligere oppslag» på oppslagstavla-siden, men ikke på forsiden.</div>'
         + '</div>'
         + '<div class="meta-panel"><h3>Overskrift øverst på siden</h3>'
           + '<div class="meta-grid">'
@@ -68,6 +68,7 @@
       function lazySave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveData, 350); }
       function uid(pfx) { return pfx + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
       function find(id) { return data.posters.find(function (x) { return x.id === id; }); }
+      function fmtArchived(ts) { if (!ts) return ''; try { return new Date(ts).toLocaleDateString('no-NO', { day: 'numeric', month: 'short', year: 'numeric' }); } catch (_) { return ''; } }
 
       // opplasting + redigering håndteres av AdminCommon.wireImageField (delt) i posterCard
 
@@ -81,7 +82,8 @@
           '<div class="card-head"><span class="drag-handle" title="Dra for å sortere">⠿</span>'
             + '<span class="card-title">' + esc(p.title || '(uten tittel)') + '</span>'
             + '<div class="order-btns"><button class="btn-ord btn-up" type="button" title="Opp">↑</button><button class="btn-ord btn-dn" type="button" title="Ned">↓</button></div>'
-            + '<button class="btn-status btn-status--' + (p.done ? 'done' : 'active') + '" type="button" title="Klikk for å veksle status">' + (p.done ? '✓ Ferdig' : '● Aktiv') + '</button>'
+            + '<span class="archived-on"' + (p.done ? '' : ' hidden') + '>🗄 Arkivert ' + esc(fmtArchived(p.archivedAt)) + '</span>'
+            + '<button class="btn-status btn-status--' + (p.done ? 'done' : 'active') + '" type="button" title="' + (p.done ? 'Hent tilbake til aktive plakater' : 'Flytt til arkivet (vises under «Tidligere oppslag»)') + '">' + (p.done ? '↩ Hent tilbake' : '🗄 Arkivér') + '</button>'
             + '<button class="btn-del" type="button">Slett</button></div>'
           + '<div class="card-body">'
             + AC.imgFieldHtml('', 'Klikk eller dra inn plakat')
@@ -93,7 +95,7 @@
               + '</div>'
               + '<div class="fg"><label>Undertekst (valgfri)</label><textarea data-f="note" placeholder="Én kort linje om plakaten...">' + esc(p.note) + '</textarea></div>'
               + '<div class="frow">'
-                + '<div class="fg"><label data-help="Hvor «Les mer» går — klikk 📍 for å velge side og seksjon, eller skriv en https-lenke. La stå tom for ingen lenke.">Lenke (valgfri)</label><div class="addr-wrap"><input type="text" data-f="link" value="' + esc(p.link) + '" placeholder="index.html#aporetisk"><button class="btn-loc" type="button" title="Velg side og seksjon">📍</button></div></div>'
+                + '<div class="fg"><label data-help="Hvor «Les mer» går. Klikk 📍 for å velge side og seksjon, eller skriv en https-lenke. La stå tom for ingen lenke.">Lenke (valgfri)</label><div class="addr-wrap"><input type="text" data-f="link" value="' + esc(p.link) + '" placeholder="index.html#aporetisk"><button class="btn-loc" type="button" title="Velg side og seksjon">📍</button></div></div>'
                 + '<div class="fg narrow"><label>Lenketekst</label><input type="text" data-f="linkLabel" value="' + esc(p.linkLabel) + '" placeholder="Les mer"></div>'
               + '</div>'
             + '</div>'
@@ -104,7 +106,7 @@
           get: function () { return p.img || ''; },
           set: function (url) { p.img = url || null; },
           aspect: 3 / 4, aspects: [0.75, 1, 1.3333], outSize: 1400, quality: 0.9,
-          title: 'Rediger plakat — ' + (p.title || ''),
+          title: 'Rediger plakat: ' + (p.title || ''),
           afterChange: lazySave
         });
 
@@ -120,10 +122,18 @@
         var statusBtn = card.querySelector('.btn-status');
         statusBtn.addEventListener('click', function () {
           p.done = !p.done;
+          // Sett arkivdato FØRSTE gang den arkiveres, og behold den for alltid —
+          // en utilsiktet «Hent tilbake» + ny arkivering endrer IKKE datoen.
+          if (p.done && !p.archivedAt) p.archivedAt = Date.now();
+          var aOn = card.querySelector('.archived-on');
+          if (aOn) { aOn.hidden = !p.done; aOn.textContent = '🗄 Arkivert ' + fmtArchived(p.archivedAt); }
           statusBtn.className = 'btn-status btn-status--' + (p.done ? 'done' : 'active');
-          statusBtn.textContent = p.done ? '✓ Ferdig' : '● Aktiv';
+          statusBtn.textContent = p.done ? '↩ Hent tilbake' : '🗄 Arkivér';
+          statusBtn.title = p.done ? 'Hent tilbake til aktive plakater' : 'Flytt til arkivet (vises under «Tidligere oppslag»)';
           card.classList.toggle('is-done', !!p.done);
+          AC.toast(p.done ? ('Arkivert ' + fmtArchived(p.archivedAt) + ', ligger nå under «Arkiverte»') : 'Hentet tilbake til aktive');
           lazySave();
+          if (typeof shell !== 'undefined' && shell.isActive()) shell.refresh();
         });
         wireLoc(card);
         return card;
@@ -146,11 +156,12 @@
         renderList(); lazySave();
         setTimeout(function () { var first = host.querySelector('#list-posters .card:first-child'); if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60);
       }
-      function del(id) { var i = data.posters.findIndex(function (x) { return x.id === id; }); if (i < 0) return; AC.undoDelete(data.posters, i, '«' + (data.posters[i].title || 'Plakat') + '» slettet', renderList, lazySave); }
+      function shellRender() { renderList(); if (typeof shell !== 'undefined' && shell.isActive()) shell.refresh(); }
+      function del(id) { var i = data.posters.findIndex(function (x) { return x.id === id; }); if (i < 0) return; AC.undoDelete(data.posters, i, '«' + (data.posters[i].title || 'Plakat') + '» slettet', shellRender, lazySave); }
       function move(id, dir) {
         var arr = data.posters, i = arr.findIndex(function (x) { return x.id === id; });
         if (i < 0) return; var j = i + dir; if (j < 0 || j >= arr.length) return;
-        var t = arr[i]; arr[i] = arr[j]; arr[j] = t; renderList(); lazySave();
+        var t = arr[i]; arr[i] = arr[j]; arr[j] = t; shellRender(); lazySave();
       }
       function wireMeta(id, key) { q(id).addEventListener('input', function () { data.intro[key] = this.value; lazySave(); }); }
       wireMeta('meta-eyebrow', 'eyebrow'); wireMeta('meta-heading', 'heading'); wireMeta('meta-lede', 'lede');
@@ -170,7 +181,7 @@
           + '   posters[].done      : true = arkivert (vises i «Tidligere oppslag»). */\n\n'
           + 'window.OPPSLAG_CONTENT = ' + JSON.stringify(out, null, 2) + ';\n';
         AC.saveFile('oppslag-content.js', content);
-        AC.toast('Fil lastet ned — erstatt i GitHub og push!');
+        AC.toast('Fil lastet ned. Erstatt i GitHub og push!');
       }
 
       q('reset-btn').addEventListener('click', function () {
@@ -183,6 +194,36 @@
         itemSelector: '.card', handleSelector: '.drag-handle',
         onReorder: function (ids) { data.posters.sort(function (a, b) { return ids.indexOf(a.id) - ids.indexOf(b.id); }); lazySave(); }
       });
+
+      /* ── delt «Liste + detalj»-skall (enkeltliste + banner) ── */
+      var shell = AC.PanelShell.mount(host, AC, {
+        rail: 'filter',
+        title: 'Oppslagstavla', subtitle: '1 samling',
+        remember: 'apeiron-oppslag-shell-sel',
+        banner: { label: 'Overskrift øverst på siden', current: function () { return data.intro.heading || ''; }, adopt: function () { return host.querySelector('.meta-panel'); } },
+        filter: {
+          def: 'active',
+          segments: [
+            { key: 'active', label: 'Aktive', count: function () { return data.posters.filter(function (p) { return !p.done; }).length; } },
+            { key: 'archived', label: 'Arkiverte', count: function () { return data.posters.filter(function (p) { return p.done; }).length; } },
+            { key: 'all', label: 'Alle', count: function () { return data.posters.length; } }
+          ]
+        },
+        groups: [{
+          key: 'posters', label: 'Plakater', addLabel: 'Ny plakat',
+          items: function () { return data.posters; },
+          matchFilter: function (p, seg) { return seg === 'all' ? true : seg === 'archived' ? !!p.done : !p.done; },
+          meta: function (p) {
+            if (p.done) { var d = fmtArchived(p.archivedAt); return { av: '✓', cls: 'sq', nm: p.title || '(uten tittel)', sub: d ? ('Arkivert ' + d) : 'Arkivert', dot: 'off' }; }
+            return { av: '📌', cls: 'sq', nm: p.title || '(uten tittel)', sub: p.date || 'Aktiv', dot: 'on' };
+          },
+          detail: function (p) { return posterCard(p); },
+          onAdd: function () { add(); return data.posters[0] && data.posters[0].id; }
+        }]
+      });
+      function mdActive() { return shell.isActive(); }
+      function applyPanelLayout() { shell.layoutChanged(); }
+      window.addEventListener('apeiron-panellayout', applyPanelLayout);
 
       /* ── live forhåndsvisning ── */
       var pvFrame = q('pv-board');
@@ -288,7 +329,7 @@
         btn.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); openLocPicker(input); });
       }
 
-      loadData(); renderAll();
+      loadData(); renderAll(); applyPanelLayout();
       AC.viewSwitch({ list: q('list-posters'), key: 'apeiron-oppslag-view-v1', help: 'Velg hvordan plakatkortene vises mens du redigerer her i admin. Påvirker bare redigeringsvisningen, ikke den publiserte siden.' });
       fitPreview(); setTimeout(fitPreview, 80);
       pushPreview(); setTimeout(pushPreview, 150);
@@ -298,6 +339,8 @@
         destroy: function () {
           window.removeEventListener('message', onPreviewMsg);
           window.removeEventListener('resize', fitPreview);
+          window.removeEventListener('apeiron-panellayout', applyPanelLayout);
+          if (shell) shell.destroy();
           document.removeEventListener('keydown', cropKeydown);
           document.removeEventListener('click', locDocClick);
           window.removeEventListener('resize', locWinResize);

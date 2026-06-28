@@ -22,7 +22,7 @@ window.INDEX_CONTENT = {
     "mosaicSizes": "varied",
     "polaStyle": "framed",
     "heading": "Livet i Apeiron",
-    "lede": "Glimt fra det sosiale livet i Apeiron — fester, fagkvelder og alt imellom."
+    "lede": "Glimt fra det sosiale livet i Apeiron: fester, fagkvelder og alt imellom."
   },
   "hero": {
     "wordmark": {
@@ -46,12 +46,12 @@ window.INDEX_CONTENT = {
   "arr": {
     "eyebrow": "Hva skjer",
     "heading": "Arrangementer",
-    "lede": "Fra dyptpløyende fagkvelder til legendariske symposion. Se hele semesterprogrammet som liste, rutenett eller helhetlig oversikt — og legg det rett inn i din egen kalender."
+    "lede": "Fra dyptpløyende fagkvelder til legendariske symposion. Se hele semesterprogrammet som liste, rutenett eller helhetlig oversikt, og legg det rett inn i din egen kalender."
   },
   "apo": {
     "eyebrow": "Fast hver måned",
     "title": "Aporetisk Aften",
-    "lede": "Én kveld i måneden samler vi oss rundt ett eneste spørsmål — uten pensum og uten fasit. Vi tenker høyt, er uenige i godt selskap, og går hjem med flere spørsmål enn vi kom med. Ferskinger og veteraner er like velkomne.",
+    "lede": "Én kveld i måneden samler vi oss rundt ett eneste spørsmål, uten pensum og uten fasit. Vi tenker høyt, er uenige i godt selskap, og går hjem med flere spørsmål enn vi kom med. Ferskinger og veteraner er like velkomne.",
     "forWhom": "Åpent for alle",
     "greek": "ἀπορία",
     "greekSub": "a-po-ri-a · «rådvillhet»",
@@ -60,7 +60,7 @@ window.INDEX_CONTENT = {
   "fadder": {
     "eyebrow": "Velkommen til Dragvoll",
     "heading": "Fadderukene",
-    "lede": "Studiestartens beste uker — bli kjent med faget, byen og hverandre. Velg en dag for å se programmet."
+    "lede": "Studiestartens beste uker. Bli kjent med faget, byen og hverandre. Velg en dag for å se programmet."
   },
   "medlem": {
     "eyebrow": "Bli en av oss",
@@ -110,11 +110,11 @@ window.INDEX_CONTENT = {
       },
       {
         "q": "Hva er S.A.K?",
-        "a": "S.A.K — Sosiale Arrangement Komité — er styrets hjelpemiddel for å gi studenter en lavterskel måte å ta del i planlegging og gjennomføring av det sosiale på. Vil du engasjere deg uten å sitte i styret, er dette den enkleste veien inn."
+        "a": "S.A.K (Sosiale Arrangement Komité) er styrets hjelpemiddel for å gi studenter en lavterskel måte å ta del i planlegging og gjennomføring av det sosiale på. Vil du engasjere deg uten å sitte i styret, er dette den enkleste veien inn."
       },
       {
         "q": "Hva er Begrep?",
-        "a": "Begrep er et studentdrevet filosofitidsskrift laget av nåværende og tidligere filosofi- og etikkstudenter. Det springer ut av det samme studentmiljøet — alle kan sende inn bidrag og få redaksjonell tilbakemelding."
+        "a": "Begrep er et studentdrevet filosofitidsskrift laget av nåværende og tidligere filosofi- og etikkstudenter. Det springer ut av det samme studentmiljøet, og alle kan sende inn bidrag og få redaksjonell tilbakemelding."
       }
     ]
   }

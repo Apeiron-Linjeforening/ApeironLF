@@ -18,14 +18,14 @@
       host.innerHTML =
         '<section class="preview-top">'
           + '<h3>Forhåndsvisning</h3>'
-          + '<p class="pp-sub">Live fra den ekte Hjelp-siden — bla i ruta for å se hele siden. Endringene dine vises umiddelbart.</p>'
+          + '<p class="pp-sub">Live fra den ekte Hjelp-siden. Bla i ruta for å se hele siden. Endringene dine vises umiddelbart.</p>'
           + '<div class="pv-page-wrap"><iframe id="pv-page" src="hjelp.html?preview=1" title="Forhåndsvisning av Hjelp-siden"></iframe></div>'
         + '</section>'
         + '<div class="tip">'
           + '<button class="tip-reset" id="reset-btn" type="button">Tilbakestill til siste publiserte versjon</button>'
           + '<strong>Slik oppdaterer du Hjelp-siden</strong>'
           + '<ol>'
-            + '<li>Rediger innholdet nedenfor — klikk på et felt for å redigere det</li>'
+            + '<li>Rediger innholdet nedenfor. Klikk på et felt for å redigere det</li>'
             + '<li>Legg til kort med <b>+ Nytt kort</b>, og punkter eller kontaktlinjer med <b>+ punkt</b> / <b>+ kontaktlinje</b></li>'
             + '<li>I tekstfelt for kontaktlinjer og «Si fra»-kort kan du bruke HTML, f.eks. <code>&lt;strong&gt;...&lt;/strong&gt;</code> eller en lenke</li>'
             + '<li>Trykk <b>☁ Publiser til GitHub</b> oppe til høyre</li>'
@@ -149,10 +149,10 @@
               + '<div class="fg narrow"><label>Fargestripe</label><div data-accent-host></div></div>'
             + '</div>'
             + '<div class="fg"><label>Beskrivelse</label><textarea data-f="desc" placeholder="Brødtekst. Blank linje gir nytt avsnitt.">' + esc(c.desc) + '</textarea></div>'
-            + '<div class="fg"><label data-help="Valgfri rødbrun merknad over punktlisten. HTML er tillatt.">Uthevet merknad (rødbrun, vises før punktene)</label><input type="text" data-f="noteTop" value="' + esc(c.noteTop) + '" placeholder="valgfri — HTML lov"></div>'
+            + '<div class="fg"><label data-help="Valgfri rødbrun merknad over punktlisten. HTML er tillatt.">Uthevet merknad (rødbrun, vises før punktene)</label><input type="text" data-f="noteTop" value="' + esc(c.noteTop) + '" placeholder="valgfri (HTML lov)"></div>'
             + '<div class="subed" data-resp></div>'
             + '<div class="subed" data-contacts></div>'
-            + '<div class="fg"><label data-help="Valgfri diskré merknad under punktlisten. HTML er tillatt.">Diskré merknad (vises etter punktene)</label><input type="text" data-f="note" value="' + esc(c.note) + '" placeholder="valgfri — HTML lov"></div>'
+            + '<div class="fg"><label data-help="Valgfri diskré merknad under punktlisten. HTML er tillatt.">Diskré merknad (vises etter punktene)</label><input type="text" data-f="note" value="' + esc(c.note) + '" placeholder="valgfri (HTML lov)"></div>'
             + '<div class="frow">'
               + '<div class="fg narrow"><label>Knappetekst</label><input type="text" data-f="btnLabel" value="' + esc(c.btnLabel) + '" placeholder="tom = ingen knapp"></div>'
               + '<div class="fg"><label>Knapp-lenke</label><input type="text" data-f="btnHref" value="' + esc(c.btnHref) + '" placeholder="https://..."></div>'
@@ -182,7 +182,7 @@
           + '<div class="fields">'
             + '<div class="frow"><div class="fg narrow"><label>Ikon (emoji)</label><input type="text" data-f="icon" value="' + esc(it.icon) + '" placeholder="📚"></div>'
             + '<div class="fg"><label>Tittel</label><input type="text" data-f="title" value="' + esc(it.title) + '"></div></div>'
-            + '<div class="fg"><label>Tekst (HTML lov — lenker o.l.)</label><textarea data-f="body">' + esc(it.body) + '</textarea></div>'
+            + '<div class="fg"><label>Tekst (HTML lov: lenker o.l.)</label><textarea data-f="body">' + esc(it.body) + '</textarea></div>'
           + '</div>';
         card.querySelectorAll('[data-f]').forEach(function (el) {
           var field = el.getAttribute('data-f');
@@ -319,7 +319,7 @@
           + '   akutt.cards[]     : nødnummer-kort. {name, num, numHref, when, life} */\n\n';
         var content = header + 'window.HJELP_CONTENT = ' + JSON.stringify(out, null, 2) + ';\n';
         AC.saveFile('hjelp-content.js', content);
-        showToast('Fil lastet ned — erstatt i GitHub og push!');
+        showToast('Fil lastet ned. Erstatt i GitHub og push!');
       }
 
       host.querySelector('#reset-btn').addEventListener('click', function () {
@@ -370,11 +370,19 @@
       fitPreview(); setTimeout(fitPreview, 80);
       pushPreview(); setTimeout(pushPreview, 150);
 
+      /* ── delt «Liste + detalj»-skall (sections: hver .panel blir en rad) ── */
+      var shell = AC.PanelShell.mount(host, AC, { rail: 'sections', title: 'Hjelp', subtitle: 'Seksjoner', remember: 'apeiron-hjelp-shell-sel' });
+      function applyPanelLayout() { shell.layoutChanged(); }
+      window.addEventListener('apeiron-panellayout', applyPanelLayout);
+      applyPanelLayout();
+
       return {
         export: exportFile,
         destroy: function () {
           window.removeEventListener('message', onPreviewMsg);
           window.removeEventListener('resize', fitPreview);
+          window.removeEventListener('apeiron-panellayout', applyPanelLayout);
+          if (shell) shell.destroy();
         }
       };
     }

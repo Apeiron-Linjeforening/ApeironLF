@@ -32,7 +32,7 @@
         out.push({ t: m.name, d: desc, u: 'index.html#styret', g: 'Styret' });
       });
       var roles = (d.roles || []).map(function (r) { return r && r.name; }).filter(Boolean);
-      if (roles.length) out.push({ t: 'Om vervene — Styret', d: 'Beskrivelse av styrevervene i Apeiron: ' + roles.join(', ') + '.', u: 'styret.html', g: 'Styret' });
+      if (roles.length) out.push({ t: 'Om vervene (Styret)', d: 'Beskrivelse av styrevervene i Apeiron: ' + roles.join(', ') + '.', u: 'styret.html', g: 'Styret' });
       (d.archive || []).forEach(function (a) {
         if (!a || !a.period) return;
         out.push({ t: 'Styret ' + a.period, d: (a.summary || 'Tidligere styre i Apeiron.').slice(0, 150), u: 'styret-arkiv.html#arkiv', g: 'Styre-arkiv' });
@@ -44,7 +44,7 @@
       host.innerHTML =
         '<section class="preview-top">'
           + '<h3>Forhåndsvisning</h3>'
-          + '<p class="pp-sub">Live mens du redigerer — bytt mellom Styret-siden og hele arkivsiden (tidligere styrer).</p>'
+          + '<p class="pp-sub">Live mens du redigerer. Bytt mellom Styret-siden og hele arkivsiden (tidligere styrer).</p>'
           + '<div class="pv-page" id="pv-page"><button type="button" data-page="styret.html?preview=1" class="pv-page-btn on">Styret-siden</button><button type="button" data-page="styret-arkiv.html?preview=1" class="pv-page-btn">Arkivsiden</button></div>'
           + '<div class="pv-board-wrap"><iframe id="pv-board" src="styret.html?preview=1" title="Forhåndsvisning"></iframe></div>'
         + '</section>'
@@ -52,13 +52,13 @@
           + '<button class="tip-reset" id="reset-btn" type="button">Tilbakestill til siste publiserte versjon</button>'
           + '<strong>Slik oppdaterer du Styret-siden</strong>'
           + '<ol>'
-            + '<li>Rediger innholdet nedenfor — klikk på et felt for å redigere det</li>'
-            + '<li>Last opp portrett ved å <b>klikke på bildefeltet</b> eller dra et bilde inn — da åpnes redigeringsvinduet (flytt, zoom, roter, speilvend, lys/kontrast/metning)</li>'
+            + '<li>Rediger innholdet nedenfor. Klikk på et felt for å redigere det</li>'
+            + '<li>Last opp portrett ved å <b>klikke på bildefeltet</b> eller dra et bilde inn, så åpnes redigeringsvinduet (flytt, zoom, roter, speilvend, lys/kontrast/metning)</li>'
             + '<li>Arkivér et avtroppende styre med <b>+ Arkivér nåværende styre</b>, og skriv notater om hva styret og hvert medlem gjorde</li>'
-            + '<li>Trykk <b>☁ Publiser til GitHub</b> oppe til høyre — <code>styret-content.js</code> og portrettene committes automatisk til <code>assets/styret/</code></li>'
-            + '<li><em>Reserve hvis publisering svikter: «↓ Last ned alle endrede» nederst i Oversikt — da lastes <code>styret-content.js</code> + portrettene ned, som du legger i <code>assets/styret/</code>.</em></li>'
+            + '<li>Trykk <b>☁ Publiser til GitHub</b> oppe til høyre, så <code>styret-content.js</code> og portrettene committes automatisk til <code>assets/styret/</code></li>'
+            + '<li><em>Reserve hvis publisering svikter: «↓ Last ned alle endrede» nederst i Oversikt, så lastes <code>styret-content.js</code> + portrettene ned, som du legger i <code>assets/styret/</code>.</em></li>'
           + '</ol>'
-          + '<div class="tip-note">💾 Endringer lagres automatisk i nettleseren din. Bilder lagres som egne filer (ikke inni innholdsfila), så fila holder seg liten — de committes til <code>assets/styret/</code> når du publiserer. Tomt portrett viser initialene som fallback.</div>'
+          + '<div class="tip-note">💾 Endringer lagres automatisk i nettleseren din. Bilder lagres som egne filer (ikke inni innholdsfila), så fila holder seg liten, og de committes til <code>assets/styret/</code> når du publiserer. Tomt portrett viser initialene som fallback.</div>'
         + '</div>'
         + '<div class="meta-panel">'
           + '<h3>Topp-banner</h3>'
@@ -67,13 +67,13 @@
             + '<div class="fg"><label>Tittel</label><input type="text" id="meta-sh-title"></div>'
             + '<div class="fg"><label>Ingress</label><input type="text" id="meta-sh-lede"></div>'
           + '</div>'
-          + '<h3>Overskrift — Styremedlemmer</h3>'
+          + '<h3>Overskrift: Styremedlemmer</h3>'
           + '<div class="meta-grid">'
             + '<div class="fg narrow"><label data-help="Liten etikett som vises over overskriften på siden, f.eks. «Hvem er vi».">Eyebrow</label><input type="text" id="meta-board-eyebrow"></div>'
             + '<div class="fg"><label>Overskrift</label><input type="text" id="meta-board-heading"></div>'
             + '<div class="fg"><label>Ingress</label><input type="text" id="meta-board-lede"></div>'
           + '</div>'
-          + '<h3>Overskrift — Hva gjør vi (roller)</h3>'
+          + '<h3>Overskrift: Hva gjør vi (roller)</h3>'
           + '<div class="meta-grid">'
             + '<div class="fg narrow"><label data-help="Liten etikett som vises over overskriften på siden, f.eks. «Hvem er vi».">Eyebrow</label><input type="text" id="meta-verv-eyebrow"></div>'
             + '<div class="fg"><label>Overskrift</label><input type="text" id="meta-verv-heading"></div>'
@@ -82,7 +82,7 @@
         + '</div>'
         + '<div class="sec"><div class="sec-head"><h2>Styremedlemmer</h2><span class="count" id="count-members"></span><button class="btn-add btn-add--danger" type="button" id="clear-board">🗑 Tøm styret</button><button class="btn-add" type="button" data-add="members">+ Nytt medlem</button></div>'
           + '<div class="lay-switch" id="lay-switch">'
-            + '<span class="lay-switch__lbl" data-help="Velg hvordan styremedlemmene vises mens du redigerer her i admin. Påvirker bare denne redigeringsvisningen — ikke den publiserte Styret-siden.">Visning</span>'
+            + '<span class="lay-switch__lbl" data-help="Velg hvordan styremedlemmene vises mens du redigerer her i admin. Påvirker bare denne redigeringsvisningen, ikke den publiserte Styret-siden.">Visning</span>'
             + '<div class="lay-switch__btns">'
               + '<button type="button" data-lay="stack" title="Stablet – ett bredt kort per rad (som før)"><span class="lay-ic ic-stack"><i></i><i></i></span>Stablet</button>'
               + '<button type="button" data-lay="b1" title="To kort i bredden"><span class="lay-ic ic-b1"><i></i><i></i></span>To i bredden</button>'
@@ -92,17 +92,17 @@
           + '</div>'
           + '<div class="undo-bar" id="undo-bar" hidden></div>'
           + '<div class="list" id="list-members"></div></div>'
-        + '<div class="sec"><div class="sec-head"><h2>Roller — «Hva gjør vi»</h2><span class="count" id="count-roles"></span><button class="btn-add" type="button" data-add="roles">+ Ny rolle</button></div><div class="list" id="list-roles"></div></div>'
+        + '<div class="sec"><div class="sec-head"><h2>Roller: «Hva gjør vi»</h2><span class="count" id="count-roles"></span><button class="btn-add" type="button" data-add="roles">+ Ny rolle</button></div><div class="list" id="list-roles"></div></div>'
         + '<div class="sec arch-sec">'
           + '<div class="sec-head"><h2>Tidligere styrer (arkiv)</h2><span class="count" id="count-archive"></span>'
             + '<button class="btn-add btn-add--ghost" type="button" id="arch-add-empty">+ Tomt arkiv</button>'
             + '<button class="btn-add" type="button" id="arch-add-current">+ Arkivér nåværende styre</button></div>'
-          + '<p class="sec-desc">Bygg et arkiv over hvilke styrer som har vært. «Arkivér nåværende styre» tar en kopi av styremedlemmene over, som du så kan skrive notater på. Arkivet vises som teaser på Styret-siden og i sin helhet på arkivsiden — velg «Arkivsiden» i forhåndsvisningen øverst for å se den live.</p>'
+          + '<p class="sec-desc">Bygg et arkiv over hvilke styrer som har vært. «Arkivér nåværende styre» tar en kopi av styremedlemmene over, som du så kan skrive notater på. Arkivet vises som teaser på Styret-siden og i sin helhet på arkivsiden. Velg «Arkivsiden» i forhåndsvisningen øverst for å se den live.</p>'
           + '<div class="lay-switch" id="arch-density">'
             + '<span class="lay-switch__lbl" data-help="Velg hvordan arkivet vises mens du redigerer. Kompakt slår sammen hvert styre til én rad (periode + medlemstall) for rask oversikt når det blir mange år. Utvidet åpner full editor for alle. Du kan alltid åpne/lukke ett enkelt styre med pilen i kort-toppen.">Visning</span>'
             + '<div class="lay-switch__btns">'
-              + '<button type="button" data-density="kompakt" title="Sammenslåtte rader — rask oversikt over mange år"><span class="lay-ic ic-rows"><i></i><i></i><i></i></span>Kompakt</button>'
-              + '<button type="button" data-density="utvidet" title="Full editor — alle styrer åpne"><span class="lay-ic ic-one"><i></i></span>Utvidet</button>'
+              + '<button type="button" data-density="kompakt" title="Sammenslåtte rader: rask oversikt over mange år"><span class="lay-ic ic-rows"><i></i><i></i><i></i></span>Kompakt</button>'
+              + '<button type="button" data-density="utvidet" title="Full editor: alle styrer åpne"><span class="lay-ic ic-one"><i></i></span>Utvidet</button>'
             + '</div>'
           + '</div>'
           + '<div class="list lay-cols-1" id="list-archive"></div></div>'
@@ -221,6 +221,7 @@
           obj.img = null;
         }
         renderList('members'); renderArchive();
+        if (mdActive()) shell.refresh();
         lazySave();
       }
 
@@ -283,7 +284,7 @@
         if (url) {
           if (!preview) { preview = document.createElement('img'); preview.className = 'img-preview'; preview.alt = ''; zone.appendChild(preview); }
           // mangler bildefila (f.eks. ikke committet ennå)? vis placeholder i stedet for ødelagt bilde.
-          preview.onerror = function () { preview.style.display = 'none'; if (ph) ph.style.display = 'flex'; if (overlay) overlay.textContent = '⚠ Bilde mangler — klikk for å laste opp'; };
+          preview.onerror = function () { preview.style.display = 'none'; if (ph) ph.style.display = 'flex'; if (overlay) overlay.textContent = '⚠ Bilde mangler, klikk for å laste opp'; };
           preview.style.display = 'block'; preview.src = url;
           if (ph) ph.style.display = 'none';
           if (clrBtn) clrBtn.style.display = 'flex';
@@ -330,7 +331,8 @@
       }
 
       /* ───────────────────── STYREMEDLEMMER ───────────────────── */
-      function memberCard(m) {
+      function memberCard(m, forceMode) {
+        var mode = forceMode || viewMode;
         var card = document.createElement('div');
         card.className = 'card'; card.setAttribute('data-id', m.id);
         var headHtml =
@@ -347,14 +349,14 @@
         var fInit = '<div class="fg narrow"><label data-help="Forkortelse som vises i en gull-sirkel når portrettet ikke er lastet opp ennå, f.eks. «SL».">Initialer</label><input type="text" data-f="initials" value="' + esc(m.initials) + '" placeholder="f.eks. SL"></div>';
         var fRole = '<div class="fg"><label data-help="Personens viktigste verv, vises stort på kortet, f.eks. «Leder».">Hovedverv (Rolle)</label><input type="text" data-f="role" value="' + esc(m.role) + '" placeholder="f.eks. Leder"></div>';
         var tagsHtml = '<div class="subed" data-tags></div>';
-        if (viewMode === 'b2') {
+        if (mode === 'b2') {
           card.innerHTML = headHtml
             + '<div class="card-body b2-body">'
               + '<div class="b2-top">' + imgZone + fName + '</div>'
               + '<div class="frow">' + fRole + fInit + '</div>'
               + tagsHtml
             + '</div>';
-        } else if (viewMode === 'b3') {
+        } else if (mode === 'b3') {
           card.innerHTML =
             '<div class="b3-img">' + imgZone + '</div>'
             + '<div class="fields">' + fName + '<div class="frow">' + fRole + fInit + '</div>' + tagsHtml + '</div>'
@@ -368,7 +370,7 @@
 
         var zone = card.querySelector('.img-zone');
         if (m.img) refreshImgZone(zone, imgSrc(m));
-        wireImgZone(zone, function () { return { obj: m, path: memberPath(m) }; }, 'Rediger portrett — ' + (m.name || ''));
+        wireImgZone(zone, function () { return { obj: m, path: memberPath(m) }; }, 'Rediger portrett: ' + (m.name || ''));
 
         card.querySelectorAll('[data-f]').forEach(function (el) {
           var field = el.getAttribute('data-f');
@@ -392,11 +394,13 @@
 
       function renderTags(hostEl, m) {
         if (!Array.isArray(m.tags)) m.tags = [];
-        hostEl.innerHTML = '<label data-help="Mindre verv eller utvalg, vist som fargede merker under hovedvervet. Velg farge med fargevelgeren ved siden av hvert merke.">Tilleggsverv (chips)</label><div class="subed-rows"></div><button class="btn-subadd" type="button">+ verv</button>';
+        hostEl.innerHTML = '<label data-help="Mindre verv eller utvalg, vist som fargede merker under hovedvervet. Velg farge med fargevelgeren ved siden av hvert merke. Dra i ⠿ for å endre rekkefølgen.">Tilleggsverv (chips)</label><div class="subed-rows"></div><button class="btn-subadd" type="button">+ verv</button>';
         var rows = hostEl.querySelector('.subed-rows');
         m.tags.forEach(function (t, i) {
           var row = document.createElement('div');
-          row.className = 'subed-row'; row.style.alignItems = 'flex-start';
+          row.className = 'subed-row'; row.style.alignItems = 'center'; row.setAttribute('data-tagidx', String(i));
+          var handle = document.createElement('span');
+          handle.className = 'drag-handle'; handle.title = 'Dra for å flytte'; handle.textContent = '⠿';
           var input = document.createElement('input');
           input.type = 'text'; input.value = t.label || ''; input.placeholder = 'f.eks. ASAP';
           input.addEventListener('input', function () { t.label = input.value; lazySave(); });
@@ -405,9 +409,13 @@
           var del = document.createElement('button');
           del.className = 'btn-mini x'; del.type = 'button'; del.title = 'Fjern'; del.textContent = '✕';
           del.addEventListener('click', function () { AC.undoDelete(m.tags, i, 'Tilleggsverv fjernet', function () { renderTags(hostEl, m); }, lazySave); });
-          row.appendChild(input); row.appendChild(ctrl); row.appendChild(del);
+          row.appendChild(handle); row.appendChild(input); row.appendChild(ctrl); row.appendChild(del);
           rows.appendChild(row);
         });
+        AC.enableDragSort(rows, { itemSelector: '.subed-row', handleSelector: '.drag-handle', idAttr: 'data-tagidx', onReorder: function (idxs) {
+          var nw = idxs.map(function (s) { return m.tags[+s]; }).filter(function (x) { return x != null; });
+          if (nw.length === m.tags.length) { m.tags = nw; lazySave(); renderTags(hostEl, m); }
+        } });
         hostEl.querySelector('.btn-subadd').addEventListener('click', function () { m.tags.push({ label: '', color: '' }); renderTags(hostEl, m); lazySave(); });
       }
 
@@ -476,7 +484,7 @@
           + '<div class="arch-body">'
             + '<div class="frow"><div class="fg narrow"><label data-help="Styreperioden (årskull). Vises som overskrift og brukes til å sortere arkivet på den publiserte siden.">Periode</label><select data-af="period">' + periodeOptions(a.period) + '</select></div>'
               + '<div class="fg"><label>Tittel (valgfri)</label><input type="text" data-af="heading" value="' + esc(a.heading || '') + '" placeholder="f.eks. Styret 2024/25"></div></div>'
-            + '<div class="fg"><label>Sammendrag — hva gjorde styret denne perioden?</label><textarea data-af="summary" placeholder="Skriv om styreperioden...">' + esc(a.summary || '') + '</textarea></div>'
+            + '<div class="fg"><label>Sammendrag: hva gjorde styret denne perioden?</label><textarea data-af="summary" placeholder="Skriv om styreperioden...">' + esc(a.summary || '') + '</textarea></div>'
             + '<div class="subed" data-highlights></div>'
             + '<div class="arch-mem-head"><span class="arch-mem-ttl">Medlemmer</span><span class="arch-mem-count"></span><button class="btn-subadd" type="button" data-add-mem>+ medlem</button></div>'
             + '<div class="arch-mem-list" data-mem-list></div>'
@@ -533,19 +541,21 @@
           var row = document.createElement('div');
           row.className = 'arch-mem'; row.setAttribute('data-mid', m.id);
           row.innerHTML =
-            imgColHtml('arch-mem__img')
-            + '<div class="arch-mem__fields">'
-              + '<div class="frow"><div class="fg"><label>Navn</label><input type="text" data-mf="name" value="' + esc(m.name) + '" placeholder="Navn"></div>'
-              + '<div class="fg"><label>Verv</label><input type="text" data-mf="role" value="' + esc(m.role) + '" placeholder="f.eks. Leder"></div>'
-              + '<div class="fg narrow"><label data-help="Forkortelse som vises når portrettet mangler, f.eks. «SL».">Init.</label><input type="text" data-mf="initials" value="' + esc(m.initials) + '" placeholder="SL"></div></div>'
-              + '<div class="fg"><label>Notat — hva gjorde personen i perioden? (valgfri)</label><textarea data-mf="note" placeholder="Kort om bidraget...">' + esc(m.note || '') + '</textarea></div>'
-              + '<div class="subed arch-mem-tags" data-mtags></div>'
+            '<div class="arch-mem__row">'
+              + imgColHtml('arch-mem__img')
+              + '<div class="arch-mem__idfields">'
+                + '<div class="frow"><div class="fg"><label>Navn</label><input type="text" data-mf="name" value="' + esc(m.name) + '" placeholder="Navn"></div>'
+                + '<div class="fg"><label>Verv</label><input type="text" data-mf="role" value="' + esc(m.role) + '" placeholder="f.eks. Leder"></div>'
+                + '<div class="fg narrow"><label data-help="Forkortelse som vises når portrettet mangler, f.eks. «SL».">Init.</label><input type="text" data-mf="initials" value="' + esc(m.initials) + '" placeholder="SL"></div></div>'
+              + '</div>'
+              + '<div class="arch-mem__ctrls"><button class="btn-mini up" type="button" title="Opp">↑</button><button class="btn-mini dn" type="button" title="Ned">↓</button><button class="btn-mini x" type="button" title="Fjern">✕</button></div>'
             + '</div>'
-            + '<div class="arch-mem__ctrls"><button class="btn-mini up" type="button" title="Opp">↑</button><button class="btn-mini dn" type="button" title="Ned">↓</button><button class="btn-mini x" type="button" title="Fjern">✕</button></div>';
+            + '<div class="fg arch-mem__note"><label>Notat: hva gjorde personen i perioden? (valgfri)</label><textarea data-mf="note" placeholder="Kort om bidraget...">' + esc(m.note || '') + '</textarea></div>'
+            + '<div class="subed arch-mem-tags" data-mtags></div>';
 
           var zone = row.querySelector('.img-zone');
           if (m.img) refreshImgZone(zone, imgSrc(m));
-          wireImgZone(zone, function () { return { obj: m, path: archPath(a, m) }; }, 'Rediger portrett — ' + (m.name || ''));
+          wireImgZone(zone, function () { return { obj: m, path: archPath(a, m) }; }, 'Rediger portrett: ' + (m.name || ''));
 
           row.querySelectorAll('[data-mf]').forEach(function (el) {
             var field = el.getAttribute('data-mf');
@@ -582,9 +592,14 @@
         });
         data.archive.unshift(a);
         setArchOpen(a.id, true);
-        renderArchive();
         lazySave();
-        setTimeout(function () { var first = host.querySelector('#list-archive .card:first-child'); if (first) { first.scrollIntoView({ behavior: 'smooth', block: 'center' }); var pi = first.querySelector('[data-af="period"]'); if (pi) pi.focus(); } }, 60);
+        renderArchive();
+        if (mdActive()) {
+          shell.select('archive', a.id);
+          setTimeout(function () { var pi = host.querySelector('.aps__detail [data-af="period"]'); if (pi) pi.focus(); }, 40);
+        } else {
+          setTimeout(function () { var first = host.querySelector('#list-archive .card:first-child'); if (first) { first.scrollIntoView({ behavior: 'smooth', block: 'center' }); var pi = first.querySelector('[data-af="period"]'); if (pi) pi.focus(); } }, 60);
+        }
       }
 
       /* ── Tøm styret + ANGRE (egen, ikke «Tilbakestill») ──
@@ -599,7 +614,7 @@
         if (!snap || !snap.members) { bar.hidden = true; bar.innerHTML = ''; return; }
         var n = snap.members.length;
         bar.hidden = false;
-        bar.innerHTML = '<span class="undo-msg">Styret ble tømt — <b>' + n + '</b> medlem' + (n === 1 ? '' : 'mer') + ' fjernet.</span>'
+        bar.innerHTML = '<span class="undo-msg">Styret ble tømt: <b>' + n + '</b> medlem' + (n === 1 ? '' : 'mer') + ' fjernet.</span>'
           + '<button class="undo-do" type="button">↶ Angre</button>'
           + '<button class="undo-x" type="button" title="Lukk">✕</button>';
         bar.querySelector('.undo-do').addEventListener('click', undoClear);
@@ -618,7 +633,7 @@
         data.members = snap.members.map(function (m) { return Object.assign({}, m, { tags: (m.tags || []).map(function (t) { return Object.assign({}, t); }) }); });
         dropUndo(); showUndoBar(null);
         renderList('members'); lazySave();
-        AC.toast('Angret — styret er gjenopprettet');
+        AC.toast('Angret. Styret er gjenopprettet');
       }
 
       /* ───────────────────── RENDER ───────────────────── */
@@ -662,20 +677,68 @@
         q('count-roles').textContent = data.roles.length + ' roller';
         q('count-archive').textContent = data.archive.length ? (data.archive.length + (data.archive.length === 1 ? ' styre' : ' styrer')) : '';
       }
-      function renderAll() { renderMeta(); renderList('members'); renderList('roles'); renderArchive(); AC.enhanceHelp(host); }
+      function renderAll() { renderMeta(); renderList('members'); renderList('roles'); renderArchive(); AC.enhanceHelp(host); if (mdActive()) shell.refresh(); }
+
+      /* ───────────────────── LISTE + DETALJ (master–detalj) ─────────────────────
+         Global «Panelvisning»-innstilling (Oversikt) kan sette redigeringen til
+         «liste-detalj»: en smal navigator med alle tre seksjonene til venstre +
+         ett skjema om gangen til høyre. Skjemaene GJENBRUKER memberCard/roleCard/
+         archiveCard, så all eksisterende logikk (bilder, chips, angre …) er lik. */
+      /* Skallet (delt PanelShell) eier rail/søk/kollaps/launchpad/husk-sist.
+         Detalj-skjemaene GJENBRUKER memberCard/roleCard/archiveCard — derfor
+         arver liste+detalj all eksisterende logikk (bilder, chips, angre …). */
+      var shell = AC.PanelShell.mount(host, AC, {
+        rail: 'collections',
+        title: 'Styret', subtitle: '3 seksjoner',
+        remember: 'apeiron-styret-shell-sel',
+        collapseGroupsByDefault: true,
+        banner: null,
+        groups: [
+          { key: 'members', label: 'Styremedlemmer', addLabel: 'Nytt medlem', primary: true,
+            items: function () { return data.members; },
+            meta: function (m) { return { av: (m.initials || initialsFrom(m.name) || '–'), cls: '', nm: m.name || '(uten navn)', sub: m.role || 'Styremedlem' }; },
+            detail: function (m) { return memberCard(m, 'detail'); },
+            onAdd: function () { var it = DEFAULTS.members(); data.members.push(it); lazySave(); renderList('members'); return it.id; },
+            onReorder: function (ids) {
+              var byId = {}; data.members.forEach(function (mm) { byId[mm.id] = mm; });
+              var nw = []; ids.forEach(function (id) { if (byId[id]) { nw.push(byId[id]); delete byId[id]; } });
+              data.members.forEach(function (mm) { if (byId[mm.id]) nw.push(mm); });
+              if (nw.length === data.members.length) { data.members = nw; lazySave(); renderList('members'); }
+            } },
+          { key: 'roles', label: 'Roller', addLabel: 'Ny rolle',
+            items: function () { return data.roles; },
+            meta: function (r) { return { av: (r.name || '?').charAt(0).toUpperCase(), cls: 'role', nm: r.name || '(uten navn)', sub: (r.resp && r.resp.length) ? (r.resp.length + ' ansvarspunkt' + (r.resp.length === 1 ? '' : 'er')) : 'Verv' }; },
+            detail: function (r) { return roleCard(r); },
+            onAdd: function () { var it = DEFAULTS.roles(); data.roles.push(it); lazySave(); renderList('roles'); return it.id; } },
+          { key: 'archive', label: 'Tidligere styrer', addLabel: 'Arkivér nåværende styre',
+            items: function () { return data.archive; },
+            meta: function (a) { return { av: String(a.period || '?').replace(/\s*\/\s*/, '/').slice(0, 7), cls: 'arch', nm: a.heading || ('Styret ' + (a.period || '')) || '(uten periode)', sub: ((a.members && a.members.length) || 0) + ' medlemmer' }; },
+            detail: function (a) { var c = archiveCard(a); c.classList.remove('is-collapsed'); return c; },
+            onAdd: function () { archiveCurrent(); var a = data.archive[0]; return a && a.id; } }
+        ]
+      });
+      function mdActive() { return shell.isActive(); }
+      function renderMD() { shell.refresh(); }
+      function applyPanelLayout() { shell.layoutChanged(); }
 
       var DEFAULTS = {
         members: function () { return { id: uid('m'), name: '', role: '', initials: '', img: null, tags: [] }; },
         roles: function () { return { id: uid('r'), name: '', accent: '', desc: '', resp: [] }; }
       };
       function add(list) {
-        data[list].push(DEFAULTS[list]()); renderList(list); lazySave();
-        setTimeout(function () { var last = host.querySelector('#list-' + list + ' .card:last-child'); if (last) last.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60);
+        var item = DEFAULTS[list](); data[list].push(item); lazySave();
+        renderList(list);
+        if (mdActive()) {
+          shell.select(list, item.id);
+          setTimeout(function () { var inp = host.querySelector('.aps__detail input, .aps__detail textarea'); if (inp) inp.focus(); }, 40);
+        } else {
+          setTimeout(function () { var last = host.querySelector('#list-' + list + ' .card:last-child'); if (last) last.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60);
+        }
       }
       function del(list, id) {
         var arr = data[list], i = arr.findIndex(function (x) { return x.id === id; });
         if (i < 0) return;
-        var render = list === 'archive' ? renderArchive : function () { renderList(list); };
+        var render = mdActive() ? function () { shell.refresh(); } : (list === 'archive' ? renderArchive : function () { renderList(list); });
         var label = list === 'members' ? ('«' + (arr[i].name || 'Medlem') + '» slettet')
           : list === 'roles' ? ('«' + (arr[i].name || 'Rolle') + '» slettet')
           : ('Arkivert styre «' + (arr[i].period || '') + '» slettet');
@@ -684,7 +747,7 @@
       function move(list, id, dir) {
         var arr = data[list], i = arr.findIndex(function (x) { return x.id === id; });
         if (i < 0) return; var j = i + dir; if (j < 0 || j >= arr.length) return;
-        var t = arr[i]; arr[i] = arr[j]; arr[j] = t; list === 'archive' ? renderArchive() : renderList(list); lazySave();
+        var t = arr[i]; arr[i] = arr[j]; arr[j] = t; if (mdActive()) shell.refresh(); else if (list === 'archive') renderArchive(); else renderList(list); lazySave();
       }
 
       function wireMeta(id, group, key) { q(id).addEventListener('input', function () { data[group][key] = this.value; lazySave(); }); }
@@ -741,11 +804,11 @@
                 AC.saveBlob(it.name, new Blob([it.bytes], { type: 'image/webp' }));
               }, idx * 220);
             });
-            AC.toast('Lastet ned styret-content.js + ' + items.length + ' bilde' + (items.length === 1 ? '' : 'r') + ' — legg bildene i assets/styret/ og push!');
+            AC.toast('Lastet ned styret-content.js + ' + items.length + ' bilde' + (items.length === 1 ? '' : 'r') + '. Legg bildene i assets/styret/ og push!');
           } else {
-            AC.toast('Fil lastet ned — erstatt i GitHub og push!');
+            AC.toast('Fil lastet ned. Erstatt i GitHub og push!');
           }
-        }).catch(function () { AC.toast('Fil lastet ned — erstatt i GitHub og push!'); });
+        }).catch(function () { AC.toast('Fil lastet ned. Erstatt i GitHub og push!'); });
       }
 
       q('reset-btn').addEventListener('click', function () {
@@ -817,6 +880,8 @@
       if (pvFrame) pvFrame.addEventListener('load', function () { fitPreview(); pushPreview(); });
 
       loadData(); renderAll(); updateLaySwitch();
+      applyPanelLayout();
+      window.addEventListener('apeiron-panellayout', applyPanelLayout);
       AC.viewSwitch({ list: q('list-roles'), key: 'apeiron-styret-roles-view-v1', help: 'Velg hvordan rolle-kortene vises mens du redigerer her i admin. Påvirker bare redigeringsvisningen, ikke den publiserte siden.' });
       showUndoBar(readUndo());
       fitPreview(); setTimeout(fitPreview, 80);
@@ -824,13 +889,14 @@
       AC.imgAll().then(function (map) {
         imgCache = Object.assign(map || {}, imgCache);
         renderList('members'); renderArchive();
+        if (mdActive()) shell.refresh();
         pushPreview();
       });
       pushPreview(); setTimeout(pushPreview, 150);
 
       return {
         export: exportFile,
-        destroy: function () { window.removeEventListener('message', onPreviewMsg); window.removeEventListener('resize', fitPreview); }
+        destroy: function () { window.removeEventListener('message', onPreviewMsg); window.removeEventListener('resize', fitPreview); window.removeEventListener('apeiron-panellayout', applyPanelLayout); if (shell) shell.destroy(); }
       };
     }
   });

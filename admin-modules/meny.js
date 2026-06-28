@@ -16,7 +16,7 @@
     mount: function (host, AC) {
       host.innerHTML =
         '<div class="desk-preview-bar">'
-          + '<div class="dpb-cap">Desktop — menylinje <span class="dpb-hint">Vist i din skjermbredde — slik menylinja faktisk ser ut. <b>Får punktene ikke plass, bytter linja automatisk til hamburgermeny.</b> Undermenyene ser du utvidet i mobil-forhåndsvisningen til høyre.</span></div>'
+          + '<div class="dpb-cap">Desktop: menylinje <span class="dpb-hint">Vist i din skjermbredde, slik menylinja faktisk ser ut. <b>Får punktene ikke plass, bytter linja automatisk til hamburgermeny.</b> Undermenyene ser du utvidet i mobil-forhåndsvisningen til høyre.</span></div>'
           + '<div class="np-desk-wrap"><iframe id="pv-desk" title="Desktop-forhåndsvisning" scrolling="no"></iframe></div>'
         + '</div>'
         + '<div class="editor-grid"><div class="editor">'
@@ -25,16 +25,16 @@
             + '<button class="tip-reset" id="reset-btn" type="button">Tilbakestill til siste publiserte versjon</button>'
             + '<strong>Slik oppdaterer du menyen</strong>'
             + '<ol>'
-              + '<li>Rediger punktene nedenfor — forhåndsvisningen oppdateres med nettstedets <b>ekte</b> meny-utseende</li>'
+              + '<li>Rediger punktene nedenfor. Forhåndsvisningen oppdateres med nettstedets <b>ekte</b> meny-utseende</li>'
               + '<li>Legg til underpunkter for å lage en nedtrekksmeny, dra i <b>⠿</b> for å sortere</li>'
               + '<li>Velg <b>synlighet</b> per punkt: begge, kun mobil eller kun desktop</li>'
-              + '<li>Trykk <b>☁ Publiser til GitHub</b> oppe til høyre — endringene legges ut automatisk</li>'
+              + '<li>Trykk <b>☁ Publiser til GitHub</b> oppe til høyre. Endringene legges ut automatisk</li>'
             + '</ol>'
             + '<div class="tip-note">💡 Klikk <b>📍</b> ved et adressefelt for å velge side og seksjon fra en liste med lesbare navn. (Du kan fortsatt skrive adressen for hånd.) Angre/gjør-om med knappene over eller Ctrl/Cmd+Z.</div>'
           + '</div>'
           + '<div class="align-sec">'
             + '<h2>Plassering på menylinja</h2>'
-            + '<p class="sec-desc">Hvor punktene ligger på desktop-linja. Velg en forhåndsinnstilling, eller dra for å finjustere — den hekter seg på faste hakk (hvert 5. trinn). Logo til venstre og søk/modus til høyre står alltid fast.</p>'
+            + '<p class="sec-desc">Hvor punktene ligger på desktop-linja. Velg en forhåndsinnstilling, eller dra for å finjustere. Den hekter seg på faste hakk (hvert 5. trinn). Logo til venstre og søk/modus til høyre står alltid fast.</p>'
             + '<div class="align-presets"><button type="button" data-align="0">⟵&nbsp; Venstrelent</button><button type="button" data-align="50">⟷&nbsp; Sentrert</button><button type="button" data-align="100">Høyrelent &nbsp;⟶</button></div>'
             + '<div class="align-track"><input type="range" id="align-range" min="0" max="100" step="5" value="0" aria-label="Plassering på menylinja"><div class="align-scale"><span>Ved logoen</span><span>Midten</span><span>Ved søk</span></div></div>'
           + '</div>'
@@ -44,7 +44,7 @@
             + '<div class="list" id="list-items"></div>'
           + '</div>'
         + '</div>'
-        + '<aside class="preview-pane"><h3>Mobil</h3><p class="pp-sub">Hamburgermenyen — skuffen vises åpen med alle seksjoner utvidet.</p><div class="np-mob-wrap"><iframe id="pv-mob" title="Mobil-forhåndsvisning" scrolling="no"></iframe></div></aside>'
+        + '<aside class="preview-pane"><h3>Mobil</h3><p class="pp-sub">Hamburgermenyen: skuffen vises åpen med alle seksjoner utvidet.</p><div class="np-mob-wrap"><iframe id="pv-mob" title="Mobil-forhåndsvisning" scrolling="no"></iframe></div></aside>'
         + '</div>';
 
       var q = function (id) { return host.querySelector('#' + id); };
@@ -124,8 +124,8 @@
       function redo() { if (histIndex >= histStack.length - 1) return; histIndex++; restoreSnap(histStack[histIndex]); updateHistButtons(); AC.toast('Gjorde om'); }
       function updateHistButtons() { var u = q('undo-btn'), r = q('redo-btn'); if (u) u.disabled = histIndex <= 0; if (r) r.disabled = histIndex >= histStack.length - 1; }
 
-      var HREF_HELP = 'Hvor lenken går:\n• En side i repoet: «pensum.html»\n• En seksjon på forsiden: «index.html#kontakt»\n• En seksjon på en annen side: «styret.html#sak»\n• En ekstern adresse: «https://...».\nTips: skriv hele «side.html#anker» — menyen forkorter det automatisk på riktig side.';
-      var MODE_HELP = 'Hvor punktet vises:\n• Begge — både desktop-menyen og mobilmenyen (standard)\n• Kun mobil — vises bare i hamburgermenyen (drawerOnly)\n• Kun desktop — vises bare i menylinja på store skjermer (desktopOnly)';
+      var HREF_HELP = 'Hvor lenken går:\n• En side i repoet: «pensum.html»\n• En seksjon på forsiden: «index.html#kontakt»\n• En seksjon på en annen side: «styret.html#sak»\n• En ekstern adresse: «https://...».\nTips: skriv hele «side.html#anker». Menyen forkorter det automatisk på riktig side.';
+      var MODE_HELP = 'Hvor punktet vises:\n• Begge: både desktop-menyen og mobilmenyen (standard)\n• Kun mobil: vises bare i hamburgermenyen (drawerOnly)\n• Kun desktop: vises bare i menylinja på store skjermer (desktopOnly)';
       var PARENT_HELP = 'Landingslenken for selve punktet. På desktop er dette der man havner om man klikker på toppnivå-teksten; underpunktene vises i nedtrekksmenyen. Ofte er første underpunkt den samme lenken.';
 
       function kidCard(it, c) {
@@ -168,7 +168,7 @@
         card.querySelector('.item-row .btn-del-row').addEventListener('click', function () { data = data.filter(function (x) { return x !== it; }); renderItems(); lazySave(); });
         var kidsList = card.querySelector('.kids-list');
         if (hasKids) { it.children.forEach(function (c) { kidsList.appendChild(kidCard(it, c)); }); }
-        else { kidsList.innerHTML = '<div class="kids-empty">Ingen underpunkter — punktet blir en enkel lenke.</div>'; }
+        else { kidsList.innerHTML = '<div class="kids-empty">Ingen underpunkter, punktet blir en enkel lenke.</div>'; }
         card.querySelector('.btn-add-kid').addEventListener('click', function () { it.children.push({ _id: uid(), label: '', href: '' }); renderItems(); lazySave(); });
         AC.enableDragSort(kidsList, {
           itemSelector: '.kid-card', handleSelector: '.kid-handle',
@@ -183,6 +183,7 @@
         var el = q('list-items'); el.innerHTML = '';
         data.forEach(function (it) { el.appendChild(itemCard(it)); });
         q('count-items').textContent = data.length + ' punkter';
+        if (typeof shell !== 'undefined' && shell && shell.isActive()) shell.refresh();
       }
 
       function cleanNav() {
@@ -263,7 +264,7 @@
           + 'window.SITE_NAV = ' + JSON.stringify(out, null, 2) + ';\n'
           + 'window.SITE_NAV_CONFIG = { align: ' + Number(navAlign) + ' };\n';
         AC.saveFile('nav-content.js', content);
-        AC.toast('Fil lastet ned — erstatt i GitHub og push!');
+        AC.toast('Fil lastet ned. Erstatt i GitHub og push!');
       }
 
       q('reset-btn').addEventListener('click', function () {
@@ -402,10 +403,34 @@
       pushHistory(); buildPicker(); enrichLive();
       AC.enhanceHelp(host);
 
+      /* ── delt «Liste + detalj»-skall: menypunktene som én liste (dra i ₿ for
+         å sortere), «Plassering på menylinja» som innstillings-rad, mobil-preview
+         i dokken nederst. Nestede underpunkter redigeres inni hvert kort. ── */
+      var shell = AC.PanelShell.mount(host, AC, {
+        rail: 'collections', launchpad: false, mountAtTop: true,
+        title: 'Meny', subtitle: 'Menypunkter',
+        remember: 'apeiron-meny-shell-sel',
+        previewDock: true, previewSelector: '.desk-preview-bar',
+        banner: { label: 'Plassering på menylinja', sub: 'Hvor punktene ligger på desktop-linja', current: function () { return null; }, adopt: function () { return host.querySelector('.align-sec'); } },
+        groups: [{
+          key: 'items', label: 'Menypunkter', addLabel: 'Nytt menypunkt', listDetail: true, icon: '☰', idOf: function (it) { return it._id; },
+          items: function () { return data; },
+          detail: function (it) { return itemCard(it); },
+          reorderItemSelector: '.item-card', reorderHandleSelector: '.item-handle',
+          onReorder: function (ids) { var order = ids.filter(function (id) { return data.some(function (it) { return it._id === id; }); }); data.sort(function (a, b) { return order.indexOf(a._id) - order.indexOf(b._id); }); lazySave(); },
+          onAdd: function () { var it = { _id: uid(), label: '', href: '', mode: 'both', children: [] }; data.push(it); renderItems(); lazySave(); return it._id; }
+        }]
+      });
+      function applyPanelLayout() { shell.layoutChanged(); }
+      window.addEventListener('apeiron-panellayout', applyPanelLayout);
+      applyPanelLayout();
+
       return {
         export: exportFile,
         destroy: function () {
           window.removeEventListener('resize', winResize);
+          window.removeEventListener('apeiron-panellayout', applyPanelLayout);
+          if (shell) shell.destroy();
           document.removeEventListener('keydown', onKeydown);
           document.removeEventListener('click', locDocClick);
           window.removeEventListener('resize', locWinResize);

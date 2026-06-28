@@ -16,14 +16,14 @@
       host.innerHTML =
         '<section class="preview-top">'
           + '<h3>Forhåndsvisning</h3>'
-          + '<p class="pp-sub">Slik ser footeren ut nederst på alle sider — bytt mellom 🖥 og 📱 for desktop- og mobilbredde. Oppdateres mens du skriver.</p>'
+          + '<p class="pp-sub">Slik ser footeren ut nederst på alle sider. Bytt mellom 🖥 og 📱 for desktop- og mobilbredde. Oppdateres mens du skriver.</p>'
           + '<div class="fpv-wrap"><iframe id="pv-foot" title="Forhåndsvisning av footeren" scrolling="no"></iframe></div>'
         + '</section>'
         + '<div class="tip">'
           + '<button class="tip-reset" id="reset-btn" type="button">Tilbakestill til siste publiserte versjon</button>'
           + '<strong>Slik oppdaterer du footeren</strong>'
           + '<ol>'
-            + '<li>Rediger feltene nedenfor — endringene vises i forhåndsvisningen og lagres i nettleseren</li>'
+            + '<li>Rediger feltene nedenfor. Endringene vises i forhåndsvisningen og lagres i nettleseren</li>'
             + '<li>Legg til, fjern eller dra for å sortere lenker</li>'
             + '<li>Trykk <b>☁ Publiser til GitHub</b> oppe til høyre</li>'
             + '<li>Erstatt <code>site-content.js</code> i GitHub-repoet og push/commit</li>'
@@ -31,6 +31,7 @@
           + '</ol>'
           + '<div class="tip-note">💾 Footeren er lik på alle sider. «Rapporter en feil»-knappen åpner en boks som bruker e-posten du setter her.</div>'
         + '</div>'
+        + '<div data-footer-banner>'
         + '<div class="meta-panel"><h3>Tekst</h3>'
           + '<div class="meta-grid">'
             + '<div class="fg"><label data-help="Den store tittelen øverst i footeren, f.eks. «APEIRON».">Navn (stor tittel)</label><input type="text" id="m-name"></div>'
@@ -46,6 +47,7 @@
             + '<div class="fg narrow"><label data-help="E-postadressen feilmeldinger sendes til.">E-post</label><input type="text" id="m-rep-email" placeholder="navn@eksempel.no"></div>'
             + '<div class="fg narrow"><label data-help="Forhåndsutfylt emnefelt i e-posten, f.eks. «Feil på nettsiden».">E-post emne</label><input type="text" id="m-rep-subject"></div>'
           + '</div>'
+        + '</div>'
         + '</div>'
         + '<div class="sec">'
           + '<div class="sec-head"><h2>Lenker</h2><span class="count" id="count-links"></span><button class="btn-add" type="button" id="add-link">+ Ny lenke</button></div>'
@@ -112,7 +114,7 @@
         });
         card.querySelector('.btn-del-row').addEventListener('click', function () {
           var i = data.links.indexOf(l); if (i < 0) return;
-          AC.undoDelete(data.links, i, '«' + (l.label || 'Lenke') + '» fjernet', renderLinks, lazySave);
+          AC.undoDelete(data.links, i, '«' + (l.label || 'Lenke') + '» fjernet', shellLinks, lazySave);
         });
         AC.enhanceHelp(card);
         AC.wireHrefField(card);
@@ -142,7 +144,7 @@
         });
         card.querySelector('.btn-del-row').addEventListener('click', function () {
           var i = data.social.indexOf(s); if (i < 0) return;
-          AC.undoDelete(data.social, i, '«' + (s.label || 'Sosial lenke') + '» fjernet', renderSocial, lazySave);
+          AC.undoDelete(data.social, i, '«' + (s.label || 'Sosial lenke') + '» fjernet', shellSocial, lazySave);
         });
         AC.enhanceHelp(card);
         AC.wireHrefField(card);
@@ -217,7 +219,7 @@
           + '   ============================================================ */\n'
           + 'window.SITE_FOOTER = ' + JSON.stringify(out, null, 2) + ';\n';
         AC.saveFile('site-content.js', content);
-        AC.toast('Fil lastet ned — erstatt i GitHub og push!');
+        AC.toast('Fil lastet ned. Erstatt i GitHub og push!');
       }
 
       q('reset-btn').addEventListener('click', function () {
@@ -238,6 +240,34 @@
 
       function renderAll() { renderMeta(); renderLinks(); renderSocial(); renderPreview(); AC.enhanceHelp(host); }
 
+      function shellLinks() { renderLinks(); if (shell && shell.isActive()) shell.refresh(); }
+      function shellSocial() { renderSocial(); if (shell && shell.isActive()) shell.refresh(); }
+      /* ── delt «Liste + detalj»-skall (collections: banner + Lenker + Sosiale) ── */
+      var shell = AC.PanelShell.mount(host, AC, {
+        rail: 'collections',
+        title: 'Footer', subtitle: '2 lister',
+        remember: 'apeiron-footer-shell-sel',
+        previewDock: true,
+        launchpad: false,
+        banner: { label: 'Tekst & rapporter-lenke', current: function () { return data.name || ''; }, adopt: function () { return host.querySelector('[data-footer-banner]'); } },
+        groups: [
+          { key: 'links', label: 'Lenker', addLabel: 'Ny lenke', primary: true, listDetail: true, icon: '🔗', idOf: function (l) { return l._id; },
+            items: function () { return data.links; },
+            meta: function (l) { return { av: '🔗', cls: 'sq', nm: l.label || '(uten tekst)', sub: l.href || 'ingen adresse' }; },
+            detail: function (l) { return linkCard(l); },
+            onReorder: function (ids) { data.links.sort(function (a, b) { return ids.indexOf(a._id) - ids.indexOf(b._id); }); lazySave(); },
+            onAdd: function () { var l = { _id: uid(), label: '', href: '' }; data.links.push(l); renderLinks(); lazySave(); return l._id; } },
+          { key: 'social', label: 'Sosiale lenker', addLabel: 'Ny sosial lenke', listDetail: true, icon: '◈', idOf: function (s) { return s._id; },
+            items: function () { return data.social; },
+            meta: function (s) { return { av: '◈', cls: 'sq', nm: s.label || '(uten tekst)', sub: s.href || 'ingen URL' }; },
+            detail: function (s) { return socialCard(s); },
+            onReorder: function (ids) { data.social.sort(function (a, b) { return ids.indexOf(a._id) - ids.indexOf(b._id); }); lazySave(); },
+            onAdd: function () { var s = { _id: uid(), label: '', href: '', icon: '' }; data.social.push(s); renderSocial(); lazySave(); return s._id; } }
+        ]
+      });
+      function applyPanelLayout() { shell.layoutChanged(); }
+      window.addEventListener('apeiron-panellayout', applyPanelLayout);
+
       loadData();
       bind('m-name', function (v) { data.name = v; });
       bind('m-tagline', function (v) { data.tagline = v; });
@@ -246,11 +276,12 @@
       bind('m-rep-email', function (v) { data.report.email = v; });
       bind('m-rep-subject', function (v) { data.report.subject = v; });
       renderAll();
+      applyPanelLayout();
 
       AC.viewSwitch({ list: q('list-links'), key: 'apeiron-footer-links-view-v1', help: 'Velg hvordan lenke-radene vises mens du redigerer her i admin. Påvirker bare redigeringsvisningen, ikke nettsiden.' });
       AC.viewSwitch({ list: q('list-social'), key: 'apeiron-footer-social-view-v1', help: 'Velg hvordan de sosiale lenkene vises mens du redigerer her i admin. Påvirker bare redigeringsvisningen, ikke nettsiden.' });
 
-      return { export: exportFile, destroy: function () { window.removeEventListener('resize', fitFoot); } };
+      return { export: exportFile, destroy: function () { window.removeEventListener('resize', fitFoot); window.removeEventListener('apeiron-panellayout', applyPanelLayout); if (shell) shell.destroy(); } };
     }
   });
 })();

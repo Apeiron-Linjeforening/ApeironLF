@@ -112,7 +112,7 @@
     var whereEl = document.getElementById('apoWhere');
     if (whenEl) {
       var valSpan = whenEl.querySelector('span');
-      if (valSpan) valSpan.textContent = !state.live ? '—' : ((liveEmpty || !nxt) ? 'Dato kommer' : fmtDate(nxt.start, nxt.allDay));
+      if (valSpan) valSpan.textContent = !state.live ? 'Kommer' : ((liveEmpty || !nxt) ? 'Dato kommer' : fmtDate(nxt.start, nxt.allDay));
     }
     if (whereEl) {
       var placeSpan = whereEl.querySelector('span');
@@ -120,7 +120,7 @@
       if (placeSpan) {
         placeSpan.textContent = '';
         if (!place) {
-          placeSpan.textContent = '—';
+          placeSpan.textContent = 'Kommer';
         } else if (place.length <= 36) {
           placeSpan.textContent = place;
         } else {

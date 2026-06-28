@@ -1,20 +1,20 @@
-# VEDLIKEHOLD.md — teknisk dokumentasjon
+# VEDLIKEHOLD.md: teknisk dokumentasjon
 
 Denne fila er for de som **drifter koden** bak Apeiron-nettsiden: publisering, oppsett,
 filstruktur, manuell redigering og de tekniske integrasjonene (Google Kalender/Drive,
 Apps Script).
 
 > 👉 Skal du bare **endre innhold** (nyheter, styret, merch, bilder osv.)? Da hører du
-> hjemme i **brukerveiledningen i [README.md](README.md)** — alt innhold redigeres i
+> hjemme i **brukerveiledningen i [README.md](README.md)**. Alt innhold redigeres i
 > Admin-senteret, uten å røre kode. Vanlige brukere skal **aldri** redigere kodefiler direkte på GitHub.
 
 **Innhold**
 1. [Slik fungerer publisering (Cloudflare + GitHub)](#slik-fungerer-publisering-cloudflare-pages--github)
-2. [Endre filer — på GitHub eller lokalt](#endre-filer--på-github-eller-lokalt)
+2. [Endre filer på GitHub eller lokalt](#endre-filer-på-github-eller-lokalt)
 3. [Admin-arkitektur](#admin-arkitektur)
 4. [Manuell redigering av innholdsfilene](#manuell-redigering-av-innholdsfilene)
 5. [Pensum](#pensum)
-6. [Lesesalen — bilder](#lesesalen--bilder)
+6. [Lesesalen: bilder](#lesesalen-bilder)
 7. [Slik fungerer søket](#slik-fungerer-søket)
 8. [Merch-bestilling: Google Sheet + Apps Script](#merch-bestilling-google-sheet--apps-script)
 9. [Filstruktur](#filstruktur)
@@ -36,20 +36,41 @@ endringer pushes til GitHub-repoet. Vanligvis tar det under ett minutt fra push 
 siden er live.
 
 **Publisering fra Admin-senteret (G1):** med GitHub-innlogging committer admin
-endringene **rett til repoet** når du trykker «☁ Publiser til GitHub» — ingen
-nedlasting, ingen manuell push. Innloggingen kjører server-løst på Cloudflare Pages
+endringene **rett til repoet** når du trykker «☁ Publiser til GitHub», uten
+nedlasting og uten manuell push. Innloggingen kjører server-løst på Cloudflare Pages
 Functions (`functions/api/github/`); tokenet ligger i en httpOnly-cookie og når aldri
-nettleseren. Engangs-oppsett (GitHub OAuth-app + miljøvariabler) er beskrevet i
+nettleseren. Cookien varer **30 dager** (`setCookie(…, 2592000)` i `callback.js`, og
+standard i `_common.js`), så redaktører slipper å logge inn på nytt hver økt. Engangs-
+oppsett (GitHub OAuth-app + miljøvariabler) er beskrevet i
 [docs/g1-oppsett.md](docs/g1-oppsett.md).
 
-**Reserveløsning:** «↓ Last ned alle endrede» (nederst i **Oversikt**-fanen i admin)
-laster fortsatt ned de ferdige filene, slik at en redaktør kan legge dem inn i GitHub
-manuelt hvis publiseringen ikke virker. Det er denne opplastingen — eller G1-commiten —
-som utløser en ny Cloudflare-deploy.
+**Konfliktsjekk ved samtidig redigering:** rett før en commit spør admin
+`/api/github/latest` (se `functions/api/github/latest.js`) om branchen har flyttet seg
+siden admin ble åpnet. Har en annen redaktør publisert **de samme innholdsfilene** i
+mellomtiden, vises et varsel med valget «↻ Last inn på nytt» eller «Publiser likevel»,
+så man ikke uforvarende overskriver andres publiserte arbeid. Redigeres ulike filer,
+flettes de automatisk (`base_tree` i `commit.js`). Endepunktet driver også «Sist
+publisert: navn · tidspunkt» i admin-toppen. *(Dette forhindrer ikke samtidig
+redigering, men gjør en stille overskriving synlig.)*
+
+**Angre siste publisering:** på **Oversikt**, under «Slik publiserer du», ligger
+**↩ Angre siste publisering** (kun synlig når man er innlogget på GitHub). Den ruller
+hele nettsiden tilbake til slik den var **før den siste publiseringen**, ved å lage en
+ny commit som peker på forrige tre (`functions/api/github/revert.js`). GitHub beholder
+all historikk — angringen er bare nok en commit på toppen, og kan angres på nytt (klikk
+igjen for å hente endringen tilbake). Før den kjører, viser admin nøyaktig hvilken
+publisering som angres og hvilken tilstand man havner på (`history.js`), og en konfliktvakt
+avbryter hvis en annen redaktør har publisert i mellomtiden («last inn på nytt»). Som
+all annen publisering utløser angringen en ny Cloudflare-deploy — live innen ~1 minutt.
+
+**Reserveløsning:** «↓ Last ned alle endrede» (i admin: **Oversikt → «Publisering
+virker ikke?»**) laster fortsatt ned de ferdige filene, slik at en redaktør kan legge
+dem inn i GitHub manuelt hvis publiseringen ikke virker. Det er denne opplastingen,
+eller G1-commiten, som utløser en ny Cloudflare-deploy.
 
 ---
 
-## Endre filer — på GitHub eller lokalt
+## Endre filer på GitHub eller lokalt
 
 > Dette er drifter-arbeid. Innholdsredaktører gjør alt i Admin-senteret og laster bare
 > opp de nedlastede filene (steg 3 i brukerveiledningen i [README.md](README.md)).
@@ -123,9 +144,9 @@ Hver modul med søkbart innhold har en `searchEntries()`-funksjon som mater søk
 ## Manuell redigering av innholdsfilene
 
 Alt dette gjøres normalt i Admin-senteret. Men hver del kan også redigeres for hånd i
-sin `*-content.js`-fil — nyttig for drift, feilsøk og bulk-endringer.
+sin `*-content.js`-fil, nyttig for drift, feilsøk og bulk-endringer.
 
-### 👥 Styret — `styret-content.js`
+### 👥 Styret: `styret-content.js`
 
 Både `styret.html` og `styret-arkiv.html` (og forside-teaseren) leser fra denne fila.
 `window.STYRET_CONTENT` har seksjonene `board`/`verv` (overskrifter), `members`, `roles`
@@ -138,10 +159,10 @@ og `archive`.
 - **Bilder lagres som egne filer, ikke base64.** `img` er en sti: eldre bilder i
   `assets/Styremedlemmer/filnavn.jpg`, nye fra admin i `assets/styret/<id>.webp`
   (arkivbilder i `assets/styret/arkiv/`). Admin laster portrettene ned som **egne
-  bildefiler** (én og én, ingen zip) ved publisering — legg dem i `assets/styret/`.
+  bildefiler** (én og én, ingen zip) ved publisering. Legg dem i `assets/styret/`.
   Tomt `img` = bare initialer.
 
-### 🛍️ Merch — `merch-products.js`
+### 🛍️ Merch: `merch-products.js`
 
 Hvert produkt er et objekt i `window.MERCH_PRODUCTS`:
 
@@ -168,29 +189,29 @@ Hvert produkt er et objekt i `window.MERCH_PRODUCTS`:
 > `assets/merch/...`). Hoved = `images[0]`. `colorImages: { "Fargenavn": indeks }` bytter
 > hovedbildet når en farge velges.
 
-### 📰 Begrep — `begrep-content.js`
+### 📰 Begrep: `begrep-content.js`
 
 `window.BEGREP_CONTENT` med seksjonene `meta`, `issues`, `podcasts`, `films`,
 `christmas`. Bilder: `null` (plassholder), `"assets/begrep/fil.png"` eller base64 fra
 admin. `meta` rommer bl.a. `email` og `orderFormUrl`.
 
-### 🆘 Hjelp — `hjelp-content.js`
+### 🆘 Hjelp: `hjelp-content.js`
 
 `window.HJELP_CONTENT` med seksjonene `hero`, `sifra`, `studier`, `helse`, `fysisk`,
 `akutt`. Ressurskort (`*.cards[]`): `eyebrow`, `accent`, `name`, `desc`, `resp[]`,
 `contacts[]`, `noteTop`, `note`, `btnLabel`, `btnHref`. Tom linje i `desc` = nytt avsnitt.
 `contacts` og «Si fra»-tekst tillater HTML (lenker, `<strong>`).
 
-### 📰 Nyheter — `news-content.js`
+### 📰 Nyheter: `news-content.js`
 
 `window.NEWS_CONTENT = { items: [...] }`. Felt per nyhet (forklart øverst i fila):
 `place` (`panel`/`arrangement`/`aporetisk`/`fadderuke`), `urgent`, `title`, `text`
 (støtter `**fet**`, `*kursiv*`, `_understrek_`, `[tekst](url)`, linjeskift), `date`,
-`link`, `linkLabel`, `done` (arkivert). Nyheter lastes umiddelbart fra repoet — det gamle
+`link`, `linkLabel`, `done` (arkivert). Nyheter lastes umiddelbart fra repoet. Det gamle
 Google Sheet-systemet er borte.
 
 > **Neste arrangement** i «Akkurat nå»-kortet hentes automatisk fra
-> arrangementskalenderen — det legges ikke inn som nyhet.
+> arrangementskalenderen, og legges ikke inn som nyhet.
 
 ### 🏛️ Forsiden / 📖 Om oss
 
@@ -198,7 +219,7 @@ Forsidens tekster (toppbilde, om-seksjon, FAQ, kontakt) ligger i `index-content.
 Om oss-siden i `om-content.js`. Begge redigeres i Admin-senteret med live preview.
 
 **Galleribilder på forsiden.** Admin → Forsiden har et eget panel som kan vise
-bilder fra galleriet på forsiden — **av som standard**. Innstillingene ligger i
+bilder fra galleriet på forsiden, **av som standard**. Innstillingene ligger i
 `heroGallery` i `index-content.js`; `apeiron-hero-gallery.js` (+ `hero-gallery.css`)
 rendrer dem og henter bilder **tilfeldig fra hele Drive-galleriet** (samme
 `ROOT_FOLDER_ID` som Galleri-siden), bufret 6 t i nettleseren. Fire stiler
@@ -224,7 +245,7 @@ søk/filter/trekkspill-logikken bor i `pensum.html`.
   Vil man skille f.eks. årsstudium fra bachelor, eller master i etikk fra master i filosofi,
   legger man bare til en ny seksjon og flytter emnene dit (via «Seksjon» på hvert emne).
 - Filter-fanene, fargemerkene og gruppeoverskriftene på `pensum.html` **bygges dynamisk**
-  fra `sections` — nye/delte seksjoner får sin egen fane og merke automatisk, ingen
+  fra `sections`. Nye/delte seksjoner får sin egen fane og merke automatisk, ingen
   kodeendring nødvendig.
 
 > Ambisjon: koble mot en NTNU-API slik at emnene oppdateres automatisk. Inntil da
@@ -232,14 +253,14 @@ søk/filter/trekkspill-logikken bor i `pensum.html`.
 
 ---
 
-## Lesesalen — bilder
+## Lesesalen: bilder
 
 Bildene på forsiden ligger i `assets/lesesalen/` med mønsteret `lesesal1.jpg`,
 `lesesal2.jpg`, … Siden oppdager hele sekvensen automatisk.
 
 - `lesesal1.jpg` = stort hovedbilde; `lesesal2.jpg`+ = den rullende stripa under
 - **Legg til/bytt:** gi bildet `lesesalX.jpg` (neste ledige nummer), legg i mappa, push
-- **Fjern:** slett fila — men unngå hull i nummereringen (fjernes `lesesal3.jpg` slutter
+- **Fjern:** slett fila, men unngå hull i nummereringen (fjernes `lesesal3.jpg` slutter
   alt fra `lesesal4.jpg` å vises). Rename så sekvensen er sammenhengende.
 - **Bytt hovedbilde:** gi ønsket bilde navnet `lesesal1.jpg`
 - **Format:** `.jpg`/`.jpeg`, helst under 1–2 MB per fil
@@ -253,15 +274,15 @@ Den regenereres automatisk når du publiserer fra Admin-senteret.
 
 | Fil | Hva den er | Redigeres |
 | --- | --- | --- |
-| `site-search.js` | Selve søkefunksjonen (overlay, tastatur, MiniSearch-motor) | Sjelden — kun ved endret *oppførsel* |
-| `minisearch.min.js` | Søkemotor-biblioteket (MiniSearch v7, vendet inn — ingen CDN). Lastes **før** `site-search.js` | Aldri — bytt kun ved versjonsoppgradering |
-| `search-index.js` | **Auto-generert** liste over alle treff. Lastes på alle sider | **Aldri for hånd** — genereres ved «Publiser» |
+| `site-search.js` | Selve søkefunksjonen (overlay, tastatur, MiniSearch-motor) | Sjelden, kun ved endret *oppførsel* |
+| `minisearch.min.js` | Søkemotor-biblioteket (MiniSearch v7, vendet inn, ingen CDN). Lastes **før** `site-search.js` | Aldri, bytt kun ved versjonsoppgradering |
+| `search-index.js` | **Auto-generert** liste over alle treff. Lastes på alle sider | **Aldri for hånd**, genereres ved «Publiser» |
 | `search-base.js` | Statiske treff som *ikke* kommer fra en admin-modul (sider, seksjoner, emner) | For hånd, ved behov |
 
-**Motoren:** søket bruker **MiniSearch** med en norsk stemmer (bøyning — «studieretninger»
-finner «studieretning») og fuzzy-treff (skrivefeil — «filosfi» finner «filosofi»). Faller
+**Motoren:** søket bruker **MiniSearch** med en norsk stemmer (bøyning: «studieretninger»
+finner «studieretning») og fuzzy-treff (skrivefeil: «filosfi» finner «filosofi»). Faller
 automatisk tilbake til enkel delstreng-scoring hvis biblioteket ikke skulle laste. Indeksen
-bygges i nettleseren fra `search-index.js` ved hver sidelast — nytt publisert innhold er
+bygges i nettleseren fra `search-index.js` ved hver sidelast, så nytt publisert innhold er
 automatisk søkbart. Uregelmessige ord stemmeren bommer på legges i `SYN`-lista øverst i
 `site-search.js`.
 
@@ -287,21 +308,21 @@ side, ny seksjon, nytt emne):
 `Pensum`, `Merch`, `Begrep`, `Galleri`. (Ny gruppe må også legges i `ICONS` og
 `GROUP_ORDER` øverst i `site-search.js`.)
 
-> ⚠️ **Rediger aldri `search-index.js` direkte** — den overskrives ved neste publisering.
+> ⚠️ **Rediger aldri `search-index.js` direkte**. Den overskrives ved neste publisering.
 
-### Oppdatere søkemotoren (MiniSearch) — kun ved behov
+### Oppdatere søkemotoren (MiniSearch): kun ved behov
 
 `minisearch.min.js` er **frosset** på én versjon (MiniSearch v7) og oppdateres aldri av
-seg selv. Du trenger **ikke** vedlikeholde den — biblioteket kjører i nettleseren på våre
+seg selv. Du trenger **ikke** vedlikeholde den. Biblioteket kjører i nettleseren på våre
 egne statiske data, så det er ingen sikkerhetsgrunn til å oppgradere. Gjør det **bare** hvis
 en nyere versjon gir noe dere faktisk vil ha, eller for å rette en konkret feil.
 
-Slik oppdaterer du (engangsjobb — «bytt ut den ene fila og test»):
+Slik oppdaterer du (engangsjobb: «bytt ut den ene fila og test»):
 
 1. **Hent det nye UMD-bygget.** Last ned fra et CDN og bytt versjonsnummeret til det nyeste:
    `https://cdn.jsdelivr.net/npm/minisearch@7.1.0/dist/umd/index.min.js`
    (fila som starter med `!function(t,e)…` og definerer `window.MiniSearch`).
-2. **Lagre den over `minisearch.min.js`** — *samme filnavn*. Da slipper du å røre de 14
+2. **Lagre den over `minisearch.min.js`**, *samme filnavn*. Da slipper du å røre de 14
    sidene; de peker allerede på det navnet.
 3. **Test søket:** åpne en side, trykk **⌘/Ctrl + K**, og søk på noe med bøyning
    («studieretninger» skal finne «studieretning») og en skrivefeil («filosfi» skal finne
@@ -344,13 +365,13 @@ window.MERCH_ORDER_TOKEN    = '';          // bot-filter-token (samme som i Apps
 
 ### Bot-filter (mot spam)
 
-Endepunktet er offentlig (skriv-bare — ingen kan lese ut data). To lag:
+Endepunktet er offentlig (skriv-bare, ingen kan lese ut data). To lag:
 
 1. **Delt token:** samme tilfeldige streng i `MERCH_ORDER_TOKEN` og `ORDER_TOKEN` (Apps
    Script). Innsendinger uten riktig token avvises.
 2. **Honeypot:** et skjult felt som bots fyller ut, men ikke mennesker.
 
-> Dette er et **bot-filter, ikke ekte sikkerhet** — token-en ligger i klient-koden. Men
+> Dette er et **bot-filter, ikke ekte sikkerhet**, token-en ligger i klient-koden. Men
 > som skriv-endepunkt har det reell verdi mot drive-by-spam. **Ikke** lim den ekte
 > `SHEET_ID` eller `/exec`-URL inn i offentlige filer.
 
@@ -368,7 +389,7 @@ Full guide: [`docs/apps-script-oppsett.md`](docs/apps-script-oppsett.md). Kort:
 <summary><b>Hele Apps Script-koden (klikk for å vise)</b></summary>
 
 ```javascript
-// ── Apeiron — mottak av merch-bestillinger ──
+// ── Apeiron: mottak av merch-bestillinger ──
 var STYRE_EPOST = 'DIN_STYRE_EPOST@example.com';   // ← hvem som varsles
 var SHEET_ID    = 'DITT_GOOGLE_SHEET_ID';          // ← ID fra Sheet-URL (…/d/DETTE/edit)
 var ORDER_TOKEN = 'EN_HEMMELIG_TILFELDIG_STRENG';  // ← samme som MERCH_ORDER_TOKEN
@@ -436,10 +457,10 @@ function doPost(e) {
 
 | Fil | Hva det er |
 | --- | --- |
-| `index.html` | Forsiden «Hjem» — toppbilde, om, FAQ, kontakt (tekst fra `index-content.js`) |
+| `index.html` | Forsiden «Hjem»: toppbilde, om, FAQ, kontakt (tekst fra `index-content.js`) |
 | `om-oss.html` | «Om oss»-siden (fra `om-content.js`) |
 | `nyheter.html` | Nyhetsside med arkiv |
-| `oppslagstavla.html` | Oppslagstavla — plakater (fra `oppslag-content.js`) |
+| `oppslagstavla.html` | Oppslagstavla: plakater (fra `oppslag-content.js`) |
 | `pensum.html` | Pensum-oversikt (fra `pensum-content.js`) |
 | `styret.html` | Styret og styreverv (fra `styret-content.js`) |
 | `styret-arkiv.html` | Arkiv over tidligere styrer (fra `archive[]` i `styret-content.js`) |
@@ -450,7 +471,7 @@ function doPost(e) {
 | `hjelp.html` | Hjelp & ressurser (fra `hjelp-content.js`) |
 | `oppnaelser.html` | Oppnåelser / milepæler (fra `oppnaelser-content.js`) |
 | `utmerkelser.html` | Utmerkelser / priser (fra `utmerkelser-content.js`) |
-| `admin.html` | **Admin-senter** — én inngang for all redigering; mounter modulene |
+| `admin.html` | **Admin-senter**: én inngang for all redigering; mounter modulene |
 
 **Innholds- og innstillingsfiler (redigeres via Admin-senteret)**
 
@@ -494,7 +515,7 @@ function doPost(e) {
 | `image-slot.js` | Gjenbrukbar bildekomponent (`<image-slot>`) |
 | `site-search.js` | Søkefunksjon (overlay + MiniSearch-motor) |
 | `minisearch.min.js` | Søkemotor-bibliotek (MiniSearch v7, vendet inn) |
-| `search-base.js` | Statiske søketreff — input til indeksen |
+| `search-base.js` | Statiske søketreff: input til indeksen |
 | `search-index.js` | Auto-generert søkeindeks (rediger aldri for hånd) |
 | `styles.css` | All styling for de offentlige sidene |
 
@@ -513,13 +534,13 @@ function doPost(e) {
 | Fil | Hva det er |
 | --- | --- |
 | `README.md` | Oversikt + brukerveiledning (endre innhold via Admin-senteret), to-do og domene-status |
-| `VEDLIKEHOLD.md` | Denne fila — teknisk drift og dokumentasjon |
+| `VEDLIKEHOLD.md` | Denne fila: teknisk drift og dokumentasjon |
 | `CHANGELOG.md` | Logg over hva som er gjort |
 | `docs/admin-arkitektur.md` | Skall+modul-arkitekturen for Admin-senteret |
 | `docs/apps-script-oppsett.md` | Google Sheet + Apps Script-guide (merch-bestilling) |
 | `.gitignore` | Hva git hopper over (bl.a. `api-config.js`, `Plan F.html`) |
 | `.github/dependabot.yml` | Ukentlig sjekk av GitHub Actions-avhengigheter |
-| `_headers` | Cloudflare Pages — HTTP-sikkerhetsheadere (trygg basis, uten CSP) |
+| `_headers` | Cloudflare Pages: HTTP-sikkerhetsheadere (trygg basis, uten CSP) |
 
 **Bilder**
 
@@ -539,7 +560,7 @@ function doPost(e) {
 ## Sikkerhet og konfigurasjon
 
 - **`api-config.js`** er en gitignorert lokal stub for Google-API-nøkkelen. I produksjon
-  injiseres nøkkelen av Cloudflare — **commit aldri** en ekte nøkkel.
+  injiseres nøkkelen av Cloudflare, og **commit aldri** en ekte nøkkel.
 - **Bot-filter-token** (`MERCH_ORDER_TOKEN`) er et drive-by-spam-filter, ikke
   ekte sikkerhet. Hold ekte `SHEET_ID` / `/exec`-URL utenfor offentlige filer.
 - **`_headers`** gir HTTP-sikkerhetsheadere via Cloudflare Pages (trygg basis, uten CSP).
@@ -556,4 +577,4 @@ Hvis repoet ikke er koblet til Cloudflare Pages, eller man vil bytte Cloudflare-
 2. [dash.cloudflare.com](https://dash.cloudflare.com) → «Workers & Pages» → «Create» →
    «Pages» → «Connect to Git» → velg repoet
 3. «Framework preset» = «None», «Build command» tom, «Build output directory» = `/`
-4. «Save and Deploy» — fra nå skjer alt automatisk
+4. «Save and Deploy». Fra nå skjer alt automatisk

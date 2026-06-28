@@ -17,6 +17,32 @@
       .then(function (d) { state = Object.assign({ checked: true }, d || { authenticated: false }); return state; })
       .catch(function () { state = { authenticated: false, checked: true, offline: true }; return state; });
   }
+  // Siste commit på branchen (+ ev. endrede filer siden ?base). Brukes til
+  // «Sist publisert av …» og konfliktsjekk. Feiler stille (returnerer !ok)
+  // når man kjører lokalt / er utlogget — kallere skal ikke blokkere på det.
+  function latest(base) {
+    var url = '/api/github/latest' + (base ? ('?base=' + encodeURIComponent(base)) : '');
+    return fetch(url, { credentials: 'same-origin' })
+      .then(function (r) { return r.json().catch(function () { return { ok: false }; }); })
+      .catch(function () { return { ok: false, offline: true }; });
+  }
+  // Siste commits på branchen (hvem/hva/når). Driver «Angre siste publisering».
+  function history(n) {
+    var url = '/api/github/history' + (n ? ('?n=' + encodeURIComponent(n)) : '');
+    return fetch(url, { credentials: 'same-origin' })
+      .then(function (r) { return r.json().catch(function () { return { ok: false }; }); })
+      .catch(function () { return { ok: false, offline: true }; });
+  }
+  // Angre siste publisering: ruller branchen tilbake til forrige tre.
+  // expect = SHA-en man så som «siste» (konfliktvakt på serveren).
+  function revert(expect) {
+    return fetch('/api/github/revert', {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ expect: expect || '' })
+    }).then(function (r) { return r.json().catch(function () { return { ok: false, error: 'bad_response' }; }); })
+      .catch(function () { return { ok: false, error: 'network' }; });
+  }
   function login() { location.href = '/api/github/login'; }
   function logout() {
     return fetch('/api/github/logout', { method: 'POST', credentials: 'same-origin' })
@@ -45,7 +71,8 @@
   }
 
   window.AdminGitHub = {
-    status: status, login: login, logout: logout, commit: commit,
+    status: status, login: login, logout: logout, commit: commit, latest: latest,
+    history: history, revert: revert,
     get state() { return state; }
   };
 })();

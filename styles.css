@@ -710,7 +710,7 @@ html[data-mode="marine"] .member__tag{
 .sak__krav .par{ font-family:var(--display); font-weight:700; font-size:1.15rem; color:var(--gold); }
 .sak__krav .txt{ font-size:1.02rem; color:var(--paper); }
 .sak__krav li.is-open .txt{ color:rgba(244,236,217,.4); font-style:italic; }
-.sak__krav li.is-open .txt::after{ content:"— holdt åpen"; }
+.sak__krav li.is-open .txt::after{ content:" (holdt åpen)"; }
 .sak__krav-note{ margin-top:20px; font-size:.86rem; line-height:1.55; color:rgba(244,236,217,.55); font-style:italic; }
 
 /* ============================================================

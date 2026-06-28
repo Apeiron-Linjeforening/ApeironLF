@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Begrep — Filosofisk Tidsskrift · NTNU</title>
+<title>Begrep · Filosofisk Tidsskrift · NTNU</title>
 <meta name="description" content="Begrep er et studentdrevet filosofisk tidsskrift fra NTNU. Utgaver, podkast, film og julekalender." />
-<meta property="og:title" content="Begrep — Filosofisk Tidsskrift · NTNU" />
+<meta property="og:title" content="Begrep · Filosofisk Tidsskrift · NTNU" />
 <meta property="og:description" content="Studentdrevet. Uavhengig. Siden 2019." />
 <meta property="og:image" content="assets/apeiron-logo.png" />
 <meta property="og:type" content="website" />
@@ -598,7 +598,7 @@ html[data-begrep-mode="print"] .drawer__mode .drawer__mode-label[data-ed="digita
         <h2 class="bg-section__title">Hva er Begrep?</h2>
         <p class="bg-section__lede">
           Begrep er et studentdrevet filosofisk tidsskrift som utgår fra filosofimiljøet ved NTNU.
-          Vi publiserer essays, analyser og refleksjoner skrevet av studenter — om filosofi, etikk
+          Vi publiserer essays, analyser og refleksjoner skrevet av studenter, om filosofi, etikk
           og alt det store og vanskelige imellom.
         </p>
         <p style="font-size:.98rem; color:rgba(var(--bg-fg-rgb),.6); line-height:1.7; max-width:56ch;">
@@ -652,7 +652,7 @@ html[data-begrep-mode="print"] .drawer__mode .drawer__mode-label[data-ed="digita
     <span class="bg-section__eyebrow">Podkasten</span>
     <h2 class="bg-section__title">Begrep i lyd</h2>
     <p class="bg-section__lede">
-      Vi produserer samtaler i tilknytning til tidsskriftet — med artikkelforfattere,
+      Vi produserer samtaler i tilknytning til tidsskriftet, med artikkelforfattere,
       gjester og gode filosofiske spørsmål.
     </p>
 
@@ -671,7 +671,7 @@ html[data-begrep-mode="print"] .drawer__mode .drawer__mode-label[data-ed="digita
     <h2 class="bg-section__title">Begrep på skjermen</h2>
     <p class="bg-section__lede">
       Begrep er ikke bare tekst og lyd. Vi skriver, regisserer og filmer egne
-      produksjoner — fra kortfilm til krim. Full produksjon, fra manus til klipp.
+      produksjoner, fra kortfilm til krim. Full produksjon, fra manus til klipp.
     </p>
 
     <div class="bg-film-grid" id="bg-films">
@@ -697,7 +697,7 @@ html[data-begrep-mode="print"] .drawer__mode .drawer__mode-label[data-ed="digita
     <div class="bg-hilbert__badge">Julekalender 2025</div>
     <h2 class="bg-section__title" style="max-width:14ch;">Hilbert Hotell</h2>
     <p class="bg-section__lede">
-      En filosofisk fortelling om uendelighet, rom og mysterium — utgitt som podkast
+      En filosofisk fortelling om uendelighet, rom og mysterium, utgitt som podkast
       i 24 episoder gjennom desember 2025. Basert på matematikeren David Hilberts
       tankeeksperiment om et hotell med uendelig mange rom.
     </p>
@@ -716,7 +716,7 @@ html[data-begrep-mode="print"] .drawer__mode .drawer__mode-label[data-ed="digita
     <h2>Vil du bidra?</h2>
     <p>
       Skriv for Begrep, bli med i redaksjonen, eller foreslå et tema.
-      Vi tar imot tekster fra alle som studerer filosofi og etikk ved NTNU —
+      Vi tar imot tekster fra alle som studerer filosofi og etikk ved NTNU,
       og fra andre som har noe på hjertet.
     </p>
     <p class="bg-cta__email" id="bg-kontakt-email">E-post: <strong>begreptidsskrift@gmail.com</strong></p>
@@ -838,7 +838,7 @@ html[data-begrep-mode="print"] .drawer__mode .drawer__mode-label[data-ed="digita
   if (coversEl) {
     coversEl.innerHTML = issues.map(function (it, i) {
       return '<div class="bg-cover-card reveal' + (i ? ' d' + Math.min(i, 4) : '') + '">'
-        + imgOrPh(it.img, it.roman || (i + 1), 'Begrep ' + (it.title || '') + ' — ' + (it.year || ''))
+        + imgOrPh(it.img, it.roman || (i + 1), 'Begrep ' + (it.title || '') + ', ' + (it.year || ''))
         + '<div class="bg-cover-card__label">'
         + '<span class="bg-cover-card__year">' + esc(it.year || '') + '</span>'
         + '<div class="bg-cover-card__issue">' + esc(it.title || '') + '</div>'

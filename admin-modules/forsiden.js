@@ -16,14 +16,14 @@
       host.innerHTML =
         '<section class="preview-top">'
           + '<h3>Forhåndsvisning</h3>'
-          + '<p class="pp-sub">Live fra den ekte forsiden (Hjem) — endringene dine vises umiddelbart. Dette panelet styrer <b>tekstene på Hjem</b> (hero, seksjons-introer, «Bli medlem» og kontakt). «Om oss» og FAQ redigeres i <b>Om oss</b>.</p>'
+          + '<p class="pp-sub">Live fra den ekte forsiden (Hjem). Endringene dine vises umiddelbart. Dette panelet styrer <b>tekstene på Hjem</b> (hero, seksjons-introer, «Bli medlem» og kontakt). «Om oss» og FAQ redigeres i <b>Om oss</b>.</p>'
           + '<div class="pv-board-wrap"><iframe id="pv-board" src="index.html?preview=1" title="Forhåndsvisning av forsiden"></iframe></div>'
         + '</section>'
         + '<div class="tip">'
           + '<button class="tip-reset" id="reset-btn" type="button">Tilbakestill til siste publiserte versjon</button>'
           + '<strong>Slik oppdaterer du Hjem</strong>'
           + '<ol>'
-            + '<li>Rediger tekstene nedenfor — endringer vises live i forhåndsvisningen</li>'
+            + '<li>Rediger tekstene nedenfor. Endringer vises live i forhåndsvisningen</li>'
             + '<li>Trykk <b>☁ Publiser til GitHub</b> oppe til høyre</li>'
             + '<li><em>(Reserve hvis publisering svikter: «↓ Last ned alle endrede» nederst i Oversikt-fanen, og legg fila i GitHub.)</em></li>'
             + '<li>Cloudflare oppdaterer nettsiden automatisk innen et minutt</li>'
@@ -66,10 +66,10 @@
               + '<div class="hg-grp">'
                 + '<div class="frow">'
                   + '<div class="fg"><label>Stil</label><select id="hg-style">'
-                    + '<option value="A">A — Rullende bånd</option>'
-                    + '<option value="B">B — Mosaikk (egen seksjon)</option>'
-                    + '<option value="C">C — Polaroider (egen seksjon)</option>'
-                    + '<option value="D">D — Svevende bilder bak hero</option>'
+                    + '<option value="A">A: Rullende bånd</option>'
+                    + '<option value="B">B: Mosaikk (egen seksjon)</option>'
+                    + '<option value="C">C: Polaroider (egen seksjon)</option>'
+                    + '<option value="D">D: Svevende bilder bak hero</option>'
                   + '</select></div>'
                   + '<div class="fg" data-hg="animation"><label>Animasjon</label><select id="hg-animation">'
                     + '<option value="diagonal">Diagonal drift</option>'
@@ -103,7 +103,7 @@
                   + '<div class="fg" data-hg="motif"><label>Motiv</label><select id="hg-motif">'
                     + '<option value="photos">Galleribilder</option>'
                     + '<option value="blueLogos">Blå logo-utkast (bytter mellom variantene)</option>'
-                    + '<option value="logoBW">Logo — vanlig &amp; svart</option>'
+                    + '<option value="logoBW">Logo: vanlig &amp; svart</option>'
                     + '<option value="hourglass">Timeglass-logo</option>'
                   + '</select></div>'
                   + '<div class="fg" data-hg="mosaic"><label>Bildestørrelser</label><select id="hg-mosaic">'
@@ -129,14 +129,14 @@
             + '<div class="frow"><div class="fg narrow"><label>Tittel (før)</label><input type="text" id="hero-wm-pre"></div>'
             + '<div class="fg narrow"><label>Spesial-bokstav</label><input type="text" id="hero-wm-mid"></div>'
             + '<div class="fg narrow"><label>Tittel (etter)</label><input type="text" id="hero-wm-post"></div></div>'
-            + '<p class="hint">Den store tittelen øverst (foreningsnavnet). «Spesial-bokstaven» får ∞-stilen — la den stå tom for en vanlig bokstav.</p>'
+            + '<p class="hint">Den store tittelen øverst (foreningsnavnet). «Spesial-bokstaven» får ∞-stilen. La den stå tom for en vanlig bokstav.</p>'
             + '<div class="fg"><label>Eyebrow (liten etikett over tittelen)</label><input type="text" id="hero-eyebrow"></div>'
             + '<div class="fg"><label>Undertittel</label><input type="text" id="hero-tag"></div>'
             + '<div class="fg"><label>Ingress</label><textarea id="hero-lede"></textarea></div>'
-            + '<div class="frow"><div class="fg"><label>Knapp 1 — tekst</label><input type="text" id="hero-cta1-label"></div>'
-            + '<div class="fg narrow"><label>Knapp 1 — lenke</label><input type="text" id="hero-cta1-href" placeholder="#bli-medlem"></div></div>'
-            + '<div class="frow"><div class="fg"><label>Knapp 2 — tekst</label><input type="text" id="hero-cta2-label"></div>'
-            + '<div class="fg narrow"><label>Knapp 2 — lenke</label><input type="text" id="hero-cta2-href" placeholder="#arrangementer"></div></div>'
+            + '<div class="frow"><div class="fg"><label>Knapp 1: tekst</label><input type="text" id="hero-cta1-label"></div>'
+            + '<div class="fg narrow"><label>Knapp 1: lenke</label><input type="text" id="hero-cta1-href" placeholder="#bli-medlem"></div></div>'
+            + '<div class="frow"><div class="fg"><label>Knapp 2: tekst</label><input type="text" id="hero-cta2-label"></div>'
+            + '<div class="fg narrow"><label>Knapp 2: lenke</label><input type="text" id="hero-cta2-href" placeholder="#arrangementer"></div></div>'
             + '<div class="fg"><label>«Ny her?»-bro-lenke (tekst under knappene)</label><input type="text" id="hero-bridge"></div>'
           + '</div>'
         + '</div>'
@@ -145,7 +145,7 @@
             + '<div class="fg"><label>Eyebrow (liten etikett over tittelen)</label><input type="text" id="arr-eyebrow"></div>'
             + '<div class="fg"><label>Overskrift</label><input type="text" id="arr-heading"></div>'
             + '<div class="fg"><label>Ingress</label><textarea id="arr-lede"></textarea></div>'
-            + '<p class="hint">Selve arrangementene hentes fra Google Kalender — her styrer du bare overskriften og teksten over dem.</p>'
+            + '<p class="hint">Selve arrangementene hentes fra Google Kalender. Her styrer du bare overskriften og teksten over dem.</p>'
           + '</div>'
         + '</div>'
         + '<div class="panel"><h2>Aporetisk Aften <small>seksjons-intro på Hjem</small></h2>'
@@ -219,7 +219,7 @@
           enabled: false, style: 'D', placement: 'top', count: 10, opacity: 0.8, speed: 100,
           direction: 'up-left', animation: 'diagonal', navClip: true, dvdMotif: 'photos',
           mosaicSizes: 'varied', polaStyle: 'framed', dvdSize: 100,
-          heading: 'Livet i Apeiron', lede: 'Glimt fra det sosiale livet i Apeiron — fester, fagkvelder og alt imellom.'
+          heading: 'Livet i Apeiron', lede: 'Glimt fra det sosiale livet i Apeiron: fester, fagkvelder og alt imellom.'
         }, d.heroGallery || {});
         return d;
       }
@@ -472,7 +472,7 @@
           + '*/\n\n'
           + 'window.INDEX_CONTENT = ' + JSON.stringify(out, null, 2) + ';\n';
         AC.downloadBlob('index-content.js', content);
-        AC.toast('Fil lastet ned — erstatt i GitHub og push!');
+        AC.toast('Fil lastet ned. Erstatt i GitHub og push!');
       }
 
       q('reset-btn').addEventListener('click', function () {
@@ -508,9 +508,29 @@
       fitPreview(); setTimeout(fitPreview, 80);
       pushPreview(); setTimeout(pushPreview, 150);
 
+      /* ── delt «Liste + detalj»-skall (sections: hver .panel blir en rad) ── */
+      var shell = AC.PanelShell.mount(host, AC, {
+        rail: 'sections',
+        title: 'Forsiden', subtitle: 'Sidetekster',
+        remember: 'apeiron-forsiden-shell-sel',
+        sections: function () {
+          var out = [];
+          Array.prototype.forEach.call(host.querySelectorAll('.panel'), function (p, i) {
+            if (!p.getAttribute('data-aps-sec')) p.setAttribute('data-aps-sec', 's' + i);
+            var h2 = p.querySelector('h2'), label = '', sub = '';
+            if (h2) { var sm = h2.querySelector('small'); sub = sm ? sm.textContent.trim() : ''; label = (h2.textContent || '').replace(sub, '').trim(); }
+            out.push({ id: p.getAttribute('data-aps-sec'), label: label || ('Seksjon ' + (i + 1)), sub: sub, node: p, av: '✎' });
+          });
+          return out;
+        }
+      });
+      function applyPanelLayout() { shell.layoutChanged(); }
+      window.addEventListener('apeiron-panellayout', applyPanelLayout);
+      applyPanelLayout();
+
       return {
         export: exportFile,
-        destroy: function () { window.removeEventListener('message', onPreviewMsg); window.removeEventListener('resize', fitPreview); }
+        destroy: function () { window.removeEventListener('message', onPreviewMsg); window.removeEventListener('resize', fitPreview); window.removeEventListener('apeiron-panellayout', applyPanelLayout); if (shell) shell.destroy(); }
       };
     }
   });

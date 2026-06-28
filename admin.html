@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin-senter — Apeiron</title>
+<title>Admin-senter · Apeiron</title>
 <link rel="icon" href="assets/apeiron-logo.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -72,7 +72,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 .content { flex: 1 1 auto; position: relative; min-height: 0; }
 
 /* ── Oversikt (dashboard) ── */
-#dashboard { position: absolute; inset: 0; overflow-y: auto; padding: 34px 26px 70px; display: none; }
+#dashboard { position: absolute; inset: 0; overflow-y: auto; padding: 34px 26px 34px; display: none; }
 #dashboard.show { display: block; }
 .dash-wrap { max-width: 1080px; margin: 0 auto; }
 .dash-hero { margin-bottom: 26px; }
@@ -82,6 +82,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 .info-panel {
   display: grid; grid-template-columns: 1.4fr 1fr; gap: 18px; margin-bottom: 30px;
 }
+.dash-wrap > :last-child { margin-bottom: 0; }
 .info-card { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
 .info-card.is-flow { border-left: 3px solid var(--gold); }
 .info-card h3 { font-family: var(--display); font-size: 1.3rem; color: var(--navy); margin-bottom: 8px; }
@@ -100,6 +101,49 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 .pub-btn--backup { align-self: flex-start; padding: 7px 14px; background: transparent; color: var(--navy); border: 1px solid rgba(35,39,64,.3); border-radius: 4px; font-family: var(--body); font-size: .8rem; font-weight: 700; cursor: pointer; }
 .pub-btn--backup:hover { border-color: var(--navy); background: rgba(35,39,64,.04); }
 .pub-btn--backup:disabled { opacity: .55; cursor: progress; }
+/* ── «Angre siste publisering» (rull tilbake forrige commit) ── */
+.undo-pub { margin: 12px 0 2px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.undo-pub-btn { flex: 0 0 auto; padding: 8px 15px; background: transparent; color: var(--navy); border: 1px solid var(--border); border-radius: 6px; font-family: var(--body); font-size: .82rem; font-weight: 700; cursor: pointer; transition: border-color .15s, background .15s; }
+.undo-pub-btn:hover { border-color: var(--navy); background: rgba(35,39,64,.05); }
+.undo-pub-btn:disabled { opacity: .55; cursor: progress; }
+.undo-pub-hint { flex: 1; min-width: 180px; font-size: .76rem; color: var(--ink-soft); line-height: 1.45; }
+/* Detaljer i angre-modalen */
+.undo-diff { margin: 2px 0 2px; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.undo-diff__row { display: flex; gap: 10px; padding: 10px 13px; font-size: .85rem; }
+.undo-diff__row + .undo-diff__row { border-top: 1px solid var(--border); }
+.undo-diff__row.is-undo { background: rgba(118,17,15,.04); }
+.undo-diff__row.is-keep { background: rgba(35,39,64,.025); }
+.undo-diff__row.is-ctx { opacity: .58; }
+.undo-diff__cap { margin: 14px 0 6px; font-size: .8rem; font-weight: 700; color: var(--ink-soft); }
+.undo-diff__ico { flex: 0 0 auto; }
+.undo-diff__lbl { flex: 0 0 92px; font-weight: 700; color: var(--ink-soft); }
+.undo-diff__txt { flex: 1; color: var(--navy); }
+.undo-diff__txt b { display: block; }
+.undo-diff__meta { font-size: .76rem; color: var(--ink-soft); font-weight: 400; }
+/* ── #5 Slankt publiser-kort: tre ikon-steg + sammenleggbar reserve ── */
+.steps3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin: 2px 0; }
+.step3 { position: relative; background: rgba(35,39,64,.025); border: 1px solid var(--border); border-radius: 9px; padding: 13px 13px 12px; }
+.step3 .n { position: absolute; top: 10px; right: 12px; font-family: var(--display); font-size: 1rem; font-weight: 700; color: rgba(35,39,64,.22); line-height: 1; }
+.step3 .ic { font-size: 1.35rem; line-height: 1; margin-bottom: 8px; }
+.step3 .t { font-family: var(--display); font-size: 1.1rem; font-weight: 600; color: var(--navy); margin-bottom: 2px; }
+.step3 .d { font-size: .79rem; color: var(--ink-soft); line-height: 1.4; }
+.step3 .d b { color: var(--gold-ink); }
+.step3--pub { background: rgba(212,175,55,.1); border-color: rgba(212,175,55,.5); }
+@media (max-width: 540px) { .steps3 { grid-template-columns: 1fr; } }
+.assure { margin-top: 13px; display: flex; flex-direction: column; gap: 7px; }
+.assure__row { display: flex; gap: 8px; align-items: flex-start; font-size: .82rem; color: var(--ink-soft); line-height: 1.5; }
+.assure__row b { color: var(--gold-ink); }
+.assure__ico { flex: 0 0 auto; }
+.last-pub-card { margin-top: 13px; padding-top: 11px; border-top: 1px solid var(--border); font-size: .8rem; color: var(--ink-soft); }
+.fallback { margin-top: 13px; }
+.fallback summary { list-style: none; cursor: pointer; font-size: .82rem; font-weight: 600; color: var(--ink-soft); display: inline-flex; align-items: center; gap: 7px; }
+.fallback summary::-webkit-details-marker { display: none; }
+.fallback summary .chev { transition: transform .15s; font-size: .7rem; display: inline-block; }
+.fallback[open] summary .chev { transform: rotate(90deg); }
+.fallback summary:hover { color: var(--navy); }
+.fallback__body { margin-top: 11px; }
+.fallback__body .backup-box__txt { margin-bottom: 10px; font-size: .8rem; color: var(--ink-soft); line-height: 1.5; }
+.fallback__body .backup-box__txt b { color: var(--ink); }
 .quick-links { display: flex; flex-direction: column; gap: 9px; }
 .quick-links a {
   display: flex; align-items: center; gap: 10px; padding: 10px 13px; border: 1px solid var(--border);
@@ -113,6 +157,27 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
   font-size: .68rem; letter-spacing: .18em; text-transform: uppercase; font-weight: 700;
   color: var(--ink-soft); margin: 4px 0 14px;
 }
+/* ── Panelvisning-innstilling (Klassisk ↔ Liste + detalj) ── */
+.layout-setting { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; margin-bottom: 30px; display: grid; grid-template-columns: 1.3fr 1fr; gap: 16px 26px; align-items: center; }
+.layout-setting__txt h3 { font-family: var(--display); font-size: 1.3rem; color: var(--navy); margin-bottom: 6px; }
+.layout-setting__txt p { font-size: .86rem; color: var(--ink-soft); line-height: 1.55; }
+.layout-setting__txt p b { color: var(--gold-ink); }
+.layout-seg { display: flex; gap: 10px; }
+.layout-seg__opt { flex: 1; display: flex; flex-direction: column; gap: 2px; align-items: flex-start; text-align: left; background: rgba(35,39,64,.025); border: 1px solid var(--border); border-radius: 9px; padding: 11px 13px; cursor: pointer; font-family: var(--body); transition: border-color .15s, background .15s, box-shadow .15s; }
+.layout-seg__opt:hover { border-color: rgba(212,175,55,.6); }
+.layout-seg__opt.active { border-color: var(--navy); background: #fff; box-shadow: 0 8px 22px -14px rgba(35,39,64,.5); }
+.layout-seg__opt .ls-name { font-family: var(--display); font-size: 1.12rem; font-weight: 600; color: var(--navy); }
+.layout-seg__opt.active .ls-name { color: var(--gold-ink); }
+.layout-seg__opt .ls-sub { font-size: .73rem; color: var(--ink-soft); line-height: 1.3; }
+.ls-ico { display: flex; gap: 3px; margin-bottom: 6px; width: 34px; height: 21px; }
+.ls-ico i, .ls-ico b { background: rgba(35,39,64,.2); border-radius: 2px; display: block; }
+.ls-ico--classic { flex-direction: column; }
+.ls-ico--classic i { width: 100%; flex: 1; }
+.ls-ico--md b { width: 12px; height: 100%; }
+.ls-ico--md i { flex: 1; height: 100%; background: rgba(35,39,64,.12); }
+.layout-seg__opt.active .ls-ico i, .layout-seg__opt.active .ls-ico b { background: var(--gold); }
+.layout-seg__opt.active .ls-ico--md i { background: rgba(212,175,55,.4); }
+@media (max-width: 720px) { .layout-setting { grid-template-columns: 1fr; } }
 .reset-all-box { margin: 0 0 22px; padding: 12px 14px; border: 1px dashed rgba(118,17,15,.4); border-radius: 8px; background: rgba(118,17,15,.04); display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
 .reset-all-box__txt { flex: 1; min-width: 200px; font-size: .82rem; color: var(--ink-soft); line-height: 1.5; }
 .reset-all-btn { padding: 7px 14px; background: transparent; color: #76110f; border: 1px solid rgba(118,17,15,.5); border-radius: 4px; font-family: var(--body); font-size: .8rem; font-weight: 700; cursor: pointer; white-space: nowrap; }
@@ -139,7 +204,12 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 /* ── Kontekst-område i header: «Se siden» + samlet publiser-knapp ── */
 .ctx { display: none; align-items: center; gap: 14px; }
 .ctx.show { display: flex; }
-.ctx .pub-count { font-size: .8rem; color: rgba(244,236,217,.78); white-space: nowrap; }
+/* #1: «upublisert»-telleren er nå et alltid-synlig statusmerke, ikke bare tekst */
+.ctx .pub-count { display: inline-flex; align-items: center; gap: 7px; font-size: .78rem; font-weight: 600; color: var(--navy); background: var(--gold); border-radius: 999px; padding: 4px 11px 4px 9px; white-space: nowrap; }
+.ctx .pub-count::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--navy); flex: 0 0 auto; animation: pubPulse 1.8s ease-in-out infinite; }
+@keyframes pubPulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .4; transform: scale(.65); } }
+@media (prefers-reduced-motion: reduce) { .ctx .pub-count::before { animation: none; } }
+.a-header .last-pub { font-size: .76rem; color: rgba(244,236,217,.58); white-space: nowrap; }
 .ctx .pub-btn { padding: 7px 15px; background: var(--gold); color: var(--navy); border: none; border-radius: 4px; font-family: var(--body); font-size: .82rem; font-weight: 700; cursor: pointer; transition: filter .15s; white-space: nowrap; }
 .ctx .pub-btn:hover { filter: brightness(1.08); }
 .ctx .pub-btn:disabled { opacity: .6; cursor: progress; }
@@ -183,6 +253,26 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
   .sec-nav.show, .sec-nav__open.show { display: none; }
   .panel-host.has-secnav { padding-right: 22px; }
 }
+
+/* ── Skall-modus: når et migrert panel kjører «Liste + detalj» fyller skallet
+   hele flaten og scroller internt (rail + detalj hver for seg), i stedet for at
+   hele siden scroller. Det nye oppsettet ER siden.
+   Høyde-kjeden bygges med flex (ikke %-høyde), siden skallet kan ligge inni en
+   .pv-editor-wrapper (paneler med forhåndsvisning) ELLER rett i .ph-wrap. ── */
+.panel-host.shell-on { padding: 0; overflow: hidden; }
+.panel-host.shell-on .ph-wrap { display: flex !important; flex-direction: column; max-width: none; margin: 0; height: 100%; min-height: 0; }
+.panel-host.shell-on .pv-editor { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+.panel-host.shell-on .aps { flex: 1 1 auto; min-height: 0; margin: 0; border: none; border-radius: 0; box-shadow: none; display: flex; flex-direction: column; }
+.panel-host.shell-on .aps__md { flex: 1 1 auto; min-height: 0; }
+.panel-host.shell-on .aps__nav, .panel-host.shell-on .aps__detail { min-height: 0; }
+.panel-host.shell-on .aps__nav { overflow: hidden; }
+.panel-host.shell-on .aps__scroll { max-height: none; flex: 1 1 auto; min-height: 0; }
+.panel-host.shell-on .aps__detail { max-height: none; height: auto; }
+/* Forhåndsvisningen er skjult inline i skall-modus, men åpnes som overlay via «👁». */
+.panel-host.shell-on .ph-wrap:not(.pv-full) > .preview-top { display: none; }
+/* Kolonnebredde-velgeren («Visning: 1/2/3 i bredden») gir ikke mening i «Liste + detalj»
+   (ett kort om gangen) og kan ellers henge igjen som en stripe. Skjul den i skall-modus. */
+.panel-host.shell-on .lay-switch { display: none !important; }
 
 /* ── Live-preview øverst, full bredde (god plassbruk). Verktøy: 🖥/📱, ⛶, 📌 Fest. ── */
 .panel-host .preview-top { position: relative; margin-bottom: 28px; }
@@ -368,7 +458,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 
 @media (max-width: 720px) {
   .info-panel { grid-template-columns: 1fr; }
-  .a-header h1 { display: none; } .a-header .hint { display: none; } .ctx .pub-count { display: none; }
+  .a-header h1 { display: none; } .a-header .hint { display: none; } .ctx .pub-count { display: none; } .a-header .last-pub { display: none; }
 }
 
 /* ── Advarsel ved lukking (nullstilling til publisert versjon) ── */
@@ -394,9 +484,91 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
   letter-spacing: .03em; cursor: pointer; transition: background .15s;
 }
 .leave-warn__ok:hover { background: var(--maroon, #76110f); }
+
+/* ── Gruppert venstre-sidemeny (1A) + modusbytte ── */
+.admin-main { flex: 1 1 auto; display: flex; min-height: 0; }
+.content { min-width: 0; }
+.sidenav { width: 242px; flex: 0 0 auto; background: #1c1f33; display: none; flex-direction: column; overflow-y: auto; padding: 10px 9px 30px; box-shadow: inset -1px 0 0 rgba(244,236,217,.08); }
+#admin.nav-side .sidenav { display: flex; }
+#admin.nav-side .tabbar-shell { display: none; }
+#admin.nav-tabs .sidenav { display: none; }
+#admin.sidenav-collapsed .sidenav { width: 62px; }
+.sidenav__top { display: flex; align-items: center; gap: 8px; padding: 2px 4px 12px; }
+.sidenav__home { display: flex; align-items: center; gap: 9px; flex: 1 1 auto; min-width: 0; padding: 9px 11px; border: 0; border-radius: 8px; background: rgba(244,236,217,.07); color: var(--paper); font-family: var(--body); font-size: .92rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.sidenav__home:hover { background: rgba(244,236,217,.13); }
+.sidenav__home.active { background: var(--navy); color: var(--gold); box-shadow: inset 0 0 0 1px rgba(212,175,55,.4); }
+.sidenav__home .ico { font-size: 1.05rem; flex: 0 0 auto; width: 20px; text-align: center; }
+.sidenav__collapse { width: 30px; height: 30px; flex: 0 0 auto; border: 0; border-radius: 7px; background: rgba(244,236,217,.07); color: rgba(244,236,217,.75); cursor: pointer; font-size: .8rem; line-height: 1; }
+.sidenav__collapse:hover { background: rgba(244,236,217,.16); color: var(--gold); }
+.sidenav__grp { margin-bottom: 11px; }
+.sidenav__grplbl { font-size: .57rem; letter-spacing: .15em; text-transform: uppercase; color: rgba(244,236,217,.42); font-weight: 700; padding: 2px 11px 5px; white-space: nowrap; }
+.sidenav__item { display: flex; align-items: center; gap: 9px; width: 100%; text-align: left; padding: 8px 11px; border: 0; border-left: 3px solid transparent; border-radius: 7px; background: none; color: rgba(244,236,217,.78); font-family: var(--body); font-size: .9rem; cursor: pointer; white-space: nowrap; position: relative; }
+.sidenav__item:hover { background: rgba(244,236,217,.06); color: var(--paper); }
+.sidenav__item.active { background: var(--navy); color: var(--gold); border-left-color: var(--gold); }
+.sidenav__item .ico { font-size: 1.02rem; width: 20px; text-align: center; flex: 0 0 auto; }
+.sidenav__lbl { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.sidenav__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); flex: 0 0 auto; display: none; box-shadow: 0 0 0 3px rgba(212,175,55,.16); }
+.sidenav__item.has-changes .sidenav__dot { display: block; }
+.sidenav__item.has-changes { color: var(--paper); }
+#admin.sidenav-collapsed .sidenav__lbl, #admin.sidenav-collapsed .sidenav__grplbl { display: none; }
+#admin.sidenav-collapsed .sidenav__item { justify-content: center; padding: 9px 0; }
+#admin.sidenav-collapsed .sidenav__home { justify-content: center; padding: 9px 0; }
+#admin.sidenav-collapsed .sidenav__top { flex-direction: column; gap: 6px; align-items: stretch; }
+#admin.sidenav-collapsed .sidenav__dot { position: absolute; top: 5px; right: 7px; }
+@media (max-width: 720px) {
+  #admin.nav-side .sidenav { width: 58px; }
+  #admin.nav-side .sidenav__lbl, #admin.nav-side .sidenav__grplbl { display: none; }
+  #admin.nav-side .sidenav__item, #admin.nav-side .sidenav__home { justify-content: center; padding: 9px 0; }
+  #admin.nav-side .sidenav__top { flex-direction: column; gap: 6px; align-items: stretch; }
+}
+
+/* ── ⚙ Innstillinger-knapp + modal (flyttet ut av oversikten) ── */
+.a-gear { width: 32px; height: 32px; flex: 0 0 auto; border: 1px solid rgba(244,236,217,.3); background: none; color: rgba(244,236,217,.8); border-radius: 7px; cursor: pointer; font-size: 1rem; line-height: 1; display: inline-flex; align-items: center; justify-content: center; }
+.a-gear:hover { border-color: var(--gold); color: var(--gold); }
+
+/* Kompakt «Angre alle» i toppen — vises bare når det finnes upubliserte endringer */
+.ctx .reset-link { background: none; border: 1px solid rgba(244,236,217,.28); color: rgba(244,236,217,.82); border-radius: 4px; padding: 5px 11px; font-family: var(--body); font-size: .8rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.ctx .reset-link:hover { border-color: #db9290; color: #f0b6b4; background: rgba(118,17,15,.18); }
+
+.settings-ov, .ap-modal-ov { position: fixed; inset: 0; z-index: 2000; background: rgba(20,22,38,.55); backdrop-filter: blur(2px); display: none; align-items: center; justify-content: center; padding: 24px; }
+.settings-ov.show, .ap-modal-ov.show { display: flex; }
+.settings-modal { background: var(--paper); color: var(--ink); max-width: 560px; width: 100%; border-radius: 12px; padding: 22px 26px 24px; box-shadow: 0 20px 60px rgba(0,0,0,.35); border-top: 4px solid var(--gold); max-height: 88vh; overflow-y: auto; }
+.settings-modal__head { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+.settings-modal__head h3 { font-family: var(--display); font-size: 1.5rem; color: var(--navy); margin-right: auto; }
+.settings-modal__close { width: 30px; height: 30px; flex: 0 0 auto; border: none; background: rgba(35,39,64,.06); color: var(--ink-soft); border-radius: 7px; font-size: .9rem; cursor: pointer; }
+.settings-modal__close:hover { background: rgba(35,39,64,.12); color: var(--navy); }
+.settings-modal__intro { font-size: .86rem; color: var(--ink-soft); line-height: 1.5; margin-bottom: 18px; }
+.settings-modal .layout-setting { grid-template-columns: 1fr; gap: 13px; margin-bottom: 14px; }
+.settings-modal .layout-setting:last-child { margin-bottom: 0; }
+
+/* ── Generisk, stylet bekreftelses-modal (erstatter confirm()) ── */
+.ap-modal { background: var(--paper); color: var(--ink); max-width: 480px; width: 100%; border-radius: 11px; padding: 24px 26px 20px; box-shadow: 0 20px 60px rgba(0,0,0,.35); border-top: 4px solid var(--gold); max-height: 86vh; overflow-y: auto; }
+.ap-modal--danger { border-top-color: var(--maroon); }
+.ap-modal h3 { font-family: var(--display); font-size: 1.4rem; color: var(--navy); margin-bottom: 10px; letter-spacing: .02em; }
+.ap-modal__body { font-size: .92rem; line-height: 1.55; color: var(--ink-soft); }
+.ap-modal__body p { margin-bottom: 13px; }
+.ap-modal__body b { color: var(--gold-ink); }
+.ap-modal__row { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+.ap-modal__btn { border: 0; border-radius: 6px; padding: 9px 18px; font-family: var(--body); font-size: .9rem; font-weight: 600; letter-spacing: .02em; cursor: pointer; transition: filter .15s, background .15s; }
+.ap-modal__btn--cancel { background: rgba(35,39,64,.08); color: var(--ink); }
+.ap-modal__btn--cancel:hover { background: rgba(35,39,64,.15); }
+.ap-modal__btn--ok { background: var(--navy); color: var(--paper); }
+.ap-modal__btn--ok:hover { filter: brightness(1.14); }
+.ap-modal__btn--git { background: #1f8a4c; color: #fff; }
+.ap-modal__btn--git:hover { filter: brightness(1.08); }
+.ap-modal__btn--danger { background: var(--maroon); color: #fff; }
+.ap-modal__btn--danger:hover { filter: brightness(1.12); }
+
+.ap-chg-list { list-style: none; margin: 2px 0 4px; padding: 0; border: 1px solid var(--border); border-radius: 9px; overflow: hidden; }
+.ap-chg { display: flex; align-items: center; gap: 11px; padding: 10px 13px; background: #fff; }
+.ap-chg + .ap-chg { border-top: 1px solid var(--border); }
+.ap-chg__ico { font-size: 1.12rem; flex: 0 0 auto; }
+.ap-chg__name { font-family: var(--display); font-size: 1.08rem; font-weight: 600; color: var(--navy); flex: 1 1 auto; }
+.ap-chg__see { font-size: .8rem; font-weight: 700; color: var(--gold-ink); text-decoration: none; white-space: nowrap; }
+.ap-chg__see:hover { text-decoration: underline; text-underline-offset: 2px; }
 </style>
 <link rel="stylesheet" href="admin-common.css">
-<link rel="stylesheet" href="admin-modules.css">
+<link rel="stylesheet" href="admin-modules.css?v=20260627i">
 </head>
 <body>
 
@@ -404,13 +576,15 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
   <header class="a-header">
     <img src="assets/apeiron-logo.png" alt="">
     <h1>Admin-senter</h1>
-    <span class="hint" id="hint">Endringer er lokale til du laster ned og pusher</span>
     <div class="ctx" id="ctx">
       <a id="ctx-see" href="#" target="_blank" rel="noopener" data-keep-token>Se siden ↗</a>
       <span class="pub-count" id="pub-count"></span>
+      <button class="reset-link" id="reset-all-btn" type="button" style="display:none" title="Tilbakestill alle upubliserte endringer til siste publiserte versjon">↺ Angre alle</button>
       <button class="pub-btn pub-btn--git" id="gh-pub-btn" type="button" style="display:none">☁ Publiser til GitHub</button>
     </div>
+    <span class="last-pub" id="last-pub" style="display:none"></span>
     <span class="gh-auth" id="gh-auth"></span>
+    <button class="a-gear" id="settings-btn" type="button" title="Innstillinger" aria-label="Innstillinger">⚙</button>
     <a href="index.html" target="_blank" rel="noopener" data-keep-token>Se nettsiden ↗</a>
   </header>
 
@@ -421,29 +595,56 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
     <div class="tab-scrollbar"><div class="tab-scrollbar__thumb"></div></div>
   </div>
 
+  <div class="admin-main">
+  <nav class="sidenav" id="sidenav" aria-label="Velg admin-panel"></nav>
   <div class="content">
     <div id="dashboard">
       <div class="dash-wrap">
         <div class="dash-hero">
           <h2>Velkommen til admin-senteret</h2>
-          <p>Herfra styrer du alt innholdet på nettsiden — tekst, bilder, nyheter, styret, merch og resten. Velg et område under <b>«Rediger innhold»</b> nedenfor, eller bla i menyen øverst. Alt du endrer dukker opp med en gang i en <b>live forhåndsvisning</b> ved siden av, så du ser nøyaktig hvordan det blir — lenge før noe legges ut.</p>
+          <p>Herfra styrer du alt innholdet på nettsiden: tekst, bilder, nyheter, styret, merch og resten. Velg et område i <b>menyen til venstre</b> for å begynne. Alt du endrer dukker opp med en gang i en <b>live forhåndsvisning</b> ved siden av, så du ser nøyaktig hvordan det blir, lenge før noe legges ut.</p>
         </div>
 
         <div class="info-panel">
           <div class="info-card is-flow">
             <h3>Slik publiserer du</h3>
-            <p class="flow-intro">Det du endrer her lever først bare i din egen nettleser. Når du publiserer, skrives det rett til nettsiden. Slik gjør du det:</p>
-            <ol class="flow-steps">
-              <li><b>Logg inn</b> med GitHub-kontoen — knappen <b>☁ Logg inn for å publisere</b> øverst til høyre. (Bare første gang.)</li>
-              <li><b>Rediger</b> i et panel. Det du skriver lagres automatisk i din egen nettleser og vises live i forhåndsvisningen.</li>
-              <li>Når du er fornøyd, trykk <b>☁ Publiser til GitHub</b> øverst til høyre.</li>
-              <li>Ferdig! Nettsiden oppdaterer seg selv automatisk innen ett minutt.</li>
-            </ol>
-            <div class="info-note">💡 Ingenting blir synlig for andre før du trykker «Publiser». Du kan trygt prøve deg fram og forhåndsvise så mye du vil.</div>
-            <div class="backup-box">
-              <div class="backup-box__txt"><b>⚠ Reserveløsning — brukes bare hvis publisering ikke virker.</b> Du kan laste ned de endrede filene og legge dem i GitHub manuelt (erstatt filene og «commit / push»). Normalt trenger du <em>ikke</em> dette — bruk «☁ Publiser til GitHub».</div>
-              <button class="pub-btn pub-btn--backup" id="pub-btn" type="button">↓ Last ned alle endrede</button>
+            <p class="flow-intro">Det du endrer lever bare i din egen nettleser til du publiserer. Tre steg:</p>
+            <div class="steps3">
+              <div class="step3">
+                <span class="n">1</span>
+                <div class="ic">🔑</div>
+                <div class="t">Logg inn</div>
+                <div class="d">Med GitHub, øverst til høyre. <b>Bare første gang.</b></div>
+              </div>
+              <div class="step3">
+                <span class="n">2</span>
+                <div class="ic">✎</div>
+                <div class="t">Rediger</div>
+                <div class="d">Velg et område og endre. Du ser alt live i forhåndsvisningen.</div>
+              </div>
+              <div class="step3 step3--pub">
+                <span class="n">3</span>
+                <div class="ic">☁</div>
+                <div class="t">Publiser</div>
+                <div class="d"><b>☁ Publiser til GitHub</b>. Siden er oppdatert innen ett minutt.</div>
+              </div>
             </div>
+            <div class="assure">
+              <div class="assure__row"><span class="assure__ico">💡</span><span>Ingenting er synlig for andre før du trykker <b>Publiser</b>. Prøv deg trygt fram.</span></div>
+              <div class="assure__row"><span class="assure__ico">↺</span><span>Angret deg? Når du har upubliserte endringer kan du trykke <b>↺ Angre alle</b> øverst for å gå tilbake til sist publiserte versjon.</span></div>
+            </div>
+            <div class="last-pub-card" id="last-pub-card" style="display:none"></div>
+            <div class="undo-pub" id="undo-pub-wrap" style="display:none">
+              <button class="undo-pub-btn" id="undo-pub-btn" type="button" title="Rull nettsiden tilbake til slik den var før forrige publisering">↩ Angre siste publisering</button>
+              <span class="undo-pub-hint">Ruller nettsiden tilbake til slik den var før forrige publisering. Kan gjøres om igjen.</span>
+            </div>
+            <details class="fallback">
+              <summary><span class="chev">▶</span> Publisering virker ikke?</summary>
+              <div class="fallback__body">
+                <div class="backup-box__txt">Du kan laste ned de endrede filene og legge dem i GitHub manuelt (erstatt filene, så «commit / push»). <b>Normalt trenger du ikke dette.</b> Bruk «☁ Publiser til GitHub».</div>
+                <button class="pub-btn pub-btn--backup" id="pub-btn" type="button">↓ Last ned alle endrede</button>
+              </div>
+            </details>
           </div>
           <div class="info-card">
             <h3>Snarveier</h3>
@@ -454,14 +655,6 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
             </div>
           </div>
         </div>
-
-        <div class="reset-all-box" id="reset-all-box" style="display:none">
-          <div class="reset-all-box__txt"><b>↺ Angre alle endringer</b> — tilbakestiller alle upubliserte endringer (på tvers av alle paneler) til siste publiserte versjon. Kan ikke angres.</div>
-          <button class="reset-all-btn" id="reset-all-btn" type="button">Tilbakestill alle sider</button>
-        </div>
-
-        <div class="dash-section-label">Rediger innhold</div>
-        <div class="card-grid" id="card-grid"></div>
       </div>
     </div>
 
@@ -472,12 +665,60 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
       <iframe id="admin-frame" title="Admin-panel"></iframe>
     </div>
   </div>
+  </div>
+</div>
+
+<div class="settings-ov" id="settings-ov" aria-hidden="true">
+  <div class="settings-modal" role="dialog" aria-modal="true" aria-labelledby="settings-h">
+    <div class="settings-modal__head">
+      <h3 id="settings-h">Innstillinger</h3>
+      <button class="settings-modal__close" id="settings-close" type="button" aria-label="Lukk innstillinger">✕</button>
+    </div>
+    <p class="settings-modal__intro">Disse valgene styrer bare hvordan admin-senteret ser ut for deg. De lagres i din egen nettleser og endrer ingenting på selve nettsiden.</p>
+    <div class="layout-setting" id="nav-setting">
+      <div class="layout-setting__txt">
+        <h3>Navigasjon</h3>
+        <p>Hvordan vil du bytte mellom panelene? <b>Sidemeny</b> viser alle områdene gruppert i en meny til venstre, alltid synlig. <b>Faner</b> er den klassiske raden med faner på toppen. Valget lagres i nettleseren din.</p>
+      </div>
+      <div class="layout-seg" role="radiogroup" aria-label="Navigasjon">
+        <button type="button" class="layout-seg__opt" data-nav="side" role="radio" aria-checked="false">
+          <span class="ls-ico ls-ico--md"><b></b><i></i></span>
+          <span class="ls-name">Sidemeny</span>
+          <span class="ls-sub">Gruppert meny til venstre</span>
+        </button>
+        <button type="button" class="layout-seg__opt" data-nav="tabs" role="radio" aria-checked="false">
+          <span class="ls-ico ls-ico--classic"><i></i><i></i><i></i></span>
+          <span class="ls-name">Faner</span>
+          <span class="ls-sub">Klassisk rad på toppen</span>
+        </button>
+      </div>
+    </div>
+    <div class="layout-setting" id="layout-setting">
+      <div class="layout-setting__txt">
+        <h3>Panelvisning</h3>
+        <p>Hvordan vil du redigere lister (f.eks. styremedlemmer)? <b>Liste + detalj</b> samler alt i en smal meny til venstre og viser ett skjema om gangen, mye mindre skrolling. <b>Klassisk</b> viser alle kortene under hverandre. Valget lagres i nettleseren din.</p>
+      </div>
+      <div class="layout-seg" role="radiogroup" aria-label="Panelvisning">
+        <button type="button" class="layout-seg__opt" data-layout="klassisk" role="radio" aria-checked="false">
+          <span class="ls-ico ls-ico--classic"><i></i><i></i><i></i></span>
+          <span class="ls-name">Klassisk</span>
+          <span class="ls-sub">Alle kort under hverandre</span>
+        </button>
+        <button type="button" class="layout-seg__opt" data-layout="liste-detalj" role="radio" aria-checked="false">
+          <span class="ls-ico ls-ico--md"><b></b><i></i></span>
+          <span class="ls-name">Liste + detalj</span>
+          <span class="ls-sub">Meny til venstre, ett skjema om gangen</span>
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
 <div id="bulk-host" class="ph-wrap" aria-hidden="true" style="position:fixed;left:-10000px;top:0;width:880px;height:1px;overflow:hidden;opacity:0;pointer-events:none;"></div>
 
 <script src="admin-common.js"></script>
+<script src="admin-panel-shell.js?v=20260627b"></script>
 <script src="admin-github.js"></script>
 <!-- C-moduler: paneler som mountes inline i skallet (erstatter frittstående *-admin.html etter hvert) -->
 <script src="palette.js"></script>
@@ -508,7 +749,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 <script src="admin-modules/utmerkelser.js"></script>
 <script src="admin-modules/om-oss.js"></script>
 <script src="admin-modules/forsiden.js"></script>
-<script src="admin-modules/styret.js"></script>
+<script src="admin-modules/styret.js?v=20260627c"></script>
 <script src="admin-modules/begrep.js"></script>
 <script src="admin-modules/oppslag.js"></script>
 <script src="admin-modules/nyheter.js"></script>
@@ -543,6 +784,15 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
     { id: 'pensum',       ico: '📚', label: 'Pensum',        module: true, ls: ['apeiron-pensum-v1'],                    desc: 'Emnekatalogen, studieretninger og grader.' }
   ];
 
+  // Gruppering av panelene for sidemenyen (1A). Dekker alle 16 id-er over.
+  var NAV_GROUPS = [
+    { name: 'Forside & nyheter',   ids: ['forsiden', 'nyheter', 'oppslag'] },
+    { name: 'Om foreningen',       ids: ['om-oss', 'styret', 'oppnaelser', 'utmerkelser', 'begrep'] },
+    { name: 'Butikk & medlemskap', ids: ['merch', 'medlemskap', 'marked'] },
+    { name: 'Sider & oppsett',     ids: ['meny', 'footer', 'hjelp', 'galleri', 'pensum'] }
+  ];
+  function panelById(id) { return PANELS.filter(function (p) { return p.id === id; })[0]; }
+
   /* ─── NULLSTILL UTKAST VED NY ØKT + ADVARSEL VED LUKKING ───────────
      Mål: admin skal alltid åpne i den PUBLISERTE tilstanden — ikke vise
      gamle, upubliserte utkast fra en tidligere økt. Alle panel-utkast i
@@ -556,7 +806,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
     return keys;
   })();
   var SESSION_FLAG = 'apeiron-admin-session-active';
-  var LEAVE_NOWARN = 'apeiron-admin-leave-nowarn';   // localStorage: bruker har skrudd av varselet
+  var LEAVE_NOWARN = 'apeiron-admin-leave-nowarn';   // sessionStorage: demp modalen for resten av økta (browser-vakten lever uansett)
   var LEAVE_SHOWN  = 'apeiron-admin-leave-shown';    // sessionStorage: varsel allerede vist i økta
 
   function clearAllDrafts() {
@@ -571,7 +821,9 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
     }
   }
   function leaveWarnDisabled() {
-    try { return localStorage.getItem(LEAVE_NOWARN) === '1'; } catch (_) { return false; }
+    // Gjelder BARE den ekstra in-app-modalen, og bare for inneværende økt.
+    // Browser-vakten (beforeunload) kan aldri skrus av — se init().
+    try { return sessionStorage.getItem(LEAVE_NOWARN) === '1'; } catch (_) { return false; }
   }
   // Vises FØRSTE gang i en økt at det finnes upubliserte endringer — med
   // avhukingsboks «Ikke vis dette igjen». Forklarer at endringer forsvinner
@@ -588,13 +840,13 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
     ov.innerHTML =
       '<div class="leave-warn" role="dialog" aria-modal="true" aria-labelledby="leave-warn-h">'
       + '<h3 id="leave-warn-h">Husk å publisere før du lukker</h3>'
-      + '<p>Endringene dine lever bare i denne nettleseren. Lukker eller forlater du admin uten å <b>laste ned og publisere</b>, forsvinner de — admin starter alltid fra den publiserte versjonen neste gang du åpner den.</p>'
-      + '<label class="leave-warn__cb"><input type="checkbox" id="leave-warn-cb"> Ikke vis dette varselet igjen</label>'
+      + '<p>Endringene dine lever bare i denne nettleseren. Lukker eller forlater du admin uten å <b>laste ned og publisere</b>, forsvinner de. Admin starter alltid fra den publiserte versjonen neste gang du åpner den.</p>'
+      + '<label class="leave-warn__cb"><input type="checkbox" id="leave-warn-cb"> Ikke vis dette varselet igjen (denne økta)</label>'
       + '<div class="leave-warn__row"><button type="button" class="leave-warn__ok" id="leave-warn-ok">Forstått</button></div>'
       + '</div>';
     document.body.appendChild(ov);
     function close() {
-      try { if (ov.querySelector('#leave-warn-cb').checked) localStorage.setItem(LEAVE_NOWARN, '1'); } catch (_) {}
+      try { if (ov.querySelector('#leave-warn-cb').checked) sessionStorage.setItem(LEAVE_NOWARN, '1'); } catch (_) {}
       ov.remove();
     }
     ov.querySelector('#leave-warn-ok').addEventListener('click', close);
@@ -658,6 +910,8 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
   var panelHost = document.getElementById('panel-host');
   var panelHostInner = document.getElementById('panel-host-inner');
   var grid = document.getElementById('card-grid');
+  var sidenav = document.getElementById('sidenav');
+  var adminEl = document.getElementById('admin');
   var ctx = document.getElementById('ctx');
   var ctxSee = document.getElementById('ctx-see');
   var hint = document.getElementById('hint');
@@ -827,6 +1081,19 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
     return { mount: mount, destroy: destroy };
   })();
 
+  // Skall-krom: når et migrert panel kjører «Liste + detalj» (PanelShell) skal
+  // det nye oppsettet VÆRE siden — da slår vi på .shell-on (full høyde, intern
+  // scroll) og skjuler «På denne siden»-menyen (skallet erstatter den). Ellers
+  // beholdes klassisk visning med seksjonsmeny.
+  function applyShellChrome() {
+    var hasShell = !!panelHostInner.querySelector('.aps');
+    var on = hasShell && window.AdminCommon.panelLayout && window.AdminCommon.panelLayout() === 'liste-detalj';
+    panelHost.classList.toggle('shell-on', on);
+    if (on) { try { secNav.destroy(); } catch (_) {} }
+    else { try { secNav.mount(panelHostInner); } catch (_) {} }
+  }
+  window.addEventListener('apeiron-panellayout', function () { if (panelHost.classList.contains('show')) setTimeout(applyShellChrome, 0); });
+
   // Plasser live-forhåndsvisningen (.preview-top) øverst i full bredde og legg til
   // en verktøylinje: enhets-veksler (🖥/📱), full størrelse (⛶) og «📌 Fest» (sticky).
   // Generisk — gjelder alle moduler med en .preview-top, uten at modulene endres.
@@ -937,10 +1204,11 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
      fjernes ved «Tilbakestill»). Viser gul prikk på fane + kort, og en linje med
      «Last ned alle endrede». Samlet nedlasting mounter hvert endret panel skjult,
      kaller dets ekte eksport, og rydder opp — så filene blir 100 % korrekte. */
-  var tabBtns = {}, cardEls = {};
+  var tabBtns = {}, cardEls = {}, sideBtns = {};
   var pubBtn = null, pubCount = null, panelOn = false;
   var ghPubBtn = null, ghAuth = null;
-  var resetAllBox = null;
+  var resetBtn = null;
+  var loadedCommit = null;   // #2: commit-SHA-en som var live da admin ble åpnet (baseline for konfliktsjekk)
 
   // Samordner header-området: «Se siden» (når et panel er åpent) og den samlede
   // publiser-knappen + telleren (når minst étt panel har upubliserte endringer).
@@ -963,14 +1231,56 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
       var on = panelChanged(p);
       if (tabBtns[p.id]) tabBtns[p.id].classList.toggle('has-changes', on);
       if (cardEls[p.id]) cardEls[p.id].classList.toggle('has-changes', on);
+      if (sideBtns[p.id]) sideBtns[p.id].classList.toggle('has-changes', on);
     });
     var n = changedPanels().length;
     if (pubCount) pubCount.textContent = n === 0 ? '' : (n === 1 ? '1 upublisert endring' : n + ' upubliserte endringer');
     if (pubBtn) pubBtn.textContent = '↓ Last ned alle endrede (' + n + ')';
     updateGhVisibility(n);
-    if (resetAllBox) resetAllBox.style.display = n > 0 ? '' : 'none';
+    if (resetBtn) resetBtn.style.display = n > 0 ? '' : 'none';
     syncHeader();
     maybeShowLeaveWarning();
+  }
+
+  // Stylet bekreftelses-modal (erstatter native confirm()). Returnerer en Promise
+  // som resolver true ved «OK» og false ved avbryt/Esc/klikk utenfor.
+  function apModal(opts) {
+    opts = opts || {};
+    return new Promise(function (resolve) {
+      var ov = document.createElement('div');
+      ov.className = 'ap-modal-ov show';
+      var okClass = opts.okClass || (opts.danger ? 'ap-modal__btn--danger' : 'ap-modal__btn--ok');
+      ov.innerHTML =
+        '<div class="ap-modal' + (opts.danger ? ' ap-modal--danger' : '') + '" role="dialog" aria-modal="true">'
+        + '<h3>' + (opts.title || '') + '</h3>'
+        + '<div class="ap-modal__body">' + (opts.bodyHTML || '') + '</div>'
+        + '<div class="ap-modal__row">'
+        + (opts.cancelLabel === null ? '' : '<button type="button" class="ap-modal__btn ap-modal__btn--cancel" data-act="cancel">' + (opts.cancelLabel || 'Avbryt') + '</button>')
+        + '<button type="button" class="ap-modal__btn ' + okClass + '" data-act="ok">' + (opts.okLabel || 'OK') + '</button>'
+        + '</div></div>';
+      document.body.appendChild(ov);
+      function done(val) { ov.remove(); document.removeEventListener('keydown', onKey); resolve(val); }
+      function onKey(e) { if (e.key === 'Escape') { e.stopPropagation(); done(false); } }
+      ov.addEventListener('click', function (e) {
+        if (e.target === ov) return done(false);
+        var b = e.target.closest('[data-act]');
+        if (!b) return;
+        done(b.getAttribute('data-act') === 'ok');
+      });
+      document.addEventListener('keydown', onKey);
+      var okBtn = ov.querySelector('[data-act="ok"]'); if (okBtn) okBtn.focus();
+    });
+  }
+
+  // Liste over endrede paneler til modalene. withLinks=true legger til en
+  // «Se siden ↗»-lenke (forhåndsvis før publisering).
+  function changeListHTML(list, withLinks) {
+    return '<ul class="ap-chg-list">' + list.map(function (p) {
+      var def = window.AdminPanels && window.AdminPanels.get(p.id);
+      var see = def && def.see;
+      var link = (withLinks && see) ? '<a class="ap-chg__see" href="' + see.href + '" target="_blank" rel="noopener" data-keep-token>Se siden ↗</a>' : '';
+      return '<li class="ap-chg"><span class="ap-chg__ico">' + p.ico + '</span><span class="ap-chg__name">' + p.label + '</span>' + link + '</li>';
+    }).join('') + '</ul>';
   }
 
   var bulkBusy = false;
@@ -978,10 +1288,16 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
     if (bulkBusy) return;
     var list = changedPanels();
     if (!list.length) return;
-    if (!confirm('Last ned ' + list.length + (list.length === 1 ? ' endret fil' : ' endrede filer')
-      + ' nå?\n\n' + list.map(function (p) { return '• ' + p.label; }).join('\n')
-      + '\n• Søkeindeks (oppdateres automatisk hvis nødvendig)'
-      + '\n\nHusk å erstatte hver fil i GitHub og pushe for at endringene skal bli synlige.')) return;
+    apModal({
+      title: 'Last ned endrede filer',
+      bodyHTML: '<p>Dette laster ned ' + list.length + (list.length === 1 ? ' endret fil' : ' endrede filer')
+        + ' til maskinen din (søkeindeksen oppdateres automatisk ved behov). Husk å erstatte hver fil i GitHub og pushe for at endringene skal bli synlige.</p>'
+        + changeListHTML(list, false),
+      okLabel: '↓ Last ned ' + list.length + (list.length === 1 ? ' fil' : ' filer'),
+      cancelLabel: 'Avbryt'
+    }).then(function (ok) { if (ok) runBulkExport(list); });
+  }
+  function runBulkExport(list) {
     bulkBusy = true;
     if (pubBtn) pubBtn.disabled = true;
     var hostDiv = document.getElementById('bulk-host');
@@ -993,7 +1309,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
         bulkBusy = false; if (pubBtn) pubBtn.disabled = false;
         if (hostDiv) hostDiv.innerHTML = '';
         window.AdminCommon.toast('Lastet ned ' + total + (total === 1 ? ' fil' : ' filer')
-          + (idxDownloaded ? ' (inkl. søkeindeks)' : '') + ' — husk å pushe til GitHub');
+          + (idxDownloaded ? ' (inkl. søkeindeks)' : '') + '. Husk å pushe til GitHub');
         return;
       }
       var p = list[i++];
@@ -1015,20 +1331,144 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
   function resetAll() {
     var list = changedPanels();
     if (!list.length) { window.AdminCommon.toast('Ingen endringer å tilbakestille'); return; }
-    if (!confirm('Tilbakestille ALLE ' + list.length + (list.length === 1 ? ' endret side' : ' endrede sider') + ' til siste publiserte versjon?\n\n'
-      + list.map(function (p) { return '• ' + p.label; }).join('\n')
-      + '\n\nDette sletter de upubliserte endringene og kan ikke angres.')) return;
-    list.forEach(function (p) { (p.ls || []).forEach(function (k) { try { localStorage.removeItem(k); } catch (_) {} }); });
-    refreshStatus();
-    window.AdminCommon.toast('Alle sider tilbakestilt til publisert versjon');
+    apModal({
+      title: 'Tilbakestill alle sider',
+      danger: true,
+      bodyHTML: '<p>Tilbakestille <b>alle</b> ' + list.length + (list.length === 1 ? ' endret side' : ' endrede sider')
+        + ' til siste publiserte versjon? Dette sletter de upubliserte endringene og kan ikke angres.</p>'
+        + changeListHTML(list, false),
+      okLabel: 'Tilbakestill alle',
+      cancelLabel: 'Avbryt'
+    }).then(function (ok) {
+      if (!ok) return;
+      list.forEach(function (p) { (p.ls || []).forEach(function (k) { try { localStorage.removeItem(k); } catch (_) {} }); });
+      refreshStatus();
+      window.AdminCommon.toast('Alle sider tilbakestilt til publisert versjon');
+    });
   }
 
   /* ─── G1: PUBLISER TIL GITHUB (commit i stedet for nedlasting) ───
      Speiler bulkExport(), men fanger filene via AdminCommon.beginCapture()
      og committer dem som ÉN commit på branchen (Cloudflare-funksjon). */
+  /* ─── #2: SIST PUBLISERT + KONFLIKTSJEKK ───
+     Henter siste commit på branchen så vi kan vise «Sist publisert av X» og
+     advare før publisering hvis noen andre har publisert de SAMME filene etter
+     at du åpnet admin (ellers ville din publisering stille overskrive deres). */
+  function fmtPubTime(iso) {
+    if (!iso) return '';
+    try {
+      var d = new Date(iso);
+      return d.toLocaleDateString('no-NO', { day: '2-digit', month: 'short' })
+        + ' kl. ' + d.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit' });
+    } catch (_) { return ''; }
+  }
+  function renderLastPub(r) {
+    var el = document.getElementById('last-pub');
+    var card = document.getElementById('last-pub-card');
+    if (!r || !r.ok) { if (el) el.style.display = 'none'; if (card) card.style.display = 'none'; return; }
+    var who = r.authorName || r.author || 'ukjent';
+    var when = fmtPubTime(r.date);
+    var txt = 'Sist publisert: ' + who + (when ? ' \u00b7 ' + when : '');
+    if (el) { el.textContent = txt; el.style.display = ''; }
+    if (card) { card.textContent = txt; card.style.display = ''; }
+  }
+  function refreshLastPub() {
+    if (!window.AdminGitHub || !window.AdminGitHub.latest
+      || !window.AdminGitHub.state || !window.AdminGitHub.state.authenticated) return;
+    window.AdminGitHub.latest().then(function (r) {
+      if (r && r.ok && r.sha && !loadedCommit) loadedCommit = r.sha; // baseline ved oppstart
+      renderLastPub(r);
+    });
+  }
+
+  /* ─── ANGRE SISTE PUBLISERING (rull branchen tilbake til forrige tre) ───
+     GitHub beholder hver publisering som et øyeblikksbilde, så «angre» er bare
+     en ny commit som peker på forrige tilstand — ingenting går tapt, og det kan
+     gjøres om igjen. Knappen vises kun når man er innlogget på GitHub. */
+  var undoBusy = false;
+  function _escHtml(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function refreshUndoVisibility() {
+    var wrap = document.getElementById('undo-pub-wrap');
+    if (!wrap) return;
+    var authed = !!(window.AdminGitHub && window.AdminGitHub.state && window.AdminGitHub.state.authenticated);
+    wrap.style.display = authed ? '' : 'none';
+  }
+  function undoLastPublish() {
+    if (undoBusy) return;
+    if (!window.AdminGitHub || !window.AdminGitHub.state.authenticated) { window.AdminCommon.toast('Logg inn på GitHub først'); return; }
+    var btn = document.getElementById('undo-pub-btn');
+    undoBusy = true; if (btn) { btn.disabled = true; btn.textContent = '↩ Henter…'; }
+    function reset() { undoBusy = false; if (btn) { btn.disabled = false; btn.textContent = '↩ Angre siste publisering'; } }
+
+    window.AdminGitHub.history(3).then(function (r) {
+      if (!r || !r.ok || !r.commits || !r.commits.length) { reset(); window.AdminCommon.toast('Fant ikke publiseringshistorikken'); return; }
+      var c = r.commits;
+      var last = c[0];
+      if (!last.parents || !last.parents.length) { reset(); window.AdminCommon.toast('Dette er den første publiseringen — ingenting å angre.'); return; }
+      function diffRow(commit, cls, ico, lbl) {
+        var when = fmtPubTime(commit.date);
+        return '<div class="undo-diff__row ' + cls + '"><span class="undo-diff__ico">' + ico + '</span>'
+          + '<span class="undo-diff__lbl">' + lbl + '</span>'
+          + '<span class="undo-diff__txt"><b>' + _escHtml(commit.message || commit.sha.slice(0, 7)) + '</b>'
+          + '<span class="undo-diff__meta">' + _escHtml(commit.authorName || commit.author || 'ukjent') + (when ? ' · ' + when : '') + '</span></span></div>';
+      }
+      var rows = diffRow(c[0], 'is-undo', '↩', 'Angrer');
+      if (c[1]) rows += diffRow(c[1], 'is-keep', '✓', 'Tilbake til');
+      if (c[2]) rows += diffRow(c[2], 'is-ctx', '·', 'Tidligere');
+      var body =
+        '<p>Dette ruller hele nettsiden tilbake til slik den var <b>før den siste publiseringen</b>. '
+        + 'Ingen historikk slettes — angringen blir selv en publisering du kan angre på nytt. '
+        + 'Siden oppdateres automatisk innen ~1 minutt.</p>'
+        + '<p class="undo-diff__cap">De tre siste publiseringene:</p>'
+        + '<div class="undo-diff">' + rows + '</div>';
+      apModal({
+        title: 'Angre siste publisering?',
+        danger: true,
+        bodyHTML: body,
+        okLabel: '↩ Angre publiseringen',
+        cancelLabel: 'Avbryt'
+      }).then(function (ok) {
+        if (!ok) { reset(); return; }
+        if (btn) btn.textContent = '↩ Angrer…';
+        window.AdminGitHub.revert(last.sha).then(function (res) {
+          reset();
+          if (res && res.ok) {
+            if (res.commit) loadedCommit = res.commit;
+            refreshLastPub();
+            window.AdminCommon.toast('✓ Siste publisering angret. Live om ~1 min');
+          } else if (res && res.error === 'head_moved') {
+            apModal({
+              title: 'Noen andre har publisert',
+              danger: true,
+              bodyHTML: '<p>En annen redaktør publiserte etter at du åpnet denne siden, så «den siste publiseringen» er ikke lenger den du så. Last inn admin på nytt for å hente fersk historikk før du angrer.</p>',
+              okLabel: '↻ Last inn på nytt',
+              cancelLabel: 'Avbryt'
+            }).then(function (rl) { if (rl) location.reload(); });
+          } else if (res && res.error === 'nothing_to_revert') {
+            window.AdminCommon.toast('Dette er den første publiseringen — ingenting å angre.');
+          } else {
+            window.AdminCommon.toast('Angring feilet: ' + ((res && res.error) || 'ukjent'));
+          }
+        }).catch(function () { reset(); window.AdminCommon.toast('Angring feilet (nettverk)'); });
+      });
+    }).catch(function () { reset(); window.AdminCommon.toast('Angring feilet (nettverk)'); });
+  }
+  // exportName per panel → lesbar etikett, for konflikt-meldingen
+  function fileLabelMap() {
+    var m = {};
+    PANELS.forEach(function (p) {
+      var def = window.AdminPanels && window.AdminPanels.get(p.id);
+      if (def && def.exportName) m[def.exportName] = p.label;
+    });
+    return m;
+  }
+
   function updateGhVisibility(n) {
     var authed = !!(window.AdminGitHub && window.AdminGitHub.state && window.AdminGitHub.state.authenticated);
     if (ghPubBtn) ghPubBtn.style.display = (authed && n > 0) ? '' : 'none';
+    refreshUndoVisibility();
   }
   function renderAuth() {
     if (!ghAuth) return;
@@ -1040,11 +1480,10 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
     } else {
       var unavailable = !!(s.offline || s.unavailable);
       var label = (s.error === 'not_allowed') ? ('GitHub: ingen tilgang (' + (s.login || '') + ')') : '☁ Logg inn for å publisere';
-      ghAuth.innerHTML = '<button class="gh-link" id="gh-login" type="button">' + label + '</button>'
-        + (unavailable ? '<span class="gh-note">krever publisert side</span>' : '');
+      ghAuth.innerHTML = '<button class="gh-link" id="gh-login" type="button">' + label + '</button>';
       var li = document.getElementById('gh-login');
       if (li) li.addEventListener('click', function () {
-        if (unavailable) { window.AdminCommon.toast('GitHub-publisering virker kun på den publiserte siden (Cloudflare) — ikke når du åpner filene lokalt.'); return; }
+        if (unavailable) { window.AdminCommon.toast('GitHub-publisering virker kun på den publiserte siden (Cloudflare), ikke når du åpner filene lokalt.'); return; }
         window.AdminGitHub.login();
       });
     }
@@ -1055,10 +1494,57 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
     if (!window.AdminGitHub || !window.AdminGitHub.state.authenticated) { window.AdminCommon.toast('Logg inn på GitHub først'); return; }
     var list = changedPanels();
     if (!list.length) return;
+    // #2 Konfliktsjekk: har noen andre publisert de SAMME filene siden du åpnet admin?
+    // Feiler kallet (lokalt/nettverk), publiserer vi som før — commit-en på serveren
+    // har uansett en innebygd vakt mot at branchen flyttet seg under selve commiten.
+    if (loadedCommit && window.AdminGitHub.latest) {
+      window.AdminGitHub.latest(loadedCommit).then(function (r) {
+        if (r && r.ok && r.changedSince && r.changedFiles && r.changedFiles.length) {
+          var labels = fileLabelMap(), mine = {};
+          list.forEach(function (p) {
+            var def = window.AdminPanels && window.AdminPanels.get(p.id);
+            if (def && def.exportName) mine[def.exportName] = 1;
+          });
+          var clash = r.changedFiles.filter(function (f) { return mine[f]; });
+          if (clash.length) { warnConflict(list, r, clash, labels); return; }
+        }
+        confirmPublish(list);
+      }).catch(function () { confirmPublish(list); });
+    } else {
+      confirmPublish(list);
+    }
+  }
+  function warnConflict(list, r, clash, labels) {
+    var who = r.authorName || r.author || 'En annen redaktør';
+    var pages = clash.map(function (f) { return '<b>' + (labels[f] || f) + '</b>'; }).join(', ');
+    var n = clash.length;
+    apModal({
+      title: 'Noen andre har publisert',
+      danger: true,
+      bodyHTML: '<p>' + who + ' publiserte ' + pages + ' etter at du åpnet admin. '
+        + 'Publiserer du nå, <b>overskriver du endringene deres</b> på ' + (n === 1 ? 'den siden' : 'de sidene') + '.</p>'
+        + '<p>Anbefalt: last inn admin på nytt for å hente deres versjon først. '
+        + '<em>Dine upubliserte endringer på ' + (n === 1 ? 'denne siden' : 'disse sidene') + ' forsvinner da. Kopier ev. teksten din ut først.</em></p>',
+      okLabel: '↻ Last inn på nytt',
+      cancelLabel: 'Publiser likevel'
+    }).then(function (reload) {
+      if (reload) location.reload();
+      else confirmPublish(list);
+    });
+  }
+  function confirmPublish(list) {
     var branch = window.AdminGitHub.state.branch || 'main';
-    if (!confirm('Publisere ' + list.length + (list.length === 1 ? ' endring' : ' endringer') + ' rett til GitHub (' + branch + ')?\n\n'
-      + list.map(function (p) { return '• ' + p.label; }).join('\n')
-      + '\n\nNettsiden oppdaterer seg automatisk innen ~1 minutt.')) return;
+    apModal({
+      title: 'Klar til å publisere?',
+      bodyHTML: '<p>Disse ' + list.length + (list.length === 1 ? ' siden' : ' sidene') + ' publiseres rett til GitHub (<b>' + branch
+        + '</b>). Trykk «Se siden» for å forhåndsvise før du publiserer. Nettsiden oppdaterer seg automatisk innen ~1 minutt.</p>'
+        + changeListHTML(list, true),
+      okLabel: '☁ Publiser ' + list.length + (list.length === 1 ? ' side' : ' sider'),
+      okClass: 'ap-modal__btn--git',
+      cancelLabel: 'Avbryt'
+    }).then(function (ok) { if (ok) runBulkPublish(list); });
+  }
+  function runBulkPublish(list) {
     bulkBusy = true;
     function resetBtns() { bulkBusy = false; if (ghPubBtn) { ghPubBtn.disabled = false; ghPubBtn.textContent = '☁ Publiser til GitHub'; } if (pubBtn) pubBtn.disabled = false; }
     if (ghPubBtn) { ghPubBtn.disabled = true; ghPubBtn.textContent = '☁ Publiserer…'; }
@@ -1083,8 +1569,10 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
             if (res && res.ok) {
               // publisert → fjern lokale utkast så «upublisert»-merkene nullstilles
               list.forEach(function (p) { (p.ls || []).forEach(function (k) { try { localStorage.removeItem(k); } catch (_) {} }); });
+              if (res.commit) loadedCommit = res.commit; // ny baseline = det vi nettopp publiserte
+              refreshLastPub();
               refreshStatus();
-              window.AdminCommon.toast('✓ Publisert til GitHub — live om ~1 min');
+              window.AdminCommon.toast('✓ Publisert til GitHub. Live om ~1 min');
             } else {
               window.AdminCommon.toast('Publisering feilet: ' + ((res && res.error) || 'ukjent'));
             }
@@ -1141,6 +1629,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
     showCtx(false);
     dashboard.classList.add('show');
     setActive(homeBtn);
+    sideSetActive('home');
     try { history.replaceState(null, '', location.pathname + location.search); } catch (_) {}
   }
 
@@ -1154,6 +1643,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
   function select(panel, btn) {
     dashboard.classList.remove('show');
     setActive(btn);
+    sideSetActive(panel.id);
     if (btn && btn.scrollIntoView) btn.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
     if (current === panel.id) return;
     teardownActive();
@@ -1172,7 +1662,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
       var ctrl = def.mount(panelHostInner, window.AdminCommon) || {};
       activeCtrl = ctrl;
       applyPreviewLayout(panelHostInner);
-      try { secNav.mount(panelHostInner); } catch (_) {}
+      applyShellChrome();
       if (def.see) { ctxSee.href = def.see.href; ctxSee.textContent = def.see.label; ctxSee.style.display = ''; }
       else ctxSee.style.display = 'none';
       showCtx(true);
@@ -1266,6 +1756,110 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
     updTabScroll(); setTimeout(updTabScroll, 250);
   }
 
+  /* ─── 1A: Gruppert venstre-sidemeny + modusbytte (Sidemeny ↔ Faner) ───
+     Sidemeny er standard. Faner beholdes som et valg under «Innstillinger».
+     Valget (og om menyen er sammenslått) huskes i nettleseren. */
+  var NAV_MODE_KEY = 'apeiron-admin-nav-mode';
+  var NAV_COLLAPSE_KEY = 'apeiron-admin-nav-collapsed';
+  function navMode() {
+    try { return localStorage.getItem(NAV_MODE_KEY) === 'tabs' ? 'tabs' : 'side'; } catch (_) { return 'side'; }
+  }
+  function setNavMode(m) {
+    var val = m === 'tabs' ? 'tabs' : 'side';
+    try { localStorage.setItem(NAV_MODE_KEY, val); } catch (_) {}
+    applyNavMode();
+    kickResize();
+    return val;
+  }
+  function applyNavMode() {
+    var side = navMode() === 'side';
+    adminEl.classList.toggle('nav-side', side);
+    adminEl.classList.toggle('nav-tabs', !side);
+  }
+  function navCollapsed() {
+    try { return localStorage.getItem(NAV_COLLAPSE_KEY) === '1'; } catch (_) { return false; }
+  }
+  function setNavCollapsed(v) {
+    try { localStorage.setItem(NAV_COLLAPSE_KEY, v ? '1' : '0'); } catch (_) {}
+    adminEl.classList.toggle('sidenav-collapsed', !!v);
+    kickResize();
+  }
+
+  function buildSidenav() {
+    if (!sidenav) return;
+    sidenav.innerHTML = '';
+    sideBtns = {};
+
+    // Topp: «Oversikt» + sammenslå-knapp
+    var top = document.createElement('div');
+    top.className = 'sidenav__top';
+    var home = document.createElement('button');
+    home.type = 'button'; home.className = 'sidenav__home'; home.title = 'Oversikt';
+    home.innerHTML = '<span class="ico">⌂</span><span class="sidenav__lbl">Oversikt</span>';
+    home.addEventListener('click', showHome);
+    var collapse = document.createElement('button');
+    collapse.type = 'button'; collapse.className = 'sidenav__collapse';
+    collapse.title = 'Slå sammen / utvid menyen';
+    collapse.textContent = navCollapsed() ? '»' : '«';
+    collapse.addEventListener('click', function () {
+      var now = !adminEl.classList.contains('sidenav-collapsed');
+      setNavCollapsed(now);
+      collapse.textContent = now ? '»' : '«';
+    });
+    top.appendChild(home); top.appendChild(collapse);
+    sidenav.appendChild(top);
+    sideBtns.home = home;
+
+    // Grupperte paneler (NAV_GROUPS dekker alle 16 id-er)
+    NAV_GROUPS.forEach(function (g) {
+      var grp = document.createElement('div'); grp.className = 'sidenav__grp';
+      var lbl = document.createElement('div'); lbl.className = 'sidenav__grplbl'; lbl.textContent = g.name;
+      grp.appendChild(lbl);
+      g.ids.forEach(function (id) {
+        var p = panelById(id);
+        if (!p) return;
+        var b = document.createElement('button');
+        b.type = 'button'; b.className = 'sidenav__item'; b.title = p.label + (p.desc ? ': ' + p.desc : '');
+        b.innerHTML = '<span class="ico">' + p.ico + '</span><span class="sidenav__lbl">' + p.label
+          + '</span><span class="sidenav__dot" title="Ulagrede endringer"></span>';
+        b.addEventListener('click', function () { select(p, tabBtns[p.id]); });
+        grp.appendChild(b);
+        sideBtns[p.id] = b;
+      });
+      sidenav.appendChild(grp);
+    });
+  }
+
+  function sideSetActive(id) {
+    if (!sidenav) return;
+    if (sideBtns.home) sideBtns.home.classList.toggle('active', id === 'home');
+    PANELS.forEach(function (p) {
+      if (sideBtns[p.id]) sideBtns[p.id].classList.toggle('active', p.id === id);
+    });
+  }
+
+  function initNavSetting() {
+    var box = document.getElementById('nav-setting');
+    if (!box) return;
+    var opts = box.querySelectorAll('[data-nav]');
+    function paint() {
+      var cur = navMode();
+      Array.prototype.forEach.call(opts, function (b) {
+        var on = b.getAttribute('data-nav') === cur;
+        b.classList.toggle('active', on);
+        b.setAttribute('aria-checked', on ? 'true' : 'false');
+      });
+    }
+    Array.prototype.forEach.call(opts, function (b) {
+      b.addEventListener('click', function () {
+        setNavMode(b.getAttribute('data-nav'));
+        paint();
+        window.AdminCommon.toast(navMode() === 'side' ? 'Navigasjon: Sidemeny' : 'Navigasjon: Faner');
+      });
+    });
+    paint();
+  }
+
   function build() {
     // Hjem-fane
     homeBtn = document.createElement('button');
@@ -1274,7 +1868,7 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
     homeBtn.addEventListener('click', showHome);
     bar.appendChild(homeBtn);
 
-    tabBtns = {}; cardEls = {};
+    tabBtns = {}; cardEls = {}; sideBtns = {};
     var btns = tabBtns;
     PANELS.forEach(function (p) {
       var b = document.createElement('button');
@@ -1283,18 +1877,9 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
       b.addEventListener('click', function () { select(p, b); });
       bar.appendChild(b);
       btns[p.id] = b;
-
-      // Dashboard-kort
-      var card = document.createElement('button');
-      card.type = 'button'; card.className = 'panel-card';
-      card.innerHTML =
-        '<div class="pc-head"><span class="pc-ico">' + p.ico + '</span><span class="pc-name">' + p.label + '</span><span class="pc-dot" title="Ulagrede endringer"></span></div>'
-        + '<div class="pc-desc">' + p.desc + '</div>'
-        + '<div class="pc-open">Åpne →</div>';
-      card.addEventListener('click', function () { select(p, btns[p.id]); });
-      grid.appendChild(card);
-      cardEls[p.id] = card;
     });
+
+    buildSidenav();
 
     // Dyp-lenke (#merch osv.) åpner panelet direkte; ellers oversikt.
     var hash = (location.hash || '').replace('#', '');
@@ -1303,13 +1888,36 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
     else showHome();
   }
 
+  function initLayoutSetting() {
+    var box = document.getElementById('layout-setting');
+    if (!box) return;
+    var opts = box.querySelectorAll('[data-layout]');
+    function paint() {
+      var cur = window.AdminCommon.panelLayout();
+      Array.prototype.forEach.call(opts, function (b) {
+        var on = b.getAttribute('data-layout') === cur;
+        b.classList.toggle('active', on);
+        b.setAttribute('aria-checked', on ? 'true' : 'false');
+      });
+    }
+    Array.prototype.forEach.call(opts, function (b) {
+      b.addEventListener('click', function () {
+        var v = window.AdminCommon.setPanelLayout(b.getAttribute('data-layout'));
+        paint();
+        window.AdminCommon.toast(v === 'liste-detalj' ? 'Panelvisning: Liste + detalj' : 'Panelvisning: Klassisk');
+      });
+    });
+    paint();
+  }
+
   function init() {
     // Nullstill upubliserte utkast til publisert versjon når admin åpnes i en ny
     // økt — MÅ kjøre før build()/panel-mount, så modulene leser publisert data.
     resetDraftsOnFreshSession();
     // Advarsel ved faktisk lukking/oppdatering med upubliserte endringer.
+    // #1 Browser-vakten er siste skanse mot å miste arbeid — den fyrer ALLTID
+    // når det finnes upubliserte endringer, og kan ikke skrus av permanent.
     window.addEventListener('beforeunload', function (e) {
-      if (leaveWarnDisabled()) return;
       if (changedPanels().length === 0) return;
       e.preventDefault();
       e.returnValue = '';
@@ -1335,9 +1943,10 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
     ghPubBtn = document.getElementById('gh-pub-btn');
     ghAuth = document.getElementById('gh-auth');
     if (ghPubBtn) ghPubBtn.addEventListener('click', bulkPublish);
-    resetAllBox = document.getElementById('reset-all-box');
-    var resetAllBtn = document.getElementById('reset-all-btn');
-    if (resetAllBtn) resetAllBtn.addEventListener('click', resetAll);
+    var undoBtn = document.getElementById('undo-pub-btn');
+    if (undoBtn) undoBtn.addEventListener('click', undoLastPublish);
+    resetBtn = document.getElementById('reset-all-btn');
+    if (resetBtn) resetBtn.addEventListener('click', resetAll);
     if (window.AdminGitHub) {
       try {
         var sp = new URLSearchParams(location.search);
@@ -1345,12 +1954,28 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
         else if (sp.get('gh') === 'error') window.AdminCommon.toast('GitHub-innlogging feilet (' + (sp.get('reason') || '') + ')');
         if (sp.get('gh')) { sp.delete('gh'); sp.delete('reason'); var qs = sp.toString(); history.replaceState(null, '', location.pathname + (qs ? '?' + qs : '') + location.hash); }
       } catch (_) {}
-      window.AdminGitHub.status().then(function () { renderAuth(); });
+      window.AdminGitHub.status().then(function () { renderAuth(); refreshLastPub(); });
     }
+    var settingsBtn = document.getElementById('settings-btn');
+    var settingsOv = document.getElementById('settings-ov');
+    var settingsClose = document.getElementById('settings-close');
+    function openSettings() { if (settingsOv) { settingsOv.classList.add('show'); settingsOv.setAttribute('aria-hidden', 'false'); } }
+    function closeSettings() { if (settingsOv) { settingsOv.classList.remove('show'); settingsOv.setAttribute('aria-hidden', 'true'); } }
+    if (settingsBtn) settingsBtn.addEventListener('click', openSettings);
+    if (settingsClose) settingsClose.addEventListener('click', closeSettings);
+    if (settingsOv) settingsOv.addEventListener('click', function (e) { if (e.target === settingsOv) closeSettings(); });
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') { var f = document.querySelector('.ph-wrap.pv-full'); if (f) { f.classList.remove('pv-full'); kickResize(); } }
+      if (e.key !== 'Escape') return;
+      var f = document.querySelector('.ph-wrap.pv-full');
+      if (f) { f.classList.remove('pv-full'); kickResize(); }
+      else closeSettings();
     });
+    // Naviger via sidemeny som standard; bruk lagret valg hvis det finnes.
+    applyNavMode();
+    if (navCollapsed()) adminEl.classList.add('sidenav-collapsed');
     build();
+    initNavSetting();
+    initLayoutSetting();
     initTabScroll();
     refreshStatus();
     setInterval(refreshStatus, 2500);

@@ -8,22 +8,22 @@
   /* ── Søkeindeks ── */
   var IDX = [
     /* Startside */
-    { t: 'Om oss', d: 'Apeiron er linjeforeningen for filosofi og etikk ved NTNU siden 1981 — et fellesskap uten faste grenser.', u: 'om-oss.html#om', g: 'Om oss' },
+    { t: 'Om oss', d: 'Apeiron er linjeforeningen for filosofi og etikk ved NTNU siden 1981, et fellesskap uten faste grenser.', u: 'om-oss.html#om', g: 'Om oss' },
     { t: 'Studiet', d: 'Studieretningene filosofi og etikk, grader og løp ved NTNU.', u: 'pensum.html', g: 'Startside' },
-    { t: 'Filosofi — studieretning', d: 'Grunnleggende spørsmål om mennesket, verden og kunnskap. FI1001, FI1101, FI1003, FI1004, FI1005.', u: 'pensum.html', g: 'Startside' },
-    { t: 'Etikk — studieretning', d: 'Hvordan vi bør handle og leve — som individer og fellesskap. FI1210, FI1211, FI1002, FI2211.', u: 'pensum.html', g: 'Startside' },
+    { t: 'Filosofi (studieretning)', d: 'Grunnleggende spørsmål om mennesket, verden og kunnskap. FI1001, FI1101, FI1003, FI1004, FI1005.', u: 'pensum.html', g: 'Startside' },
+    { t: 'Etikk (studieretning)', d: 'Hvordan vi bør handle og leve, som individer og fellesskap. FI1210, FI1211, FI1002, FI2211.', u: 'pensum.html', g: 'Startside' },
     { t: 'Årsstudium i filosofi', d: '60 studiepoeng · 1 år · kan brukes som valgfrie emner i annen grad.', u: 'pensum.html', g: 'Startside' },
     { t: 'Årsstudium i etikk', d: '60 studiepoeng · 1 år (også deltid). Særlig godt for videre- og tilleggsutdanning.', u: 'pensum.html', g: 'Startside' },
     { t: 'Bachelor i filosofi og etikk', d: '180 studiepoeng · 3 år · to studieretninger · bacheloroppgave.', u: 'pensum.html', g: 'Startside' },
     { t: 'Master i filosofi og etikk', d: '120 studiepoeng · 2 år · masteroppgave og forskningsseminar.', u: 'pensum.html', g: 'Startside' },
     { t: 'Arrangementer', d: 'Fagkvelder, symposion, lesesirkler og mer. Se hele semesterprogrammet.', u: 'index.html#arrangementer', g: 'Startside' },
-    { t: 'Aporetisk Aften', d: 'Én kveld i måneden rundt ett filosofisk spørsmål — uten pensum og uten fasit. Åpent for alle.', u: 'index.html#aporetisk', g: 'Startside' },
-    { t: 'Fadderuke', d: 'Studiestartens beste uker — bli kjent med faget, byen og medstudentene.', u: 'index.html#fadderuke', g: 'Startside' },
-    { t: 'Oppslagstavla', d: 'Plakatene for det som skjer i Apeiron — fagkvelder, fester, frister og kunngjøringer.', u: 'oppslagstavla.html', g: 'Startside' },
+    { t: 'Aporetisk Aften', d: 'Én kveld i måneden rundt ett filosofisk spørsmål, uten pensum og uten fasit. Åpent for alle.', u: 'index.html#aporetisk', g: 'Startside' },
+    { t: 'Fadderuke', d: 'Studiestartens beste uker. Bli kjent med faget, byen og medstudentene.', u: 'index.html#fadderuke', g: 'Startside' },
+    { t: 'Oppslagstavla', d: 'Plakatene for det som skjer i Apeiron: fagkvelder, fester, frister og kunngjøringer.', u: 'oppslagstavla.html', g: 'Startside' },
     { t: 'Styret 2025/26', d: 'Leder, nestleder, økonomi, sosialansvarlig, faddersjef, fagansvarlig og mer.', u: 'index.html#styret', g: 'Startside' },
-    { t: 'S.A.K', d: 'Sosiale Arrangement Komité — lavterskel engasjement for alle studenter.', u: 'styret.html#sak', g: 'Styret' },
-    { t: 'Lesesalen', d: 'Filosofi- og etikkstudentenes eget tilfluktssted på Dragvoll — bibliotek, gratis kaffe for medlemmer og god plass.', u: 'om-oss.html#lesesalen', g: 'Om oss' },
-    { t: 'Galleri', d: 'Bilder fra fester, fagkvelder og fadderuker — automatisk hentet fra Google Drive.', u: 'galleri.html', g: 'Galleri' },
+    { t: 'S.A.K', d: 'Sosiale Arrangement Komité, lavterskel engasjement for alle studenter.', u: 'styret.html#sak', g: 'Styret' },
+    { t: 'Lesesalen', d: 'Filosofi- og etikkstudentenes eget tilfluktssted på Dragvoll: bibliotek, gratis kaffe for medlemmer og god plass.', u: 'om-oss.html#lesesalen', g: 'Om oss' },
+    { t: 'Galleri', d: 'Bilder fra fester, fagkvelder og fadderuker, automatisk hentet fra Google Drive.', u: 'galleri.html', g: 'Galleri' },
     { t: 'Fellesskap & samarbeid', d: 'Unionen, søsterforeningen Dionysos og studenttidsskriftet Begrep.', u: 'om-oss.html#samarbeid', g: 'Om oss' },
     { t: 'Bli medlem', d: 'Meld deg inn i Apeiron og få fullt utbytte av alt vi tilbyr.', u: 'index.html#bli-medlem', g: 'Startside' },
     { t: 'Kontakt', d: 'Ta kontakt med styret på e-post eller sosiale medier. apeironlinjeforening@gmail.com', u: 'index.html#kontakt', g: 'Startside' },
@@ -41,19 +41,19 @@
     { t: 'Fredrik C.F. Rosenfors', d: 'A.S.A.P S.A.K & S.A.K-medgrunnlegger · Apeiron 2025/26', u: 'index.html#styret', g: 'Styret' },
     /* Pensum */
     { t: 'Pensum', d: 'Pensumlister for alle emner på filosofi og etikk ved NTNU.', u: 'pensum.html', g: 'Pensum' },
-    { t: 'FI1001 — Filosofiens og etikkens historie', d: 'Felles · 15 sp · Platon: Staten · Descartes: Meditasjoner', u: 'pensum.html', g: 'Pensum' },
-    { t: 'FI1002 — Etikk og politisk filosofi', d: 'Felles · 7,5 sp · Rawls: A Theory of Justice', u: 'pensum.html', g: 'Pensum' },
-    { t: 'FI1003 — Kunnskaps- og vitenskapsteori', d: 'Felles · 7,5 sp · Gilje & Grimen: Vitenskapsteori for nybegynnere', u: 'pensum.html', g: 'Pensum' },
-    { t: 'FI1004 — Metafysikk og bevissthetsfilosofi', d: 'Filosofi · 7,5 sp · virkelighet, eksistens og bevissthet', u: 'pensum.html', g: 'Pensum' },
-    { t: 'FI1005 — Logikk', d: 'Filosofi · 7,5 sp · formell logikk og argumentasjonsteori', u: 'pensum.html', g: 'Pensum' },
-    { t: 'FI1101 — Samtidens filosofi', d: 'Filosofi · 7,5 sp · Heidegger: Being and Time · fenomenologi, eksistensialisme', u: 'pensum.html', g: 'Pensum' },
-    { t: 'FI1210 — Innføring i etikk og metaetikk', d: 'Etikk · 7,5 sp · Aristoteles: Den nikomakiske etikk · Mill: Utilitarisme', u: 'pensum.html', g: 'Pensum' },
-    { t: 'FI1211 — Etikkprosjekt og metode', d: 'Etikk · 15 sp · prosjektbasert fordypning i etisk analyse', u: 'pensum.html', g: 'Pensum' },
-    { t: 'FI2002 — Bacheloroppgave', d: 'Felles · 15 sp · selvstendig skriftlig arbeid, individuelt pensum', u: 'pensum.html', g: 'Pensum' },
-    { t: 'FI2111 — Fordypning 1', d: 'Filosofi · 15 sp · fordypning i valgt tema, varierer per semester', u: 'pensum.html', g: 'Pensum' },
-    { t: 'FI2211 — Sosial- og rettsfilosofi', d: 'Etikk · 15 sp · rettferdighet, makt og rettslige strukturer', u: 'pensum.html', g: 'Pensum' },
-    { t: 'EXPH0100 — Examen philosophicum (humaniora)', d: 'Filosofi · 7,5 sp · Skirbekk & Gilje: Filosofihistorie', u: 'pensum.html', g: 'Pensum' },
-    { t: 'EXPH0200 — Examen philosophicum (samfunn)', d: 'Etikk · 7,5 sp · obligatorisk innføring for samfunnsvitenskap', u: 'pensum.html', g: 'Pensum' },
+    { t: 'FI1001: Filosofiens og etikkens historie', d: 'Felles · 15 sp · Platon: Staten · Descartes: Meditasjoner', u: 'pensum.html', g: 'Pensum' },
+    { t: 'FI1002: Etikk og politisk filosofi', d: 'Felles · 7,5 sp · Rawls: A Theory of Justice', u: 'pensum.html', g: 'Pensum' },
+    { t: 'FI1003: Kunnskaps- og vitenskapsteori', d: 'Felles · 7,5 sp · Gilje & Grimen: Vitenskapsteori for nybegynnere', u: 'pensum.html', g: 'Pensum' },
+    { t: 'FI1004: Metafysikk og bevissthetsfilosofi', d: 'Filosofi · 7,5 sp · virkelighet, eksistens og bevissthet', u: 'pensum.html', g: 'Pensum' },
+    { t: 'FI1005: Logikk', d: 'Filosofi · 7,5 sp · formell logikk og argumentasjonsteori', u: 'pensum.html', g: 'Pensum' },
+    { t: 'FI1101: Samtidens filosofi', d: 'Filosofi · 7,5 sp · Heidegger: Being and Time · fenomenologi, eksistensialisme', u: 'pensum.html', g: 'Pensum' },
+    { t: 'FI1210: Innføring i etikk og metaetikk', d: 'Etikk · 7,5 sp · Aristoteles: Den nikomakiske etikk · Mill: Utilitarisme', u: 'pensum.html', g: 'Pensum' },
+    { t: 'FI1211: Etikkprosjekt og metode', d: 'Etikk · 15 sp · prosjektbasert fordypning i etisk analyse', u: 'pensum.html', g: 'Pensum' },
+    { t: 'FI2002: Bacheloroppgave', d: 'Felles · 15 sp · selvstendig skriftlig arbeid, individuelt pensum', u: 'pensum.html', g: 'Pensum' },
+    { t: 'FI2111: Fordypning 1', d: 'Filosofi · 15 sp · fordypning i valgt tema, varierer per semester', u: 'pensum.html', g: 'Pensum' },
+    { t: 'FI2211: Sosial- og rettsfilosofi', d: 'Etikk · 15 sp · rettferdighet, makt og rettslige strukturer', u: 'pensum.html', g: 'Pensum' },
+    { t: 'EXPH0100: Examen philosophicum (humaniora)', d: 'Filosofi · 7,5 sp · Skirbekk & Gilje: Filosofihistorie', u: 'pensum.html', g: 'Pensum' },
+    { t: 'EXPH0200: Examen philosophicum (samfunn)', d: 'Etikk · 7,5 sp · obligatorisk innføring for samfunnsvitenskap', u: 'pensum.html', g: 'Pensum' },
     /* Merch */
     { t: 'Merch', d: 'Apeiron-merch i begrenset opplag. Bestill via e-post, hent på lesesalen.', u: 'merch.html', g: 'Merch' },
     { t: 'Segl-pin', d: 'Emaljert pin med Apeirons timeglass-segl. Hard emalje, gullkant. Ca. 2,5 cm · 75,– (65,– for medlemmer)', u: 'merch.html#butikk', g: 'Merch' },
@@ -61,7 +61,7 @@
     { t: 'Crew-neck genser', d: 'Marineblå genser med brodert segl på bryst · begrenset antall · str. S–XL · 450,– (405,– for medlemmer)', u: 'merch.html#butikk', g: 'Merch' },
     { t: 'Tote-bag', d: 'Naturbeige canvas-bag med trykt segl og ΦΙΛΟΣΟΦΙΑ · 200,– (180,– for medlemmer)', u: 'merch.html#butikk', g: 'Merch' },
     { t: 'Filosofkrus', d: 'Hvit keramikk med Γνῶθι σεαυτόν (kjenn deg selv) og seglet. 350 ml · 180,– (160,– for medlemmer)', u: 'merch.html#butikk', g: 'Merch' },
-    { t: 'Pensum-markedet', d: 'Kjøp og bytte av brukt pensum — kommer snart.', u: 'marked.html', g: 'Merch' },
+    { t: 'Pensum-markedet', d: 'Kjøp og bytte av brukt pensum. Kommer snart.', u: 'marked.html', g: 'Merch' },
     /* Begrep */
     { t: 'Begrep', d: 'Studentdrevet filosofisk tidsskrift ved NTNU. Utgaver, podkast, film og mer.', u: 'begrep.html', g: 'Begrep' },
     { t: 'Begrep Podcast', d: 'Samtaler med forfatterne bak artiklene i Begrep tidsskrift. Sesong 1.', u: 'begrep.html#podkast', g: 'Begrep' },
@@ -69,10 +69,10 @@
     { t: 'Hilbert Hotell', d: 'Filosofisk advent-fortelling i 24 episoder. Desember 2025.', u: 'begrep.html#julekalender', g: 'Begrep' },
     { t: 'Bidra i Begrep', d: 'Skriv for tidsskriftet eller bli med i redaksjonen.', u: 'begrep.html#bidra', g: 'Begrep' },
     /* Om vervene */
-    { t: 'Om vervene — Styret', d: 'Beskrivelse av alle styreverv i Apeiron: Leder, Nestleder, Økonomiansvarlig, Sosialansvarlig, PR-ansvarlig, Faddersjef, Fagansvarlig, Potet, PTV, ITV, S.A.K, H.I.V.', u: 'styret.html', g: 'Styret' },
+    { t: 'Om vervene (Styret)', d: 'Beskrivelse av alle styreverv i Apeiron: Leder, Nestleder, Økonomiansvarlig, Sosialansvarlig, PR-ansvarlig, Faddersjef, Fagansvarlig, Potet, PTV, ITV, S.A.K, H.I.V.', u: 'styret.html', g: 'Styret' },
     /* Heder */
-    { t: 'Utmerkelser', d: 'Vi hedrer personer som har stått ut i studentmiljøet og det frivillige arbeidet — æresmedlemmer, ildsjeler og mer.', u: 'utmerkelser.html', g: 'Heder' },
-    { t: 'Oppnåelser', d: 'Premier, pokaler og resultater Apeiron har vunnet — volleyballcup-sølv, best oppmøte fra Dionysos og mer.', u: 'oppnaelser.html', g: 'Heder' },
+    { t: 'Utmerkelser', d: 'Vi hedrer personer som har stått ut i studentmiljøet og det frivillige arbeidet: æresmedlemmer, ildsjeler og mer.', u: 'utmerkelser.html', g: 'Heder' },
+    { t: 'Oppnåelser', d: 'Premier, pokaler og resultater Apeiron har vunnet: volleyballcup-sølv, best oppmøte fra Dionysos og mer.', u: 'oppnaelser.html', g: 'Heder' },
   ];
 
   /* ── SVG-ikoner per gruppe ── */
@@ -249,7 +249,7 @@
     '    <button class="sov__esc" id="sovEsc" type="button" aria-label="Lukk søk"><kbd>Esc</kbd></button>' +
     '  </div>' +
     '  <div class="sov__body" id="sovBody" role="listbox">' +
-    '    <p class="sov__empty sov__tip">Skriv for å søke på hele nettstedet — sider, emner, bøker og merch.</p>' +
+    '    <p class="sov__empty sov__tip">Skriv for å søke på hele nettstedet: sider, emner, bøker og merch.</p>' +
     '  </div>' +
     '  <div class="sov__foot">' +
     '    <span class="sov__key"><kbd>↑↓</kbd> naviger</span>' +
@@ -268,7 +268,7 @@
     curIdx = -1;
 
     if (!q.trim()) {
-      sovBody.innerHTML = '<p class="sov__empty sov__tip">Skriv for å søke på hele nettstedet — sider, emner, bøker og merch.</p>';
+      sovBody.innerHTML = '<p class="sov__empty sov__tip">Skriv for å søke på hele nettstedet: sider, emner, bøker og merch.</p>';
       return;
     }
     if (!results.length) {

@@ -25,7 +25,7 @@ window.MARKED_CONTENT = {
   "intro": {
     "symbol": "⇄",
     "heading": "Vi bygger noe nyttig",
-    "lede": "Pensum-markedet vil gjøre det enkelt å la bøker leve videre fra kull til kull — og spare alle for unødvendige utgifter."
+    "lede": "Pensum-markedet vil gjøre det enkelt å la bøker leve videre fra kull til kull, og spare alle for unødvendige utgifter."
   },
 
   "features": [
@@ -37,7 +37,7 @@ window.MARKED_CONTENT = {
   "interest": {
     "eyebrow": "Vær tidlig ute",
     "heading": "Meld interesse",
-    "body": "Vil du bli varslet når markedet åpner — eller bidra til å bygge det? Send oss en mail, så noterer vi deg.",
+    "body": "Vil du bli varslet når markedet åpner, eller bidra til å bygge det? Send oss en mail, så noterer vi deg.",
     "ctaLabel": "Send interesse-mail",
     "ctaHref": "mailto:apeironlinjeforening@gmail.com?subject=Interesse%3A%20Pensum-markedet&body=Hei!%20Jeg%20er%20interessert%20i%20pensum-markedet%20og%20vil%20gjerne%20bli%20varslet%20n%C3%A5r%20det%20%C3%A5pner.%0A%0ANavn%3A%20%0AStudieretning%3A%20",
     "ctaLabel2": "Følg oss på Instagram",

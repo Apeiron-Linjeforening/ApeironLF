@@ -5,9 +5,9 @@
 <script src="theme.js"></script>
 <script>try{if(/[?&]preview\b/.test(location.search))document.documentElement.classList.add('is-preview');}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Tidligere styrer — Apeiron · NTNU</title>
-<meta name="description" content="Arkiv over tidligere styrer i Apeiron — hvem som har sittet i styret, hva de fikk til, og hva hvert medlem bidro med gjennom styreperioden." />
-<meta property="og:title" content="Tidligere styrer — Apeiron · NTNU" />
+<title>Tidligere styrer · Apeiron · NTNU</title>
+<meta name="description" content="Arkiv over tidligere styrer i Apeiron: hvem som har sittet i styret, hva de fikk til, og hva hvert medlem bidro med gjennom styreperioden." />
+<meta property="og:title" content="Tidligere styrer · Apeiron · NTNU" />
 <meta property="og:description" content="Et arkiv over styrene som har holdt Apeiron i gang gjennom årene." />
 <meta property="og:image" content="assets/apeiron-logo.png" />
 <meta property="og:type" content="website" />
@@ -114,7 +114,7 @@ html[data-mode="marine"] .arch-highlights { border-left-color: var(--gold); }
 }
 .arch-highlights ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 9px; }
 .arch-highlights li { position: relative; padding-left: 18px; font-size: .94rem; color: var(--ink); line-height: 1.55; }
-.arch-highlights li::before { content: "—"; position: absolute; left: 0; color: var(--warm, var(--gold-ink, #a07820)); font-weight: 700; }
+.arch-highlights li::before { content: "–"; position: absolute; left: 0; color: var(--warm, var(--gold-ink, #a07820)); font-weight: 700; }
 
 .arch-members {
   display: grid;
@@ -172,7 +172,7 @@ html[data-mode="marine"] .arch-member__tag {
     <h1>Tidligere styrer</h1>
     <p class="subhero__lede">
       Apeiron drives av frivillige som gir stafettpinnen videre år for år.
-      Her er et arkiv over styrene som har vært — hvem som satt der, hva de fikk til,
+      Her er et arkiv over styrene som har vært, hvem som satt der, hva de fikk til,
       og hva hvert medlem bidro med gjennom perioden.
     </p>
   </div>
@@ -351,7 +351,7 @@ html[data-mode="marine"] .arch-member__tag {
     var fbar = document.getElementById('arch-filter');
     if (!arch.length) {
       if (fbar) { fbar.hidden = true; fbar.innerHTML = ''; }
-      list.innerHTML = '<p class="arch-empty">Arkivet er tomt ennå. Når et styre trer av, legges det inn her — med en oppsummering av perioden og hva hvert medlem bidro med.</p>';
+      list.innerHTML = '<p class="arch-empty">Arkivet er tomt ennå. Når et styre trer av, legges det inn her, med en oppsummering av perioden og hva hvert medlem bidro med.</p>';
       return;
     }
     renderFilter(distinctPeriods(arch));

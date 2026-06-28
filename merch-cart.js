@@ -196,7 +196,7 @@
       var mp = memberPriceOf(it);
       var priceHtml;
       if (it.price == null) {
-        priceHtml = '—';
+        priceHtml = 'Pris kommer';
       } else {
         // Normalpris først; medlemspris under når produktet har en.
         priceHtml = '<span class="cart-item__price-normal' + (isMember && mp != null ? ' is-struck' : '') + '">' + line + ',–</span>';

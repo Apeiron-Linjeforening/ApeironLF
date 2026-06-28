@@ -35,10 +35,10 @@ export function readCookie(request, name) {
   return m ? decodeURIComponent(m[1]) : null;
 }
 
-// Bygger en Set-Cookie-verdi. maxAge i sekunder; 0 => slett.
+// Bygger en Set-Cookie-verdi. maxAge i sekunder; 0 => slett. Standard 30 dager.
 export function setCookie(name, value, maxAge) {
   var parts = [name + '=' + encodeURIComponent(value), 'Path=/', 'HttpOnly', 'Secure', 'SameSite=Lax'];
-  parts.push('Max-Age=' + (maxAge == null ? 28800 : maxAge));
+  parts.push('Max-Age=' + (maxAge == null ? 2592000 : maxAge));
   return parts.join('; ');
 }
 

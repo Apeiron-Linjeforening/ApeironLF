@@ -1,7 +1,7 @@
-# 🌐 Apeiron — Linjeforeningens nettside
+# 🌐 Apeiron: Linjeforeningens nettside
 
 Nettsiden for **Apeiron**, linjeforeningen for filosofi og etikk ved NTNU.
-Statisk side (HTML/CSS/JS) på Cloudflare Pages — ingen byggesteg, ingen avhengigheter å installere.
+Statisk side (HTML/CSS/JS) på Cloudflare Pages, uten byggesteg og uten avhengigheter å installere.
 **Vibrasjonskoding har aldri vært så effektivt!**
 
 [![Live](https://img.shields.io/badge/live-apeironlf.pages.dev-2ea44f?style=flat-square)](https://apeironlf.pages.dev)
@@ -14,7 +14,7 @@ Statisk side (HTML/CSS/JS) på Cloudflare Pages — ingen byggesteg, ingen avhen
 
 | Dokument | Hva det er |
 | --- | --- |
-| 📖 **README** (du er her) | Oversikt + **brukerveiledning** — endre innhold via Admin-senteret |
+| 📖 **README** (du er her) | Oversikt + **brukerveiledning**: endre innhold via Admin-senteret |
 | 🔧 **[VEDLIKEHOLD.md](VEDLIKEHOLD.md)** | Teknisk drift: publisering, lokal kjøring, manuell redigering, filstruktur, Apps Script |
 | 🏗️ **[docs/admin-arkitektur.md](docs/admin-arkitektur.md)** | Hvordan Admin-senteret er bygd + veikart mot klonbar mal |
 | 🛒 **[docs/apps-script-oppsett.md](docs/apps-script-oppsett.md)** | Steg-for-steg: merch-bestilling (Google Sheet + Apps Script) |
@@ -48,10 +48,10 @@ Statisk side (HTML/CSS/JS) på Cloudflare Pages — ingen byggesteg, ingen avhen
 # Slik endrer du innhold på Apeiron-nettsiden
 
 Alt innhold på nettsiden redigeres **ett sted: Admin-senteret**, rett i nettleseren.
-Du trenger ingen programmer — og du skal **aldri åpne eller endre en kodefil**. Du
+Du trenger ingen programmer, og du skal **aldri åpne eller endre en kodefil**. Du
 redigerer i Admin-senteret og trykker **☁ Publiser til GitHub** når endringene skal bli
 synlige for alle. Første gang logger du inn med GitHub-kontoen din; etter det husker
-nettleseren deg en stund.
+nettleseren deg i **30 dager**.
 
 > 🧑‍🔧 **Den ene regelen:** Hvis du ikke vedlikeholder selve koden, skal du aldri gå
 > inn i en fil på GitHub og redigere teksten i den. All redigering skjer i
@@ -71,7 +71,7 @@ https://apeironlf.pages.dev/admin.html
 ```
 
 Du møter en meny med alle delene av siden du kan endre. Selve redigeringen og
-forhåndsvisningen krever **ingen innlogging** — du logger bare inn med GitHub når du
+forhåndsvisningen krever **ingen innlogging**, du logger bare inn med GitHub når du
 vil **publisere** (knappen øverst til høyre).
 
 ---
@@ -80,8 +80,10 @@ vil **publisere** (knappen øverst til høyre).
 
 1. **Velg en del** i menyen (Nyheter, Forsiden, Styret, Merch …).
 2. **Rediger feltene.** En **live forhåndsvisning** ved siden viser hvordan det blir.
-3. Alt du skriver **lagres automatisk i din egen nettleser** mens du jobber — så du
-   mister ingenting om du lukker fanen. Men det er **ikke publisert** ennå (se neste steg).
+3. Det du skriver lever i **din egen nettleser** mens du jobber og vises i
+   forhåndsvisningen, men det er **ikke publisert** ennå. Lukker du admin uten å
+   publisere, starter den fra den publiserte versjonen neste gang, så **publiser før du
+   forlater** (admin minner deg på det hvis du har upubliserte endringer).
 
 De fleste paneler lar deg legge til, slette og **dra for å endre rekkefølge** på kort
 (medlemmer, produkter, nyheter osv.), og laste opp bilder ved å klikke på bildefeltet
@@ -91,22 +93,26 @@ eller dra et bilde inn.
 
 ## 3. Slik publiserer du (gjør endringene synlige for alle)
 
-Med GitHub-innlogging publiserer du **rett fra Admin-senteret** — ingen filer å laste ned
+Med GitHub-innlogging publiserer du **rett fra Admin-senteret**, uten filer å laste ned
 eller pushe manuelt.
 
-1. **Logg inn** med GitHub-kontoen din — knappen **☁ Logg inn for å publisere** øverst til
-   høyre. (Bare første gang; du holder deg innlogget en stund.)
-2. **Rediger** i panelene som vanlig. Alt lagres automatisk i nettleseren og vises i live
-   forhåndsvisning.
+1. **Logg inn** med GitHub-kontoen din, via knappen **☁ Logg inn for å publisere** øverst til
+   høyre. (Bare første gang; du holder deg innlogget i **30 dager**.)
+2. **Rediger** i panelene som vanlig. Alt vises live i forhåndsvisningen mens du jobber.
 3. Trykk **☁ Publiser til GitHub** øverst til høyre. Endringene skrives rett til nettsidens
    repo (én samlet «commit»).
-4. Vent ca. ett minutt — nettsiden oppdaterer seg selv automatisk.
+4. Vent ca. ett minutt. Nettsiden oppdaterer seg selv automatisk.
 
 > 💡 **Hvem kan publisere?** Bare GitHub-kontoer som er satt opp med tilgang (se
-> [docs/g1-oppsett.md](docs/g1-oppsett.md)). Hver publisering merkes med hvem som gjorde den.
+> [docs/g1-oppsett.md](docs/g1-oppsett.md)). Hver publisering merkes med hvem som gjorde den,
+> og toppen viser **«Sist publisert: navn · tidspunkt»**.
+
+> 👥 **Jobber dere flere samtidig?** Har noen andre publisert de samme sidene etter at du
+> åpnet admin, varsler admin deg **før** du publiserer, så du ikke uforvarende overskriver
+> arbeidet deres. Velg da **«↻ Last inn på nytt»** for å hente deres versjon først.
 
 > 🛟 **Reserveløsning:** skulle publisering svikte, finnes en backup som laster ned filene
-> for manuell opplasting til GitHub. Den trenger du normalt ikke — full framgangsmåte for
+> for manuell opplasting til GitHub. Den trenger du normalt ikke. Full framgangsmåte for
 > drift står i [VEDLIKEHOLD.md](VEDLIKEHOLD.md).
 
 ---
@@ -134,14 +140,14 @@ Hver del i menyen styrer én del av nettsiden:
 Publiser alt på én gang med **☁ Publiser til GitHub** øverst til høyre.
 
 > 💡 **Hastebeskjed?** En kjapp viktig melding (for eksempel «Aporetisk i kveld er flyttet»)
-> legger du ut i **Nyheter**-panelet — skru på **⚑ Viktig** og velg hvor den skal vises.
+> legger du ut i **Nyheter**-panelet. Skru på **⚑ Viktig** og velg hvor den skal vises.
 > Den dukker opp i «Akkurat nå»-kortet på forsiden.
 
 ---
 
 ## 5. Deler som styres utenfor Admin-senteret
 
-Noen ting er enda enklere — de oppdateres helt uten kode, men i et annet verktøy enn
+Noen ting er enda enklere, og de oppdateres helt uten kode, men i et annet verktøy enn
 Admin-senteret:
 
 ### 📅 Arrangementer → Google Kalender
@@ -192,7 +198,7 @@ inni esker. Hopper du over et nivå, vises ikke bildene.
 2. **Skoleår-mappene** (nivå 2) lager du inni hovedmappen. Navnet, f.eks. `2025/2026`,
    blir teksten på fanen øverst i galleriet. Bruk alltid samme navneform.
 3. **Arrangement-mappene** (nivå 3) lager du inni en skoleår-mappe. Navnet blir
-   tittelen på bildekortet — kall den noe gjenkjennelig, f.eks. `Fadderukefest`.
+   tittelen på bildekortet. Kall den noe gjenkjennelig, f.eks. `Fadderukefest`.
 4. **Bildene** legger du helt innerst, rett inni arrangement-mappen.
 
 #### Tre ting som er lett å gjøre feil
@@ -201,7 +207,7 @@ inni esker. Hopper du over et nivå, vises ikke bildene.
   hovedmappen) blir hoppet over.
 - **Forsidebildet på kortet blir det bildet som kommer først alfabetisk** på filnavn.
   Vil du styre det, gi det et navn som havner først, f.eks. `01.jpg` eller `aaa-forside.jpg`.
-- **Nyeste skoleår vises først** av seg selv — `2025/2026` legger seg foran `2024/2025`.
+- **Nyeste skoleår vises først** av seg selv: `2025/2026` legger seg foran `2024/2025`.
 
 #### Legg til bilder fra et nytt arrangement
 
@@ -209,7 +215,7 @@ inni esker. Hopper du over et nivå, vises ikke bildene.
 2. Finn mappen for inneværende skoleår, f.eks. `2025/2026`. Finnes den ikke, lag den.
 3. Gå **inn i** skoleår-mappen og lag en ny mappe med navnet på arrangementet.
 4. Gå **inn i** arrangement-mappen og last opp bildene dit.
-5. Ferdig — neste gang noen åpner galleriet er bildene der.
+5. Ferdig. Neste gang noen åpner galleriet er bildene der.
 
 > **Viktig om deling:** Hovedmappen og alt inni den må være delt som «Alle med lenken
 > kan se». Er en mappe privat, klarer ikke nettsiden å hente bildene. Spør styret hvis
@@ -220,12 +226,12 @@ inni esker. Hopper du over et nivå, vises ikke bildene.
 ## 6. Trenger du noe mer avansert?
 
 Lesesalsbildene på forsiden, oppsett av merch-bestilling, hele filstrukturen og hvordan
-publiseringen fungerer under panseret — alt det ligger i
+publiseringen fungerer under panseret. Alt det ligger i
 **[VEDLIKEHOLD.md](VEDLIKEHOLD.md)**, ment for de som drifter koden.
 
 > 💡 **Pensum & studieretninger** redigeres nå i **Admin → Pensum**: emnene er gruppert per
 > studieretning (Felles · Filosofi · Etikk · Master), og du kan legge til, dele opp eller
-> gi nye farger til seksjonene — fanene og merkene på siden følger automatisk med.
+> gi nye farger til seksjonene, og fanene og merkene på siden følger automatisk med.
 
 Lurer du på noe som ikke står her, spør styret, den KI modellen som er best på koding i den tid du leser dette eller den som vedlikeholder nettsiden.
 
@@ -246,11 +252,20 @@ Hver modul har live forhåndsvisning. Redigeringsløkka er
 finnes for manuell publisering (se [VEDLIKEHOLD.md](VEDLIKEHOLD.md)).
 Full arkitekturforklaring: [docs/admin-arkitektur.md](/docs/admin-arkitektur.md).
 
+**To redigeringsvisninger (Oversikt → «Panelvisning»):** alle 16 paneler kan vises som
+**Liste + detalj**, et delt `admin-panel-shell.js` (PanelShell) med en smal, søkbar
+navigator + ett skjema om gangen, eller som **Klassisk (Legacy)**, den opprinnelige
+visningen med kort i full bredde. Valget lagres i nettleseren. PanelShell gjenbruker
+modulenes egne kort-byggere, så all logikk (bilder, lagring, angre, publisering) er felles
+mellom visningene. Skallet velger «rail-type» per panel (samlinger / enkeltliste /
+status-filter / seksjoner / liste-i-detalj). Global **Ctrl/Cmd+Z** angrer både slettinger
+og tillegg.
+
 ---
 
 ## Kjente begrensninger og usikkerheter
 
-Ting vi vet om, men er usikre på om det er verdt å gjøre noe med. Ført opp så de ikke glemmes — ikke nødvendigvis feil som må fikses.
+Ting vi vet om, men er usikre på om det er verdt å gjøre noe med. Ført opp så de ikke glemmes, ikke nødvendigvis feil som må fikses.
 
 <details>
 <summary><b>Vis de fem punktene</b></summary>
@@ -287,7 +302,7 @@ Lav:
 - [ ] Automatisk tema endring av sidene: Jul, 17. mai, påske, halloween, fadderukene, frigjøringsdagen, HMS bursdag (legge dette til i en admin fil, muligens... HMS er gammel) + mulighet til å skru de av, endre bilder, farger osv.
 
 Må gjøres før vi slapper av med å bygge nettsiden:
-- [ ] Sjekke at alle admin sider fungerer.
+- [x] Sjekke at alle admin sider fungerer. *(27.06.26: alle 16 paneler verifisert i begge visninger, Liste + detalj og Legacy.)*
 - [ ] Sjekke på nytt hvordan alt oppfører seg på mobil og smalere skjermer.
 
 Page-builder Prosjekt:
@@ -309,8 +324,8 @@ Page-builder Prosjekt:
 
 | Domene                 | Status      | Pris       | Registrar            |
 | ------------------------| -------------| ------------| ----------------------|
-| apeiron.no             | **Tatt**    | —          | —                    |
-| apeiron.org            | **Tatt**    | —          | —                    |
+| apeiron.no             | **Tatt**    | –          | –                    |
+| apeiron.org            | **Tatt**    | –          | –                    |
 | apeironntnu.no         | **Ledig** ✅ | 149 kr/år  | Loopia               |
 | apeironntnu.org        | **Ledig** ✅ | 169 kr/år  | Loopia               |
 | apeironntnu.org        | **Ledig** ✅ | 275 kr/år  | Domeneshop           |

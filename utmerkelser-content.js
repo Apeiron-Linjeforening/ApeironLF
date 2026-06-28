@@ -10,7 +10,7 @@ window.UTMERKELSER_CONTENT = {
   "intro": {
     "eyebrow": "Heder & ære",
     "heading": "Utmerkelser",
-    "lede": "Noen mennesker løfter hele miljøet rundt seg. Her hedrer vi dem som har stått ut — i det frivillige arbeidet, i fellesskapet, og i det å gjøre Apeiron til et sted å høre hjemme.",
+    "lede": "Noen mennesker løfter hele miljøet rundt seg. Her hedrer vi dem som har stått ut: i det frivillige arbeidet, i fellesskapet og i det å gjøre Apeiron til et sted å høre hjemme.",
     "back": "Tilbake",
     "backHref": "index.html"
   },

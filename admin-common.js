@@ -239,7 +239,7 @@
     var lbl = document.createElement('span');
     lbl.className = 'lay-switch__lbl';
     lbl.textContent = 'Visning';
-    lbl.setAttribute('data-help', opts.help || 'Velg hvordan kortene vises mens du redigerer her i admin. Påvirker bare denne redigeringsvisningen — ikke den publiserte siden.');
+    lbl.setAttribute('data-help', opts.help || 'Velg hvordan kortene vises mens du redigerer her i admin. Påvirker bare denne redigeringsvisningen, ikke den publiserte siden.');
     wrap.appendChild(lbl);
     var btnWrap = document.createElement('div');
     btnWrap.className = 'lay-switch__btns';
@@ -348,7 +348,7 @@
         src: src, aspect: aspect, aspects: opts.aspects, outSize: opts.outSize || 1000, quality: opts.quality || 0.86,
         round: !!opts.round, title: opts.title || 'Rediger bilde', applyLabel: 'Bruk bilde',
         onApply: function (url) { var prev = (opts.get && opts.get()) || null; opts.set(url); refresh(url); checkImageSize(url); if (opts.afterChange) opts.afterChange(url); undoable('Bilde endret', function () { opts.set(prev); refresh(prev || ''); if (opts.afterChange) opts.afterChange(prev); }); },
-        onError: function () { try { toast('Det gamle bildet kunne ikke lastes — velg et nytt.'); } catch (_) {} imgPick(openEd); }
+        onError: function () { try { toast('Det gamle bildet kunne ikke lastes. Velg et nytt.'); } catch (_) {} imgPick(openEd); }
       });
     }
     function editOrPick() { var cur = opts.get && opts.get(); if (cur) openEd(cur); else imgPick(openEd); }
@@ -571,6 +571,23 @@
   }
   function getPreviewWidth() { return previewDevice() === 'mobile' ? 390 : 1180; }
 
+  /* ─── PANELVISNING (redigeringslayout) ───
+     Global innstilling som styrer HVORDAN listene i panelene redigeres:
+       'klassisk'     — alle kort under hverandre (slik det alltid har vært)
+       'liste-detalj' — smal navigator til venstre + ett skjema om gangen til høyre
+     Valget huskes i nettleseren og deles av alle paneler. setPanelLayout sender
+     et 'apeiron-panellayout'-event så et åpent panel kan tegne om umiddelbart. */
+  var PANEL_LAYOUT_KEY = 'apeiron-admin-panellayout';
+  function panelLayout() {
+    try { return localStorage.getItem(PANEL_LAYOUT_KEY) === 'liste-detalj' ? 'liste-detalj' : 'klassisk'; } catch (_) { return 'klassisk'; }
+  }
+  function setPanelLayout(v) {
+    var val = v === 'liste-detalj' ? 'liste-detalj' : 'klassisk';
+    try { localStorage.setItem(PANEL_LAYOUT_KEY, val); } catch (_) {}
+    try { window.dispatchEvent(new CustomEvent('apeiron-panellayout', { detail: val })); } catch (_) {}
+    return val;
+  }
+
   /* ─── SIDE/SEKSJON-VELGER (delt 📍) + LENKEVALIDERING + BILDEADVARSEL ───
      PAGE_SECTIONS speiler nettstedets sider og seksjoner. attachLocPicker(btn,input)
      gir feltet en velger; validateHref() flagger lenker til ukjente sider/ankere;
@@ -694,7 +711,7 @@
     try {
       if (typeof dataUrl !== 'string' || dataUrl.indexOf('data:') !== 0) return;
       var kb = Math.round(dataUrl.length * 0.75 / 1024);
-      if (kb >= 500) toast('⚠ Stort bilde (~' + (kb >= 1024 ? (Math.round(kb / 102.4) / 10) + ' MB' : kb + ' kB') + (label ? ', ' + label : '') + ') — beskjær/forminsk gjerne før publisering');
+      if (kb >= 500) toast('⚠ Stort bilde (~' + (kb >= 1024 ? (Math.round(kb / 102.4) / 10) + ' MB' : kb + ' kB') + (label ? ', ' + label : '') + '). Beskjær/forminsk gjerne før publisering');
     } catch (_) {}
   }
 
@@ -721,7 +738,7 @@
     var n = _undo.stack.length;
     var top = _undo.stack[n - 1];
     _undo.el.querySelector('.undo-snack__msg').textContent = (top.label || 'Slettet')
-      + (n > 1 ? ' — Angre tar én om gangen' : '');
+      + (n > 1 ? '. Angre tar én om gangen' : '');
     var badge = _undo.el.querySelector('.undo-snack__count');
     if (n > 1) { badge.textContent = n; badge.style.display = ''; badge.title = n + ' slettinger kan angres'; }
     else { badge.style.display = 'none'; }
@@ -769,6 +786,19 @@
     return item;
   }
 
+  /* ─── GLOBAL CTRL/CMD+Z ───
+     Tekstfelt beholder nettleserens egen angre-funksjon; ellers angrer vi siste
+     «slett» (samme som «Angre» i snack-stripa). Paneler med egen Ctrl+Z (Meny)
+     håndterer eventet først (defaultPrevented) og hoppes over her. */
+  document.addEventListener('keydown', function (e) {
+    if (!(e.ctrlKey || e.metaKey) || e.shiftKey) return;
+    if (e.key !== 'z' && e.key !== 'Z') return;
+    if (e.defaultPrevented) return;
+    var t = e.target;
+    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+    if (_undo.stack.length) { e.preventDefault(); _undoTop(); }
+  });
+
   /* ─── ESCAPE ─── */
   function esc(s) {
     return String(s == null ? '' : s)
@@ -798,11 +828,14 @@
     dataUrlToBytes: dataUrlToBytes,
     zipFiles: zipFiles,
     enableDragSort: enableDragSort,
+    undoable: undoable,
     createStore: createStore,
     readDraftOr: readDraftOr,
     previewDevice: previewDevice,
     setPreviewDevice: setPreviewDevice,
     getPreviewWidth: getPreviewWidth,
+    panelLayout: panelLayout,
+    setPanelLayout: setPanelLayout,
     pageSections: PAGE_SECTIONS,
     validateHref: validateHref,
     attachLocPicker: attachLocPicker,

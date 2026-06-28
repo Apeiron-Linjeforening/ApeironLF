@@ -29,11 +29,11 @@ export async function onRequestGet(context) {
     return redirect(origin(request) + '/admin.html?gh=error&reason=token', { 'Set-Cookie': setCookie('gh_state', '', 0) });
   }
 
-  // Slett state-cookien og sett token-cookien (8 t). To Set-Cookie via Headers.
+  // Slett state-cookien og sett token-cookien (30 dager). To Set-Cookie via Headers.
   var headers = new Headers();
   headers.append('Location', origin(request) + '/admin.html?gh=ok');
   headers.append('Cache-Control', 'no-store');
   headers.append('Set-Cookie', setCookie('gh_state', '', 0));
-  headers.append('Set-Cookie', setCookie('gh_token', token, 28800));
+  headers.append('Set-Cookie', setCookie('gh_token', token, 2592000));
   return new Response(null, { status: 302, headers: headers });
 }

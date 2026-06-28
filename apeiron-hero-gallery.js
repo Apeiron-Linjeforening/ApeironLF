@@ -34,7 +34,7 @@
     mosaicSizes: 'varied',     // varied | uniform (kun B)
     polaStyle: 'framed',       // framed | clean (kun C)
     heading: 'Livet i Apeiron',
-    lede: 'Glimt fra det sosiale livet i Apeiron — fester, fagkvelder og alt imellom.'
+    lede: 'Glimt fra det sosiale livet i Apeiron: fester, fagkvelder og alt imellom.'
   };
 
   function cfg() {

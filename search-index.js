@@ -14,14 +14,14 @@ window.SEARCH_INDEX = [
     "g": "Startside"
   },
   {
-    "t": "Filosofi — studieretning",
+    "t": "Filosofi (studieretning)",
     "d": "Grunnleggende spørsmål om mennesket, verden og kunnskap. FI1001, FI1101, FI1003, FI1004, FI1005.",
     "u": "pensum.html",
     "g": "Startside"
   },
   {
-    "t": "Etikk — studieretning",
-    "d": "Hvordan vi bør handle og leve — som individer og fellesskap. FI1210, FI1211, FI1002, FI2211.",
+    "t": "Etikk (studieretning)",
+    "d": "Hvordan vi bør handle og leve, som individer og fellesskap. FI1210, FI1211, FI1002, FI2211.",
     "u": "pensum.html",
     "g": "Startside"
   },
@@ -57,19 +57,19 @@ window.SEARCH_INDEX = [
   },
   {
     "t": "Aporetisk Aften",
-    "d": "Én kveld i måneden rundt ett filosofisk spørsmål — uten pensum og uten fasit. Åpent for alle.",
+    "d": "Én kveld i måneden rundt ett filosofisk spørsmål, uten pensum og uten fasit. Åpent for alle.",
     "u": "index.html#aporetisk",
     "g": "Startside"
   },
   {
     "t": "Fadderuke",
-    "d": "Studiestartens beste uker — bli kjent med faget, byen og medstudentene.",
+    "d": "Studiestartens beste uker. Bli kjent med faget, byen og medstudentene.",
     "u": "index.html#fadderuke",
     "g": "Startside"
   },
   {
     "t": "Oppslagstavla",
-    "d": "Plakatene for det som skjer i Apeiron — fagkvelder, fester, frister og kunngjøringer.",
+    "d": "Plakatene for det som skjer i Apeiron: fagkvelder, fester, frister og kunngjøringer.",
     "u": "oppslagstavla.html",
     "g": "Startside"
   },
@@ -81,7 +81,7 @@ window.SEARCH_INDEX = [
   },
   {
     "t": "S.A.K",
-    "d": "Sosiale Arrangement Komité — lavterskel engasjement for alle studenter.",
+    "d": "Sosiale Arrangement Komité, lavterskel engasjement for alle studenter.",
     "u": "styret.html#sak",
     "g": "Startside"
   },
@@ -99,13 +99,13 @@ window.SEARCH_INDEX = [
   },
   {
     "t": "Om oss",
-    "d": "Apeiron er linjeforeningen for filosofi og etikk ved NTNU siden 1981 — et fellesskap uten faste grenser.",
+    "d": "Apeiron er linjeforeningen for filosofi og etikk ved NTNU siden 1981, et fellesskap uten faste grenser.",
     "u": "om-oss.html#om",
     "g": "Om oss"
   },
   {
     "t": "Lesesalen",
-    "d": "Filosofi- og etikkstudentenes eget tilfluktssted på Dragvoll — bibliotek, gratis kaffe for medlemmer og god plass.",
+    "d": "Filosofi- og etikkstudentenes eget tilfluktssted på Dragvoll: bibliotek, gratis kaffe for medlemmer og god plass.",
     "u": "om-oss.html#lesesalen",
     "g": "Om oss"
   },
@@ -117,7 +117,7 @@ window.SEARCH_INDEX = [
   },
   {
     "t": "Galleri",
-    "d": "Bilder fra fester, fagkvelder og fadderuker — automatisk hentet fra Google Drive.",
+    "d": "Bilder fra fester, fagkvelder og fadderuker, automatisk hentet fra Google Drive.",
     "u": "galleri.html",
     "g": "Galleri"
   },
@@ -128,79 +128,79 @@ window.SEARCH_INDEX = [
     "g": "Pensum"
   },
   {
-    "t": "FI1001 — Filosofiens og etikkens historie",
+    "t": "FI1001: Filosofiens og etikkens historie",
     "d": "Felles · 15 sp · Platon: Staten · Descartes: Meditasjoner",
     "u": "pensum.html",
     "g": "Pensum"
   },
   {
-    "t": "FI1002 — Etikk og politisk filosofi",
+    "t": "FI1002: Etikk og politisk filosofi",
     "d": "Felles · 7,5 sp · Rawls: A Theory of Justice",
     "u": "pensum.html",
     "g": "Pensum"
   },
   {
-    "t": "FI1003 — Kunnskaps- og vitenskapsteori",
+    "t": "FI1003: Kunnskaps- og vitenskapsteori",
     "d": "Felles · 7,5 sp · Gilje & Grimen: Vitenskapsteori for nybegynnere",
     "u": "pensum.html",
     "g": "Pensum"
   },
   {
-    "t": "FI1004 — Metafysikk og bevissthetsfilosofi",
+    "t": "FI1004: Metafysikk og bevissthetsfilosofi",
     "d": "Filosofi · 7,5 sp · virkelighet, eksistens og bevissthet",
     "u": "pensum.html",
     "g": "Pensum"
   },
   {
-    "t": "FI1005 — Logikk",
+    "t": "FI1005: Logikk",
     "d": "Filosofi · 7,5 sp · formell logikk og argumentasjonsteori",
     "u": "pensum.html",
     "g": "Pensum"
   },
   {
-    "t": "FI1101 — Samtidens filosofi",
+    "t": "FI1101: Samtidens filosofi",
     "d": "Filosofi · 7,5 sp · Heidegger: Being and Time · fenomenologi, eksistensialisme",
     "u": "pensum.html",
     "g": "Pensum"
   },
   {
-    "t": "FI1210 — Innføring i etikk og metaetikk",
+    "t": "FI1210: Innføring i etikk og metaetikk",
     "d": "Etikk · 7,5 sp · Aristoteles: Den nikomakiske etikk · Mill: Utilitarisme",
     "u": "pensum.html",
     "g": "Pensum"
   },
   {
-    "t": "FI1211 — Etikkprosjekt og metode",
+    "t": "FI1211: Etikkprosjekt og metode",
     "d": "Etikk · 15 sp · prosjektbasert fordypning i etisk analyse",
     "u": "pensum.html",
     "g": "Pensum"
   },
   {
-    "t": "FI2002 — Bacheloroppgave",
+    "t": "FI2002: Bacheloroppgave",
     "d": "Felles · 15 sp · selvstendig skriftlig arbeid, individuelt pensum",
     "u": "pensum.html",
     "g": "Pensum"
   },
   {
-    "t": "FI2111 — Fordypning 1",
+    "t": "FI2111: Fordypning 1",
     "d": "Filosofi · 15 sp · fordypning i valgt tema, varierer per semester",
     "u": "pensum.html",
     "g": "Pensum"
   },
   {
-    "t": "FI2211 — Sosial- og rettsfilosofi",
+    "t": "FI2211: Sosial- og rettsfilosofi",
     "d": "Etikk · 15 sp · rettferdighet, makt og rettslige strukturer",
     "u": "pensum.html",
     "g": "Pensum"
   },
   {
-    "t": "EXPH0100 — Examen philosophicum (humaniora)",
+    "t": "EXPH0100: Examen philosophicum (humaniora)",
     "d": "Filosofi · 7,5 sp · Skirbekk & Gilje: Filosofihistorie",
     "u": "pensum.html",
     "g": "Pensum"
   },
   {
-    "t": "EXPH0200 — Examen philosophicum (samfunn)",
+    "t": "EXPH0200: Examen philosophicum (samfunn)",
     "d": "Etikk · 7,5 sp · obligatorisk innføring for samfunnsvitenskap",
     "u": "pensum.html",
     "g": "Pensum"
@@ -213,7 +213,7 @@ window.SEARCH_INDEX = [
   },
   {
     "t": "Pensum-markedet",
-    "d": "Kjøp og bytte av brukt pensum — kommer snart.",
+    "d": "Kjøp og bytte av brukt pensum. Kommer snart.",
     "u": "marked.html",
     "g": "Merch"
   },
@@ -302,8 +302,8 @@ window.SEARCH_INDEX = [
     "g": "Styret"
   },
   {
-    "t": "Om vervene — Styret",
-    "d": "Beskrivelse av styrevervene i Apeiron: Leder, Nestleder, Økonomiansvarlig, Sosialansvarlig, PR-ansvarlig, Faddersjef, Fagansvarlig, Potet, S.A.K — Sosiale Arrangement Komité, H.I.…",
+    "t": "Om vervene (Styret)",
+    "d": "Beskrivelse av styrevervene i Apeiron: Leder, Nestleder, Økonomiansvarlig, Sosialansvarlig, PR-ansvarlig, Faddersjef, Fagansvarlig, Potet, S.A.K: Sosiale Arrangement Komité, H.I.…",
     "u": "styret.html",
     "g": "Styret"
   },
@@ -315,31 +315,31 @@ window.SEARCH_INDEX = [
   },
   {
     "t": "Oppnåelser",
-    "d": "Filosofer er ikke bare flinke til å tenke. Her er premiene, pokalene og bragdene Apeiron har dratt i land — beviset på at vi også kan vinne ting.",
+    "d": "Filosofer er ikke bare flinke til å tenke. Her er premiene, pokalene og bragdene Apeiron har dratt i land, beviset på at vi også kan vinne ting.",
     "u": "oppnaelser.html",
     "g": "Heder"
   },
   {
     "t": "Volleyballcup 2026",
-    "d": "Sølv · NTNUI · 2026 — Andreplass i NTNUIs volleyballcup 2026. Et lag bygget på vennskap, vågale servinger og en urokkelig tro på at etikere og filosofer kan smæshe.",
+    "d": "Sølv · NTNUI · 2026: Andreplass i NTNUIs volleyballcup 2026. Et lag bygget på vennskap, vågale servinger og en urokkelig tro på at etikere og filosofer kan smæshe.",
     "u": "oppnaelser.html",
     "g": "Heder"
   },
   {
     "t": "Best oppmøte",
-    "d": "Vinner · Dionysos · 2025 — Kåret av søsterforeningen Dionysos for det beste oppmøtet... for deres egne arrangementer. Når etikerne og filosofene møter opp, møter de opp i flokk!",
+    "d": "Vinner · Dionysos · 2025: Kåret av søsterforeningen Dionysos for det beste oppmøtet... for deres egne arrangementer. Når etikerne og filosofene møter opp, møter de opp i flokk!",
     "u": "oppnaelser.html",
     "g": "Heder"
   },
   {
     "t": "Utmerkelser",
-    "d": "Noen mennesker løfter hele miljøet rundt seg. Her hedrer vi dem som har stått ut — i det frivillige arbeidet, i fellesskapet, og i det å gjøre Apeiron til et sted å høre hjemme.",
+    "d": "Noen mennesker løfter hele miljøet rundt seg. Her hedrer vi dem som har stått ut: i det frivillige arbeidet, i fellesskapet og i det å gjøre Apeiron til et sted å høre hjemme.",
     "u": "utmerkelser.html",
     "g": "Heder"
   },
   {
     "t": "Blir dette deg?",
-    "d": "GOAT · 2026/2027 — Et eksempelkort. Beskriv kort hva personen har betydd for Apeiron og hvorfor de fortjener heder. Bytt ut navn, bilde og tekst i admin.",
+    "d": "GOAT · 2026/2027: Et eksempelkort. Beskriv kort hva personen har betydd for Apeiron og hvorfor de fortjener heder. Bytt ut navn, bilde og tekst i admin.",
     "u": "utmerkelser.html",
     "g": "Heder"
   },

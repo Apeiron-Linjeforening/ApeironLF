@@ -142,7 +142,7 @@
   // offline=false → vennlig «datoer kommer»-beskjed.
   function showComingSoon(offline) {
     var datesEl = document.getElementById('fadderDates');
-    if (datesEl) datesEl.textContent = offline ? '—' : 'Datoer kommer';
+    if (datesEl) datesEl.textContent = offline ? 'Datoer kommer' : 'Datoer kommer';
     var noteEl = document.getElementById('fadderPlaceholder');
     if (noteEl) noteEl.style.display = 'none';
     var stage = document.querySelector('.fadder__stage');
@@ -219,7 +219,7 @@
       '</div>';
   }
   function itemsBlock(items) {
-    if (!items.length) return '<p class="fd-rest">Fri dag — ingen felles program.</p>';
+    if (!items.length) return '<p class="fd-rest">Fri dag, ingen felles program.</p>';
     return '<div class="fd-items">' + items.map(itemRow).join('') + '</div>';
   }
   function cntLabel(n) { return n === 0 ? 'Fri' : (n + (n === 1 ? ' post' : ' poster')); }

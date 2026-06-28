@@ -30,7 +30,7 @@
       host.innerHTML =
         '<section class="preview-top">'
           + '<h3>Forhåndsvisning</h3>'
-          + '<p class="pp-sub">Live fra den ekte merch-siden — bla i ruta for å se hele siden (info-tekst, «Merch»-toppen og bestillingsboksen nederst). Endringene dine vises umiddelbart.</p>'
+          + '<p class="pp-sub">Live fra den ekte merch-siden. Bla i ruta for å se hele siden (info-tekst, «Merch»-toppen og bestillingsboksen nederst). Endringene dine vises umiddelbart.</p>'
           + '<div class="pv-shop-wrap"><iframe id="pv-shop" src="merch.html?preview=1" title="Forhåndsvisning av butikken"></iframe></div>'
         + '</section>'
         + '<div class="editor-col">'
@@ -38,20 +38,21 @@
             + '<button class="tip-reset" id="reset-btn" type="button">Tilbakestill til siste publiserte versjon</button>'
             + '<strong>Slik oppdaterer du merch-siden</strong>'
             + '<ol>'
-              + '<li>Rediger produktene nedenfor — klikk på et felt for å redigere det</li>'
+              + '<li>Rediger produktene nedenfor. Klikk på et felt for å redigere det</li>'
               + '<li>Last opp bilder ved å <b>klikke på bildefeltet</b> eller dra bilder inn på det (du kan velge flere)</li>'
-              + '<li><b>Koble farger til bilder:</b> har produktet farger, kan du på hvert bilde velge hvilken farge det hører til — da byttes hovedbildet i butikken når kunden velger den fargen</li>'
-              + '<li>Trykk <b>☁ Publiser til GitHub</b> oppe til høyre — endringene legges ut automatisk</li>'
+              + '<li><b>Koble farger til bilder:</b> har produktet farger, kan du på hvert bilde velge hvilken farge det hører til. Da byttes hovedbildet i butikken når kunden velger den fargen</li>'
+              + '<li>Trykk <b>☁ Publiser til GitHub</b> oppe til høyre. Endringene legges ut automatisk</li>'
             + '</ol>'
             + '<div class="tip-note">🖼️ <b>Bilder pr. produkt:</b> Det <b>første</b> bildet er hovedbildet («Hoved»). På hver miniatyr: <b>⠿</b> dra rekkefølge · <b>⛶</b> beskjær/zoom · <b>↻</b> roter · <b>✕</b> slett. Har produktet farger, kan du koble et bilde til en farge.</div>'
             + '<div class="tip-note">💾 Endringer lagres automatisk i nettleseren din. Last ned filen for å publisere.</div>'
           + '</div>'
+          + '<div data-merch-banner>'
           + '<div class="info-edit">'
             + '<label for="info-input"><strong>Info-tekst øverst i butikken</strong></label>'
-            + '<p class="info-edit__hint">Vises i en boks øverst på merch-siden — f.eks. leveringstid, henteinfo eller en beskjed. La stå tom for å skjule boksen. Dobbelt linjeskift gir nytt avsnitt.</p>'
+            + '<p class="info-edit__hint">Vises i en boks øverst på merch-siden, for eksempel leveringstid, henteinfo eller en beskjed. La stå tom for å skjule boksen. Dobbelt linjeskift gir nytt avsnitt.</p>'
             + '<textarea id="info-input" rows="3" placeholder="F.eks. «Neste utlevering på lesesalen torsdag 12. juni. Bestill innen mandag!»"></textarea>'
             + '<div class="fg" style="margin-top:12px"><label for="info-label-input">Merkelapp over teksten</label>'
-              + '<input type="text" id="info-label-input" placeholder="f.eks. «Merk», «Nyhet», «Viktig» — tom = ingen merkelapp">'
+              + '<input type="text" id="info-label-input" placeholder="f.eks. «Merk», «Nyhet», «Viktig». Tom = ingen merkelapp">'
               + '<p class="info-edit__hint" style="margin-top:6px">Den lille gull-teksten med ✦-stjernen øverst i boksen. La stå tom for å fjerne den helt.</p>'
             + '</div>'
           + '</div>'
@@ -61,6 +62,7 @@
             + '<div class="fg"><label>Tilbake-lenke (tekst)</label><input type="text" id="msh-back"></div>'
             + '<div class="fg"><label>Tittel</label><input type="text" id="msh-title"></div>'
             + '<div class="fg"><label>Ingress</label><textarea id="msh-lede" rows="2"></textarea></div>'
+          + '</div>'
           + '</div>'
           + '<div style="display:flex;justify-content:flex-end;margin-bottom:14px"><button class="btn-add" id="add-btn" type="button">+ Nytt produkt</button></div>'
           + '<div id="plist"></div>'
@@ -370,7 +372,7 @@
                 + '<div class="fg"><label data-help="Valgfrie farger, skilt med komma. Tom = ingen fargevalg.">Farger (komma)</label><input type="text" data-vlist="colors" value="' + esc((p.colors || []).join(', ')) + '" placeholder="f.eks. Marineblå, Bordeaux"></div>'
               + '</div>'
               + '<div class="fg"><label data-help="Teksten på knappen. Standard «Legg i kurv».">Bestill-knapp tekst</label><input type="text" data-f="btnLabel" value="' + esc(p.btnLabel || '') + '" placeholder="Bestill (f.eks. «Utsolgt»)"></div>'
-              + '<div class="fg"><label data-help="Kortkant: lysende kant rundt kortet. Knapp: farge på bestill-knappen.">Utseende — farger & kant</label>'
+              + '<div class="fg"><label data-help="Kortkant: lysende kant rundt kortet. Knapp: farge på bestill-knappen.">Utseende: farger & kant</label>'
                 + '<div class="appearance"><div class="app-col"><span class="app-lbl">Kortkant</span><div data-edge-host></div></div><div class="app-col"><span class="app-lbl">Knapp</span><div data-btn-host></div></div></div></div>'
               + '<button class="adv-toggle" type="button">▸ Bestillingslenke (avansert)</button>'
               + '<div class="adv-fields">'
@@ -443,11 +445,11 @@
         products.push(p); renderAll(); lazySave();
         setTimeout(function () { var last = host.querySelector('#plist .pcard:last-child'); if (last) last.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60);
       }
-      function del(id) { var i = products.findIndex(function (p) { return p.id === id; }); if (i < 0) return; AC.undoDelete(products, i, '«' + (products[i].name || 'Produkt') + '» slettet', renderAll, lazySave); }
+      function del(id) { var i = products.findIndex(function (p) { return p.id === id; }); if (i < 0) return; AC.undoDelete(products, i, '«' + (products[i].name || 'Produkt') + '» slettet', shellRender, lazySave); }
       function move(id, dir) {
         var i = products.findIndex(function (p) { return p.id === id; });
         if (i < 0) return; var j = i + dir; if (j < 0 || j >= products.length) return;
-        var tmp = products[i]; products[i] = products[j]; products[j] = tmp; renderAll(); lazySave();
+        var tmp = products[i]; products[i] = products[j]; products[j] = tmp; shellRender(); lazySave();
       }
 
       function exportFile() {
@@ -469,7 +471,7 @@
           + 'window.MERCH_INFO_LABEL = ' + JSON.stringify(infoLabel) + ';\n\n'
           + 'window.MERCH_PRODUCTS = ' + JSON.stringify(products, null, 2) + ';\n';
         AC.saveFile('merch-products.js', content);
-        AC.toast('Fil lastet ned — erstatt i GitHub og push!');
+        AC.toast('Fil lastet ned. Erstatt i GitHub og push!');
       }
 
       q('reset-btn').addEventListener('click', function () {
@@ -494,6 +496,24 @@
         onReorder: function (ids) { products.sort(function (a, b) { return ids.indexOf(a.id) - ids.indexOf(b.id); }); lazySave(); }
       });
 
+      /* ── delt «Liste + detalj»-skall (enkeltliste + banner, smal rail) ── */
+      var shell = AC.PanelShell.mount(host, AC, {
+        rail: 'single',
+        title: 'Merch', subtitle: 'Produkter',
+        remember: 'apeiron-merch-shell-sel',
+        banner: { label: 'Info-tekst & topp-banner', current: function () { return (subhero && subhero.title) || infoLabel || ''; }, adopt: function () { return host.querySelector('[data-merch-banner]'); } },
+        groups: [{
+          key: 'products', label: 'Produkter', addLabel: 'Nytt produkt',
+          items: function () { return products; },
+          meta: function (p) { return { av: (p.category ? p.category.charAt(0).toUpperCase() : '🛍'), cls: 'sq', nm: p.name || '(uten navn)', sub: [p.price ? (p.price + ' kr') : '', p.category].filter(Boolean).join(' · ') || 'Produkt' }; },
+          detail: function (p) { return makeCard(p); },
+          onAdd: function () { add(); return products[products.length - 1] && products[products.length - 1].id; }
+        }]
+      });
+      function shellRender() { renderAll(); if (shell.isActive()) shell.refresh(); }
+      function applyPanelLayout() { shell.layoutChanged(); }
+      window.addEventListener('apeiron-panellayout', applyPanelLayout);
+
       /* ── live forhåndsvisning ── */
       var pvFrame = q('pv-shop');
       function pushPreview() { if (!pvFrame || !pvFrame.contentWindow) return; try { pvFrame.contentWindow.postMessage({ type: 'apeiron-merch-preview', products: products, info: info, infoLabel: infoLabel, subhero: subhero }, '*'); } catch (e) {} }
@@ -514,7 +534,7 @@
       window.addEventListener('resize', fitShop);
       if (pvFrame) pvFrame.addEventListener('load', fitShop);
 
-      loadData(); renderInfo(); renderSubhero(); renderAll();
+      loadData(); renderInfo(); renderSubhero(); renderAll(); applyPanelLayout();
       AC.viewSwitch({ list: q('plist'), key: 'apeiron-merch-view-v1', modes: [
         { id: 'cols-1', n: 1, label: '1 i bredden', title: 'Ett produkt per rad' },
         { id: 'cols-2', n: 2, label: '2 i bredden', title: 'To produkter i bredden' }
@@ -527,6 +547,8 @@
         destroy: function () {
           window.removeEventListener('message', onPreviewMsg);
           window.removeEventListener('resize', fitShop);
+          window.removeEventListener('apeiron-panellayout', applyPanelLayout);
+          if (shell) shell.destroy();
           document.removeEventListener('keydown', cropKeydown);
           if (cropEls && cropEls.ov && cropEls.ov.parentNode) cropEls.ov.parentNode.removeChild(cropEls.ov);
           cropEls = null;
