@@ -8,14 +8,14 @@
 
 window.INDEX_CONTENT = {
   "heroGallery": {
-    "enabled": true,
+    "enabled": false,
     "style": "D",
     "placement": "top",
-    "count": 3,
+    "count": 10,
     "opacity": 0.8,
     "speed": 100,
     "direction": "up-left",
-    "animation": "dvd",
+    "animation": "diagonal",
     "navClip": true,
     "dvdMotif": "photos",
     "mosaicSizes": "varied",
@@ -49,9 +49,9 @@ window.INDEX_CONTENT = {
     "lede": "Fra dyptpløyende fagkvelder til legendariske symposion. Se hele semesterprogrammet som liste, rutenett eller helhetlig oversikt, og legg det rett inn i din egen kalender."
   },
   "apo": {
-    "eyebrow": "Fast hver måned",
+    "eyebrow": "Hver måned",
     "title": "Aporetisk Aften",
-    "lede": "Én kveld i måneden samler vi oss rundt ett eneste spørsmål, uten pensum og uten fasit. Vi tenker høyt, er uenige i godt selskap, og går hjem med flere spørsmål enn vi kom med. Ferskinger og veteraner er like velkomne.",
+    "lede": "Én kveld i måneden samler vi oss rundt spørsmål noen presenterer, uten pensum og uten fasit. Vi tenker høyt, er uenige i godt selskap, og går hjem med flere spørsmål enn vi kom med. Ferskinger og veteraner er like velkomne.",
     "forWhom": "Åpent for alle",
     "greek": "ἀπορία",
     "greekSub": "a-po-ri-a · «rådvillhet»",
