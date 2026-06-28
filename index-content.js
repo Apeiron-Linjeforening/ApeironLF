@@ -1,5 +1,5 @@
 /* Innhold for forsiden (index.html / «Hjem») — TEKST-delene som endres ofte.
-   Sist oppdatert: 25.6.2026
+   Sist oppdatert: 22.6.2026
    Rediger direkte her, eller åpne Admin-senteret → Forsiden.
 
    Dekker forsiden (Hjem): hero + seksjons-introer (arrangementer/aporetisk/fadderuke) + bli medlem (intro) + kontakt.
@@ -8,19 +8,19 @@
 
 window.INDEX_CONTENT = {
   "heroGallery": {
-    "enabled": true,
+    "enabled": false,
     "style": "D",
     "placement": "top",
-    "count": 3,
-    "opacity": 1,
-    "speed": 80,
+    "count": 10,
+    "opacity": 0.8,
+    "speed": 100,
     "direction": "up-left",
-    "animation": "dvd",
-    "navClip": false,
+    "animation": "diagonal",
+    "navClip": true,
     "dvdMotif": "photos",
+    "dvdSize": 100,
     "mosaicSizes": "varied",
     "polaStyle": "framed",
-    "dvdSize": 100,
     "heading": "Livet i Apeiron",
     "lede": "Glimt fra det sosiale livet i Apeiron — fester, fagkvelder og alt imellom."
   },

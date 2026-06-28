@@ -1,5 +1,12 @@
 ## Siste endringer
 
+**25.06.26 — Hero-galleri (DVD): myk entré utenfra, jevn synlighet + ryddet admin-panel**
+- **Slutt på «pop» når DVD-bildene lastes.** Drive-bildene kommer et øyeblikk etter resten av siden, så de dukket synlig opp på plass. Nå **fødes hver ramme nær en tilfeldig kant** (venstre/høyre/topp/bunn) og glir — **kun ved aller første sidelast** — inn fra rett utenfor den kanten (klippet bort av `overflow:hidden` til den er på vei inn). Kort, rolig glid (ingen lang reise over skjermen, intet «kast»), og rammen holdes `visibility:hidden` til bildet er lastet så ingenting blinker frem. Respekterer `prefers-reduced-motion`. Gjelder bare DVD — de øvrige animasjonene er urørt.
+- **Jevn synlighet over hele flaten.** Det vannrette gradient-sløret gjorde DVD-bilder mørke til venstre og lyse til høyre. DVD bruker nå et **konstant** slør, så bildene ser like sterke ut uansett posisjon. «Synlighet»-verdien gjør ikke lenger bildene gjennomsiktige — bildene er alltid solide, og verdien styrer i stedet hvor mye slør som legges over (100% = full styrke, lavere = mørkere/svakere).
+- **Redesignet «Galleribilder på forsiden»-panelet** (Admin → Forsiden) så det tar mindre plass: Stil og Animasjon/Plassering ligger nå **side om side** på én rad i stedet for hver sin fulle rad, de interne overskriftene er fjernet, og glidebryterne (antall, synlighet, hastighet, størrelse) er pakket på én flytende rad som fyller bredden. All vis/skjul-logikk per stil (A/B/C/D) er uendret.
+- **Hjelpetekster («?»)** lagt til på Antall, Synlighet, Hastighet og «Klipp ved navigasjonsbaren». Etikettene bruker nå `nowrap`, så «?» aldri tvinger en ny linje, og boksene fyller raden så ikonet ikke kolliderer med nabofeltet.
+- Berørte filer: `apeiron-hero-gallery.js`, `hero-gallery.css`, `admin-modules/forsiden.js`, `index.html` (cache-versjon på CSS/JS-lenkene).
+
 **25.06.26 — Nytt: galleribilder på forsiden (admin-styrt, live fra Drive)**
 - **Nytt admin-panel «Galleribilder på forsiden»** (Admin → Forsiden, øverst). **Av som standard** — den live siden er uendret til styret slår det på. Bildene hentes **tilfeldig fra hele Drive-galleriet** (samme `ROOT_FOLDER_ID` som Galleri-siden), stokkes og plukkes tilfeldig, og bufres i nettleseren i 6 t. Uten API-nøkkel (lokalt) brukes reservebilder fra `assets/` så forhåndsvisningen alltid viser effekten.
 - **Fire stiler:** A — rullende bånd, B — mosaikk (egen seksjon, fyller alltid rutenettet), C — polaroider (fulle rader, hvit ramme eller rene bilder), D — svevende bilder bak hero.

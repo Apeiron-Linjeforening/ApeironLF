@@ -13,6 +13,11 @@
   var IS_PREVIEW = false;
   try { IS_PREVIEW = /[?&]preview\b/.test(location.search); } catch (e) {}
 
+  // Entré-flagg: bildene glir inn utenfra rammen KUN ved aller første sidelast.
+  // Settes false etter første D-foto-bygging, så live-preview/re-render ikke
+  // animerer på nytt.
+  var hgFirstLoad = true;
+
   // ── Standardconfig ──
   var DEFAULTS = {
     enabled: false,
@@ -191,7 +196,14 @@
     floats.className = 'hg-d-floats hg-mode-' + c.animation + (c.navClip ? ' hg-clip' : '');
     floats.style.setProperty('--hg-clip', navH + 'px');
     var veil = document.createElement('div');
-    veil.className = 'hg-d-veil';
+    veil.className = 'hg-d-veil' + (c.animation === 'dvd' ? ' hg-d-veil--flat' : '');
+    if (c.animation === 'dvd') {
+      // «Synlighet» = hvor synlige bildene er: 100% → ingen slør (fullt synlig,
+      // solide bilder), lavere verdi → mørkere slør over hele flaten. Ingen
+      // transparency på selve bildene.
+      var veilA = Math.max(0, Math.min(0.85, 1 - (c.opacity == null ? 0.8 : c.opacity)));
+      veil.style.background = 'rgba(26, 29, 51, ' + veilA.toFixed(2) + ')';
+    }
 
     // Sett inn først (etter seglet) så vi kan måle rammen før vi fyller den.
     var seal = hero.querySelector('.hero__seal');
@@ -326,7 +338,9 @@
       el.className = 'hg-dvd' + (bare ? ' hg-dvd--logo' : (card ? ' hg-dvd--card' : ''));
       el.style.width = sz + 'px';
       el.style.height = fh + 'px';
-      el.style.opacity = c.opacity;
+      // DVD: bildene er alltid SOLIDE (ingen transparency). «Synlighet»-verdien
+      // styrer i stedet sløret over flaten (se veil under) — hvor synlige de er.
+      el.style.opacity = '1';
       var layers = [];
       for (var j = 0; j < K; j++) {
         var im = document.createElement('img');
@@ -345,11 +359,56 @@
       var vx = Math.cos(ang) * sp, vy = Math.sin(ang) * sp;
       if (Math.abs(vx) < 35) vx = (vx < 0 ? -1 : 1) * 45;
       if (Math.abs(vy) < 35) vy = (vy < 0 ? -1 : 1) * 45;
+      // Hver ramme FØDES nær en TILFELDIG kant (med tilfeldig posisjon langs
+      // kanten). Da kan entréen gli den kort inn fra rett utenfor den kanten —
+      // aldri langt (intet kast), aldri midt på skjermen (intet pop). Etterpå
+      // driver DVD-fysikken den innover og rundt som normalt.
+      var edges = ['left', 'right', 'top', 'bottom'];
+      var edge = edges[Math.floor(Math.random() * edges.length)];
+      var inset = Math.random() * 28; // hvor langt inn fra kanten den lander
+      var fx, fy;
+      if (edge === 'left')        { fx = inset;            fy = Math.random() * Math.max(1, H - fh); }
+      else if (edge === 'right')  { fx = (W - sz) - inset; fy = Math.random() * Math.max(1, H - fh); }
+      else if (edge === 'top')    { fy = inset;            fx = Math.random() * Math.max(1, W - sz); }
+      else                        { fy = (H - fh) - inset; fx = Math.random() * Math.max(1, W - sz); }
       frames.push({ el: el, layers: layers, top: 0, w: sz, h: fh,
-        x: Math.random() * Math.max(1, W - sz), y: Math.random() * Math.max(1, H - fh),
-        vx: vx, vy: vy });
+        x: fx, y: fy, vx: vx, vy: vy, entryEdge: edge });
     }
-    frames.forEach(function (f) { f.el.style.transform = 'translate(' + f.x + 'px,' + f.y + 'px)'; });
+    // Entré KUN ved aller første sidelast (skjuler API-treigheten på Drive-bilder).
+    // Hver ramme er født nær en tilfeldig kant; her starter den rett UTENFOR den
+    // kanten (klippet av overflow:hidden = usynlig) og glir kort og rolig inn til
+    // sin fødeplass. Aldri langt (intet kast), aldri midt på skjermen (intet pop).
+    // Opacity røres ALDRI (visibility brukes mot synlighets-pop ved last).
+    var doEntrance = hgFirstLoad && !reducedMotion();
+    frames.forEach(function (f, i) {
+      f.el.style.transform = 'translate(' + f.x + 'px,' + f.y + 'px)';
+      if (!doEntrance) return;
+      var m = 16; // akkurat utenfor kanten
+      var startTx = 0, startTy = 0;
+      if (f.entryEdge === 'left')        startTx = -(f.x + f.w + m);  // fra venstre
+      else if (f.entryEdge === 'right')  startTx = (W - f.x + m);      // fra høyre
+      else if (f.entryEdge === 'top')    startTy = -(f.y + f.h + m);  // fra topp
+      else                               startTy = (H - f.y + m);      // fra bunn
+      f.el.style.visibility = 'hidden'; // skjult til bildet er lastet (ingen pop)
+      f.el.style.translate = startTx + 'px ' + startTy + 'px';
+      f.el.style.transition = 'translate 1.1s cubic-bezier(.25,.6,.3,1)'; // kort, rolig
+      (function (node, im2, idx) {
+        var done = false;
+        function reveal() {
+          if (done) return; done = true;
+          setTimeout(function () {
+            // Gjør synlig MENS den ennå står utenfor kanten (klippet), så glir inn.
+            node.style.visibility = 'visible';
+            node.style.translate = '0px 0px';
+          }, 60 + idx * 150);
+        }
+        if (im2 && im2.complete && im2.naturalWidth) reveal();
+        else if (im2) { im2.addEventListener('load', reveal); im2.addEventListener('error', reveal); }
+        else reveal();
+        setTimeout(reveal, 3500); // failsafe: aldri permanent skjult
+      })(f.el, f.layers[0], i);
+    });
+    hgFirstLoad = false;
     if (reducedMotion()) return;
 
     // Sprett-bytte = bare flytt z-index til et annet (allerede malt) lag.
