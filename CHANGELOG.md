@@ -1,5 +1,10 @@
 ## Siste endringer
 
+**28.06.26 · Admin: topplinje-finpuss (tilbakepil + innlogget-status)**
+- **Pila i «Tilbake til nettsiden» flyttet bak teksten** — den står nå etter ordene i stedet for foran («Tilbake til nettsiden ←»).
+- **«✓ Logget inn» vises i selve baren.** Når du er innlogget vises nå en dempet «✓ Logget inn»-status akkurat der «Logg inn»-knappen sitter når du er logget ut, så det er tydelig i toppen at du er innlogget (ikke bare inne i ⚙-menyen).
+- Berørt fil: `admin.html`.
+
 **28.06.26 · Admin: «🗂 Oversikt»-knapp i alle paneler**
 - **Alle panelene har nå Oversikt-knappen** øverst i redigeringsruten, ikke bare Styret og Begrep. Klikker du **🗂 Oversikt** får du panelets **egen oversikt** med kort for hver seksjon eller liste (f.eks. Pensum: Topp, Emnekatalog, Pensum-markedet, Studieretningene osv.). Klikk et kort for å åpne den delen.
 - **«← Oversikt»-lenke i hver detaljvisning**, så man kommer like enkelt tilbake fra en seksjon, et listeelement eller en innstilling — uansett paneltype (seksjoner, enkeltlister, filtre og samlinger).

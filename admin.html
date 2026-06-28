@@ -611,6 +611,9 @@ body { font-family: var(--body); background: var(--app-bg); color: var(--ink); d
 /* ── «Logg inn for å publisere» — alltid synlig i baren når man IKKE er innlogget ── */
 .a-login { padding: 7px 15px; background: var(--gold); color: var(--navy); border: none; border-radius: 4px; font-family: var(--body); font-size: .82rem; font-weight: 700; cursor: pointer; white-space: nowrap; flex: 0 0 auto; }
 .a-login:hover { filter: brightness(1.08); }
+/* Innlogget-status — vises på samme plass som «Logg inn»-knappen når man ER innlogget */
+.a-login--in { background: rgba(244,236,217,.08); color: rgba(244,236,217,.88); border: 1px solid rgba(244,236,217,.3); cursor: default; font-weight: 600; }
+.a-login--in:hover { filter: none; }
 
 /* «Tilbake til nettsiden» (direkte, samme fane) — ligger ved siden av tittelen,
    og dytter resten (status/angre/logg inn/⚙) helt til høyre. */
@@ -686,7 +689,7 @@ body { font-family: var(--body); background: var(--app-bg); color: var(--ink); d
   <header class="a-header">
     <img src="assets/apeiron-logo.png" alt="">
     <h1>Admin-senter</h1>
-    <a class="a-back" href="index.html" data-keep-token data-self><span class="a-back__ico">←</span> <span class="a-back__txt">Tilbake til nettsiden</span></a>
+    <a class="a-back" href="index.html" data-keep-token data-self><span class="a-back__txt">Tilbake til nettsiden</span> <span class="a-back__ico">←</span></a>
     <div class="ctx" id="ctx">
       <span class="pub-count" id="pub-count"></span>
       <button class="reset-link" id="reset-all-btn" type="button" style="display:none" title="Tilbakestill alle upubliserte endringer til siste publiserte versjon">↺ Angre alle</button>
@@ -1857,12 +1860,12 @@ body { font-family: var(--body); background: var(--app-bg); color: var(--ink); d
     if (acctBox) acctBox.style.display = s.authenticated ? '' : 'none';
     if (s.authenticated) {
       ghAuth.innerHTML = '<div class="gh-id"><span class="gh-dot"></span><span class="gh-who">Innlogget som <b>' + (s.login || 'ukjent') + '</b></span></div>';
-      if (loginBar) loginBar.style.display = 'none';
+      if (loginBar) { loginBar.style.display = ''; loginBar.textContent = '✓ Logget inn'; loginBar.classList.add('a-login--in'); loginBar.setAttribute('aria-disabled', 'true'); }
       if (logoutItem) logoutItem.style.display = '';
     } else {
       var notAllowed = (s.error === 'not_allowed');
       ghAuth.innerHTML = '<div class="gh-id"><span class="gh-dot gh-dot--off"></span><span class="gh-who">' + (notAllowed ? ('Ingen tilgang (' + (s.login || '') + ')') : 'Ikke innlogget') + '</span></div>';
-      if (loginBar) { loginBar.style.display = ''; loginBar.textContent = notAllowed ? 'Ingen tilgang' : 'Logg inn'; }
+      if (loginBar) { loginBar.style.display = ''; loginBar.textContent = notAllowed ? 'Ingen tilgang' : 'Logg inn'; loginBar.classList.remove('a-login--in'); loginBar.removeAttribute('aria-disabled'); }
       if (logoutItem) logoutItem.style.display = 'none';
     }
     updateGhVisibility(changedPanels().length);
@@ -2385,6 +2388,7 @@ body { font-family: var(--body); background: var(--app-bg); color: var(--ink); d
     var acctSettings = document.getElementById('acct-settings');
     var loginBar = document.getElementById('gh-login-bar');
     if (loginBar) loginBar.addEventListener('click', function () {
+      if (loginBar.classList.contains('a-login--in')) return; // allerede innlogget — bare status
       var s = (window.AdminGitHub && window.AdminGitHub.state) || {};
       if (!window.AdminGitHub) { window.AdminCommon.toast('GitHub-publisering er ikke tilgjengelig her.'); return; }
       if (s.offline || s.unavailable) { window.AdminCommon.toast('GitHub-publisering virker kun på den publiserte siden (Cloudflare), ikke når du åpner filene lokalt.'); return; }
