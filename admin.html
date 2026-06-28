@@ -102,9 +102,9 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
 .pub-btn--backup:hover { border-color: var(--navy); background: rgba(35,39,64,.04); }
 .pub-btn--backup:disabled { opacity: .55; cursor: progress; }
 /* ── «Angre siste publisering» (rull tilbake forrige commit) ── */
-.undo-pub { margin: 12px 0 2px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-.undo-pub-btn { flex: 0 0 auto; padding: 8px 15px; background: transparent; color: var(--navy); border: 1px solid var(--border); border-radius: 6px; font-family: var(--body); font-size: .82rem; font-weight: 700; cursor: pointer; transition: border-color .15s, background .15s; }
-.undo-pub-btn:hover { border-color: var(--navy); background: rgba(35,39,64,.05); }
+.undo-pub { margin: 14px 0 2px; padding: 13px 15px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; border: 1px solid rgba(118,17,15,.28); border-radius: 8px; background: rgba(118,17,15,.045); }
+.undo-pub-btn { flex: 0 0 auto; padding: 8px 15px; background: #fff; color: #76110f; border: 1px solid rgba(118,17,15,.4); border-radius: 6px; font-family: var(--body); font-size: .82rem; font-weight: 700; cursor: pointer; transition: border-color .15s, background .15s; }
+.undo-pub-btn:hover { border-color: #76110f; background: rgba(118,17,15,.06); }
 .undo-pub-btn:disabled { opacity: .55; cursor: progress; }
 .undo-pub-hint { flex: 1; min-width: 180px; font-size: .76rem; color: var(--ink-soft); line-height: 1.45; }
 /* Detaljer i angre-modalen */
@@ -699,15 +699,15 @@ body { font-family: var(--body); background: #e4dcc8; color: var(--ink); display
         <p>Hvordan vil du redigere lister (f.eks. styremedlemmer)? <b>Liste + detalj</b> samler alt i en smal meny til venstre og viser ett skjema om gangen, mye mindre skrolling. <b>Klassisk</b> viser alle kortene under hverandre. Valget lagres i nettleseren din.</p>
       </div>
       <div class="layout-seg" role="radiogroup" aria-label="Panelvisning">
-        <button type="button" class="layout-seg__opt" data-layout="klassisk" role="radio" aria-checked="false">
-          <span class="ls-ico ls-ico--classic"><i></i><i></i><i></i></span>
-          <span class="ls-name">Klassisk</span>
-          <span class="ls-sub">Alle kort under hverandre</span>
-        </button>
         <button type="button" class="layout-seg__opt" data-layout="liste-detalj" role="radio" aria-checked="false">
           <span class="ls-ico ls-ico--md"><b></b><i></i></span>
           <span class="ls-name">Liste + detalj</span>
           <span class="ls-sub">Meny til venstre, ett skjema om gangen</span>
+        </button>
+        <button type="button" class="layout-seg__opt" data-layout="klassisk" role="radio" aria-checked="false">
+          <span class="ls-ico ls-ico--classic"><i></i><i></i><i></i></span>
+          <span class="ls-name">Klassisk</span>
+          <span class="ls-sub">Alle kort under hverandre</span>
         </button>
       </div>
     </div>
