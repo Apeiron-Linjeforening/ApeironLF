@@ -1838,11 +1838,6 @@ body { font-family: var(--body); background: var(--app-bg); color: var(--ink); d
     if (m) m.hidden = true;
     if (g) g.setAttribute('aria-expanded', 'false');
   }
-  function openAcctMenu() {
-    var m = acctMenuEl(); var g = document.getElementById('settings-btn');
-    if (m) m.hidden = false;
-    if (g) g.setAttribute('aria-expanded', 'true');
-  }
   function renderAuth() {
     if (!ghAuth) return;
     var s = (window.AdminGitHub && window.AdminGitHub.state) || { authenticated: false };

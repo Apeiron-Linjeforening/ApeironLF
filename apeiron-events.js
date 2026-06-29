@@ -334,23 +334,6 @@
     });
   }
 
-  // ---- ICS-eksport («Legg hele programmet i din egen kalender») ----------
-  function toIcsDate(d, allDay) {
-    function p(n) { return n < 10 ? '0' + n : '' + n; }
-    if (allDay) {
-      return d.getFullYear() + '' + p(d.getMonth() + 1) + '' + p(d.getDate());
-    }
-    return d.getFullYear() + '' + p(d.getMonth() + 1) + '' + p(d.getDate())
-      + 'T' + p(d.getHours()) + '' + p(d.getMinutes()) + '00';
-  }
-  function escIcs(s) { return (s || '').replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n'); }
-  function foldLine(s) {
-    // ICS lines max 75 octets; fold with CRLF + space
-    var out = '', i = 0;
-    while (i < s.length) { out += (i ? '\r\n ' : '') + s.slice(i, i + 75); i += 75; }
-    return out;
-  }
-
   function showCalPopup(btn, calId) {
     // Fjern eventuelle eksisterende popups
     var existing = document.querySelector('.cal-popup');

@@ -8,6 +8,7 @@
 *Fjernet død kode*
 - **31 ubrukte variabler og funksjoner fjernet** (Note-varsler): bl.a. ubrukte `burger`/`grid`-DOM-oppslag på de offentlige sidene, og døde hjelpefunksjoner i admin-modulene og kjernen (`isAuthed`, `injectLogout`, `idbGet`/`idbSet`, `verifyPermission`, `find`, `renderMD`, `buildIcs`, `stripHtml`, m.fl.). Ingen av dem hadde kallsteder.
 - **Hele den gamle crop-modalen i `admin-modules/merch.js` er fjernet** (~110 linjer). Bilderedigeringen ble for lengst skrevet om til den delte `AdminImageEditor`, men den lokale `openCrop`-modal-kjeden lå igjen som død kode (inkl. tilhørende opprydding i `destroy()`). «Rediger»-knappen på produktbilder virker uendret — den bruker `AdminImageEditor.open(…)`.
+- **Andre runde (kaskade):** å fjerne døde funksjoner gjorde deres private hjelpere ubrukte, som CodeQL så flagget. Også fjernet: den døde ICS-fil-eksporten i `apeiron-events.js` (`toIcsDate`, `escIcs`, `foldLine` — bare brukt av den slettede `buildIcs`; «Abonner på kalender» via `webcal://` er en annen, levende funksjon og er urørt) og `openAcctMenu` i `admin.html` (bare kalt av den slettede `toggleAcctMenu`; `closeAcctMenu` brukes fortsatt og står igjen).
 
 *Småfiks*
 - **`galleri.html`:** `for (… ; i < (n || 6); …)` → `i < n` — eneste kall er `showSkeletons(6)`, så `|| 6`-fallbacken var død («useless conditional»).
