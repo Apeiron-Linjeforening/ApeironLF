@@ -4,9 +4,10 @@
 # Disse headerne er trygge å sette.
 
 /*
-  # Hindrer clickjacking. SAMEORIGIN (ikke DENY) fordi Admin-senteret
-  # viser de offentlige sidene i egne <iframe>-forhåndsvisninger.
-  X-Frame-Options: SAMEORIGIN
+  # Clickjacking-beskyttelse håndteres av "frame-ancestors 'self'" i CSP-en
+  # nederst (den moderne erstatningen for X-Frame-Options). Vi setter IKKE
+  # X-Frame-Options i tillegg — da klager nettleseren bare på at de to
+  # overlapper. frame-ancestors gjør samme jobb (kun egne sider kan ramme inn).
   # Nettleseren må respektere oppgitt filtype (hindrer MIME-sniffing).
   X-Content-Type-Options: nosniff
   # Begrenser hvor mye av adressen som lekker til eksterne lenker.
