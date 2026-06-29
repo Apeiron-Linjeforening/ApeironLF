@@ -1,8 +1,7 @@
 # Cloudflare Pages — HTTP-sikkerhetsheadere
-# Trygg basisversjon (uten Content-Security-Policy).
-# CSP er bevisst utelatt: den må skreddersys etter Google Calendar/Drive/Fonts
-# og inline-skriptene siden bruker, ellers blokkeres egen funksjonalitet.
-# Disse headerne er trygge å sette uten testing.
+# Inkluderer en Content-Security-Policy (CSP) skreddersydd for sidens faktiske
+# bruk av Google Fonts, Google Calendar/Drive-API og inline-skript.
+# Disse headerne er trygge å sette.
 
 /*
   # Hindrer clickjacking. SAMEORIGIN (ikke DENY) fordi Admin-senteret
@@ -16,3 +15,21 @@
   Strict-Transport-Security: max-age=31536000; includeSubDomains
   # Slår av nettleserfunksjoner siden ikke bruker.
   Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
+  # ── Content-Security-Policy ──────────────────────────────────────────────
+  # Hva nettleseren har LOV til å laste. Alt som ikke står her, blokkeres —
+  # f.eks. et innsmuglet <script src="ondsinnet-domene.com">. CSP-en MÅ stå på
+  # én linje (én header-verdi). Hva hver del betyr:
+  #   default-src 'self'          : standard = bare egne filer
+  #   script-src ... 'unsafe-inline' : egne skript + sidens inline-<script>.
+  #       (Ingen eksterne skript tillatt — det stopper den vanligste hærverk-
+  #        metoden: å laste fremmed JavaScript inn på siden.)
+  #   style-src ... fonts.googleapis.com : egne stiler, inline-stiler, Google Fonts-CSS
+  #   font-src ... fonts.gstatic.com     : selve fontfilene fra Google Fonts
+  #   img-src 'self' data: blob: https:  : egne + innlimte + Drive/YouTube-bilder
+  #   connect-src ... googleapis/script.google.com : kalender/Drive-API + merch-skjema
+  #   frame-src ...               : egne forhåndsvisninger + evt. YouTube/Spotify/Forms-embed
+  #   frame-ancestors 'self'      : kun egne sider kan ramme inn dette (mot clickjacking)
+  #   object-src 'none'           : ingen Flash/plugins
+  #   base-uri 'self'             : hindrer at injisert <base> kaprer relative lenker
+  # Legger du til et nytt eksternt embed/tjeneste senere, må riktig kilde inn her.
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://www.googleapis.com https://script.google.com; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://docs.google.com https://open.spotify.com; frame-ancestors 'self'; object-src 'none'; base-uri 'self'; upgrade-insecure-requests

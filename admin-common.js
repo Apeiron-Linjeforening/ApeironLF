@@ -15,7 +15,10 @@
 (function () {
   'use strict';
 
-  var PASSWORD = 'apeiron2026';        // ← endre admin-passordet her (gjelder alle paneler)
+  // MERK: Det gamle klient-passordet er fjernet. Det ga falsk trygghet — det lå
+  // i klartekst i denne fila og ble ikke lenger sjekket av setupAuth. Den ekte
+  // beskyttelsen er GitHub-innloggingen på serveren (functions/api/github/)
+  // sammen med ALLOWED_LOGINS.
   var AUTH_KEY = 'apeiron-admin-auth'; // delt nøkkel: innlogging gjelder ALLE admin-sider
 
   // Les auth fra både local- og sessionStorage (bakoverkompatibelt).
@@ -902,7 +905,6 @@
   }
 
   window.AdminCommon = {
-    PASSWORD: PASSWORD,
     setupAuth: setupAuth,
     logout: logout,
     toast: toast,
