@@ -1,0 +1,13 @@
+# robots.txt — Apeiron, linjeforening for filosofi og etikk ved NTNU
+# Vi ønsker crawlere velkommen, inkludert KI-/LLM-crawlere (de gjør oss synlige
+# i KI-svar). Bilde-/kalender-API-kallene skjer i klient-JavaScript som
+# crawlere ikke kjører, så de belaster ikke Google-kvoten vår.
+
+# Alle crawlere: tillatt overalt, unntatt admin og interne API-ruter.
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /api/
+
+# Sitemap hjelper både søkemotorer og KI å finne alle sidene raskt.
+Sitemap: https://apeironlf.pages.dev/sitemap.xml

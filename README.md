@@ -263,6 +263,17 @@ og tillegg.
 
 ---
 
+## Synlighet i søkemotorer og KI
+
+Siden er satt opp for å bli funnet i søkemotorer (Google, Bing) og av KI/LLM-er som
+søker på vegne av brukere: `robots.txt`, `sitemap.xml`, kanoniske URL-er, delingskort
+(`og:`/`twitter:`) og maskinlesbare strukturerte data (JSON-LD) som beskriver hvem
+Apeiron er. Alt er usynlig for besøkende og rører ikke admin. Full forklaring + hva som
+må vedlikeholdes (særlig: oppdater `sitemap.xml` ved nye sider, og bytt basis-URL ved
+nytt domene) står i **[VEDLIKEHOLD.md → Synlighet i søkemotorer og KI (SEO)](VEDLIKEHOLD.md#synlighet-i-søkemotorer-og-ki-seo)**.
+
+---
+
 ## Kjente begrensninger og usikkerheter
 
 Ting vi vet om, men er usikre på om det er verdt å gjøre noe med. Ført opp så de ikke glemmes, ikke nødvendigvis feil som må fikses.
@@ -318,6 +329,15 @@ Page-builder Prosjekt:
 - [ ] Vurdere om vi skal få bedre domene.
 
 **NTNU-alternativ (`apeiron.org.ntnu.no`) viser nå til nettsiden**
+
+> 🔁 **Sjekk at redirecten er 301 (permanent), ikke 302 (midlertidig).** En 301 lar
+> NTNU-domenets autoritet «arve» over til nettsiden i søkemotorer; en 302 gjør det ikke.
+> Test i terminal:
+> ```
+> curl -sI https://apeiron.org.ntnu.no | grep -i "^HTTP\|^location"
+> ```
+> Se etter `HTTP/.. 301` (bra) eller `308` (også permanent). Får du `302`/`307`, be den
+> som satte opp redirecten (IT/IFR) om å gjøre den permanent.
 
 <details>
 <summary><b>Domene-status og priser</b></summary>

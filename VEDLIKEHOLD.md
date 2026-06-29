@@ -18,8 +18,9 @@ Apps Script).
 7. [Slik fungerer søket](#slik-fungerer-søket)
 8. [Merch-bestilling: Google Sheet + Apps Script](#merch-bestilling-google-sheet--apps-script)
 9. [Filstruktur](#filstruktur)
-10. [Sikkerhet og konfigurasjon](#sikkerhet-og-konfigurasjon)
-11. [Første gangs oppsett (Cloudflare)](#første-gangs-oppsett-cloudflare)
+10. [Synlighet i søkemotorer og KI (SEO)](#synlighet-i-søkemotorer-og-ki-seo)
+11. [Sikkerhet og konfigurasjon](#sikkerhet-og-konfigurasjon)
+12. [Første gangs oppsett (Cloudflare)](#første-gangs-oppsett-cloudflare)
 
 ---
 
@@ -541,6 +542,8 @@ function doPost(e) {
 | `.gitignore` | Hva git hopper over (bl.a. `api-config.js`, `Plan F.html`) |
 | `.github/dependabot.yml` | Ukentlig sjekk av GitHub Actions-avhengigheter |
 | `_headers` | Cloudflare Pages: HTTP-sikkerhetsheadere (trygg basis, uten CSP) |
+| `robots.txt` | Crawler-regler: slipper inn søkemotorer/KI, holder admin+api ute, peker til sitemap |
+| `sitemap.xml` | Liste over alle offentlige sider (oppdateres manuelt — se [SEO](#synlighet-i-søkemotorer-og-ki-seo)) |
 
 **Bilder**
 
@@ -554,6 +557,58 @@ function doPost(e) {
 | `assets/logikk-panikk/` | Plakatbilder brukt på oppslagstavla |
 | `assets/oppnaelser/` | Bilder for oppnåelser-siden |
 | `assets/apeiron-logo.png` | Logoen |
+
+---
+
+## Synlighet i søkemotorer og KI (SEO)
+
+Tiltakene under gjør siden lettere å finne i søkemotorer (Google, Bing) og i KI/LLM-er
+som søker på vegne av brukere (ChatGPT-søk, Perplexity, Google AI o.l.). Alt er
+**maskinlesbar metadata** — ingenting av dette vises for besøkende, og det rører verken
+admin, publisering eller hvordan siden ser ut.
+
+> ⚠️ **Ikke skjult tekst i `<body>`.** Søkeordstappet, menneske-usynlig brødtekst
+> (white-on-white, `display:none`, 0px-font) er en «black hat»-teknikk som Google og
+> store LLM-er straffer (nedrangering/avindeksering). Den lovlige «usynlige» kanalen er
+> JSON-LD og meta-tagger under — bruk dem, ikke skjult body-tekst.
+
+**Hva som er på plass**
+
+| Hva | Hvor | Rolle |
+| --- | --- | --- |
+| `robots.txt` | rot | Slipper inn alle crawlere (også KI), nekter `/admin.html` + `/api/`, peker til sitemap |
+| `sitemap.xml` | rot | Liste over de 14 offentlige sidene med `lastmod`/`priority` |
+| JSON-LD (`Organization`) | `index.html` `<head>` | Forteller hvem Apeiron er (NTNU, Dragvoll, 1981, sosiale lenker) |
+| JSON-LD (`AboutPage`) | `om-oss.html` `<head>` | Fyldig, ærlig beskrivelse av foreningen + `knowsAbout` (fagområder) |
+| `<link rel="canonical">` | alle 14 sider | Offisiell adresse per side — hindrer duplikat-telling |
+| `og:*` + `twitter:*` | alle 14 sider | Pene delingskort på Facebook/LinkedIn/X |
+| `google-site-verification` | `index.html` `<head>` | Verifiserer eierskap i Google Search Console — **må ikke fjernes** |
+
+**Vedlikehold — to ting å huske:**
+
+1. **Ny eller fjernet side?** Oppdater `sitemap.xml` manuelt (siden har ikke byggesteg,
+   så den genereres ikke automatisk). Legg/fjern en `<url>`-blokk og sett riktig `<loc>`.
+   Robots.txt trenger normalt ingen endring.
+2. **Bytter dere domene?** Alle absolutte URL-er peker i dag på `https://apeironlf.pages.dev`.
+   Ved nytt domene må basis-URL-en byttes i `robots.txt`, `sitemap.xml` og i `<head>`
+   (`canonical`, `og:url`, `og:image`, `twitter:image`, JSON-LD) på alle sider. Finn alle
+   forekomstene med:
+   ```
+   grep -rn "apeironlf.pages.dev" *.html robots.txt sitemap.xml
+   ```
+
+**Engangsoppsett hos søkemotorene (gjøres i nettleser, ikke i koden):**
+
+- **Google Search Console** ([search.google.com/search-console](https://search.google.com/search-console)):
+  legg til eiendommen `https://apeironlf.pages.dev`, verifiser via HTML-tag (allerede i
+  `index.html`), og send inn `sitemap.xml` under «Sitemaps». Gir innsikt i søkeord,
+  indeksering og feil.
+- **Bing Webmaster Tools** ([bing.com/webmasters](https://www.bing.com/webmasters)):
+  samme prinsipp. Bing driver søket bak ChatGPT, så dette treffer KI-synligheten direkte.
+
+> 💡 Crawlere kjører ikke JavaScript, så de utløser **ikke** Google Calendar/Drive-API-kallene
+> (de skjer klient-side). Å slippe crawlere inn belaster derfor ikke API-kvoten; statiske
+> bilder serveres uansett av Cloudflares CDN.
 
 ---
 
