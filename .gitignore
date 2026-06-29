@@ -17,3 +17,9 @@ Plan F.html
 # Arbeidsfiler (ikke del av nettsiden)
 screenshots/
 uploads/
+
+# Utfylt eierskaps-/overleveringsark — inneholder ekte driftsdetaljer og skal
+# ALDRI være offentlig. Repoet har kun den tomme malen
+# (docs/eierskap-og-overlevering.template.md); den utfylte kopien holdes privat
+# (foreningens Google Drive / passordmanager).
+docs/eierskap-og-overlevering.md

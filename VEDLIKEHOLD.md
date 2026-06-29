@@ -614,6 +614,11 @@ admin, publisering eller hvordan siden ser ut.
 
 ## Sikkerhet og konfigurasjon
 
+> 👉 **Hvem eier hva, og hvordan overleveres det til neste styre?** Se
+> [docs/eierskap-og-overlevering.template.md](docs/eierskap-og-overlevering.template.md) — en ikke-teknisk
+> oversikt over kontoer (domene, Cloudflare, GitHub, Google), hvor innlogginger ligger,
+> løpende vedlikehold og en sjekkliste for styreskifte.
+
 - **`api-config.js`** er en gitignorert lokal stub for Google-API-nøkkelen. I produksjon
   injiseres nøkkelen av Cloudflare, og **commit aldri** en ekte nøkkel. Nøkkelen er
   offentlig synlig i klienten og **må** derfor være låst i Google Cloud Console til

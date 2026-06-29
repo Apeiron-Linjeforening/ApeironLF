@@ -21,7 +21,10 @@
 
 *Dypere kodeskanning*
 - **CodeQL kjører nå `security-extended,security-and-quality`** (`.github/workflows/codeql.yml`) for grundigere automatisk sårbarhetsskanning ved hver push og PR.
-- Berørte filer: `functions/api/github/commit.js`, `_headers`, `apeiron-events.js`, `admin-common.js`, `.github/workflows/codeql.yml`, `VEDLIKEHOLD.md`.
+
+*Eierskap og overlevering*
+- **Ny mal [docs/eierskap-og-overlevering.template.md](docs/eierskap-og-overlevering.template.md)** — en ikke-teknisk oversikt over hvem som eier hva (domene, Cloudflare, GitHub, Google), hvor innlogginger ligger, løpende vedlikehold og en sjekkliste for styreskifte. Skal hindre at foreningen mister tilgang når folk uteksamineres. Den **utfylte** kopien (`docs/eierskap-og-overlevering.md`) er git-ignorert og holdes privat, siden den inneholder driftsdetaljer som ikke skal i et offentlig repo.
+- Berørte filer: `functions/api/github/commit.js`, `_headers`, `apeiron-events.js`, `admin-common.js`, `.github/workflows/codeql.yml`, `docs/eierskap-og-overlevering.template.md` (ny), `.gitignore`, `VEDLIKEHOLD.md`.
 
 **28.06.26 · Admin: topplinje-finpuss (tilbakepil + innlogget-status)**
 - **Pila i «Tilbake til nettsiden» flyttet bak teksten** — den står nå etter ordene i stedet for foran («Tilbake til nettsiden ←»).
