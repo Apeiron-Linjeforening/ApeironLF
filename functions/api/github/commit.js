@@ -7,6 +7,22 @@
    Svar: { ok, commit, url } eller { ok:false, error }. */
 import { cfg, json, readCookie, gh } from './_common.js';
 
+// Sikkerhetsvakt: Admin-panelet skal BARE publisere innhold (tekst, HTML,
+// bilder) — aldri selve byggekjeden eller server-/sikkerhetskonfigurasjonen.
+// Det hindrer at en kapret admin-økt kan plante en bakdør (egen Cloudflare-
+// funksjon, en GitHub Action) eller svekke sikkerhetshodene/CSP-en. Disse
+// stiene endres kun via vanlig git-push av en utvikler, aldri via admin.
+function isForbiddenPath(p) {
+  var x = String(p == null ? '' : p).replace(/^\/+/, '').toLowerCase();
+  if (x.indexOf('..') >= 0) return true;             // ingen sti-traversering
+  if (x.indexOf('functions/') === 0) return true;    // Cloudflare Pages Functions (server-kode)
+  if (x.indexOf('.github/') === 0) return true;      // GitHub Actions / workflows
+  if (x === '_headers' || x === '_redirects') return true; // HTTP-headere (CSP) + redirects
+  if (x === 'api-config.js') return true;            // API-nøkkel-stub
+  if (x === '.gitignore' || x === 'wrangler.toml') return true;
+  return false;
+}
+
 export async function onRequestPost(context) {
   var request = context.request, c = cfg(context.env);
   var token = readCookie(request, 'gh_token');
@@ -45,6 +61,7 @@ export async function onRequestPost(context) {
   for (var i = 0; i < files.length; i++) {
     var f = files[i];
     if (!f || !f.path) continue;
+    if (isForbiddenPath(f.path)) return json({ ok: false, error: 'forbidden_path', path: f.path }, 403);
     var enc = f.encoding === 'base64' ? 'base64' : 'utf-8';
     var blob = await gh(base + '/git/blobs', token, { method: 'POST', body: { content: String(f.content == null ? '' : f.content), encoding: enc } });
     if (!blob.ok || !blob.data || !blob.data.sha) return json({ ok: false, error: 'blob_failed', path: f.path, detail: blob.data }, 502);

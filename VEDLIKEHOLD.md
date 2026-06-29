@@ -560,10 +560,28 @@ function doPost(e) {
 ## Sikkerhet og konfigurasjon
 
 - **`api-config.js`** er en gitignorert lokal stub for Google-API-nøkkelen. I produksjon
-  injiseres nøkkelen av Cloudflare, og **commit aldri** en ekte nøkkel.
+  injiseres nøkkelen av Cloudflare, og **commit aldri** en ekte nøkkel. Nøkkelen er
+  offentlig synlig i klienten og **må** derfor være låst i Google Cloud Console til
+  riktig domene (HTTP-referrer) og kun Calendar + Drive API.
 - **Bot-filter-token** (`MERCH_ORDER_TOKEN`) er et drive-by-spam-filter, ikke
   ekte sikkerhet. Hold ekte `SHEET_ID` / `/exec`-URL utenfor offentlige filer.
-- **`_headers`** gir HTTP-sikkerhetsheadere via Cloudflare Pages (trygg basis, uten CSP).
+- **`_headers`** gir HTTP-sikkerhetsheadere via Cloudflare Pages, inkludert en
+  **Content-Security-Policy (CSP)** skreddersydd for sidens kilder (Google Fonts,
+  Calendar/Drive-API, merch-skjema, egne inline-skript). Legger du til en ny ekstern
+  tjeneste eller embed, må riktig kilde inn i CSP-en, ellers blokkeres den. Clickjacking
+  styres av `frame-ancestors 'self'` (erstatter `X-Frame-Options`).
+- **Admin-publisering er begrenset til innhold.** `functions/api/github/commit.js` har en
+  forbudt-liste (`isForbiddenPath`) som avviser skriving til `functions/`, `.github/`,
+  `_headers`, `_redirects`, `api-config.js`, `.gitignore`, `wrangler.toml` og stier med
+  `..`. Disse filene endres **kun via vanlig git-push** av en utvikler, aldri via admin.
+  Skal admin kunne publisere en ny type fil, må lista justeres tilsvarende.
+- **Ingen klient-passord på admin.** Admin-UI er åpent, men selve publiseringen krever
+  GitHub-innlogging på serveren (`functions/api/github/`) + `ALLOWED_LOGINS`. Den ekte
+  beskyttelsen er altså server-side, ikke i nettleseren.
+- **Automatisk skanning:** CodeQL (`.github/workflows/codeql.yml`, `security-extended`),
+  Dependabot og Dependency Review kjører på GitHub. Anbefalt i tillegg: 2FA på alle
+  GitHub-kontoer i `ALLOWED_LOGINS` + Cloudflare, og en ruleset på `main` som blokkerer
+  force-push og sletting.
 - Galleri bruker en Google-API-nøkkel via `window.GOOGLE_API_KEY`; Drive-mappa må deles
   «Alle med lenken kan se».
 

@@ -1,5 +1,23 @@
 ## Siste endringer
 
+**29.06.26 · Sikkerhet: herding av admin-publisering, CSP og kalenderparsing**
+
+*Begrenset hva admin kan skrive*
+- **Publiser-endepunktet kan ikke lenger skrive til systemfiler.** En ny «forbudt-liste» i `functions/api/github/commit.js` avviser forsøk på å skrive til `functions/`, `.github/`, `_headers`, `_redirects`, `api-config.js`, `.gitignore` og `wrangler.toml` (samt enhver sti med `..`). Admin trenger kun å publisere innhold (tekst, HTML, bilder), så dette rammer ingen vanlig publisering, men hindrer at en kapret admin-økt kan plante en bakdør (egen Cloudflare-funksjon eller GitHub Action) eller svekke sikkerhetshodene. Disse filene endres kun via vanlig git-push av en utvikler. Avvist forsøk svarer `forbidden_path`.
+
+*Content-Security-Policy (CSP)*
+- **`_headers` har nå en CSP** skreddersydd for sidens faktiske bruk (Google Fonts, Google Calendar/Drive-API, merch-skjema, egne inline-skript). Den blokkerer bl.a. innsmuglet eksternt JavaScript (`script-src 'self'` uten eksterne kilder), den vanligste hærverksmetoden på hackede sider. Clickjacking-vernet styres nå av `frame-ancestors 'self'` i CSP-en; den overflødige `X-Frame-Options`-headeren er fjernet (de to overlappet og ga en konsoll-advarsel).
+
+*Tryggere kalenderparsing*
+- **Google Calendar-beskrivelsen parses nå med `DOMParser`** i `apeiron-events.js` i stedet for å settes som `innerHTML` på et midlertidig element. `DOMParser` kjører aldri skript eller event-handlere (f.eks. `<img onerror>`), så en oppføring kan ikke utløse kode. Resultatet (selve teksten / påmeldingslenken) er uendret.
+
+*Ryddet bort falsk trygghet*
+- **Det gamle klient-passordet (`apeiron2026`) er fjernet** fra `admin-common.js`. Det lå i klartekst og ble ikke lenger sjekket av `setupAuth`. Den ekte beskyttelsen er GitHub-innloggingen på serveren (`functions/api/github/`) sammen med `ALLOWED_LOGINS`.
+
+*Dypere kodeskanning*
+- **CodeQL kjører nå `security-extended,security-and-quality`** (`.github/workflows/codeql.yml`) for grundigere automatisk sårbarhetsskanning ved hver push og PR.
+- Berørte filer: `functions/api/github/commit.js`, `_headers`, `apeiron-events.js`, `admin-common.js`, `.github/workflows/codeql.yml`, `VEDLIKEHOLD.md`.
+
 **28.06.26 · Admin: topplinje-finpuss (tilbakepil + innlogget-status)**
 - **Pila i «Tilbake til nettsiden» flyttet bak teksten** — den står nå etter ordene i stedet for foran («Tilbake til nettsiden ←»).
 - **«✓ Logget inn» vises i selve baren.** Når du er innlogget vises nå en dempet «✓ Logget inn»-status akkurat der «Logg inn»-knappen sitter når du er logget ut, så det er tydelig i toppen at du er innlogget (ikke bare inne i ⚙-menyen).

@@ -67,15 +67,21 @@
       place: e.place || '', desc: e.desc || '', link: ''
     };
   }
+  // Parser HTML trygt: DOMParser kjører ALDRI skript eller event-handlere
+  // (f.eks. <img onerror>), i motsetning til å sette innerHTML på et element.
+  // Kalender-beskrivelsen kommer fra vår egen Google-kalender, men dette
+  // fjerner risikoen helt om en oppføring skulle inneholde ondsinnet markup.
+  function parseHtml(s) {
+    return new DOMParser().parseFromString(String(s == null ? '' : s), 'text/html');
+  }
   function stripHtml(s) {
-    var d = document.createElement('div'); d.innerHTML = s;
-    return (d.textContent || '').trim();
+    return (parseHtml(s).body.textContent || '').trim();
   }
   function extractSignupUrl(rawHtml) {
-    var d = document.createElement('div'); d.innerHTML = rawHtml;
-    var anchors = d.querySelectorAll('a[href]');
+    var doc = parseHtml(rawHtml);
+    var anchors = doc.querySelectorAll('a[href]');
     for (var i = 0; i < anchors.length; i++) {
-      var h = anchors[i].href || '';
+      var h = anchors[i].getAttribute('href') || '';
       if (h.indexOf('forms.gle') > -1 || h.indexOf('docs.google.com/forms') > -1) return h;
     }
     var m = rawHtml.match(/https?:\/\/(?:forms\.gle|docs\.google\.com\/forms\/[^\s"<>]+)/);
