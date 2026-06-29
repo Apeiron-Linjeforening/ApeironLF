@@ -204,7 +204,7 @@
 
       var pvFrame = q('pv-board');
       function pushPreview() { if (!pvFrame || !pvFrame.contentWindow) return; try { pvFrame.contentWindow.postMessage({ type: 'apeiron-marked-preview', content: data }, '*'); } catch (e) {} }
-      function onPreviewMsg(e) { if (e.data && e.data.type === 'apeiron-marked-preview-ready') { pushPreview(); fitPreview(); } }
+      function onPreviewMsg(e) { if (e.origin !== window.location.origin) return; if (e.data && e.data.type === 'apeiron-marked-preview-ready') { pushPreview(); fitPreview(); } }
       function fitPreview() {
         var wrap = host.querySelector('.pv-board-wrap');
         if (!pvFrame || !wrap) return;

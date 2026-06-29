@@ -230,7 +230,7 @@
       function pushPreview() { if (!pvFrame || !pvFrame.contentWindow) return; try { pvFrame.contentWindow.postMessage({ type: 'apeiron-membership-preview', content: store.data }, '*'); } catch (e) {} }
       var origSave = store.save;
       store.save = function () { origSave(); pushPreview(); };
-      function onPreviewMsg(e) { if (e.data && e.data.type === 'apeiron-membership-preview-ready') { pushPreview(); fitPreview(); } }
+      function onPreviewMsg(e) { if (e.origin !== window.location.origin) return; if (e.data && e.data.type === 'apeiron-membership-preview-ready') { pushPreview(); fitPreview(); } }
       function fitPreview() {
         var wrap = host.querySelector('.pv-board-wrap');
         if (!pvFrame || !wrap) return;

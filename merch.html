@@ -574,7 +574,6 @@ html[data-mode="marine"] .cart-item__rm:hover { color: var(--navy); background: 
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
-  var burger = document.getElementById('burger');
   var drawer = document.getElementById('drawer');
   function closeDrawer() { drawer.classList.remove('is-open'); document.body.style.overflow = ''; }
   /* Mobilmeny håndteres nå av site-chrome.js (ikke dupliser her) */
@@ -806,6 +805,7 @@ html[data-mode="marine"] .cart-item__rm:hover { color: var(--navy); background: 
       try { parent.postMessage({ type: 'apeiron-merch-preview-height', height: document.documentElement.scrollHeight }, '*'); } catch (e) {}
     };
     window.addEventListener('message', function (e) {
+      if (e.origin !== window.location.origin) return;
       var d = e.data;
       if (!d || d.type !== 'apeiron-merch-preview') return;
       if (Array.isArray(d.products)) window.MERCH_PRODUCTS = d.products;

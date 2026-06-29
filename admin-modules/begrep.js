@@ -143,7 +143,6 @@
         });
         var titleVal = item[schema.titleField] || '(uten navn)';
         var hasImg = !!schema.img;
-        var zoneCls = list === 'films' ? 'img-zone poster' : 'img-zone';
         card.innerHTML =
           '<div class="card-head"><span class="drag-handle" title="Dra for å sortere">⠿</span>'
             + '<span class="card-title">' + esc(titleVal) + '</span>'
@@ -251,7 +250,7 @@
 
       var pvFrame = q('pv-page');
       function pushPreview() { if (!pvFrame || !pvFrame.contentWindow) return; try { pvFrame.contentWindow.postMessage({ type: 'apeiron-begrep-preview', content: data }, '*'); } catch (e) {} }
-      function onPreviewMsg(e) { if (e.data && e.data.type === 'apeiron-begrep-preview-ready') { pushPreview(); fitPreview(); } }
+      function onPreviewMsg(e) { if (e.origin !== window.location.origin) return; if (e.data && e.data.type === 'apeiron-begrep-preview-ready') { pushPreview(); fitPreview(); } }
       function fitPreview() {
         var wrap = host.querySelector('.pv-page-wrap');
         if (!pvFrame || !wrap) return;

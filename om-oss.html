@@ -172,6 +172,7 @@
     var reveal = function () { document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); }); };
     var fillMembership = function () { if (window.renderMembership) { try { window.renderMembership(); } catch (_) {} } };
     window.addEventListener('message', function (e) {
+      if (e.origin !== window.location.origin) return;
       var d = e.data; if (!d) return;
       if (d.type === 'apeiron-page-preview') {
         if (d.page) window.OM_PAGE = d.page;

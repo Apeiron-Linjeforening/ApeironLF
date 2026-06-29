@@ -1,5 +1,19 @@
 ## Siste endringer
 
+**29.06.26 · Kodekvalitet: ryddet 65 CodeQL-varsler (postMessage-herding + død kode)**
+
+*Origin-verifisering på alle postMessage-mottakere*
+- **Alle `message`-lyttere sjekker nå avsenderen.** CodeQL flagget 31 postMessage-handlere (live-forhåndsvisningen mellom admin og de offentlige sidene) som manglet avsender-sjekk. Hver handler har fått `if (e.origin !== window.location.origin) return;` som første linje. Admin og de offentlige sidene deler origin, så forhåndsvisningen virker som før — men en side som blir embeddet et fremmed sted kan ikke lenger sende falske preview-meldinger inn i handleren.
+
+*Fjernet død kode*
+- **31 ubrukte variabler og funksjoner fjernet** (Note-varsler): bl.a. ubrukte `burger`/`grid`-DOM-oppslag på de offentlige sidene, og døde hjelpefunksjoner i admin-modulene og kjernen (`isAuthed`, `injectLogout`, `idbGet`/`idbSet`, `verifyPermission`, `find`, `renderMD`, `buildIcs`, `stripHtml`, m.fl.). Ingen av dem hadde kallsteder.
+- **Hele den gamle crop-modalen i `admin-modules/merch.js` er fjernet** (~110 linjer). Bilderedigeringen ble for lengst skrevet om til den delte `AdminImageEditor`, men den lokale `openCrop`-modal-kjeden lå igjen som død kode (inkl. tilhørende opprydding i `destroy()`). «Rediger»-knappen på produktbilder virker uendret — den bruker `AdminImageEditor.open(…)`.
+
+*Småfiks*
+- **`galleri.html`:** `for (… ; i < (n || 6); …)` → `i < n` — eneste kall er `showSkeletons(6)`, så `|| 6`-fallbacken var død («useless conditional»).
+- **`admin-common.js`:** fjernet en duplisert `undoable`-nøkkel (identisk verdi) i retur-objektet («duplicate property»).
+- Berørte filer: alle offentlige `*.html` og `apeiron-*.js` med forhåndsvisning, `admin-modules/*.js`, `admin-common.js`, `admin-image-editor.js`, `admin-panel-shell.js`, `membership.js`, `merch-cart.js`, `site-search.js`.
+
 **29.06.26 · Bugfiks: navigasjonsbaren kollapset altfor tidlig til burger**
 - **Menylenkene forsvant til burgermenyen lenge før de faktisk gikk tom for plass.** Nav-en hadde to kollapsmekanismer som krasjet: en JS-måling som sjekker om lenkene får plass (riktig), og en hard fallback-media-query på `max-width:1120px` som alltid var aktiv og skjulte lenkene uansett. Sistnevnte slo til allerede ved litt nettleser-zoom (effektiv bredde under 1120px selv om vinduet så bredt ut), så burgeren dukket opp altfor tidlig.
 - **Fallbacken er nå kun et nett for når JS ikke kjører.** `site-chrome.js` setter `nav-js` på `<html>` når den styrer nav-en, og media-queryen er skopet til `html:not(.nav-js)`. Når JS kjører er det dermed den innholdsbaserte målingen alene som avgjør når burgeren vises — på ekte smale skjermer er oppførselen uendret (`.nav.is-collapsed`-reglene dekker allerede farge- og søkeknapp-justeringene).

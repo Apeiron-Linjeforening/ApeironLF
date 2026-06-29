@@ -351,41 +351,6 @@
     return out;
   }
 
-  function buildIcs(events) {
-    var lines = [
-      'BEGIN:VCALENDAR',
-      'VERSION:2.0',
-      'PRODID:-//Apeiron Linjeforening//NTNU//NO',
-      'CALSCALE:GREGORIAN',
-      'METHOD:PUBLISH',
-      'X-WR-CALNAME:Apeiron Linjeforening',
-      'X-WR-TIMEZONE:Europe/Oslo'
-    ];
-    events.forEach(function (e, i) {
-      var dtStart = toIcsDate(e.start, e.allDay);
-      // default duration 2h for timed events
-      var end = new Date(e.start.getTime() + (e.allDay ? 0 : 2 * 3600000));
-      var dtEnd = toIcsDate(end, e.allDay);
-      var uid = 'apeiron-' + i + '-' + e.start.getTime() + '@apeironlf.no';
-      lines.push('BEGIN:VEVENT');
-      lines.push(foldLine('UID:' + uid));
-      if (e.allDay) {
-        lines.push('DTSTART;VALUE=DATE:' + dtStart);
-        lines.push('DTEND;VALUE=DATE:' + dtEnd);
-      } else {
-        lines.push('DTSTART;TZID=Europe/Oslo:' + dtStart);
-        lines.push('DTEND;TZID=Europe/Oslo:' + dtEnd);
-      }
-      lines.push(foldLine('SUMMARY:' + escIcs(e.cat !== 'Arrangement' ? e.cat + ': ' + e.title : e.title)));
-      if (e.desc) lines.push(foldLine('DESCRIPTION:' + escIcs(e.desc)));
-      if (e.place) lines.push(foldLine('LOCATION:' + escIcs(e.place)));
-      if (e.link) lines.push(foldLine('URL:' + e.link));
-      lines.push('END:VEVENT');
-    });
-    lines.push('END:VCALENDAR');
-    return lines.join('\r\n');
-  }
-
   function showCalPopup(btn, calId) {
     // Fjern eventuelle eksisterende popups
     var existing = document.querySelector('.cal-popup');

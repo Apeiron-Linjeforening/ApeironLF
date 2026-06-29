@@ -67,7 +67,6 @@
       var saveTimer = null;
       function lazySave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveData, 350); }
       function uid(pfx) { return pfx + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
-      function find(id) { return data.posters.find(function (x) { return x.id === id; }); }
       function fmtArchived(ts) { if (!ts) return ''; try { return new Date(ts).toLocaleDateString('no-NO', { day: 'numeric', month: 'short', year: 'numeric' }); } catch (_) { return ''; } }
 
       // opplasting + redigering håndteres av AdminCommon.wireImageField (delt) i posterCard
@@ -231,14 +230,13 @@
           onAdd: function () { add(); return data.posters[0] && data.posters[0].id; }
         }]
       });
-      function mdActive() { return shell.isActive(); }
       function applyPanelLayout() { shell.layoutChanged(); }
       window.addEventListener('apeiron-panellayout', applyPanelLayout);
 
       /* ── live forhåndsvisning ── */
       var pvFrame = q('pv-board');
       function pushPreview() { if (!pvFrame || !pvFrame.contentWindow) return; try { pvFrame.contentWindow.postMessage({ type: 'apeiron-oppslag-preview', content: data }, '*'); } catch (e) {} }
-      function onPreviewMsg(e) { if (e.data && e.data.type === 'apeiron-oppslag-preview-ready') { pushPreview(); fitPreview(); } }
+      function onPreviewMsg(e) { if (e.origin !== window.location.origin) return; if (e.data && e.data.type === 'apeiron-oppslag-preview-ready') { pushPreview(); fitPreview(); } }
       function fitPreview() {
         var wrap = host.querySelector('.pv-board-wrap');
         if (!pvFrame || !wrap) return;

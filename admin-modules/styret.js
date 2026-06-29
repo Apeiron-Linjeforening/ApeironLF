@@ -165,7 +165,6 @@
       function lazySave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveData, 350); }
       function uid(pfx) { return pfx + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
       function initialsFrom(name) { return String(name || '').split(/\s+/).filter(Boolean).map(function (w) { return w[0]; }).join('').toUpperCase().slice(0, 4); }
-      function find(list, id) { return data[list].find(function (x) { return x.id === id; }); }
 
       // Bygger <option>-liste for styreperiode (årskull), f.eks. «2024 / 2025».
       // Genereres automatisk rundt inneværende studieår. Egendefinerte/eldre
@@ -719,7 +718,6 @@
         ]
       });
       function mdActive() { return shell.isActive(); }
-      function renderMD() { shell.refresh(); }
       function applyPanelLayout() { shell.layoutChanged(); }
 
       var DEFAULTS = {
@@ -853,6 +851,7 @@
         try { pvFrame.contentWindow.postMessage(msg, '*'); } catch (e) {}
       }
       function onPreviewMsg(e) {
+        if (e.origin !== window.location.origin) return;
         if (!e.data) return;
         if (e.data.type === 'apeiron-styret-preview-ready' || e.data.type === 'apeiron-styret-arkiv-preview-ready') { pushPreview(); fitPreview(); }
       }

@@ -1054,7 +1054,6 @@ body { font-family: var(--body); background: var(--app-bg); color: var(--ink); d
   var frameWrap = document.getElementById('frame-wrap');
   var panelHost = document.getElementById('panel-host');
   var panelHostInner = document.getElementById('panel-host-inner');
-  var grid = document.getElementById('card-grid');
   var sidenav = document.getElementById('sidenav');
   var adminEl = document.getElementById('admin');
   var ctx = document.getElementById('ctx');
@@ -1843,10 +1842,6 @@ body { font-family: var(--body); background: var(--app-bg); color: var(--ink); d
     var m = acctMenuEl(); var g = document.getElementById('settings-btn');
     if (m) m.hidden = false;
     if (g) g.setAttribute('aria-expanded', 'true');
-  }
-  function toggleAcctMenu() {
-    var m = acctMenuEl();
-    if (m && m.hidden) openAcctMenu(); else closeAcctMenu();
   }
   function renderAuth() {
     if (!ghAuth) return;

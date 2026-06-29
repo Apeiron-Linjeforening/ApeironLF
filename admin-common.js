@@ -21,31 +21,11 @@
   // sammen med ALLOWED_LOGINS.
   var AUTH_KEY = 'apeiron-admin-auth'; // delt nøkkel: innlogging gjelder ALLE admin-sider
 
-  // Les auth fra både local- og sessionStorage (bakoverkompatibelt).
-  function isAuthed() {
-    try {
-      return localStorage.getItem(AUTH_KEY) === '1' ||
-             sessionStorage.getItem(AUTH_KEY) === '1';
-    } catch (_) { return false; }
-  }
-
   function logout() {
     try { localStorage.removeItem(AUTH_KEY); sessionStorage.removeItem(AUTH_KEY); } catch (_) {}
     // Naviger til den offentlige forsiden i stedet for å laste admin på nytt
     // (ellers blir man stående fast på passord-gaten uten vei tilbake).
     location.href = 'index.html';
-  }
-
-  // Legg til en «Logg ut»-knapp i admin-headeren (én gang).
-  function injectLogout(adminEl) {
-    var header = adminEl && adminEl.querySelector('.a-header');
-    if (!header || header.querySelector('.btn-logout')) return;
-    var b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'btn-logout';
-    b.textContent = 'Logg ut';
-    b.addEventListener('click', logout);
-    header.appendChild(b);
   }
 
   /* ─── AUTH ───
@@ -452,31 +432,6 @@
       };
       r.onsuccess = function () { res(r.result); };
       r.onerror = function () { rej(r.error); };
-    });
-  }
-  function idbGet(key) {
-    return idb().then(function (db) {
-      return new Promise(function (res, rej) {
-        var t = db.transaction(STORE, 'readonly').objectStore(STORE).get(key);
-        t.onsuccess = function () { res(t.result); };
-        t.onerror = function () { rej(t.error); };
-      });
-    });
-  }
-  function idbSet(key, val) {
-    return idb().then(function (db) {
-      return new Promise(function (res, rej) {
-        var t = db.transaction(STORE, 'readwrite').objectStore(STORE).put(val, key);
-        t.onsuccess = function () { res(); };
-        t.onerror = function () { rej(t.error); };
-      });
-    });
-  }
-  function verifyPermission(handle) {
-    var opts = { mode: 'readwrite' };
-    return handle.queryPermission(opts).then(function (p) {
-      if (p === 'granted') return true;
-      return handle.requestPermission(opts).then(function (p2) { return p2 === 'granted'; });
     });
   }
   /* ─── PUBLISERINGS-SINK (G1) ───
@@ -928,7 +883,6 @@
     enableDragSort: enableDragSort,
     draftBaseline: draftBaseline,
     persistDraft: persistDraft,
-    undoable: undoable,
     createStore: createStore,
     readDraftOr: readDraftOr,
     previewDevice: previewDevice,

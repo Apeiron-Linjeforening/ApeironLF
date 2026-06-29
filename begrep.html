@@ -919,6 +919,7 @@ html[data-begrep-mode="print"] .drawer__mode .drawer__mode-label[data-ed="digita
      Lytter etter innhold fra admin og re-renderer med ekte stil. */
   if (IS_PREVIEW) {
     window.addEventListener('message', function (e) {
+      if (e.origin !== window.location.origin) return;
       var d = e.data;
       if (!d || d.type !== 'apeiron-begrep-preview') return;
       if (d.content) window.BEGREP_CONTENT = d.content;
@@ -930,7 +931,6 @@ html[data-begrep-mode="print"] .drawer__mode .drawer__mode-label[data-ed="digita
     try { parent.postMessage({ type: 'apeiron-begrep-preview-ready' }, '*'); } catch (ev) {}
   }
 
-  var burger = document.getElementById('burger');
   var drawer = document.getElementById('drawer');
   function closeDrawer() { drawer.classList.remove('is-open'); document.body.style.overflow = ''; }
   /* Mobilmeny håndteres nå av site-chrome.js (ikke dupliser her) */

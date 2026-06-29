@@ -304,6 +304,7 @@ html[data-mode="marine"] .honor-chip.is-active { background: var(--gold); color:
       try { parent.postMessage({ type: 'apeiron-utmerkelser-preview-height', height: document.documentElement.scrollHeight }, '*'); } catch (e) {}
     };
     window.addEventListener('message', function (e) {
+      if (e.origin !== window.location.origin) return;
       var d = e.data;
       if (!d || d.type !== 'apeiron-utmerkelser-preview') return;
       if (d.content) window.UTMERKELSER_CONTENT = d.content;

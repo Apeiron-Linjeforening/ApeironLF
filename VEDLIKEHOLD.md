@@ -638,6 +638,14 @@ admin, publisering eller hvordan siden ser ut.
 - **Ingen klient-passord på admin.** Admin-UI er åpent, men selve publiseringen krever
   GitHub-innlogging på serveren (`functions/api/github/`) + `ALLOWED_LOGINS`. Den ekte
   beskyttelsen er altså server-side, ikke i nettleseren.
+- **Live-forhåndsvisning (postMessage) verifiserer avsender.** Admin laster de offentlige
+  sidene i en iframe (`?preview=1`) og utveksler `postMessage` begge veier (innhold inn,
+  høyde/«ready» tilbake). Hver `message`-lytter starter derfor med
+  `if (e.origin !== window.location.origin) return;` — admin og sidene deler origin, så
+  forhåndsvisningen virker som normalt, men en fremmed innbygging kan ikke sende falske
+  meldinger inn. **Legger du til en ny forhåndsvisning eller `message`-handler, ta med
+  samme origin-sjekk som første linje** — ellers flagger CodeQL den («Missing origin
+  verification in postMessage handler»).
 - **Automatisk skanning:** CodeQL (`.github/workflows/codeql.yml`, `security-extended`),
   Dependabot og Dependency Review kjører på GitHub. Anbefalt i tillegg: 2FA på alle
   GitHub-kontoer i `ALLOWED_LOGINS` + Cloudflare, og en ruleset på `main` som blokkerer

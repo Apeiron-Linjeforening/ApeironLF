@@ -165,9 +165,6 @@
     if (rafId) { try { window.cancelAnimationFrame(rafId); } catch (e) {} rafId = null; }
   }
 
-  // ── Pseudo-tilfeldig (stabil) for D-posisjoner ──
-  function pr(i) { var x = Math.sin(i * 12.9898) * 43758.5453; return x - Math.floor(x); }
-
   function reducedMotion() {
     try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; }
   }
@@ -612,6 +609,7 @@
   // ── Live forhåndsvisning fra Admin → Forsiden ──
   if (IS_PREVIEW) {
     window.addEventListener('message', function (e) {
+      if (e.origin !== window.location.origin) return;
       var d = e.data;
       if (!d || d.type !== 'apeiron-index-preview') return;
       if (d.content) window.INDEX_CONTENT = d.content;

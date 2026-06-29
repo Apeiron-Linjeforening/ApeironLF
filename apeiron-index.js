@@ -37,7 +37,7 @@
 
   function renderIndex() {
     var C = window.INDEX_CONTENT || {};
-    var hero = C.hero || {}, medlem = C.medlem || {}, kontakt = C.kontakt || {};
+    var hero = C.hero || {}, kontakt = C.kontakt || {};
     var arr = C.arr || {}, apo = C.apo || {}, fadder = C.fadder || {};
 
     /* ── HERO ── */
@@ -167,6 +167,7 @@
       try { parent.postMessage({ type: 'apeiron-index-preview-height', height: document.documentElement.scrollHeight }, '*'); } catch (e) {}
     };
     window.addEventListener('message', function (e) {
+      if (e.origin !== window.location.origin) return;
       var d = e.data;
       if (!d || d.type !== 'apeiron-index-preview') return;
       if (d.content) window.INDEX_CONTENT = d.content;

@@ -82,7 +82,6 @@
   var fab      = root.querySelector('.cart-fab');
   var badge    = root.querySelector('.cart-fab__count');
   var overlay  = root.querySelector('.cart-overlay');
-  var drawer   = root.querySelector('.cart-drawer');
   var itemsEl  = root.querySelector('.cart-items');
   var form     = root.querySelector('.cart-checkout');
   var statusEl = root.querySelector('.cart-status');

@@ -99,7 +99,6 @@
 
   function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML; }
   function pad(n) { return n < 10 ? '0' + n : '' + n; }
-  function stripHtml(s) { var d = document.createElement('div'); d.innerHTML = s; return (d.textContent || '').trim(); }
   function dayMs() { return 86400000; }
   function midnight(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime(); }
   function fmtDate(d) { return d.getDate() + '. ' + MONTHS[d.getMonth()]; }

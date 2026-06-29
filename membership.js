@@ -64,6 +64,7 @@
      Lytter etter ny config og re-renderer «Bli medlem»-kortet. */
   if (IS_PREVIEW) {
     window.addEventListener('message', function (e) {
+      if (e.origin !== window.location.origin) return;
       var d = e.data;
       if (!d || d.type !== 'apeiron-membership-preview') return;
       if (d.content) window.MEMBERSHIP_CONFIG = d.content;

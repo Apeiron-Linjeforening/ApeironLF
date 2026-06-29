@@ -276,7 +276,7 @@
 
       var pvFrame = q('pv-frame');
       function pushPreview() { if (!pvFrame || !pvFrame.contentWindow) return; try { pvFrame.contentWindow.postMessage({ type: 'apeiron-news-preview', items: data.items, subhero: data.subhero }, '*'); } catch (e) {} }
-      function onPreviewMsg(e) { if (e.data && e.data.type === 'apeiron-news-preview-ready') { pushPreview(); } }
+      function onPreviewMsg(e) { if (e.origin !== window.location.origin) return; if (e.data && e.data.type === 'apeiron-news-preview-ready') { pushPreview(); } }
       function fitPreview() {
         var wrap = host.querySelector('.pv-wrap');
         if (!pvFrame || !wrap) return;

@@ -75,7 +75,6 @@
       var saveTimer = null;
       function lazySave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveData, 350); }
       function uid(pfx) { return pfx + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
-      function find(id) { return data.awards.find(function (x) { return x.id === id; }); }
 
       // bildefelt håndteres av AdminCommon.wireImageField (delt) i awardCard
 
@@ -201,7 +200,7 @@
       /* ── live forhåndsvisning (oppnaelser.html?preview=1) ── */
       var pvFrame = host.querySelector('#pv-frame');
       function pushPreview() { if (!pvFrame || !pvFrame.contentWindow) return; try { pvFrame.contentWindow.postMessage({ type: 'apeiron-oppnaelser-preview', content: data }, '*'); } catch (e) {} }
-      function onPreviewMsg(e) { if (e.data && e.data.type === 'apeiron-oppnaelser-preview-ready') { pushPreview(); fitPreview(); } }
+      function onPreviewMsg(e) { if (e.origin !== window.location.origin) return; if (e.data && e.data.type === 'apeiron-oppnaelser-preview-ready') { pushPreview(); fitPreview(); } }
       function fitPreview() {
         var wrap = host.querySelector('.pv-frame-wrap');
         if (!pvFrame || !wrap) return;

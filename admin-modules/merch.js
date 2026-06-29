@@ -3,7 +3,7 @@
    Erstatter merch-admin.html. Krever palette.js (createColorControl,
    APEIRON_ANIMATED) og merch-products.js (MERCH_PRODUCTS / MERCH_INFO),
    som skallet (admin.html) laster. Live forhåndsvisning via merch.html?preview=1.
-   Bildegalleri pr. produkt med crop/zoom (modal på body), rotasjon,
+   Bildegalleri pr. produkt med bilderedigering (via AdminImageEditor),
    farge-bilde-kobling, badge, fargekontroller. Rydder opp på destroy.
    ============================================================ */
 (function () {
@@ -160,25 +160,6 @@
           syncPrimary(pp); renderGallery(prodId); lazySave();
         });
       }
-      function rotateImageAt(prodId, idx) {
-        var p = prod(prodId); if (!p || !p.images[idx]) return;
-        var prev = p.images[idx];
-        var img = new Image();
-        img.onload = function () {
-          var canvas = document.createElement('canvas');
-          canvas.width = img.height; canvas.height = img.width;
-          var ctx = canvas.getContext('2d');
-          ctx.translate(canvas.width / 2, canvas.height / 2);
-          ctx.rotate(Math.PI / 2);
-          ctx.drawImage(img, -img.width / 2, -img.height / 2);
-          p.images[idx] = canvas.toDataURL('image/webp', 0.82);
-          syncPrimary(p); renderGallery(prodId); lazySave();
-          AC.undoable('Bilde rotert', function () {
-            var pp = prod(prodId); if (pp && pp.images[idx] != null) { pp.images[idx] = prev; syncPrimary(pp); renderGallery(prodId); lazySave(); }
-          });
-        };
-        img.src = p.images[idx];
-      }
       function reorderImages(prodId, ids) {
         var p = prod(prodId); if (!p) return;
         var order = ids.map(function (s) { return parseInt(s, 10); }).filter(function (n) { return !isNaN(n) && n < p.images.length; });
@@ -238,91 +219,6 @@
         Object.keys(cm).forEach(function (k) { if (cm[k] === idx) delete cm[k]; });
         if (color) cm[color] = idx;
         renderGallery(prodId); lazySave();
-      }
-
-      /* ── crop/zoom (modal på body) ── */
-      var crop = null, cropEls = null;
-      function cropKeydown(e) { if (e.key === 'Escape' && crop) closeCrop(); }
-      function buildCropModal() {
-        if (cropEls) return cropEls;
-        var ov = document.createElement('div');
-        ov.className = 'crop-ov';
-        ov.innerHTML =
-          '<div class="crop-box"><h3>Beskjær / zoom</h3>'
-            + '<div class="crop-view"><img alt=""></div>'
-            + '<div class="crop-row"><span>Zoom</span><input type="range" class="crop-zoom" min="1" max="4" step="0.01" value="1"></div>'
-            + '<p class="crop-hint">Dra bildet for å flytte. Zoom med glidebryteren eller scrollhjulet. «Bruk» beskjærer til et kvadrat.</p>'
-            + '<div class="crop-actions"><button type="button" class="crop-cancel">Avbryt</button><button type="button" class="crop-apply">Bruk</button></div>'
-          + '</div>';
-        document.body.appendChild(ov);
-        var view = ov.querySelector('.crop-view');
-        var img = ov.querySelector('.crop-view img');
-        var zoom = ov.querySelector('.crop-zoom');
-        cropEls = { ov: ov, view: view, img: img, zoom: zoom };
-        ov.addEventListener('click', function (e) { if (e.target === ov) closeCrop(); });
-        ov.querySelector('.crop-cancel').addEventListener('click', closeCrop);
-        ov.querySelector('.crop-apply').addEventListener('click', applyCrop);
-        zoom.addEventListener('input', function () { setCropZoom(parseFloat(zoom.value)); });
-        var dragging = false, lastX = 0, lastY = 0;
-        view.addEventListener('pointerdown', function (e) { if (!crop) return; dragging = true; lastX = e.clientX; lastY = e.clientY; try { view.setPointerCapture(e.pointerId); } catch (_) {} e.preventDefault(); });
-        view.addEventListener('pointermove', function (e) { if (!dragging || !crop) return; crop.x += e.clientX - lastX; crop.y += e.clientY - lastY; lastX = e.clientX; lastY = e.clientY; clampCrop(); applyCropView(); });
-        function endDrag(e) { dragging = false; try { view.releasePointerCapture(e.pointerId); } catch (_) {} }
-        view.addEventListener('pointerup', endDrag);
-        view.addEventListener('pointercancel', endDrag);
-        view.addEventListener('wheel', function (e) { if (!crop) return; e.preventDefault(); var rect = view.getBoundingClientRect(); var z = (crop.s / crop.base) * (e.deltaY < 0 ? 1.1 : 1 / 1.1); z = Math.max(1, Math.min(4, z)); cropZoomAt(crop.base * z, e.clientX - rect.left, e.clientY - rect.top); }, { passive: false });
-        document.addEventListener('keydown', cropKeydown);
-        return cropEls;
-      }
-      function openCrop(prodId, idx) {
-        var p = prod(prodId); if (!p || !p.images[idx]) return;
-        var els = buildCropModal();
-        els.ov.classList.add('on'); els.img.src = p.images[idx];
-        var image = new Image();
-        image.onload = function () {
-          var V = els.view.clientWidth || 320;
-          var base = V / Math.min(image.naturalWidth, image.naturalHeight);
-          crop = { prodId: prodId, idx: idx, img: image, V: V, base: base, s: base, x: 0, y: 0 };
-          crop.x = (V - image.naturalWidth * crop.s) / 2;
-          crop.y = (V - image.naturalHeight * crop.s) / 2;
-          els.zoom.value = '1'; clampCrop(); applyCropView();
-        };
-        image.src = p.images[idx];
-      }
-      function setCropZoom(z) { if (!crop) return; cropZoomAt(crop.base * z, crop.V / 2, crop.V / 2); }
-      function cropZoomAt(newS, px, py) {
-        if (!crop) return;
-        var ix = (px - crop.x) / crop.s, iy = (py - crop.y) / crop.s;
-        crop.s = newS; crop.x = px - ix * crop.s; crop.y = py - iy * crop.s;
-        clampCrop(); applyCropView();
-        if (cropEls) cropEls.zoom.value = String(Math.max(1, Math.min(4, crop.s / crop.base)));
-      }
-      function clampCrop() {
-        if (!crop) return;
-        var V = crop.V;
-        var w = crop.img.naturalWidth * crop.s, h = crop.img.naturalHeight * crop.s;
-        crop.x = w <= V ? (V - w) / 2 : Math.max(V - w, Math.min(0, crop.x));
-        crop.y = h <= V ? (V - h) / 2 : Math.max(V - h, Math.min(0, crop.y));
-      }
-      function applyCropView() {
-        if (!cropEls || !crop) return;
-        var im = cropEls.img;
-        im.style.width = (crop.img.naturalWidth * crop.s) + 'px';
-        im.style.height = (crop.img.naturalHeight * crop.s) + 'px';
-        im.style.left = crop.x + 'px'; im.style.top = crop.y + 'px';
-      }
-      function closeCrop() { if (cropEls) cropEls.ov.classList.remove('on'); crop = null; }
-      function applyCrop() {
-        if (!crop) return;
-        var s = crop.s, V = crop.V;
-        var sx = -crop.x / s, sy = -crop.y / s, sw = V / s, sh = V / s;
-        var OUT = Math.min(900, Math.max(1, Math.round(sw)));
-        var canvas = document.createElement('canvas');
-        canvas.width = OUT; canvas.height = OUT;
-        canvas.getContext('2d').drawImage(crop.img, sx, sy, sw, sh, 0, 0, OUT, OUT);
-        var url = canvas.toDataURL('image/webp', 0.85);
-        var p = prod(crop.prodId);
-        if (p && p.images[crop.idx] != null) { p.images[crop.idx] = url; syncPrimary(p); renderGallery(crop.prodId); lazySave(); }
-        closeCrop();
       }
 
       function setField(id, field, val) {
@@ -518,7 +414,7 @@
       /* ── live forhåndsvisning ── */
       var pvFrame = q('pv-shop');
       function pushPreview() { if (!pvFrame || !pvFrame.contentWindow) return; try { pvFrame.contentWindow.postMessage({ type: 'apeiron-merch-preview', products: products, info: info, infoLabel: infoLabel, subhero: subhero }, '*'); } catch (e) {} }
-      function onPreviewMsg(e) { if (e.data && e.data.type === 'apeiron-merch-preview-ready') { pushPreview(); fitShop(); } }
+      function onPreviewMsg(e) { if (e.origin !== window.location.origin) return; if (e.data && e.data.type === 'apeiron-merch-preview-ready') { pushPreview(); fitShop(); } }
       function fitShop() {
         var wrap = host.querySelector('.pv-shop-wrap');
         if (!pvFrame || !wrap) return;
@@ -550,9 +446,6 @@
           window.removeEventListener('resize', fitShop);
           window.removeEventListener('apeiron-panellayout', applyPanelLayout);
           if (shell) shell.destroy();
-          document.removeEventListener('keydown', cropKeydown);
-          if (cropEls && cropEls.ov && cropEls.ov.parentNode) cropEls.ov.parentNode.removeChild(cropEls.ov);
-          cropEls = null;
         }
       };
     }

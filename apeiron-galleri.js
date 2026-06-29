@@ -36,6 +36,7 @@
       try { parent.postMessage({ type: 'apeiron-galleri-preview-height', height: document.documentElement.scrollHeight }, '*'); } catch (e) {}
     };
     window.addEventListener('message', function (e) {
+      if (e.origin !== window.location.origin) return;
       var d = e.data;
       if (!d || d.type !== 'apeiron-galleri-preview') return;
       if (d.content) window.GALLERI_CONTENT = d.content;

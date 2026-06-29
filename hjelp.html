@@ -499,6 +499,7 @@ html[data-mode="marine"] .akutt-card--life { background: #2e1c20; border-color: 
   /* ── Live forhåndsvisning fra hjelp-admin (hjelp.html?preview=1) ── */
   if (IS_PREVIEW) {
     window.addEventListener('message', function (e) {
+      if (e.origin !== window.location.origin) return;
       var d = e.data;
       if (!d || d.type !== 'apeiron-hjelp-preview') return;
       if (d.content) window.HJELP_CONTENT = d.content;
@@ -518,7 +519,6 @@ html[data-mode="marine"] .akutt-card--life { background: #2e1c20; border-color: 
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
-  var burger = document.getElementById('burger');
   var drawer = document.getElementById('drawer');
   function closeDrawer() { drawer.classList.remove('is-open'); document.body.style.overflow = ''; }
   /* Mobilmeny håndteres nå av site-chrome.js (ikke dupliser her) */

@@ -200,6 +200,7 @@
       try { parent.postMessage({ type: 'apeiron-pensum-preview-height', height: document.documentElement.scrollHeight }, '*'); } catch (e) {}
     };
     window.addEventListener('message', function (e) {
+      if (e.origin !== window.location.origin) return;
       var d = e.data;
       if (!d || d.type !== 'apeiron-pensum-preview') return;
       if (d.content) window.PENSUM_CONTENT = d.content;

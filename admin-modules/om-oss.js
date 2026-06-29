@@ -463,6 +463,7 @@
       /* ════════ PREVIEW-RAMME (skalering) ════════ */
       pvFrame = document.getElementById('pv-board');
       function onPreviewMsg(e) {
+        if (e.origin !== window.location.origin) return;
         if (e.data && e.data.type === 'apeiron-om-preview-ready') { pushFull(); fitPreview(); }
       }
       function fitPreview() {

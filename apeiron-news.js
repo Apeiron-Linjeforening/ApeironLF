@@ -54,12 +54,6 @@
     return s.replace(/\r?\n/g, '<br>');
   }
   function pad(n) { return n < 10 ? '0' + n : '' + n; }
-  function fmtPosted(iso) {
-    if (!iso) return '';
-    var d = new Date(iso + 'T00:00:00');
-    if (isNaN(d.getTime())) return iso;
-    return d.toLocaleDateString('no-NO', { day: 'numeric', month: 'long', year: 'numeric' });
-  }
   // Kort dato til «Akkurat nå»-kortet: dropp året når det er inneværende år.
   function fmtShort(iso) {
     if (!iso) return '';
@@ -245,6 +239,7 @@
     try { IS = /[?&]preview\b/.test(location.search) || (window.self !== window.top); } catch (e) {}
     if (!IS) return false;
     window.addEventListener('message', function (e) {
+      if (e.origin !== window.location.origin) return;
       var d = e.data;
       if (!d || d.type !== 'apeiron-news-preview') return;
       if (Array.isArray(d.items)) { state.items = d.items; render(); }

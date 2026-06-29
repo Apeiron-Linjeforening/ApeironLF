@@ -76,7 +76,6 @@
       function lazySave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveData, 350); }
       function uid(pfx) { return pfx + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
       function initialsFrom(name) { return String(name || '').split(/\s+/).filter(Boolean).map(function (w) { return w[0]; }).join('').toUpperCase().slice(0, 4); }
-      function find(id) { return data.people.find(function (x) { return x.id === id; }); }
 
       // Bygger <option>-liste for årskull (studieår), f.eks. 2025/2026. Eldre/ukjente
       // verdier (f.eks. bare «2026») bevares som eget valg så ingenting går tapt.
@@ -230,7 +229,7 @@
       /* ── live forhåndsvisning (utmerkelser.html?preview=1) ── */
       var pvFrame = host.querySelector('#pv-frame');
       function pushPreview() { if (!pvFrame || !pvFrame.contentWindow) return; try { pvFrame.contentWindow.postMessage({ type: 'apeiron-utmerkelser-preview', content: data }, '*'); } catch (e) {} }
-      function onPreviewMsg(e) { if (e.data && e.data.type === 'apeiron-utmerkelser-preview-ready') { pushPreview(); fitPreview(); } }
+      function onPreviewMsg(e) { if (e.origin !== window.location.origin) return; if (e.data && e.data.type === 'apeiron-utmerkelser-preview-ready') { pushPreview(); fitPreview(); } }
       function fitPreview() {
         var wrap = host.querySelector('.pv-frame-wrap');
         if (!pvFrame || !wrap) return;

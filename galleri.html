@@ -466,7 +466,7 @@
   // ── Render skeletons ─────────────────────────
   function showSkeletons(n) {
     var cards = '';
-    for (var i = 0; i < (n || 6); i++) {
+    for (var i = 0; i < n; i++) {
       cards += '<div class="gl-skeleton__card"></div>';
     }
     content.innerHTML = '<div class="gl-skeleton">' + cards + '</div>';
@@ -800,7 +800,6 @@
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
-  var burger = document.getElementById('burger');
   var drawer = document.getElementById('drawer');
   function closeDrawer() { drawer.classList.remove('is-open'); document.body.style.overflow = ''; }
   /* Mobilmeny håndteres nå av site-chrome.js (ikke dupliser her) */

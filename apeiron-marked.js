@@ -81,6 +81,7 @@
       try { parent.postMessage({ type: 'apeiron-marked-preview-height', height: document.documentElement.scrollHeight }, '*'); } catch (e) {}
     };
     window.addEventListener('message', function (e) {
+      if (e.origin !== window.location.origin) return;
       var d = e.data;
       if (!d || d.type !== 'apeiron-marked-preview') return;
       if (d.content) window.MARKED_CONTENT = d.content;

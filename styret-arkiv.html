@@ -379,6 +379,7 @@ html[data-mode="marine"] .arch-member__tag {
   if (IS_PREVIEW) {
     var pvNotify = function () { try { parent.postMessage({ type: 'apeiron-styret-arkiv-preview-height', height: document.documentElement.scrollHeight }, '*'); } catch (e) {} };
     window.addEventListener('message', function (e) {
+      if (e.origin !== window.location.origin) return;
       var d = e.data;
       if (!d || d.type !== 'apeiron-styret-preview') return;
       if (d.content) window.STYRET_CONTENT = d.content;

@@ -451,6 +451,7 @@ html[data-mode="marine"] .role-card { border-left-color: var(--c-d, var(--gold))
       try { parent.postMessage({ type: 'apeiron-styret-preview-height', height: document.documentElement.scrollHeight }, '*'); } catch (e) {}
     };
     window.addEventListener('message', function (e) {
+      if (e.origin !== window.location.origin) return;
       var d = e.data;
       if (!d || d.type !== 'apeiron-styret-preview') return;
       if (d.content) window.STYRET_CONTENT = d.content;
@@ -472,7 +473,6 @@ html[data-mode="marine"] .role-card { border-left-color: var(--c-d, var(--gold))
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
-  var burger = document.getElementById('burger');
   var drawer = document.getElementById('drawer');
   function closeDrawer() { drawer.classList.remove('is-open'); document.body.style.overflow = ''; }
   /* Mobilmeny håndteres nå av site-chrome.js (ikke dupliser her) */

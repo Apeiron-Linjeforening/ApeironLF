@@ -344,7 +344,7 @@
       var url = renderOut();
       var cb = pending.onApply;
       els.ov.classList.remove('on'); st = null;
-      var p = pending; pending = null;
+      pending = null;
       try { cb(url); } catch (e) { console.warn('AdminImageEditor onApply feilet', e); }
       return;
     }

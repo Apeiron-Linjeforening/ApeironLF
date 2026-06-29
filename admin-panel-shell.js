@@ -74,7 +74,6 @@
     }
 
     var wrap = null, sel = null, filterSeg = (cfg.filter && cfg.filter.def) || (cfg.filter && cfg.filter.segments[0] && cfg.filter.segments[0].key) || null;
-    var launchpadShown = false;
     var overview = false;   // «Oversikt»-knappen: vis panelets egen oversikt i detaljruten
     var SET_KEY = '__settings';
     var SEC_KEY = '__section';
