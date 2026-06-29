@@ -209,6 +209,11 @@
     // sticky rett under nav-en og trenger den faktiske høyden, som endrer seg
     // når nav-en krymper i «is-stuck»-tilstand).
     if (nav) {
+      // Marker at JS styrer nav-kollapsen, så den harde fallback-media-queryen
+      // (max-width:1120px) slås av. Da bestemmer den innholdsbaserte målingen
+      // under når burgeren skal vises — ikke en fast breakpoint.
+      document.documentElement.classList.add('nav-js');
+
       // Plassering av lenkene på linja (venstrelent/sentrert/høyrelent + finhakk)
       applyNavAlign();
 

@@ -1249,13 +1249,16 @@ html[data-mode="marine"] .cal-popup__opt:hover{ background:rgba(212,175,55,.1); 
    og setter .is-collapsed når de ikke gjør det (uansett antall punkter). */
 .nav.is-collapsed .nav__links{ display:none; }
 .nav.is-collapsed .nav__burger{ display:block; }
-/* Hard fallback hvis JS ikke kjører: alltid burger på smale skjermer */
+/* Hard fallback KUN hvis JS ikke kjører: alltid burger på smale skjermer.
+   Når JS kjører settes .nav-js på <html>, og da styrer den innholdsbaserte
+   målingen (is-collapsed) kollapsen i stedet — ellers skjules lenkene altfor
+   tidlig selv om de får god plass. */
 @media (max-width:1120px){
-  .nav__links{ display:none; }
-  .nav__burger{ display:block; }
-  .nav__color-toggle{ display:none; }
-  .nav__search-btn:not(.drawer__search-row){ padding:.5em .6em; margin-left:auto; margin-right:4px; }
-  .nav__search-btn:not(.drawer__search-row) .nav__search-hint{ display:none; }
+  html:not(.nav-js) .nav__links{ display:none; }
+  html:not(.nav-js) .nav__burger{ display:block; }
+  html:not(.nav-js) .nav__color-toggle{ display:none; }
+  html:not(.nav-js) .nav__search-btn:not(.drawer__search-row){ padding:.5em .6em; margin-left:auto; margin-right:4px; }
+  html:not(.nav-js) .nav__search-btn:not(.drawer__search-row) .nav__search-hint{ display:none; }
 }
 
 /* ── Nav dropdowns ── */

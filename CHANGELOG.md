@@ -1,5 +1,10 @@
 ## Siste endringer
 
+**29.06.26 · Bugfiks: navigasjonsbaren kollapset altfor tidlig til burger**
+- **Menylenkene forsvant til burgermenyen lenge før de faktisk gikk tom for plass.** Nav-en hadde to kollapsmekanismer som krasjet: en JS-måling som sjekker om lenkene får plass (riktig), og en hard fallback-media-query på `max-width:1120px` som alltid var aktiv og skjulte lenkene uansett. Sistnevnte slo til allerede ved litt nettleser-zoom (effektiv bredde under 1120px selv om vinduet så bredt ut), så burgeren dukket opp altfor tidlig.
+- **Fallbacken er nå kun et nett for når JS ikke kjører.** `site-chrome.js` setter `nav-js` på `<html>` når den styrer nav-en, og media-queryen er skopet til `html:not(.nav-js)`. Når JS kjører er det dermed den innholdsbaserte målingen alene som avgjør når burgeren vises — på ekte smale skjermer er oppførselen uendret (`.nav.is-collapsed`-reglene dekker allerede farge- og søkeknapp-justeringene).
+- Berørte filer: `site-chrome.js`, `styles.css`.
+
 **29.06.26 · Sikkerhet: herding av admin-publisering, CSP og kalenderparsing**
 
 *Begrenset hva admin kan skrive*
