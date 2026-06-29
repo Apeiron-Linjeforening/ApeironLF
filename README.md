@@ -28,13 +28,28 @@ Statisk side (HTML/CSS/JS) på Cloudflare Pages, uten byggesteg og uten avhengig
 ## 🧭 Innhold
 
 **For redaktører (styret):**
-- [Slik endrer du innhold](#slik-endrer-du-innhold-på-apeiron-nettsiden)
+- [🌐 Apeiron: Linjeforeningens nettside](#-apeiron-linjeforeningens-nettside)
+  - [📚 Dokumentasjon](#-dokumentasjon)
+  - [🧭 Innhold](#-innhold)
+- [Slik endrer du innhold på Apeiron-nettsiden](#slik-endrer-du-innhold-på-apeiron-nettsiden)
   - [1. Åpne Admin-senteret](#1-åpne-admin-senteret)
   - [2. Slik redigerer du](#2-slik-redigerer-du)
-  - [3. Slik publiserer du](#3-slik-publiserer-du-gjør-endringene-synlige-for-alle)
+  - [3. Slik publiserer du (gjør endringene synlige for alle)](#3-slik-publiserer-du-gjør-endringene-synlige-for-alle)
   - [4. Hva styrer hva](#4-hva-styrer-hva)
   - [5. Deler som styres utenfor Admin-senteret](#5-deler-som-styres-utenfor-admin-senteret)
+    - [📅 Arrangementer → Google Kalender](#-arrangementer--google-kalender)
+    - [🎓 Fadderuke → Google Kalender](#-fadderuke--google-kalender)
+    - [📷 Galleri → Google Drive](#-galleri--google-drive)
+      - [Hvordan mappene må ligge](#hvordan-mappene-må-ligge)
+      - [Tre ting som er lett å gjøre feil](#tre-ting-som-er-lett-å-gjøre-feil)
+      - [Legg til bilder fra et nytt arrangement](#legg-til-bilder-fra-et-nytt-arrangement)
   - [6. Trenger du noe mer avansert?](#6-trenger-du-noe-mer-avansert)
+  - [Slik er nettsiden bygd (kort)](#slik-er-nettsiden-bygd-kort)
+  - [Synlighet i søkemotorer og KI](#synlighet-i-søkemotorer-og-ki)
+  - [Kjente begrensninger og usikkerheter](#kjente-begrensninger-og-usikkerheter)
+  - [To-do](#to-do)
+  - [Domene](#domene)
+  - [Lisens](#lisens)
 
 **For utviklere / drift:**
 - [Slik er nettsiden bygd (kort)](#slik-er-nettsiden-bygd-kort)
@@ -297,6 +312,7 @@ Ting vi vet om, men er usikre på om det er verdt å gjøre noe med. Ført opp s
 <summary><b>Åpne to-do-lista</b></summary>
 
 Kritisk:
+ - [ ] Sjekke hvordan alt fungerer på mobil. (Husk å sjekke flere forskjellige størrelser på skjermer)
 
 Medium:
 - [ ] Be HF studentrådet om å oppdatere sidene deres og gi oss mer informasjon om hva de faktisk gjør. 
@@ -305,6 +321,7 @@ Medium:
 - [ ] Legge til side for møtereferat -> Kan tas i egen wiki, muligens. Fylle ut SAK / utvide den kan tas på denne wiki siden.
 - [ ] Sammenlign med https://www.mfplacebo.no/
 - [ ] Sjekke at "Legg til fadderukeprogrammet i din kalender" fungerer: iCal og Google Kalender.
+- [ ] Få Admin til å fungere på mobil.
 
 Lav:
 
@@ -313,7 +330,6 @@ Lav:
 - [ ] Automatisk tema endring av sidene: Jul, 17. mai, påske, halloween, fadderukene, frigjøringsdagen, HMS bursdag (legge dette til i en admin fil, muligens... HMS er gammel) + mulighet til å skru de av, endre bilder, farger osv.
 
 Må gjøres før vi slapper av med å bygge nettsiden:
-- [x] Sjekke at alle admin sider fungerer. *(27.06.26: alle 16 paneler verifisert i begge visninger, Liste + detalj og Legacy.)*
 - [ ] Sjekke på nytt hvordan alt oppfører seg på mobil og smalere skjermer.
 
 Page-builder Prosjekt:

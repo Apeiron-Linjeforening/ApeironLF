@@ -4,25 +4,6 @@
    egen <style> slik at den kan supplere eksisterende variabler.
    ============================================================ */
 
-/* «Logg ut»-knapp i admin-headeren (lys tekst — headeren er mørk/navy) */
-.btn-logout {
-  margin-left: 8px;
-  background: transparent;
-  border: 1px solid rgba(244, 236, 217, .35);
-  color: rgba(244, 236, 217, .85);
-  border-radius: 4px;
-  padding: 7px 14px;
-  font-size: .82rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background .15s, color .15s, border-color .15s;
-}
-.btn-logout:hover {
-  background: var(--maroon, #76110f);
-  border-color: var(--maroon, #76110f);
-  color: #fff;
-}
-
 /* Dra-og-slipp sortering (AdminCommon.enableDragSort) */
 .drag-handle { cursor: grab; touch-action: none; user-select: none; }
 .drag-handle:active { cursor: grabbing; }

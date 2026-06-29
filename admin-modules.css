@@ -530,22 +530,6 @@
 .locpop__sec.cur { color: var(--gold-ink); font-weight: 700; }
 .locpop__sec.cur::after { content: ' ✓'; color: var(--gold-ink); }
 .locpop__empty { padding: 18px; text-align: center; color: var(--ink-soft); font-size: .84rem; font-style: italic; }
-.crop-ov { position: fixed; inset: 0; background: rgba(15,17,30,.6); display: none; align-items: center; justify-content: center; z-index: 9500; padding: 20px; font-family: var(--body); }
-.crop-ov.on { display: flex; }
-.crop-box { background: var(--paper); border-radius: 8px; padding: 20px; width: min(380px, 94vw); box-shadow: 0 24px 60px -20px rgba(0,0,0,.5); }
-.crop-box h3 { font-family: var(--display); color: var(--navy); font-size: 1.3rem; margin-bottom: 12px; }
-.crop-view { position: relative; width: 100%; max-width: 320px; aspect-ratio: 1; margin: 0 auto; overflow: hidden; border-radius: 6px; background: var(--navy); touch-action: none; cursor: grab; }
-.crop-view:active { cursor: grabbing; }
-.crop-view img { position: absolute; max-width: none; user-select: none; -webkit-user-drag: none; pointer-events: none; }
-.crop-row { display: flex; align-items: center; gap: 10px; margin: 14px 0 4px; font-size: .78rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
-.crop-row input[type=range] { flex: 1; accent-color: var(--gold); }
-.crop-hint { font-size: .76rem; color: var(--ink-soft); line-height: 1.45; margin-bottom: 16px; }
-.crop-actions { display: flex; gap: 10px; justify-content: flex-end; }
-.crop-actions button { padding: 8px 18px; border-radius: 4px; font-family: var(--body); font-size: .85rem; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--ink); }
-.crop-cancel:hover { background: rgba(35,39,64,.06); }
-.crop-apply { background: var(--gold); border-color: var(--gold); color: var(--navy); font-weight: 700; }
-.crop-apply:hover { filter: brightness(1.08); }
-
 
 /* ════════ NYHETER (card-liste + live forsidepreview) ════════ */
 .mod-nyheter .preview-top h3 { font-family: var(--display); font-size: 1.4rem; color: var(--navy); }
@@ -967,8 +951,6 @@
 .aps__item--setting .meta .ro { font-size: .74rem; color: var(--ink-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .aps__item--setting.active .meta .nm { color: var(--paper); }
 .aps__item--setting.active .meta .ro { color: rgba(244,236,217,.72); }
-/* (eldre låst-stil beholdt for bakoverkomp.) */
-.aps__item--locked { cursor: default; }
 .aps__dot { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 auto; }
 .aps__dot.on { background: #1f8a4c; } .aps__dot.off { background: rgba(35,39,64,.25); }
 

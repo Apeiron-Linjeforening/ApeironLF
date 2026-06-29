@@ -1,5 +1,25 @@
 ## Siste endringer
 
+**29.06.26 · Kodekvalitet: fjernet ~212 linjer død CSS (foreldreløse klasser)**
+
+Etter postMessage-/JS-oppryddingen samme dag gikk vi gjennom stilarkene for *ubrukte CSS-klasser* — regler som ikke lenger matcher noe markup fordi komponentene er skrevet om. Hver klasse ble verifisert ubrukt på tvers av **alle** `*.html` og `*.js` (også klasser som bygges dynamisk i JS, f.eks. `'hg-mode-' + animasjon`) før den ble fjernet, og levende naboklasser er rørt urørt.
+
+*Aporetisk Aften — gammelt måneds-rutenett*
+- **Hele den gamle kalender-grid-stilen i `styles.css` er fjernet** (base `.apo-cal`, `.apo-cal__nav/__month/__arr/__grid/__wd/__day/__dot/__num/__next*` + `marine`-variantene). `aporetisk-cal.js` ble for lengst skrevet om fra et måneds-rutenett til en enkel «neste dato»-liste, og emitter nå bare `.apo-cal__empty/__toggle/__list/__ev*` — som beholdes. Layout-klassene `.apo__*` (ett understrek) er urørt.
+
+*Offentlige sider (`styles.css`)*
+- **Gammelt nyhets-kort:** `.news-item*` og hele `.news-zone--strip`-blokken. Nyheter rendres nå med `.beskjed*`/`.now__*` (apeiron-news.js); containeren `.news-zone` og `.topnews-anchor` er beholdt.
+- **Gammel komité-visning:** hele `.comm*`-familien (`.comm`, `:hover`, `__grid`, `__icon`, `h3`, `p`) + `.sak__breakdown*`. Komité-båndet bruker nå S.A.K-kortet (`.sak__krav`); `.committees`/`.sak__card/grid` er beholdt.
+- **Diverse foreldreløse:** `.events__grid` + `.evcard__img` (arrangementer bruker `.evrow` + `.evcard--plain`), `.member__mail`, `.join__price*` (medlemskap bruker `.join__tiers`), `.footer__github*`, `.ev-filters` og `.ev-status__dot` (`.ev-chip/__status/__view` er i live), samt de tilhørende linjene i mobil-media-queryene.
+
+*Admin (`admin-modules.css`, `admin-common.css`)*
+- **Hele den gamle crop-modal-stilen** (`.crop-ov/-box/-view/-row/-hint/-actions/-cancel/-apply`) i `admin-modules.css` — motstykket til den døde `openCrop`-koden som ble fjernet fra `merch.js` tidligere samme dag; beskjæring kjører nå via den delte `AdminImageEditor`. Også `.aps__item--locked` (merket «eldre … bakoverkomp.»).
+- **`.btn-logout`** i `admin-common.css` — utlogg ligger nå i konto-menyen (`.acct-item` i `admin.html`); selve `logout()`-funksjonen er uendret.
+
+*Fanget under verifisering*
+- Flere døde klasser var definert **to steder** (vanlig + `marine`-modus) eller hadde flere døde søsken enn først antatt (f.eks. hele `.comm`-familien, ikke bare `__grid`/`__icon`). Hver enkelt ble bekreftet 0 treff før fjerning i stedet for å stole på en startliste. Klammebalansen er sjekket lik i alle fire stilark etterpå.
+- Berørte filer: `styles.css`, `admin-modules.css`, `admin-common.css`.
+
 **29.06.26 · Kodekvalitet: ryddet 65 CodeQL-varsler (postMessage-herding + død kode)**
 
 *Origin-verifisering på alle postMessage-mottakere*
