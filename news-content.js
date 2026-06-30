@@ -1,6 +1,6 @@
 /* ============================================================
    news-content.js — nyheter, kunngjøringer og beskjeder
-   Sist oppdatert: 22.6.2026
+   Sist oppdatert: 30.6.2026
    Redigeres i Admin-senteret → Nyheter, eller rett her.
 
    place: "panel" (Akkurat nå-kortet) | "arrangement" | "aporetisk" | "fadderuke"
@@ -22,7 +22,7 @@ window.NEWS_CONTENT = {
       "place": "panel",
       "urgent": false,
       "title": "God sommer!",
-      "text": "Vi håper dere har en finfin sommer og at dere har noen artige planer!\nHilsen Apeiron",
+      "text": "Husk å søke om lån!",
       "date": "",
       "kicker": "Kunngjøring",
       "link": "",

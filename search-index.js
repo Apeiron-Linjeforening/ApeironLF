@@ -231,7 +231,7 @@ window.SEARCH_INDEX = [
   },
   {
     "t": "God sommer!",
-    "d": "Vi håper dere har en finfin sommer og at dere har noen artige planer! Hilsen Apeiron",
+    "d": "Husk å søke om lån!",
     "u": "nyheter.html",
     "g": "Nyheter"
   },
