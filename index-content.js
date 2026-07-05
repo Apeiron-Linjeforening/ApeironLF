@@ -9,7 +9,7 @@
 
 window.INDEX_CONTENT = {
   "newsPanel": {
-    "maxEvents": 2
+    "maxEvents": 3
   },
   "heroGallery": {
     "enabled": true,
