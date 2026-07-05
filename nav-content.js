@@ -9,13 +9,13 @@
    desktopOnly? (kun desktop) }. Barn: {label, href} — vanlig lenke,
    eller {label, heading:true} — ikke-klikkbar gruppeoverskrift
    med skillelinje (brukes til å gruppere undermenyen).
-   Skriv hele «side.html#anker» i href — forkortes automatisk.
-   Sist oppdatert: 4.7.2026
+   Sist oppdatert: 5.7.2026
    ============================================================ */
 window.SITE_NAV = [
   {
     "label": "Hjem",
-    "href": "index.html"
+    "href": "index.html",
+    "drawerOnly": true
   },
   {
     "label": "Hva skjer",
