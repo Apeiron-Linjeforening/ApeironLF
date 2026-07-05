@@ -125,7 +125,7 @@
           if (window.apeironNewsNextEvent) {
             var now = new Date();
             var up = items.filter(function (e) { return e.start >= now; }).sort(function (a, b) { return a.start - b.start; });
-            window.apeironNewsNextEvent(up[0] || null, true, 'fadder');
+            window.apeironNewsNextEvent(up, true, 'fadder');
           }
         } catch (_) {}
       })

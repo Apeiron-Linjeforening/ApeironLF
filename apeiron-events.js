@@ -139,7 +139,8 @@
       var now = new Date();
       var up = (state.events || []).filter(function (e) { return e.start >= now; })
         .sort(function (a, b) { return a.start - b.start; });
-      window.apeironNewsNextEvent(up[0] || null, !!state.live, 'activity');
+      // Send hele lista med kommende arrangement — panelet kan vise neste 1–3.
+      window.apeironNewsNextEvent(up, !!state.live, 'activity');
     } catch (_) {}
   }
 

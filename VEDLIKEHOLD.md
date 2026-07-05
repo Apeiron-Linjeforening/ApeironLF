@@ -69,6 +69,38 @@ virker ikke?»**) laster fortsatt ned de ferdige filene, slik at en redaktør ka
 dem inn i GitHub manuelt hvis publiseringen ikke virker. Det er denne opplastingen,
 eller G1-commiten, som utløser en ny Cloudflare-deploy.
 
+### Caching: når blir en endring synlig for besøkende? (kort: automatisk, ved neste sidelast)
+
+**Du trenger ikke gjøre noe for at endringer skal vises.** Cloudflare Pages serverer
+*hver* fil — både innhold (`*-content.js`) og kode (`styles.css`, `admin-modules.css`
+osv.) — med denne HTTP-headeren:
+
+```
+cache-control: public, max-age=0, must-revalidate
+etag: "<fingeravtrykk av filinnholdet>"
+```
+
+`max-age=0, must-revalidate` betyr at nettleseren *alltid* må spørre serveren «har denne
+fila endret seg?» før den bruker en lagret kopi. `etag`-en er filens fingeravtrykk:
+serveren svarer enten **`304 Not Modified`** (bittelite svar uten selve fila → bruk
+kopien, raskt) eller **`200`** med den nye fila. Resultatet: en publisert endring vises
+for besøkende ved **neste sidelast**, uten forsinkelse fra gammel cache. Det finnes
+heller **ingen service worker** som kunne overstyrt dette og holdt på gamle filer.
+
+**`?v=…`-stemplene på kodefilene** (f.eks. `admin-modules.css?v=20260705a` i `admin.html`)
+er derfor et «bånd og bukseseler»-tiltak, ikke en nødvendighet på dette oppsettet — de
+tvinger en garantert hard oppfriskning, men Cloudflares revalidering ordner ferskhet
+uansett. Endrer du en kodefil, kan du gjerne bumpe stempelet til ny verdi (dato +
+løpende bokstav, f.eks. `20260705a` → `20260705b`), men glemmer du det, når endringen
+likevel frem. Verdien betyr ingenting teknisk; det eneste som teller er at den er
+**annerledes enn forrige gang**.
+
+> Avveiningen Cloudflare har valgt er **alltid fersk** framfor **maksimalt raskt**: hver
+> fil koster én liten «har dette endret seg?»-forespørsel per sidelast (tomt `304`-svar
+> når intet er endret). For en side av denne størrelsen er det riktig prioritering, og
+> derfor er det ikke satt opp — eller nødvendig med — noe automatisk cache-busting eller
+> byggesteg. *(Sjekket mot live `apeironlf.pages.dev` 05.07.26.)*
+
 ---
 
 ## Endre filer på GitHub eller lokalt
@@ -212,12 +244,45 @@ admin. `meta` rommer bl.a. `email` og `orderFormUrl`.
 Google Sheet-systemet er borte.
 
 > **Neste arrangement** i «Akkurat nå»-kortet hentes automatisk fra
-> arrangementskalenderen, og legges ikke inn som nyhet.
+> arrangementskalenderne (aktivitet/aporetisk/fadder), og legges ikke inn som nyhet.
+> Kortet kan vise de neste **1–3** arrangementene — antallet velges i
+> **Admin → Forsiden → Hero** og lagres som `newsPanel.maxEvents` i `index-content.js`.
+> `apeiron-news.js` slår sammen kildene, sorterer på tid og deduperer samme hendelse
+> som står i flere kalendere.
 
-### 🏛️ Forsiden / 📖 Om oss
+### 🏛️ Forsiden
 
-Forsidens tekster (toppbilde, om-seksjon, FAQ, kontakt) ligger i `index-content.js`;
-Om oss-siden i `om-content.js`. Begge redigeres i Admin-senteret med live preview.
+Forsidens tekster (toppbilde, om-seksjon, FAQ, kontakt) ligger i `index-content.js` og
+redigeres i Admin → Forsiden med live preview. Samme fil har `newsPanel.maxEvents`
+(1–3) som styrer hvor mange kommende arrangement «Akkurat nå»-kortet lister.
+
+### 📖 Om oss (Page Builder)
+
+Om oss-siden er **datadrevet via en seksjonsmotor**, ikke én fast HTML-mal. Tre filer:
+
+- `om.page.js` (`window.OM_PAGE`) — en ordnet liste av typede seksjoner
+  `{ id, type, tone, enabled?, props }`. Dette er innholdet, redigert i Admin → Om oss.
+- `om-sections.js` — registrerer seksjons**typene** (`banner`, `about`, `cardgrid`,
+  `lesesal`, `join`, `faq`); hver eier sin `defaults`/`render`/`mount` ett sted.
+- `section-engine.js` — motoren som tegner lista og setter `data-tone` per seksjon.
+
+**Tone-rytme:** hver seksjon har en `tone` (`auto`/`paper`/`navy`/`accent`). Motoren
+regner ut faktisk tone og setter `data-tone` på seksjonen; `styles.css` maler
+`data-tone="navy"` som et mørkt bånd (token-re-pinning). `auto` veksler lys/mørk så to
+like ikke havner ved siden av hverandre. Velg fast tone i admin for å bestemme selv;
+rytme-vakten i admin varsler kun når to naboer faktisk får **samme synlige flate**.
+
+**Minimeny i banneret («På denne siden»):** banner-seksjonen har en `toc`-prop (av/på-
+bryter i Admin → Om oss, banner-panelet). Er den på, bygges en innholdsmeny automatisk
+fra seksjonenes `data-screen-label` — legg til, skjul eller flytt en seksjon, og menyen
+følger med uten videre redigering. Glasspanel på desktop (posisjon måles av JS for lik
+luft på hver side), chips under ingressen på mobil.
+
+**Avatar-rader i kort:** `cardgrid`-kort tar valgfrie `images` (liste av bildestier) og
+`imagesMore` (tekst-boble, f.eks. «+7» eller «Deg?»), redigerbare per kort i admin.
+
+> Bildene til «Møt styret»-kortene gjenbruker styreportrettene i
+> `assets/Styremedlemmer/`. Lesesal-galleriet: se [Lesesalen: bilder](#lesesalen-bilder).
 
 **Galleribilder på forsiden.** Admin → Forsiden har et eget panel som kan vise
 bilder fra galleriet på forsiden, **av som standard**. Innstillingene ligger i
@@ -459,7 +524,7 @@ function doPost(e) {
 | Fil | Hva det er |
 | --- | --- |
 | `index.html` | Forsiden «Hjem»: toppbilde, om, FAQ, kontakt (tekst fra `index-content.js`) |
-| `om-oss.html` | «Om oss»-siden (fra `om-content.js`) |
+| `om-oss.html` | «Om oss»-siden (skall; tegnes av Page Builder fra `om.page.js`) |
 | `nyheter.html` | Nyhetsside med arkiv |
 | `oppslagstavla.html` | Oppslagstavla: plakater (fra `oppslag-content.js`) |
 | `pensum.html` | Pensum-oversikt (fra `pensum-content.js`) |
@@ -479,7 +544,7 @@ function doPost(e) {
 | Fil | Hva det er |
 | --- | --- |
 | `index-content.js` | Forsidens tekster (Admin → Forsiden) |
-| `om-content.js` | Om oss-innhold (Admin → Om oss) |
+| `om.page.js` | Om oss-innhold som typede seksjoner (Admin → Om oss, Page Builder) |
 | `news-content.js` | Nyheter/beskjeder (Admin → Nyheter) |
 | `oppslag-content.js` | Oppslagstavla-plakater (Admin → Oppslagstavla) |
 | `styret-content.js` | Styremedlemmer og verv (Admin → Styret) |
@@ -489,7 +554,7 @@ function doPost(e) {
 | `utmerkelser-content.js` | Utmerkelser (Admin → Utmerkelser) |
 | `merch-products.js` | Merch-produkter (Admin → Merch) |
 | `membership-config.js` | Medlemskap: priser/Vipps/steg (Admin → Medlemskap) |
-| `nav-content.js` | Lenkene i hovedmenyen (Admin → Meny) |
+| `nav-content.js` | Lenkene i hovedmenyen (Admin → Meny). Undermeny-barn er `{label, href}`, eller `{label, heading:true}` = ikke-klikkbar gruppeoverskrift |
 | `site-content.js` | Footer-lenker og sosiale ikoner (Admin → Footer) |
 | `merch-config.js` | Merch-bestilling: Apps Script-URL, Vipps, token |
 | `api-config.js` | Lokal stub for Google-API-nøkkel (gitignorert; settes i prod av Cloudflare) |
@@ -501,7 +566,9 @@ function doPost(e) {
 | `site-chrome.js` | Bygger meny + footer på alle sider |
 | `apeiron-index.js` | Rendrer forsiden fra `index-content.js` |
 | `apeiron-hero-gallery.js` | Galleribilder på forsiden (stil A/B/C/D + DVD), live fra Drive. Styres av `heroGallery` i `index-content.js`; krever `hero-gallery.css`. Av som standard |
-| `apeiron-om.js` | Rendrer Om oss-siden fra `om-content.js` |
+| `section-engine.js` | Page Builder-motor: tegner en seksjonsliste, setter `data-tone` (Om oss) |
+| `om-sections.js` | Seksjonstypene for Om oss (banner, about, cardgrid, lesesal, join, faq) |
+| `om.page.js` | Om oss som data (seksjonsliste); redigeres i Admin → Om oss |
 | `apeiron-news.js` | «Akkurat nå»-kort + beskjeder (leser `news-content.js`) |
 | `apeiron-events.js` | Henter arrangementer fra Google Kalender |
 | `apeiron-fadder.js` | Henter fadderuke-program fra Google Kalender |
@@ -518,7 +585,7 @@ function doPost(e) {
 | `minisearch.min.js` | Søkemotor-bibliotek (MiniSearch v7, vendet inn) |
 | `search-base.js` | Statiske søketreff: input til indeksen |
 | `search-index.js` | Auto-generert søkeindeks (rediger aldri for hånd) |
-| `styles.css` | All styling for de offentlige sidene |
+| `styles.css` | All styling for de offentlige sidene. Rommer den **felles** `.subhero`-toppbanner-stilen (per-side avvik ligger inline i den enkelte HTML-en) |
 
 **Admin (Admin-senteret)**
 

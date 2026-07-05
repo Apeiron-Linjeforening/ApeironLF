@@ -25,12 +25,16 @@
 }
 /* ── Fargetema for admin ──
    --app-bg : bakgrunnen bak panelene (siden/«skrivebordet»)
-   --surface: kort, paneler og skjemafelt (tidligere ren hvit)
+   --surface: kort og paneler (tidligere ren hvit)
+   --field  : redigerbare felt og småknapper — litt LYSERE enn --surface, så
+              inputs/selects/knapper står ut fra flaten de ligger på i stedet
+              for å gå i ett med den. --field-border er den tilhørende kanten
+              (litt sterkere enn --border av samme grunn).
    Settes via data-admin-theme på <html>. Standard = varm pergament. */
-:root { --app-bg:#e4dcc8; --surface:#ffffff; }
-:root[data-admin-theme="varm"]   { --app-bg:#e7ddc6; --surface:#faf5e9; }
-:root[data-admin-theme="sval"]   { --app-bg:#dde2e7; --surface:#f6f8fa; }
-:root[data-admin-theme="salvie"] { --app-bg:#e1e5dc; --surface:#f6f8f1; }
+:root { --app-bg:#e4dcc8; --surface:#ffffff; --field:#ffffff; --field-border:rgba(35,39,64,.26); }
+:root[data-admin-theme="varm"]   { --app-bg:#e7ddc6; --surface:#faf5e9; --field:#fffdf6; }
+:root[data-admin-theme="sval"]   { --app-bg:#dde2e7; --surface:#f6f8fa; --field:#ffffff; }
+:root[data-admin-theme="salvie"] { --app-bg:#e1e5dc; --surface:#f6f8f1; --field:#fdfffa; }
 html, body { height: 100%; }
 body { font-family: var(--body); background: var(--app-bg); color: var(--ink); display: flex; flex-direction: column; }
 
@@ -43,7 +47,10 @@ body { font-family: var(--body); background: var(--app-bg); color: var(--ink); d
   background: var(--navy); color: var(--paper); padding: 12px 22px;
   display: flex; align-items: center; gap: 14px; flex: 0 0 auto;
 }
-.a-header img { width: 30px; opacity: .85; }
+.a-header img { width: 30px; opacity: .85; display: block; }
+.a-logo { display: inline-flex; align-items: center; flex: 0 0 auto; border-radius: 7px; cursor: pointer; transition: opacity .15s; }
+.a-logo:hover { opacity: 1; }
+.a-logo:hover img { opacity: 1; }
 .a-header h1 { font-family: var(--display); font-size: 1.3rem; letter-spacing: .04em; }
 .a-header .hint { font-size: .76rem; color: rgba(244,236,217,.6); }
 .a-header a { color: rgba(244,236,217,.7); font-size: .76rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; text-decoration: none; }
@@ -250,6 +257,7 @@ body { font-family: var(--body); background: var(--app-bg); color: var(--ink); d
 .ctx.show { display: flex; }
 /* #1: «upublisert»-telleren er nå et alltid-synlig statusmerke, ikke bare tekst */
 .ctx .pub-count { display: inline-flex; align-items: center; gap: 7px; font-size: .78rem; font-weight: 600; color: var(--navy); background: var(--gold); border-radius: 999px; padding: 4px 11px 4px 9px; white-space: nowrap; }
+.ctx .pub-count:empty { display: none; }
 .ctx .pub-count::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--navy); flex: 0 0 auto; animation: pubPulse 1.8s ease-in-out infinite; }
 @keyframes pubPulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .4; transform: scale(.65); } }
 @media (prefers-reduced-motion: reduce) { .ctx .pub-count::before { animation: none; } }
@@ -539,7 +547,19 @@ body { font-family: var(--body); background: var(--app-bg); color: var(--ink); d
 
 @media (max-width: 720px) {
   .info-panel { grid-template-columns: 1fr; }
-  .a-header h1 { display: none; } .a-header .hint { display: none; } .ctx .pub-count { display: none; } .a-back__txt { display: none; }
+  .a-header { gap: 10px; padding: 10px 12px; }
+  .a-header h1 { display: none; } .a-header .hint { display: none; }
+  /* «Upubliserte endringer»-merket vises også på mobil, men kompakt: «[N] Endringer». */
+  .ctx .pub-count .pub-count__lbl { display: none; }
+  .ctx .pub-count::after { content: attr(data-n) " Endringer"; }
+  /* Topplinjas «Angre alle» er skjult på mobil — den ligger i stedet i
+     Innstillinger (⚙), så toppen ikke blir overfylt. */
+  .ctx .reset-link { display: none; }
+  /* Logoen tar over «tilbake til nettsiden» på mobil, så selve lenka fjernes.
+     Logoen blir samtidig flex-avstandsholderen som dytter resten mot høyre.
+     (.a-header-prefiks for å slå den mer generelle .a-back-regelen lenger nede.) */
+  .a-header .a-back { display: none; }
+  .a-header .a-logo { margin-right: auto; }
 }
 
 /* ── Advarsel ved lukking (nullstilling til publisert versjon) ── */
@@ -596,11 +616,31 @@ body { font-family: var(--body); background: var(--app-bg); color: var(--ink); d
 #admin.sidenav-collapsed .sidenav__home { justify-content: center; padding: 9px 0; }
 #admin.sidenav-collapsed .sidenav__top { flex-direction: column; gap: 6px; align-items: stretch; }
 #admin.sidenav-collapsed .sidenav__dot { position: absolute; top: 5px; right: 7px; }
+/* ── Mobil: sidemenyen som skuff (off-canvas) ──
+   På smal skjerm ble sidemenyen tvunget til en 58px ikon-stripe uten etiketter
+   som spiste ~15 % av bredden. I stedet skjules den utenfor skjermen og åpnes
+   som en skuff via ☰-knappen i toppen — full bredde til redigering, og
+   panelnavnene er lesbare igjen. */
+.a-menu { display: none; width: 34px; height: 34px; flex: 0 0 auto; border: 1px solid rgba(244,236,217,.3); background: none; color: rgba(244,236,217,.9); border-radius: 8px; cursor: pointer; font-size: 1.2rem; line-height: 1; align-items: center; justify-content: center; padding: 0; }
+.a-menu:hover, #admin.nav-drawer-open .a-menu { border-color: var(--gold); color: var(--gold); }
+.sidenav-backdrop { display: none; position: fixed; inset: 0; z-index: 340; background: rgba(10,12,22,.5); }
 @media (max-width: 720px) {
-  #admin.nav-side .sidenav { width: 58px; }
-  #admin.nav-side .sidenav__lbl, #admin.nav-side .sidenav__grplbl { display: none; }
-  #admin.nav-side .sidenav__item, #admin.nav-side .sidenav__home { justify-content: center; padding: 9px 0; }
-  #admin.nav-side .sidenav__top { flex-direction: column; gap: 6px; align-items: stretch; }
+  #admin.nav-side .a-menu { display: inline-flex; }
+  #admin.nav-side .sidenav {
+    position: fixed; top: 0; left: 0; bottom: 0; z-index: 350;
+    width: min(280px, 82vw); padding: 12px 12px 30px;
+    transform: translateX(-100%); transition: transform .22s ease;
+    box-shadow: 0 0 40px rgba(0,0,0,.45);
+  }
+  #admin.nav-side.nav-drawer-open .sidenav { transform: translateX(0); }
+  #admin.nav-side.nav-drawer-open .sidenav-backdrop { display: block; }
+  /* Full etiketter i skuffen (den er ikke lenger trang) — også om «slå sammen»
+     var aktiv fra desktop. */
+  #admin.nav-side .sidenav, #admin.sidenav-collapsed.nav-side .sidenav { width: min(280px, 82vw); }
+  #admin.nav-side .sidenav__lbl, #admin.nav-side .sidenav__grplbl { display: block; }
+  #admin.nav-side .sidenav__item, #admin.nav-side .sidenav__home { justify-content: flex-start; padding: 9px 11px; }
+  #admin.nav-side .sidenav__top { flex-direction: row; gap: 8px; align-items: center; }
+  #admin.nav-side .sidenav__collapse { display: none; }
 }
 
 /* ── ⚙ Innstillinger-knapp + modal (flyttet ut av oversikten) ── */
@@ -637,7 +677,11 @@ body { font-family: var(--body); background: var(--app-bg); color: var(--ink); d
 .settings-modal { background: var(--paper); color: var(--ink); max-width: 560px; width: 100%; border-radius: 12px; padding: 22px 26px 24px; box-shadow: 0 20px 60px rgba(0,0,0,.35); border-top: 4px solid var(--gold); max-height: 88vh; overflow-y: auto; }
 .settings-modal__head { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
 .settings-modal__head h3 { font-family: var(--display); font-size: 1.5rem; color: var(--navy); margin-right: auto; }
-.settings-modal__close { width: 30px; height: 30px; flex: 0 0 auto; border: none; background: rgba(35,39,64,.06); color: var(--ink-soft); border-radius: 7px; font-size: .9rem; cursor: pointer; }
+/* Kun lukk-krysset er festet: en usynlig, null-høyde sticky-stripe holder ✕ i
+   øvre høyre hjørne mens resten av modalen (inkl. «Innstillinger»-tittelen)
+   scroller normalt. */
+.settings-modal__closebar { position: sticky; top: 0; z-index: 5; height: 0; display: flex; justify-content: flex-end; pointer-events: none; }
+.settings-modal__close { pointer-events: auto; position: relative; top: 4px; width: 30px; height: 30px; flex: 0 0 auto; border: none; background: rgba(35,39,64,.1); color: var(--ink-soft); border-radius: 7px; font-size: .9rem; cursor: pointer; box-shadow: 0 0 0 5px var(--paper); }
 .settings-modal__close:hover { background: rgba(35,39,64,.12); color: var(--navy); }
 .settings-modal__intro { font-size: .86rem; color: var(--ink-soft); line-height: 1.5; margin-bottom: 18px; }
 .settings-acct { display: flex; flex-direction: column; gap: 7px; padding: 12px 14px; margin-bottom: 20px; border: 1px solid var(--border); border-radius: 10px; background: rgba(35,39,64,.025); }
@@ -655,7 +699,9 @@ body { font-family: var(--body); background: var(--app-bg); color: var(--ink); d
 .ap-modal__body { font-size: .92rem; line-height: 1.55; color: var(--ink-soft); }
 .ap-modal__body p { margin-bottom: 13px; }
 .ap-modal__body b { color: var(--gold-ink); }
-.ap-modal__row { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+.ap-modal__row { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+/* Ekstra-knapp (f.eks. «Angre alle») dyttes til venstre, adskilt fra Lukk/OK. */
+.ap-modal__btn--extra { margin-right: auto; }
 .ap-modal__btn { border: 0; border-radius: 6px; padding: 9px 18px; font-family: var(--body); font-size: .9rem; font-weight: 600; letter-spacing: .02em; cursor: pointer; transition: filter .15s, background .15s; }
 .ap-modal__btn--cancel { background: rgba(35,39,64,.08); color: var(--ink); }
 .ap-modal__btn--cancel:hover { background: rgba(35,39,64,.15); }
@@ -675,19 +721,58 @@ body { font-family: var(--body); background: var(--app-bg); color: var(--ink); d
 .ap-chg__blocks { font-size: .8rem; color: var(--ink-soft); line-height: 1.45; }
 .ap-chg__see { font-size: .8rem; font-weight: 700; color: var(--gold-ink); text-decoration: none; white-space: nowrap; margin-top: 2px; }
 .ap-chg__see:hover { text-decoration: underline; text-underline-offset: 2px; }
+/* Per-side «↺ Angre» i endrings-oversikten */
+.ap-chg__undo { flex: 0 0 auto; align-self: center; padding: 5px 12px; border: 1px solid rgba(118,17,15,.35); border-radius: 6px; background: transparent; color: var(--maroon); font-family: var(--body); font-size: .8rem; font-weight: 700; cursor: pointer; white-space: nowrap; transition: background .15s, border-color .15s; }
+.ap-chg__undo:hover { background: rgba(118,17,15,.08); border-color: var(--maroon); }
 /* «x upubliserte endringer» er klikkbar — åpner en oversikt over hva som er endret */
 .ctx .pub-count { cursor: pointer; transition: filter .12s, box-shadow .12s; }
 .ctx .pub-count:hover { filter: brightness(1.06); box-shadow: 0 0 0 3px rgba(212,175,55,.25); }
 .ctx .pub-count:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(212,175,55,.45); }
+
+/* ── Varsel-pille («Lagret i nettleseren» o.l.) ──
+   Uten disse reglene ble #toast et ustilt element i vanlig flyt nederst på
+   siden: teksten ble aldri fjernet, så siste varsel ble stående igjen som en
+   «strek» i bunnen på både mobil og desktop. Nå er den fast plassert og skjult
+   til den faktisk vises. */
+.toast {
+  position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 16px);
+  z-index: 9800; max-width: min(90vw, 460px);
+  background: var(--navy); color: var(--paper);
+  padding: 11px 20px; border-radius: 10px;
+  font-family: var(--body); font-size: .9rem; line-height: 1.4; text-align: center;
+  box-shadow: 0 18px 44px -14px rgba(0,0,0,.6);
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity .2s ease, transform .2s ease, visibility .2s;
+}
+.toast.show { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
+
+/* ── «Til toppen»-knapp (mobil) ── */
+.admin-to-top {
+  position: fixed; z-index: 9600;
+  right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom));
+  width: 46px; height: 46px; display: none; align-items: center; justify-content: center;
+  border-radius: 50%; background: var(--navy); color: var(--gold); border: 1px solid var(--gold);
+  box-shadow: 0 8px 22px -8px rgba(35,39,64,.55); cursor: pointer;
+  opacity: 0; visibility: hidden; transform: translateY(10px) scale(.85);
+  transition: opacity .28s ease, transform .28s ease, visibility .28s, background .2s, color .2s;
+}
+.admin-to-top svg { width: 22px; height: 22px; }
+.admin-to-top.is-visible { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+.admin-to-top:hover { background: var(--gold); color: var(--navy); }
+@media (max-width: 760px) { .admin-to-top { display: flex; } }
+@media (prefers-reduced-motion: reduce) {
+  .admin-to-top, .admin-to-top.is-visible { transition: opacity .2s ease, visibility .2s; transform: none; }
+}
 </style>
 <link rel="stylesheet" href="admin-common.css">
-<link rel="stylesheet" href="admin-modules.css?v=20260627i">
+<link rel="stylesheet" href="admin-modules.css?v=20260705h">
 </head>
 <body>
 
 <div id="admin">
   <header class="a-header">
-    <img src="assets/apeiron-logo.png" alt="">
+    <button class="a-menu" id="nav-drawer-btn" type="button" aria-label="Åpne meny" aria-expanded="false" title="Meny">☰</button>
+    <a class="a-logo" href="index.html" data-keep-token data-self title="Tilbake til nettsiden" aria-label="Tilbake til nettsiden"><img src="assets/apeiron-logo.png" alt=""></a>
     <h1>Admin-senter</h1>
     <a class="a-back" href="index.html" data-keep-token data-self><span class="a-back__txt">Tilbake til nettsiden</span> <span class="a-back__ico">←</span></a>
     <div class="ctx" id="ctx">
@@ -709,6 +794,7 @@ body { font-family: var(--body); background: var(--app-bg); color: var(--ink); d
   </div>
 
   <div class="admin-main">
+  <div class="sidenav-backdrop" id="sidenav-backdrop" hidden></div>
   <nav class="sidenav" id="sidenav" aria-label="Velg admin-panel"></nav>
   <div class="content">
     <div id="dashboard">
@@ -782,9 +868,11 @@ body { font-family: var(--body); background: var(--app-bg); color: var(--ink); d
 
 <div class="settings-ov" id="settings-ov" aria-hidden="true">
   <div class="settings-modal" role="dialog" aria-modal="true" aria-labelledby="settings-h">
+    <div class="settings-modal__closebar">
+      <button class="settings-modal__close" id="settings-close" type="button" aria-label="Lukk innstillinger">✕</button>
+    </div>
     <div class="settings-modal__head">
       <h3 id="settings-h">Innstillinger</h3>
-      <button class="settings-modal__close" id="settings-close" type="button" aria-label="Lukk innstillinger">✕</button>
     </div>
     <p class="settings-modal__intro">Disse valgene styrer bare hvordan admin-senteret ser ut for deg. De lagres i din egen nettleser og endrer ingenting på selve nettsiden.</p>
     <div class="settings-acct" id="settings-acct" style="display:none">
@@ -857,11 +945,11 @@ body { font-family: var(--body); background: var(--app-bg); color: var(--ink); d
 <div class="toast" id="toast"></div>
 <div id="bulk-host" class="ph-wrap" aria-hidden="true" style="position:fixed;left:-10000px;top:0;width:880px;height:1px;overflow:hidden;opacity:0;pointer-events:none;"></div>
 
-<script src="admin-common.js?v=20260628b"></script>
-<script src="admin-panel-shell.js?v=20260627b"></script>
+<script src="admin-common.js?v=20260705a"></script>
+<script src="admin-panel-shell.js?v=20260705b"></script>
 <script src="admin-github.js"></script>
 <!-- C-moduler: paneler som mountes inline i skallet (erstatter frittstående *-admin.html etter hvert) -->
-<script src="palette.js"></script>
+<script src="palette.js?v=20260705b"></script>
 <script src="admin-image-editor.js"></script>
 <script src="membership-config.js"></script>
 <script src="footer-icons.js"></script>
@@ -885,13 +973,13 @@ body { font-family: var(--body); background: var(--app-bg); color: var(--ink); d
 <script src="pensum-content.js"></script>
 <script src="admin-modules/medlemskap.js?v=20260628f"></script>
 <script src="admin-modules/footer.js"></script>
-<script src="admin-modules/hjelp.js"></script>
+<script src="admin-modules/hjelp.js?v=20260705c"></script>
 <script src="admin-modules/oppnaelser.js"></script>
 <script src="admin-modules/utmerkelser.js"></script>
 <script src="admin-modules/om-oss.js"></script>
 <script src="admin-modules/forsiden.js?v=20260628a"></script>
 <script src="admin-modules/shortcuts.js"></script>
-<script src="admin-modules/styret.js?v=20260627c"></script>
+<script src="admin-modules/styret.js?v=20260705b"></script>
 <script src="admin-modules/begrep.js"></script>
 <script src="admin-modules/oppslag.js"></script>
 <script src="admin-modules/nyheter.js"></script>
@@ -1377,7 +1465,15 @@ body { font-family: var(--body); background: var(--app-bg); color: var(--ink); d
       if (sideBtns[p.id]) sideBtns[p.id].classList.toggle('has-changes', on);
     });
     var n = changedPanels().length;
-    if (pubCount) pubCount.textContent = n === 0 ? '' : (n === 1 ? '1 upublisert endring' : n + ' upubliserte endringer');
+    if (pubCount) {
+      if (n === 0) { pubCount.innerHTML = ''; pubCount.removeAttribute('data-n'); }
+      else {
+        pubCount.setAttribute('data-n', n);
+        // .pub-count__lbl er full tekst (desktop); på mobil vises i stedet den
+        // kompakte «[N] Endringer» via CSS (::after + data-n).
+        pubCount.innerHTML = '<span class="pub-count__lbl">' + (n === 1 ? '1 upublisert endring' : n + ' upubliserte endringer') + '</span>';
+      }
+    }
     if (pubBtn) pubBtn.textContent = '↓ Last ned alle endrede (' + n + ')';
     updateGhVisibility(n);
     if (resetBtn) resetBtn.style.display = n > 0 ? '' : 'none';
@@ -1398,6 +1494,7 @@ body { font-family: var(--body); background: var(--app-bg); color: var(--ink); d
         + '<h3>' + (opts.title || '') + '</h3>'
         + '<div class="ap-modal__body">' + (opts.bodyHTML || '') + '</div>'
         + '<div class="ap-modal__row">'
+        + (opts.extraLabel ? '<button type="button" class="ap-modal__btn ' + (opts.extraClass || 'ap-modal__btn--danger') + ' ap-modal__btn--extra" data-act="extra">' + opts.extraLabel + '</button>' : '')
         + (opts.cancelLabel === null ? '' : '<button type="button" class="ap-modal__btn ap-modal__btn--cancel" data-act="cancel">' + (opts.cancelLabel || 'Avbryt') + '</button>')
         + '<button type="button" class="ap-modal__btn ' + okClass + '" data-act="ok">' + (opts.okLabel || 'OK') + '</button>'
         + '</div></div>';
@@ -1408,9 +1505,11 @@ body { font-family: var(--body); background: var(--app-bg); color: var(--ink); d
         if (e.target === ov) return done(false);
         var b = e.target.closest('[data-act]');
         if (!b) return;
-        done(b.getAttribute('data-act') === 'ok');
+        var act = b.getAttribute('data-act');
+        done(act === 'ok' ? true : act === 'extra' ? 'extra' : false);
       });
       document.addEventListener('keydown', onKey);
+      if (opts.onMount) { try { opts.onMount(ov.querySelector('.ap-modal'), function () { done(false); }); } catch (_) {} }
       var okBtn = ov.querySelector('[data-act="ok"]'); if (okBtn) okBtn.focus();
     });
   }
@@ -1503,19 +1602,46 @@ body { font-family: var(--body); background: var(--app-bg); color: var(--ink); d
   // Liste over endrede paneler til modalene. withLinks=true legger til en
   // «Se siden ↗»-lenke (forhåndsvis før publisering). Hver rad viser også hvilke
   // BLOKKER i panelet som er endret.
-  function changeListHTML(list, withLinks) {
+  function changeListHTML(list, withLinks, withReset) {
     return '<ul class="ap-chg-list">' + list.map(function (p) {
       var def = window.AdminPanels && window.AdminPanels.get(p.id);
       var see = def && def.see;
       var link = (withLinks && see) ? '<a class="ap-chg__see" href="' + see.href + '" target="_blank" rel="noopener" data-keep-token>Se siden ↗</a>' : '';
+      var undo = withReset ? '<button type="button" class="ap-chg__undo" data-reset-panel="' + p.id + '" title="Tilbakestill bare denne siden til sist publiserte versjon">↺ Angre</button>' : '';
       var blocks = panelBlocks(p);
       var sub = blocks.length
         ? '<span class="ap-chg__blocks">' + blocks.slice(0, 12).map(_chgEsc).join(', ') + (blocks.length > 12 ? ' +' + (blocks.length - 12) + ' flere' : '') + '</span>'
         : '';
-      return '<li class="ap-chg"><span class="ap-chg__ico">' + p.ico + '</span>'
+      return '<li class="ap-chg" data-chg-panel="' + p.id + '"><span class="ap-chg__ico">' + p.ico + '</span>'
         + '<span class="ap-chg__meta"><span class="ap-chg__name">' + p.label + '</span>' + sub + '</span>'
-        + link + '</li>';
+        + link + undo + '</li>';
     }).join('') + '</ul>';
+  }
+  // Tilbakestill ETT panel til publisert versjon, reversibelt via angre-snackbaren.
+  function undoResetPanel(p) {
+    if (!p) return;
+    var saved = (p.ls || []).map(function (k) { return [k, localStorage.getItem(k)]; }).filter(function (kv) { return kv[1] != null; });
+    if (!saved.length) return;
+    saved.forEach(function (kv) { try { localStorage.removeItem(kv[0]); } catch (_) {} });
+    refreshStatus();
+    reloadPanelIfOpen(p.id);
+    if (window.AdminCommon && window.AdminCommon.undoable) {
+      window.AdminCommon.undoable('«' + p.label + '» tilbakestilt', function () {
+        saved.forEach(function (kv) { try { localStorage.setItem(kv[0], kv[1]); } catch (_) {} });
+        refreshStatus();
+        reloadPanelIfOpen(p.id);
+      });
+    } else {
+      window.AdminCommon.toast('«' + p.label + '» tilbakestilt');
+    }
+  }
+  // Re-monter panelet hvis det er åpent, så feltene faktisk viser den nye dataen.
+  function reloadPanelIfOpen(id) {
+    if (current !== id) return;
+    var p = panelById(id); if (!p) return;
+    var btn = tabBtns && tabBtns[id];
+    current = null;
+    select(p, btn);
   }
 
   /* ─── EGENDEFINERTE SNARVEIER (delt globalt via Git) ───
@@ -1527,32 +1653,29 @@ body { font-family: var(--body); background: var(--app-bg); color: var(--ink); d
   // (Inne i en seksjon kommer knappen «Legg til som snarvei» uansett — den henter
   //  målet fra panelets egen side, så ALLE seksjoner i alle paneler dekkes.)
   var SHORTCUT_SECTIONS = [
-    { group: 'Forsiden', page: 'index.html', id: 'oppslagstavla-teaser', label: 'Oppslagstavla', ico: '📌' },
-    { group: 'Forsiden', page: 'index.html', id: 'arrangementer', label: 'Arrangementer', ico: '📅' },
-    { group: 'Forsiden', page: 'index.html', id: 'aporetisk', label: 'Aporetisk Aften', ico: '🍷' },
-    { group: 'Forsiden', page: 'index.html', id: 'fadderuke', label: 'Fadderukene', ico: '🎓' },
-    { group: 'Forsiden', page: 'index.html', id: 'bli-medlem', label: 'Bli medlem', ico: '✍️' },
-    { group: 'Forsiden', page: 'index.html', id: 'kontakt', label: 'Kontakt', ico: '✉️' },
-    { group: 'Hjelp', page: 'hjelp.html', id: 'sifra', label: 'Si fra', ico: '🗣️' },
-    { group: 'Hjelp', page: 'hjelp.html', id: 'studier', label: 'Faglig hjelp', ico: '📚' },
-    { group: 'Hjelp', page: 'hjelp.html', id: 'helse', label: 'Psykisk helse', ico: '💚' },
-    { group: 'Hjelp', page: 'hjelp.html', id: 'fysisk', label: 'Fysisk helse', ico: '🩺' },
-    { group: 'Hjelp', page: 'hjelp.html', id: 'akutt', label: 'Akutt hjelp', ico: '🚨' },
-    { group: 'Pensum', page: 'pensum.html', id: 'ps-katalog', label: 'Emnekatalog', ico: '📚' },
-    { group: 'Pensum', page: 'pensum.html', id: 'ps-marked', label: 'Pensum-markedet', ico: '⇄' },
-    { group: 'Pensum', page: 'pensum.html', id: 'ps-tracks', label: 'Studieretningene', ico: '🧭' },
-    { group: 'Pensum', page: 'pensum.html', id: 'ps-grader', label: 'Grader & løp', ico: '🎓' }
+    { group: 'Forsiden', panel: 'forsiden', id: 'oppslagstavla-teaser', label: 'Oppslagstavla', ico: '📌' },
+    { group: 'Forsiden', panel: 'forsiden', id: 'arrangementer', label: 'Arrangementer', ico: '📅' },
+    { group: 'Forsiden', panel: 'forsiden', id: 'aporetisk', label: 'Aporetisk Aften', ico: '🍷' },
+    { group: 'Forsiden', panel: 'forsiden', id: 'fadderuke', label: 'Fadderukene', ico: '🎓' },
+    { group: 'Forsiden', panel: 'forsiden', id: 'bli-medlem', label: 'Bli medlem', ico: '✍️' },
+    { group: 'Forsiden', panel: 'forsiden', id: 'kontakt', label: 'Kontakt', ico: '✉️' },
+    { group: 'Hjelp', panel: 'hjelp', id: 'sifra', label: 'Si fra', ico: '🗣️' },
+    { group: 'Hjelp', panel: 'hjelp', id: 'studier', label: 'Faglig hjelp', ico: '📚' },
+    { group: 'Hjelp', panel: 'hjelp', id: 'helse', label: 'Psykisk helse', ico: '💚' },
+    { group: 'Hjelp', panel: 'hjelp', id: 'fysisk', label: 'Fysisk helse', ico: '🩺' },
+    { group: 'Hjelp', panel: 'hjelp', id: 'akutt', label: 'Akutt hjelp', ico: '🚨' },
+    { group: 'Pensum', panel: 'pensum', id: 'ps-katalog', label: 'Emnekatalog', ico: '📚' },
+    { group: 'Pensum', panel: 'pensum', id: 'ps-marked', label: 'Pensum-markedet', ico: '⇄' },
+    { group: 'Pensum', panel: 'pensum', id: 'ps-tracks', label: 'Studieretningene', ico: '🧭' },
+    { group: 'Pensum', panel: 'pensum', id: 'ps-grader', label: 'Grader & løp', ico: '🎓' }
   ];
-  // Hele sider (alle paneler med en egen side) — utledet fra PANELS + panelets «see».
+  // Hele paneler — hvert synlig panel i Admin-senteret blir en snarvei til seg selv.
   function pageShortcuts() {
-    var seen = {};
-    return PANELS.filter(function (p) { return !p.hidden; }).map(function (p) {
-      var def = window.AdminPanels && window.AdminPanels.get(p.id);
-      var href = def && def.see && def.see.href;
-      if (!href || seen[_scNorm(href)]) return null;
-      seen[_scNorm(href)] = 1;
-      return { group: 'Hele sider', id: 'side-' + p.id, label: p.label, href: href, ico: p.ico || '🔗' };
-    }).filter(Boolean);
+    return PANELS.filter(function (p) {
+      return !p.hidden && window.AdminPanels && window.AdminPanels.get(p.id);
+    }).map(function (p) {
+      return { group: 'Hele sider', id: 'side-' + p.id, label: p.label, href: adminHref(p.id), ico: p.ico || '🔗' };
+    });
   }
   function getShortcuts() {
     try { var raw = localStorage.getItem(SC_LS); if (raw != null) { var a = JSON.parse(raw); if (Array.isArray(a)) return a; } } catch (_) {}
@@ -1567,6 +1690,30 @@ body { font-family: var(--body); background: var(--app-bg); color: var(--ink); d
     renderShortcuts(); refreshStatus();
   }
   function _scNorm(h) { return String(h || '').replace(/^\.?\//, ''); }
+  // Snarveier peker INN i Admin-senteret (ikke den publiserte siden): «admin.html#<panel>»
+  // for et helt panel, «admin.html#<panel>/<seksjon>» for én seksjon i panelet.
+  function adminHref(panelId, secId) { return 'admin.html#' + panelId + (secId ? '/' + secId : ''); }
+  function parseAdminTarget(href) {
+    var m = /^admin\.html#(.+)$/.exec(String(href || ''));
+    if (!m) return null;
+    var parts = m[1].split('/');
+    return { panel: parts[0], section: parts[1] || '' };
+  }
+  // Naviger til et admin-panel (og evt. en seksjon) uten å laste siden på nytt.
+  function goToAdminTarget(panelId, sectionKey) {
+    var p = panelById(panelId);
+    if (!p) return;
+    if (current === p.id) {
+      // Panelet er allerede åpent — be skallet hoppe til seksjonen direkte.
+      if (sectionKey) window.dispatchEvent(new CustomEvent('apeiron-goto-section', { detail: { panel: panelId, section: sectionKey } }));
+      return;
+    }
+    // Skallet plukker opp ønsket seksjon ved første render etter mount.
+    window.AdminDeepLinkSection = sectionKey ? { panel: panelId, section: sectionKey } : null;
+    select(p, tabBtns && tabBtns[p.id]);
+  }
+  // Lar C-moduler navigere til et annet panel/seksjon (f.eks. Styret → Hjelp/Faglig hjelp).
+  window.AdminNav = { goTo: goToAdminTarget, adminHref: adminHref };
   function renderShortcuts() {
     var box = document.getElementById('quick-links');
     if (!box) return;
@@ -1574,7 +1721,15 @@ body { font-family: var(--body); background: var(--app-bg); color: var(--ink); d
     getShortcuts().forEach(function (s) {
       var item = document.createElement('div'); item.className = 'ql-item';
       var a = document.createElement('a'); a.className = 'ql-link';
-      a.href = s.href; a.target = '_blank'; a.rel = 'noopener'; a.setAttribute('data-keep-token', '');
+      a.href = s.href;
+      var tgt = parseAdminTarget(s.href);
+      if (tgt) {
+        // Snarvei inn i Admin-senteret — naviger i samme fane til panelet/seksjonen.
+        a.addEventListener('click', function (e) { e.preventDefault(); goToAdminTarget(tgt.panel, tgt.section); });
+      } else {
+        // Bakoverkompatibelt: eldre snarveier til den publiserte siden åpnes i ny fane.
+        a.target = '_blank'; a.rel = 'noopener'; a.setAttribute('data-keep-token', '');
+      }
       a.innerHTML = '<span class="ql-ico">' + (s.ico || '🔗') + '</span><span class="ql-nm">' + _chgEsc(s.label) + '</span>';
       var rm = document.createElement('button'); rm.type = 'button'; rm.className = 'ql-rm'; rm.textContent = '×';
       rm.title = 'Fjern snarvei'; rm.setAttribute('aria-label', 'Fjern snarvei ' + s.label);
@@ -1586,7 +1741,7 @@ body { font-family: var(--body); background: var(--app-bg); color: var(--ink); d
     var have = {}; getShortcuts().forEach(function (s) { have[_scNorm(s.href)] = 1; });
     // Hele sider først, deretter kjente seksjoner gruppert per side.
     var opts = pageShortcuts().concat(SHORTCUT_SECTIONS.map(function (s) {
-      return { group: s.group, id: s.id, label: s.label, href: s.page + '#' + s.id, ico: s.ico };
+      return { group: s.group, id: s.id, label: s.label, href: adminHref(s.panel, s.id), ico: s.ico };
     }));
     var groups = {};
     opts.forEach(function (o) { (groups[o.group] = groups[o.group] || []).push(o); });
@@ -1619,6 +1774,7 @@ body { font-family: var(--body); background: var(--app-bg); color: var(--ink); d
   }
   // Snarvei-API. Nøkkel = href (så samme seksjon/side ikke kan legges til to ganger).
   window.AdminShortcuts = {
+    adminHref: adminHref,
     hasHref: function (href) { var n = _scNorm(href); return getShortcuts().some(function (s) { return _scNorm(s.href) === n; }); },
     addTarget: function (t) {
       if (!t || !t.href) return false;
@@ -1639,10 +1795,25 @@ body { font-family: var(--body); background: var(--app-bg); color: var(--ink); d
     if (!list.length) { window.AdminCommon.toast('Ingen upubliserte endringer'); return; }
     apModal({
       title: list.length === 1 ? '1 upublisert endring' : list.length + ' upubliserte endringer',
-      bodyHTML: '<p>Dette er endringene som ennå ikke er publisert. De ligger lagret i din nettleser til du publiserer — ingen ser dem før det.</p>'
-        + changeListHTML(list, false),
-      okLabel: 'Lukk', cancelLabel: null
-    });
+      bodyHTML: '<p>Dette er endringene som ennå ikke er publisert. De ligger lagret i din nettleser til du publiserer — ingen ser dem før det. Trykk <b>↺ Angre</b> ved en side for å tilbakestille bare den.</p>'
+        + changeListHTML(list, false, true),
+      okLabel: 'Lukk', cancelLabel: null,
+      extraLabel: '↺ Angre alle',
+      onMount: function (modal, close) {
+        modal.addEventListener('click', function (e) {
+          var rb = e.target.closest('[data-reset-panel]');
+          if (!rb) return;
+          e.preventDefault();
+          var p = panelById(rb.getAttribute('data-reset-panel'));
+          undoResetPanel(p);
+          var li = rb.closest('.ap-chg'); if (li) li.remove();
+          var n = changedPanels().length;
+          var h3 = modal.querySelector('h3');
+          if (h3) h3.textContent = n === 1 ? '1 upublisert endring' : n + ' upubliserte endringer';
+          if (n === 0) close();
+        });
+      }
+    }).then(function (res) { if (res === 'extra') resetAll(); });
   }
 
   var bulkBusy = false;
@@ -2156,6 +2327,42 @@ body { font-family: var(--body); background: var(--app-bg); color: var(--ink); d
     kickResize();
   }
 
+  /* ── Mobil-skuff for sidemenyen (☰) ──
+     På mobil ligger sidemenyen utenfor skjermen og åpnes som en skuff. Den
+     lukkes automatisk når man velger et panel, trykker på bakteppet eller Esc. */
+  var navDrawerBtn = document.getElementById('nav-drawer-btn');
+  var navBackdrop = document.getElementById('sidenav-backdrop');
+  function openNavDrawer() { adminEl.classList.add('nav-drawer-open'); if (navDrawerBtn) navDrawerBtn.setAttribute('aria-expanded', 'true'); if (navBackdrop) navBackdrop.hidden = false; }
+  function closeNavDrawer() { adminEl.classList.remove('nav-drawer-open'); if (navDrawerBtn) navDrawerBtn.setAttribute('aria-expanded', 'false'); if (navBackdrop) navBackdrop.hidden = true; }
+  if (navDrawerBtn) navDrawerBtn.addEventListener('click', function () { adminEl.classList.contains('nav-drawer-open') ? closeNavDrawer() : openNavDrawer(); });
+  if (navBackdrop) navBackdrop.addEventListener('click', closeNavDrawer);
+  if (sidenav) sidenav.addEventListener('click', function (e) { if (e.target.closest('.sidenav__item, .sidenav__home')) closeNavDrawer(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeNavDrawer(); });
+
+  /* ── «Til toppen»-knapp på mobil ──
+     Admin scroller i indre containere (oversikten, panel-verten, og detalj-ruta
+     i «Liste + detalj»), ikke i vinduet. Vi fanger scroll i capture-fasen,
+     husker hvilken container som sist ble scrollet, og ruller den til topps. */
+  var toTopBtn = document.createElement('button');
+  toTopBtn.type = 'button';
+  toTopBtn.className = 'admin-to-top';
+  toTopBtn.setAttribute('aria-label', 'Til toppen');
+  toTopBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>';
+  document.body.appendChild(toTopBtn);
+  var lastScroller = null;
+  document.addEventListener('scroll', function (e) {
+    var el = e.target;
+    if (!el || !el.matches || !el.matches('#dashboard, .panel-host, .aps__detail, .aps__scroll')) return;
+    lastScroller = el;
+    toTopBtn.classList.toggle('is-visible', el.scrollTop > 400);
+  }, true);
+  toTopBtn.addEventListener('click', function () {
+    var el = lastScroller; if (!el) return;
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (el.scrollTo) el.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' }); else el.scrollTop = 0;
+    toTopBtn.classList.remove('is-visible');
+  });
+
   function buildSidenav() {
     if (!sidenav) return;
     sidenav.innerHTML = '';
@@ -2253,11 +2460,15 @@ body { font-family: var(--body); background: var(--app-bg); color: var(--ink); d
 
     buildSidenav();
 
-    // Dyp-lenke (#merch osv.) åpner panelet direkte; ellers oversikt.
+    // Dyp-lenke (#merch, #forsiden/aporetisk osv.) åpner panelet — og evt. seksjonen
+    // — direkte; ellers oversikt.
     var hash = (location.hash || '').replace('#', '');
-    var match = hash ? PANELS.filter(function (p) { return p.id === hash; })[0] : null;
-    if (match) select(match, btns[match.id]);
-    else showHome();
+    var hparts = hash.split('/'); var hpid = hparts[0], hsec = hparts[1] || '';
+    var match = hpid ? PANELS.filter(function (p) { return p.id === hpid; })[0] : null;
+    if (match) {
+      if (hsec) window.AdminDeepLinkSection = { panel: hpid, section: hsec };
+      select(match, btns[match.id]);
+    } else showHome();
   }
 
   function initLayoutSetting() {

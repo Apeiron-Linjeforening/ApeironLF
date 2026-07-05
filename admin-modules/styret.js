@@ -60,6 +60,7 @@
           + '</ol>'
           + '<div class="tip-note">💾 Endringer lagres automatisk i nettleseren din. Bilder lagres som egne filer (ikke inni innholdsfila), så fila holder seg liten, og de committes til <code>assets/styret/</code> når du publiserer. Tomt portrett viser initialene som fallback.</div>'
         + '</div>'
+        + '<div class="tip" id="tv-note">' + tvNoteHTML('tv-goto', 'tip-reset') + '</div>'
         + '<div class="meta-panel">'
           + '<h3>Topp-banner</h3>'
           + '<div class="meta-grid">'
@@ -109,6 +110,22 @@
         + '<input type="file" data-file accept="image/png,image/jpeg,image/webp,image/avif" hidden>';
 
       var q = function (id) { return host.querySelector('#' + id); };
+
+      // Notat + hurtiglenke: PTV/ITV/FTV redigeres i Hjelp-panelet. Delt mellom
+      // klassisk visning (.tip øverst) og «liste + detalj» (skallets oversikt).
+      function tvNoteHTML(btnId, btnCls) {
+        return '<button class="' + btnCls + '" id="' + btnId + '" type="button">Gå til Hjelp → Faglig hjelp ↗</button>'
+          + '<strong>PTV, ITV og FTV redigeres under «Hjelp»</strong>'
+          + '<p style="color:var(--ink-soft);line-height:1.55;margin:0">Programtillitsvalgt (PTV), institutt-tillitsvalgt (ITV) og fakultetstillitsvalgt (FTV) ligger på <b>Hjelp-siden → «Faglig hjelp»</b>, ikke her i Styret. Der legger du også inn <b>hvem som har vervet nå</b> — du kan koble det til et styremedlem (henter portrett automatisk) eller skrive et navn utenfor styret.</p>';
+      }
+      function wireTvGoto(scope, btnId) {
+        var b = scope.querySelector('#' + btnId); if (!b) return;
+        b.addEventListener('click', function () {
+          if (window.AdminNav && window.AdminNav.goTo) window.AdminNav.goTo('hjelp', 'studier');
+          else { try { location.hash = 'hjelp/studier'; location.reload(); } catch (_) {} }
+        });
+      }
+
       var LS_KEY = 'apeiron-styret-v1';
       var esc = AC.esc;
       var data = { board: {}, verv: {}, members: [], roles: [], archive: [] };
@@ -404,7 +421,10 @@
           input.type = 'text'; input.value = t.label || ''; input.placeholder = 'f.eks. ASAP';
           input.addEventListener('input', function () { t.label = input.value; lazySave(); });
           var ctrl = window.createColorControl({ value: t.color, onChange: function (v) { t.color = v; lazySave(); } });
-          ctrl.style.flex = '1';
+          // Basis 150px (ikke 0) så fargevelgeren får rimelig plass ved siden av
+          // tekstfeltet (basis 140px) — med basis 0 ble selecten sultefôret ned
+          // til ~30px i liste+detalj-visningen. shrink 1 lar den fortsatt krympe.
+          ctrl.style.flex = '1 1 150px';
           var del = document.createElement('button');
           del.className = 'btn-mini x'; del.type = 'button'; del.title = 'Fjern'; del.textContent = '✕';
           del.addEventListener('click', function () { AC.undoDelete(m.tags, i, 'Tilleggsverv fjernet', function () { renderTags(hostEl, m); }, lazySave); });
@@ -693,6 +713,7 @@
         remember: 'apeiron-styret-shell-sel',
         collapseGroupsByDefault: true,
         banner: null,
+        overviewNote: function (box) { box.innerHTML = tvNoteHTML('tv-goto-ovw', 'tv-goto'); wireTvGoto(box, 'tv-goto-ovw'); },
         groups: [
           { key: 'members', label: 'Styremedlemmer', addLabel: 'Nytt medlem', primary: true,
             items: function () { return data.members; },
@@ -817,6 +838,7 @@
         AC.imgAll().then(function (map) { imgCache = map || {}; renderList('members'); renderArchive(); pushPreview(); });
         AC.toast('Tilbakestilt til publisert versjon'); pushPreview();
       });
+      wireTvGoto(host, 'tv-goto');
       host.querySelectorAll('[data-add]').forEach(function (b) { b.addEventListener('click', function () { add(b.getAttribute('data-add')); }); });
       host.querySelectorAll('#lay-switch [data-lay]').forEach(function (b) { b.addEventListener('click', function () { setView(b.getAttribute('data-lay')); }); });
       q('arch-add-current').addEventListener('click', archiveCurrent);

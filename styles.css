@@ -40,7 +40,7 @@
 
 /* ---------- Reset / base ---------- */
 *{ box-sizing:border-box; margin:0; padding:0; }
-html{ scroll-behavior:smooth; scroll-padding-top:84px; -webkit-text-size-adjust:100%; }
+html{ scroll-behavior:smooth; scroll-padding-top:var(--nav-h,84px); -webkit-text-size-adjust:100%; }
 body{
   font-family:var(--body);
   color:var(--ink);
@@ -88,6 +88,9 @@ h1,h2,h3{ font-family:var(--display); font-weight:600; line-height:1.04; letter-
 .lede{ font-size:1.22rem; color:var(--ink-soft); max-width:62ch; }
 
 .center{ text-align:center; }
+.center--head{ margin-bottom:54px; }          /* sentrert seksjonshode med luft under */
+.faq--narrow{ max-width:760px; margin:0 auto; }
+.btn--full{ width:100%; justify-content:center; }
 .center .lede{ margin-left:auto; margin-right:auto; }
 
 /* Double rule divider */
@@ -239,6 +242,14 @@ h1,h2,h3{ font-family:var(--display); font-weight:600; line-height:1.04; letter-
 }
 .drawer__sec-inner a:last-child{ margin-bottom:14px; }
 .drawer__sec-inner a:hover, .drawer__sec-inner a.is-active{ color:var(--gold); }
+/* Gruppeoverskrift i skuffen — samme venstre-«rail» som lenkene */
+.drawer__group-label{
+  display:block; padding:14px 0 4px 16px; margin-left:2px;
+  border-left:1px solid rgba(212,175,55,.28);
+  font-family:var(--body); font-size:.7rem; font-weight:600;
+  letter-spacing:.2em; text-transform:uppercase;
+  color:rgba(212,175,55,.65);
+}
 
 /* ============================================================
    TIL TOPPEN — liten sirkel nede til høyre (alle sider, mobil + desktop)
@@ -346,6 +357,7 @@ h1,h2,h3{ font-family:var(--display); font-weight:600; line-height:1.04; letter-
 .about{ background:var(--paper); }
 .about__grid{ display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:center; }
 .about__greek{ font-family:var(--display); font-size:clamp(3rem,7vw,5.5rem); color:var(--warm); line-height:1; }
+.about__p-first{ margin-top:1.4em; }   /* første avsnitt etter det greske ordet */
 .about__greek small{ display:block; font-family:var(--body); font-size:.9rem; letter-spacing:.28em; text-transform:uppercase; color:var(--accent-ink); margin-top:.5em; }
 .about p + p{ margin-top:1.1em; }
 .about__card{
@@ -1139,6 +1151,16 @@ html[data-mode="marine"] .cal-popup__opt:hover{ background:rgba(212,175,55,.1); 
 .nav__drop-menu a:hover{ color:var(--gold); background:rgba(212,175,55,.07); }
 .nav__drop-menu a.is-active{ color:var(--gold); }
 .nav__drop-menu a + a{ border-top:1px solid rgba(212,175,55,.1); }
+/* Gruppeoverskrift i nedtrekk ({label, heading:true} i nav-content.js) */
+.nav__drop-heading{
+  display:block; padding:.9em 1.25em .3em;
+  font-family:var(--body); font-size:.66rem; font-weight:600;
+  letter-spacing:.2em; text-transform:uppercase; white-space:normal;
+  color:rgba(212,175,55,.72);
+  border-top:1px solid rgba(212,175,55,.18); margin-top:6px;
+  cursor:default; user-select:none;
+}
+.nav__drop-heading:first-child{ border-top:0; margin-top:0; padding-top:.2em; }
 @media (max-width:980px){
   /* Topp-juster hero-en og la den vokse med innholdet, og stram inn luften
      mellom tekst og «Akkurat nå»-kortet, så kortet trekkes opp i synsfeltet
@@ -1168,6 +1190,131 @@ html[data-mode="marine"] .cal-popup__opt:hover{ background:rgba(212,175,55,.1); 
   .member__ph{ max-width:130px; }
   .stats{ grid-template-columns:1fr 1fr; }
   .hero h1{ font-size:clamp(3rem,18vw,5rem); }
+}
+
+/* ============================================================
+   SUBHERO — felles topp-banner for undersidene.
+   Én kanonisk definisjon (flyttet ut av per-side <style>-blokker).
+   Reelle side-avvik (gull tilbake-lenke, glød, smalere ingress m.m.)
+   ligger igjen som små overstyringer i den enkelte sides <style>.
+   NB til fremtidige sider: IKKE kopier denne inn i ny HTML — den
+   gjelder allerede overalt; legg kun avvik inline.
+   ============================================================ */
+.subhero{
+  background:
+    radial-gradient(100% 80% at 90% 0%, rgba(212,175,55,.12), transparent 55%),
+    radial-gradient(70% 60% at 5% 100%, rgba(118,17,15,.28), transparent 60%),
+    var(--navy);
+  color:var(--paper);
+  padding:148px 0 72px;
+  position:relative;
+  overflow:hidden;
+}
+.subhero__seal{
+  position:absolute; right:-4%; top:50%; transform:translateY(-50%);
+  width:min(44vw, 540px); opacity:.09; pointer-events:none; z-index:1;
+  filter:drop-shadow(0 0 1px rgba(212,175,55,.4));
+}
+.subhero__inner{ position:relative; z-index:2; max-width:var(--maxw); margin:0 auto; padding:0 28px; }
+.subhero h1{
+  color:var(--paper);
+  font-size:clamp(3rem, 8vw, 6.5rem);
+  line-height:.95; letter-spacing:.01em; margin:.22em 0 .35em;
+}
+.subhero__lede{ font-size:1.18rem; color:rgba(244,236,217,.8); max-width:56ch; line-height:1.65; }
+.subhero__back{
+  display:flex; width:fit-content; align-items:center; gap:.5em;
+  font-size:.82rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+  color:rgba(244,236,217,.55); margin-bottom:.6em; transition:color .2s;
+}
+.subhero__back:hover{ color:var(--gold); }
+.subhero__back::before{ content:"←"; font-style:normal; }
+
+/* ── Minimeny i banneret («På denne siden») — bygges automatisk av
+   banner-seksjonen (om-sections.js, prop toc:true) fra seksjonenes
+   data-screen-label. Horisontal posisjon settes av JS, som måler
+   ingressens slutt og vinduskanten og gir lik luft på begge sider. ── */
+.hero-toc{
+  position:absolute; left:640px; top:50%;
+  width:max-content; transform:translateY(-50%); z-index:2;
+  background:rgba(22,25,47,.55); backdrop-filter:blur(10px);
+  border:1px solid rgba(212,175,55,.35); border-radius:6px;
+  padding:20px 26px 16px;
+  box-shadow:0 18px 44px -18px rgba(0,0,0,.55);
+}
+.hero-toc__ttl{
+  display:block; font-family:var(--body); font-size:.66rem; font-weight:600;
+  letter-spacing:.28em; text-transform:uppercase; color:var(--gold);
+  margin-bottom:.9em; opacity:.85;
+}
+.hero-toc a{
+  display:block; font-family:var(--display); font-size:1.3rem; line-height:1.15;
+  color:rgba(244,236,217,.72); padding:.22em 0;
+  transition:color .2s, padding-left .2s;
+}
+.hero-toc a:hover{ color:var(--gold); padding-left:4px; }
+@media (max-width:900px){
+  /* På smal skjerm: runde chips under ingressen, uten glassflate */
+  .hero-toc{
+    position:static; transform:none; width:auto; margin:28px 0 0;
+    background:none; border:0; box-shadow:none; backdrop-filter:none; padding:0;
+  }
+  .hero-toc a{
+    display:inline-block; font-size:1.05rem; line-height:1;
+    padding:.42em 1em; margin:0 8px 8px 0;
+    border:1px solid rgba(212,175,55,.35); border-radius:999px;
+  }
+  .hero-toc a:hover{ padding-left:1em; }
+}
+
+/* ============================================================
+   TONE-SYSTEM — seksjonsmotoren setter data-tone på hver seksjon
+   (section-engine.js). Her males "navy" som mørkt bånd; tekst- og
+   kantfarger løses ved å re-pinne tokens, samme oppskrift som
+   marine-modusens alltid-mørke flater lenger ned.
+   ============================================================ */
+.section[data-tone="navy"]{
+  background:
+    radial-gradient(90% 70% at 85% 8%, rgba(212,175,55,.08), transparent 60%),
+    var(--navy);
+  border-top:1px solid rgba(212,175,55,.22);
+  border-bottom:1px solid rgba(212,175,55,.22);
+  --paper:#f4ecd9; --paper-2:#efe5cd;
+  --ink:#f4ecd9; --ink-soft:rgba(244,236,217,.78);
+  --accent-ink:var(--gold); --warm:var(--gold);
+  --line:rgba(244,236,217,.16); --line-2:rgba(244,236,217,.3);
+}
+.section[data-tone="navy"] .ally{
+  background:#2a2e4a; border-color:rgba(244,236,217,.16); border-top-color:var(--gold);
+}
+.section[data-tone="navy"] .ally:hover{
+  border-color:rgba(212,175,55,.45); box-shadow:0 22px 44px -28px rgba(0,0,0,.8);
+}
+.section[data-tone="navy"] .ally__link{ color:var(--gold); }
+.section[data-tone="navy"] .ally__link:hover{ color:#f4ecd9; }
+
+/* ── FAQ-bånd: egen bakgrunn + hårlinje så siden ender bevisst ── */
+.faq-sec{ background:var(--paper-2); border-top:1px solid var(--line); }
+
+/* ── Avatar-rad i kort (cardgrid, prop images/imagesMore) ── */
+.ally__avatars{ display:flex; align-items:center; margin:6px 0 16px; }
+.ally__avatars img, .ally__avatars-more{
+  width:46px; height:46px; border-radius:50%; object-fit:cover;
+  border:2px solid var(--paper-2); margin-left:-11px; background:var(--paper-2);
+}
+.ally__avatars img:first-child{ margin-left:0; }
+.ally__avatars-more{
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--body); font-size:.72rem; font-weight:700;
+  color:var(--warm); border:2px dashed rgba(118,17,15,.45);
+}
+.ally__avatars-more:first-child{ margin-left:0; }
+.section[data-tone="navy"] .ally__avatars img,
+.section[data-tone="navy"] .ally__avatars-more{
+  border-color:#2a2e4a; background:#2a2e4a;
+}
+.section[data-tone="navy"] .ally__avatars-more{
+  color:var(--gold); border:2px dashed rgba(212,175,55,.5);
 }
 
 /* ---------- Tweaks: dark/marine mode ---------- */
@@ -1744,15 +1891,45 @@ a.now__row:hover{ background:#efe5cd; }
 .now__excerpt{ font-size:.84rem; color:#4a4d63; line-height:1.42; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
 .now__meta{ font-size:.82rem; color:#4a4d63; }
 .now__arr{ margin-left:auto; color:#8a6d18; font-weight:700; flex:0 0 auto; }
-.now__all{
-  display:flex; align-items:center; justify-content:center; gap:.4em; padding:12px;
-  font-size:.82rem; font-weight:600; letter-spacing:.04em; color:#8a6d18;
-  background:#efe5cd; transition:color .15s, background .15s;
+/* «Senere»-blokk: arrangement 2–3 samlet i en svakt tonet underblokk under
+   hovedhendelsen, knyttet til en tynn gull-tidslinje. Holdt lav og stram. */
+.now__later{ background:rgba(35,39,64,.05); padding:8px 18px 9px; border-bottom:1px solid rgba(35,39,64,.1); }
+.now__later-h{
+  display:block; margin-bottom:1px;
+  font-size:.56rem; letter-spacing:.2em; text-transform:uppercase; color:#8a6d18; font-weight:700;
 }
-.now__all:hover{ color:var(--navy); background:#e8dcbd; }
+.now__laterrow{
+  display:flex; align-items:center; gap:12px; position:relative;
+  padding:6px 0 6px 18px; color:inherit; transition:background .15s;
+}
+a.now__laterrow:hover{ background:rgba(35,39,64,.04); }
+.now__laterrow::before{ content:""; position:absolute; left:3px; top:0; bottom:0; width:1px; background:rgba(212,175,55,.5); }
+.now__laterrow:first-of-type::before{ top:50%; }
+.now__laterrow:last-of-type::before{ bottom:50%; }
+.now__laterrow::after{
+  content:""; position:absolute; left:0; top:50%; transform:translateY(-50%);
+  width:7px; height:7px; border-radius:50%; background:var(--gold);
+}
+.now__later-d{
+  flex:0 0 auto; min-width:56px; font-size:.7rem; font-weight:700;
+  letter-spacing:.05em; text-transform:uppercase; color:#8a6d18;
+}
+.now__later-t{
+  flex:1 1 auto; min-width:0; font-family:var(--display); font-size:1.02rem; color:#232740;
+  line-height:1.15; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+/* Siste rad grenser mot kortets avrundede bunn — ingen skillelinje der. */
+.now > .now__row:last-child{ border-bottom:none; }
 
+/* ---- Responsiv oppførsel for «Akkurat nå» ----
+   Som merch-bestillingskortet: kortet holdes som en tett, avgrenset blokk i
+   alle bredder i stedet for å strekke seg utover og la korte rader få store
+   tomrom mellom tekst og pil. Seglet fyller resten av hero-flaten. */
 @media (max-width:860px){
-  .hero__aside{ max-width:none; }
+  /* Hero stables til én kolonne — kortet blir en ryddig blokk mot venstre,
+     på linje med brødteksten, ikke en full-bredde flate. width:100% + denne
+     maks-bredden fyller automatisk smalere mobilskjermer og avgrenser bredere. */
+  .hero__aside{ justify-self:start; max-width:440px; }
 }
 
 /* ---- Slank beskjed øverst i en seksjon (arrangement/aporetisk/fadderuke) ---- */

@@ -72,6 +72,11 @@
       var dragEl, longPress = false, fieldHold = false;
       if (handle && container.contains(handle)) {
         dragEl = handle.closest(itemSel);            // håndtak → umiddelbar dra
+      } else if (opts.handleOnly) {
+        // Bare håndtaket (⠿) kan starte et dra. Brukes for lister der hele
+        // «kortet» er et redigeringsskjema (liste+detalj): et klikk på selve
+        // kortet skal redigere/velge, ikke gli inn i dra-og-slipp.
+        return;
       } else {
         dragEl = e.target.closest && e.target.closest(itemSel);
         if (!dragEl || !container.contains(dragEl)) return;
@@ -633,7 +638,14 @@
      et 'apeiron-panellayout'-event så et åpent panel kan tegne om umiddelbart. */
   var PANEL_LAYOUT_KEY = 'apeiron-admin-panellayout';
   function panelLayout() {
-    try { return localStorage.getItem(PANEL_LAYOUT_KEY) === 'liste-detalj' ? 'liste-detalj' : 'klassisk'; } catch (_) { return 'klassisk'; }
+    try {
+      var v = localStorage.getItem(PANEL_LAYOUT_KEY);
+      if (v === 'liste-detalj' || v === 'klassisk') return v;
+    } catch (_) {}
+    // Ingen lagret verdi ennå → smart standard: mobil får «Liste + detalj» (mye
+    // mindre scrolling på liten skjerm), desktop beholder «Klassisk».
+    try { if (window.matchMedia && window.matchMedia('(max-width: 760px)').matches) return 'liste-detalj'; } catch (_) {}
+    return 'klassisk';
   }
   function setPanelLayout(v) {
     var val = v === 'liste-detalj' ? 'liste-detalj' : 'klassisk';

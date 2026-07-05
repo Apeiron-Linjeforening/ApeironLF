@@ -21,7 +21,7 @@
   var SECTIONS = { arrangement: 'news-arrangement', aporetisk: 'news-aporetisk', fadderuke: 'news-fadderuke' };
   var MAX_PANEL = 3; // antall kunngjøringer i panelet (resten ligger i arkivet)
 
-  var state = { items: [], event: null, sources: {} };
+  var state = { items: [], events: [], sources: {} };
   var shownEvent = false; // true når kalender-raden har vist seg minst én gang (styrer entré-animasjon)
   var SRC_PRIORITY = { aporetisk: 3, fadder: 2, activity: 1 };
   var SRC_LABEL = {
@@ -88,10 +88,25 @@
       return n && !n.done && n.place === place;
     });
   }
+  // Hvor mange kommende arrangement «Akkurat nå»-kortet skal vise (1–3).
+  // Styres i Admin → Forsiden → Arrangementer (INDEX_CONTENT.newsPanel.maxEvents).
+  // Admin-utkast i denne nettleseren (apeiron-index-v1) vinner, som ellers på sida.
+  function panelMaxEvents() {
+    var cfg = window.INDEX_CONTENT || {};
+    try {
+      var raw = localStorage.getItem('apeiron-index-v1');
+      if (raw) { var d = JSON.parse(raw); if (d) cfg = d; }
+    } catch (_) {}
+    var n = parseInt(cfg && cfg.newsPanel && cfg.newsPanel.maxEvents, 10);
+    return (n >= 1 && n <= 3) ? n : 1;
+  }
 
   /* ---------- panel (Akkurat nå) ---------- */
   function panelRowAnnounce(n) {
-    var safe = n.link ? safeUrl(n.link) : '';
+    // Hele kunngjøringsraden er klikkbar (som arrangement-radene): til sin egen
+    // lenke om den har en, ellers til nyhetsarkivet. Erstatter den gamle
+    // «Alle nyheter & arkiv»-knappen nederst i kortet.
+    var safe = (n.link && safeUrl(n.link)) || 'nyheter.html';
     var ext = /^https?:/i.test(safe);
     var tag = ext ? ' target="_blank" rel="noopener"' : '';
     var kick = (n.kicker === undefined ? 'Kunngjøring' : n.kicker);
@@ -108,9 +123,7 @@
       body = '<span class="now__line now__line--lead">' + ttl + whenHtml + '</span>' + exHtml;
     }
     var inner = '<span class="now__body">' + body + '</span><span class="now__arr" aria-hidden="true">→</span>';
-    return safe
-      ? '<a class="now__row" href="' + safe + '"' + tag + '>' + inner + '</a>'
-      : '<div class="now__row">' + inner + '</div>';
+    return '<a class="now__row now__row--announce" href="' + safe + '"' + tag + '>' + inner + '</a>';
   }
   function panelUrgent(n) {
     var safe = n.link ? safeUrl(n.link) : '';
@@ -119,18 +132,30 @@
       ? '<a class="now__urgent" href="' + safe + '">' + txt + '</a>'
       : '<div class="now__urgent">' + txt + '</div>';
   }
-  function panelEventRow(entering) {
-    var c = state.event;
+  // Hovedhendelsen: neste arrangement med stort datokort og merkelapp.
+  function panelEventRow(c, entering) {
     if (!c || !c.ev || !c.ev.start) return '';
     var e = c.ev, d = e.start;
-    var meta = (e.allDay ? 'Hele dagen' : (WD[d.getDay()] + ' · ' + pad(d.getHours()) + ':' + pad(d.getMinutes())));
-    if (e.place) meta += ' · ' + esc(e.place);
     var L = SRC_LABEL[c.src] || SRC_LABEL.activity;
     var ttl = esc(e.title || 'Arrangement');
+    var meta = (e.allDay ? 'Hele dagen' : (WD[d.getDay()] + ' · ' + pad(d.getHours()) + ':' + pad(d.getMinutes())));
+    if (e.place) meta += ' · ' + esc(e.place);
     return '<a class="now__row now__row--event' + (entering ? ' now__row--enter' : '') + '" href="' + L.href + '">'
       + '<span class="now__date"><b>' + d.getDate() + '</b><span>' + MON[d.getMonth()] + '</span></span>'
       + '<span class="now__body"><span class="now__lbl">' + L.lbl + '</span>'
       + '<span class="now__ttl">' + ttl + '</span><span class="now__meta">' + meta + '</span></span>'
+      + '</a>';
+  }
+  // Kompakt rad i «Senere»-blokka (arrangement 2–3), knyttet til en tidslinje.
+  function panelLaterRow(c) {
+    if (!c || !c.ev || !c.ev.start) return '';
+    var e = c.ev, d = e.start;
+    var L = SRC_LABEL[c.src] || SRC_LABEL.activity;
+    var day = d.getDate() + '. ' + MON[d.getMonth()].toLowerCase();
+    return '<a class="now__laterrow" href="' + L.href + '">'
+      + '<span class="now__later-d">' + day + '</span>'
+      + '<span class="now__later-t">' + esc(e.title || 'Arrangement') + '</span>'
+      + '<span class="now__arr" aria-hidden="true">→</span>'
       + '</a>';
   }
   function logoFallback(host) {
@@ -145,22 +170,31 @@
     var panel = visible(items, 'panel');
     var urgent = panel.filter(function (n) { return n.urgent; });
     var normal = panel.filter(function (n) { return !n.urgent; }).slice(0, MAX_PANEL);
+    // Neste 1–3 arrangement (antall styres i Admin → Forsiden → Arrangementer).
+    var evs = state.events.slice(0, panelMaxEvents());
     // Animer kalender-raden inn bare første gang den dukker opp (ikke ved senere re-render).
-    var entering = !!state.event && !shownEvent;
-    var evRow = panelEventRow(entering);
-    if (evRow) shownEvent = true;
+    var entering = evs.length && !shownEvent;
+    var evRows = '';
+    if (evs.length) {
+      evRows = panelEventRow(evs[0], entering);
+      // Arrangement 2–3 samles i en tonet «Senere»-blokk med tidslinje.
+      if (evs.length > 1) {
+        evRows += '<div class="now__later"><span class="now__later-h">Senere</span>'
+          + evs.slice(1).map(panelLaterRow).join('') + '</div>';
+      }
+      shownEvent = true;
+    }
 
     // Tomt kort unngås: uten innhold OG uten arrangement → seglet.
-    if (!urgent.length && !normal.length && !evRow) { logoFallback(host); return; }
+    if (!urgent.length && !normal.length && !evRows) { logoFallback(host); return; }
 
     host.className = 'hero__aside';
     host.hidden = false;
     var h = '<aside class="now" role="complementary" aria-label="Akkurat nå">'
       + '<div class="now__head"><span class="now__kick">Akkurat nå</span></div>'
       + urgent.map(panelUrgent).join('')
-      + evRow
+      + evRows
       + normal.map(panelRowAnnounce).join('')
-      + '<a class="now__all" href="nyheter.html">Alle nyheter &amp; arkiv <span aria-hidden="true">→</span></a>'
       + '</aside>';
     host.innerHTML = h;
   }
@@ -199,14 +233,21 @@
     renderPanel(items);
     renderSections(items);
   }
+  // Lar forsiden be panelet tegne på nytt (f.eks. når Admin-forhåndsvisning
+  // endrer antall arrangement i «Akkurat nå»-kortet).
+  window.apeironNewsRender = render;
 
   // Krok fra kalenderne (apeiron-events / aporetisk-cal / apeiron-fadder):
   // hver kalender melder inn sitt neste kommende arrangement med en kilde-nøkkel.
   // Vi viser det aller første som kommer, og slår sammen samme hendelse som
   // står i flere kalendere (f.eks. Aporetisk på en fadder-torsdag) til én.
+  // ev kan være ett arrangement (som før) eller en liste med kommende arrangement
+  // fra kilden — vi trenger flere for å kunne vise «neste to/tre».
   window.apeironNewsNextEvent = function (ev, live, source) {
     source = source || 'activity';
-    state.sources[source] = (ev && ev.start) ? ev : null;
+    var list = Array.isArray(ev) ? ev.filter(function (e) { return e && e.start; })
+                                 : ((ev && ev.start) ? [ev] : []);
+    state.sources[source] = list;
     recomputeEvent();
     // Kalenderne (aktivitet/aporetisk/fadder) melder seg inn hver for seg i rask
     // rekkefølge. Debounce render-en så panelet tegnes én gang når de har satt seg
@@ -218,19 +259,21 @@
   function recomputeEvent() {
     var now = new Date(), cands = [];
     Object.keys(state.sources).forEach(function (src) {
-      var ev = state.sources[src];
-      if (ev && ev.start && ev.start >= now) cands.push({ src: src, ev: ev });
+      (state.sources[src] || []).forEach(function (ev) {
+        if (ev && ev.start && ev.start >= now) cands.push({ src: src, ev: ev });
+      });
     });
     // Tidligst først; ved likt tidspunkt vinner mest spesifikke kalender.
     cands.sort(function (a, b) {
       return (a.ev.start - b.ev.start) || ((SRC_PRIORITY[b.src] || 0) - (SRC_PRIORITY[a.src] || 0));
     });
+    // Slå sammen samme hendelse fra flere kalendere; behold hele den sorterte lista.
     var seen = {}, deduped = [];
     cands.forEach(function (c) {
       var k = c.ev.start.getTime() + '|' + String(c.ev.title || '').toLowerCase().trim();
       if (seen[k]) return; seen[k] = 1; deduped.push(c);
     });
-    state.event = deduped.length ? deduped[0] : null;
+    state.events = deduped;
   }
 
   /* ---------- live forhåndsvisning (Admin → Nyheter) ---------- */

@@ -120,6 +120,13 @@
       function showToast(msg) { AC.toast(msg); }
       function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 
+      // Styremedlemmer (utkast om det finnes, ellers publisert) — for å koble
+      // FTV/ITV/PTV-kort til en person og hente portrettet automatisk.
+      function boardMembers() {
+        var d = (AC && AC.readDraftOr) ? AC.readDraftOr('apeiron-styret-v1', 'STYRET_CONTENT') : (window.STYRET_CONTENT || {});
+        return (d && Array.isArray(d.members)) ? d.members.filter(function (m) { return m && m.name; }) : [];
+      }
+
       function renderSubList(host2, arr, label, addLabel, placeholder) {
         host2.innerHTML = '<label>' + label + '</label><div class="subed-rows"></div><button class="btn-subadd" type="button">' + addLabel + '</button>';
         var rows = host2.querySelector('.subed-rows');
@@ -155,6 +162,13 @@
               + '<div class="fg narrow"><label>Fargestripe</label><div data-accent-host></div></div>'
             + '</div>'
             + '<div class="fg"><label>Beskrivelse</label><textarea data-f="desc" placeholder="Brødtekst. Blank linje gir nytt avsnitt.">' + esc(c.desc) + '</textarea></div>'
+            + '<div class="fg holder-fg"><label data-help="Hvem har vervet nå (f.eks. FTV, ITV eller PTV)? Koble til et styremedlem for å hente navn og portrett automatisk, eller skriv et eget navn hvis personen ikke sitter i styret. La alt stå tomt om ukjent.">Hvem har vervet nå?</label>'
+              + '<div class="frow">'
+                + '<div class="fg"><label class="sub">Koble til styremedlem</label><select data-holder-pick></select></div>'
+                + '<div class="fg"><label class="sub">Navn (vises på kortet)</label><input type="text" data-f="holder" value="' + esc(c.holder) + '" placeholder="f.eks. Ola Nordmann"></div>'
+              + '</div>'
+              + '<div class="holder-preview" data-holder-prev></div>'
+            + '</div>'
             + '<div class="fg"><label data-help="Valgfri rødbrun merknad over punktlisten. HTML er tillatt.">Uthevet merknad (rødbrun, vises før punktene)</label><input type="text" data-f="noteTop" value="' + esc(c.noteTop) + '" placeholder="valgfri (HTML lov)"></div>'
             + '<div class="subed" data-resp></div>'
             + '<div class="subed" data-contacts></div>'
@@ -169,6 +183,29 @@
           var evt = el.tagName === 'SELECT' ? 'change' : 'input';
           el.addEventListener(evt, function () { c[field] = el.value; if (field === 'name') card.querySelector('.card-title').textContent = el.value || '(uten navn)'; lazySave(); });
         });
+        // ── Innehaver: koble til styremedlem (henter portrett) + fritekst-navn ──
+        var pick = card.querySelector('[data-holder-pick]');
+        var prev = card.querySelector('[data-holder-prev]');
+        var nameInp = card.querySelector('[data-f="holder"]');
+        function paintHolderPrev() {
+          if (!prev) return;
+          if (c.holderImg) prev.innerHTML = '<img src="' + esc(c.holderImg) + '" alt=""><span>Portrett hentes automatisk fra Styret' + (c.holder ? ' — ' + esc(c.holder) : '') + '</span>';
+          else if (c.holder) prev.innerHTML = '<span class="holder-noimg">👤 ' + esc(c.holder) + ' · uten portrett</span>';
+          else prev.innerHTML = '';
+        }
+        if (pick) {
+          var mem = boardMembers();
+          pick.innerHTML = '<option value="">— Egendefinert / ingen kobling —</option>'
+            + mem.map(function (m) { return '<option value="' + esc(m.id) + '"' + (c.holderId === m.id ? ' selected' : '') + '>' + esc(m.name) + (m.role ? ' (' + esc(m.role) + ')' : '') + '</option>'; }).join('');
+          pick.addEventListener('change', function () {
+            var m = boardMembers().filter(function (x) { return x.id === pick.value; })[0];
+            if (m) { c.holderId = m.id; c.holder = m.name; c.holderImg = m.img || ''; if (nameInp) nameInp.value = c.holder; }
+            else { c.holderId = ''; c.holderImg = ''; }
+            paintHolderPrev(); lazySave();
+          });
+        }
+        if (nameInp) nameInp.addEventListener('input', paintHolderPrev);
+        paintHolderPrev();
         var accentHost = card.querySelector('[data-accent-host]');
         if (accentHost && window.createColorControl) accentHost.appendChild(window.createColorControl({ value: c.accent || '', emptyLabel: 'Gull (standard)', onChange: function (v) { c.accent = v; lazySave(); } }));
         renderSubList(card.querySelector('[data-resp]'), c.resp, 'Punkter (strekpunkter)', '+ punkt', 'Et punkt...');
@@ -289,7 +326,7 @@
         wire('sifra-helpersHeading', function (v) { data.sifra.helpersHeading = v; }); wire('sifra-helpersLede', function (v) { data.sifra.helpersLede = v; });
         ['studier', 'helse', 'fysisk', 'akutt'].forEach(function (k) { wire(k + '-eyebrow', function (v) { data[k].eyebrow = v; }); wire(k + '-heading', function (v) { data[k].heading = v; }); wire(k + '-lede', function (v) { data[k].lede = v; }); });
       }
-      function newCard() { return { eyebrow: '', accent: '', name: '', desc: '', noteTop: '', resp: [], contacts: [], note: '', btnLabel: '', btnHref: '' }; }
+      function newCard() { return { eyebrow: '', accent: '', name: '', desc: '', holder: '', holderId: '', holderImg: '', noteTop: '', resp: [], contacts: [], note: '', btnLabel: '', btnHref: '' }; }
       function scrollLast(listId) { setTimeout(function () { var last = host.querySelector('#' + listId + ' .card:last-child'); if (last) last.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60); }
 
       host.querySelector('[data-add-nav]').addEventListener('click', function () { data.hero.nav.push({ title: '', desc: '', target: '#', akutt: false }); renderAll(); lazySave(); scrollLast('list-nav'); });
@@ -304,7 +341,7 @@
         var o = clone(c);
         o.resp = (o.resp || []).filter(function (x) { return x && x.trim(); });
         o.contacts = (o.contacts || []).filter(function (x) { return x && x.trim(); });
-        ['eyebrow', 'noteTop', 'note', 'btnLabel', 'btnHref', 'accent'].forEach(function (k) { if (o[k] === '' || o[k] == null) { if (k !== 'accent') delete o[k]; } });
+        ['eyebrow', 'holder', 'holderId', 'holderImg', 'noteTop', 'note', 'btnLabel', 'btnHref', 'accent'].forEach(function (k) { if (o[k] === '' || o[k] == null) { if (k !== 'accent') delete o[k]; } });
         if (!o.contacts.length) delete o.contacts;
         return o;
       }
@@ -319,7 +356,11 @@
           + '   STRUKTUR\n'
           + '   hero.nav[]        : hurtignav-kortene øverst. {title, desc, target, akutt}\n'
           + '   *.cards[]         : ressurskort (role-card): eyebrow, accent, name, desc,\n'
-          + '                       resp[], contacts[], noteTop, note, btnLabel, btnHref\n'
+          + '                       holder, holderId, holderImg, resp[], contacts[], noteTop,\n'
+          + '                       note, btnLabel, btnHref\n'
+          + '                       holder    = navnet på den som har vervet nå (f.eks. FTV/ITV/PTV)\n'
+          + '                       holderId  = koblet styremedlem-id (styret-content.js), valgfri\n'
+          + '                       holderImg = portrett-sti hentet fra styremedlemmet, valgfri\n'
           + '   sifra.items[]     : "Si fra"-kortene. {icon, title, body}  — body tillater HTML\n'
           + '   sifra.cta         : gull-knappen. {label, href}\n'
           + '   akutt.cards[]     : nødnummer-kort. {name, num, numHref, when, life} */\n\n';
@@ -343,7 +384,10 @@
         ['list-akutt',       function () { return data.akutt.cards; },  function (v) { data.akutt.cards = v; }]
       ].forEach(function (cfg) {
         AC.enableDragSort(host.querySelector('#' + cfg[0]), {
-          itemSelector: '.card', handleSelector: '.drag-handle',
+          // handleOnly: kortene er fulle redigeringsskjema med eget ⠿-håndtak, så
+          // et vanlig klikk skal redigere/velge — ikke gli inn i dra-og-slipp
+          // (samme fiks som Meny/Footer, se CHANGELOG 04.07.26).
+          itemSelector: '.card', handleSelector: '.drag-handle', handleOnly: true,
           onReorder: function (ids) { var snap = cfg[1]().slice(); cfg[2](ids.map(function (o) { return snap[Number(o)]; })); renderAll(); lazySave(); }
         });
       });

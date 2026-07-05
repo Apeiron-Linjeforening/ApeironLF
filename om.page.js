@@ -20,7 +20,8 @@ window.OM_PAGE = {
         "back": "Til forsiden",
         "backHref": "index.html",
         "title": "Om oss",
-        "lede": "Hvem vi er, hvem vi henger med, og det lille tilfluktsstedet vårt på Dragvoll: alt om Apeiron, samlet på ett sted."
+        "lede": "Hvem vi er, hvem vi henger med, og det lille tilfluktsstedet vårt på Dragvoll: alt om Apeiron, samlet på ett sted.",
+        "toc": true
       }
     },
     {
@@ -70,7 +71,7 @@ window.OM_PAGE = {
     {
       "id": "samarbeid",
       "type": "cardgrid",
-      "tone": "auto",
+      "tone": "paper",
       "props": {
         "screenLabel": "Samarbeid",
         "eyebrow": "Større enn oss selv",
@@ -131,7 +132,7 @@ window.OM_PAGE = {
     {
       "id": "lesesalen",
       "type": "lesesal",
-      "tone": "auto",
+      "tone": "paper",
       "props": {
         "eyebrow": "En skjult perle på Dragvoll",
         "heading": "Lesesalen",
@@ -156,7 +157,7 @@ window.OM_PAGE = {
     {
       "id": "mot-styret",
       "type": "cardgrid",
-      "tone": "auto",
+      "tone": "navy",
       "props": {
         "screenLabel": "Møt styret",
         "eyebrow": "Folkene bak",
@@ -167,6 +168,13 @@ window.OM_PAGE = {
             "glyph": "Σ",
             "level": "Styret",
             "title": "Styret 2025/26",
+            "images": [
+              "assets/Styremedlemmer/Iver.jpg",
+              "assets/Styremedlemmer/Dagny.jpg",
+              "assets/Styremedlemmer/Dennis.jpg",
+              "assets/Styremedlemmer/Helene.jpg"
+            ],
+            "imagesMore": "+7",
             "body": "Leder, nestleder, økonomi, sosialansvarlig, faddersjef, fagansvarlig og resten av gjengen som driver foreningen gjennom året.",
             "links": [
               {
@@ -179,6 +187,12 @@ window.OM_PAGE = {
             "glyph": "Ψ",
             "level": "Tillitsvalgte",
             "title": "Tillitsvalgte",
+            "imagesFrom": "tillitsvalgte",
+            "images": [
+              "assets/Styremedlemmer/AnnaF.jpg",
+              "assets/Styremedlemmer/Fredrik.jpg",
+              "assets/Styremedlemmer/Karoline.jpg"
+            ],
             "body": "Studentenes stemme inn mot institutt og program, de som tar med seg tilbakemeldingene dine dit beslutningene tas.",
             "links": [
               {
@@ -191,6 +205,7 @@ window.OM_PAGE = {
             "glyph": "Δ",
             "level": "Engasjer deg",
             "title": "Verv & komiteer",
+            "imagesMore": "Deg?",
             "body": "Lyst til å bidra? Det finnes mange måter å engasjere seg på, fra komité til styreverv. Se hva som finnes og hvordan du blir med.",
             "links": [
               {
@@ -224,7 +239,7 @@ window.OM_PAGE = {
     {
       "id": "faq",
       "type": "faq",
-      "tone": "auto",
+      "tone": "paper",
       "props": {
         "eyebrow": "Spørsmål?",
         "heading": "Ofte stilte spørsmål",

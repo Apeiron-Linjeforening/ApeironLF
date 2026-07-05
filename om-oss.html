@@ -76,39 +76,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="styles.css" />
-<style>
-/* ── Subpage header ── */
-.subhero {
-  background:
-    radial-gradient(100% 80% at 90% 0%, rgba(212,175,55,.12), transparent 55%),
-    radial-gradient(70% 60% at 5% 100%, rgba(118,17,15,.28), transparent 60%),
-    var(--navy);
-  color: var(--paper);
-  padding: 148px 0 72px;
-  position: relative;
-  overflow: hidden;
-}
-.subhero__seal {
-  position: absolute; right: -4%; top: 50%; transform: translateY(-50%);
-  width: min(44vw, 540px); opacity: .09; pointer-events: none; z-index: 1;
-  filter: drop-shadow(0 0 1px rgba(212,175,55,.4));
-}
-.subhero__inner { position: relative; z-index: 2; max-width: var(--maxw); margin: 0 auto; padding: 0 28px; }
-.subhero h1 {
-  color: var(--paper);
-  font-size: clamp(3rem, 8vw, 6.5rem);
-  line-height: .95; letter-spacing: .01em; margin: .22em 0 .35em;
-}
-.subhero__lede { font-size: 1.18rem; color: rgba(244,236,217,.8); max-width: 56ch; line-height: 1.65; }
-.subhero__back {
-  display: flex; width: fit-content; align-items: center; gap: .5em;
-  font-size: .82rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
-  color: rgba(244,236,217,.55); margin-bottom: .6em; transition: color .2s;
-}
-.subhero__back:hover { color: var(--gold); }
-.subhero__back::before { content: "←"; font-style: normal; }
-</style>
+<link rel="stylesheet" href="styles.css?v=20260704" />
+
 </head>
 <body data-mode="paper">
 
@@ -135,11 +104,13 @@
 <script src="footer-icons.js"></script>
 <script src="site-content.js"></script>
 <script src="nav-content.js"></script>
-<script src="site-chrome.js"></script>
+<script src="site-chrome.js?v=20260704c"></script>
 
 <script src="image-slot.js"></script>
 
 <!-- Page Builder: motor + seksjonstyper + side-data, så bootstrap som tegner -->
+<!-- hjelp-content.js: Tillitsvalgte-kortet henter PTV/ITV/FTV-portrettene herfra -->
+<script src="hjelp-content.js"></script>
 <script src="section-engine.js"></script>
 <script src="om-sections.js"></script>
 <script src="om.page.js"></script>

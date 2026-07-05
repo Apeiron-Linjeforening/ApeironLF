@@ -27,6 +27,7 @@ Statisk side (HTML/CSS/JS) på Cloudflare Pages, uten byggesteg og uten avhengig
 
 ## 🧭 Innhold
 
+
 **For redaktører (styret):**
 - [🌐 Apeiron: Linjeforeningens nettside](#-apeiron-linjeforeningens-nettside)
   - [📚 Dokumentasjon](#-dokumentasjon)
@@ -139,7 +140,7 @@ Hver del i menyen styrer én del av nettsiden:
 | Panel | Styrer |
 | --- | --- |
 | **Forsiden** | Toppbildet, «Om oss»-teksten, FAQ og kontaktinfo på forsiden |
-| **Om oss** | Innholdet på Om oss-siden |
+| **Om oss** | Innholdet på Om oss-siden: seksjoner, lys/mørk tone per seksjon, og minimenyen «På denne siden» i toppbanneret |
 | **Nyheter** | Kunngjøringer og beskjeder (på forsiden + arkiv på Nyheter-siden) |
 | **Oppslagstavla** | Plakatene på oppslagstavla og forside-teaseren |
 | **Styret** | Styremedlemmer, portretter og beskrivelse av vervene |
@@ -147,7 +148,7 @@ Hver del i menyen styrer én del av nettsiden:
 | **Begrep** | Begrep-tidsskriftet: utgaver, podkast, film, julekalender |
 | **Medlemskap** | Priser, Vipps-nummer og innmeldingssteg |
 | **Hjelp** | Hjelp & ressurser-siden |
-| **Meny** | Lenkene i hovedmenyen (topp + mobil) |
+| **Meny** | Lenkene i hovedmenyen (topp + mobil). Et underpunkt kan òg være en **gruppeoverskrift** («+ Overskrift») for å dele opp en lang nedtrekksmeny |
 | **Footer** | Bunnteksten og de sosiale lenkene |
 | **Oppnåelser** | Milepæler / oppnåelser |
 | **Utmerkelser** | Utmerkelser og priser |
@@ -157,6 +158,10 @@ Publiser alt på én gang med **☁ Publiser til GitHub** øverst til høyre.
 > 💡 **Hastebeskjed?** En kjapp viktig melding (for eksempel «Aporetisk i kveld er flyttet»)
 > legger du ut i **Nyheter**-panelet. Skru på **⚑ Viktig** og velg hvor den skal vises.
 > Den dukker opp i «Akkurat nå»-kortet på forsiden.
+
+> 💡 **Hvor mange arrangement i «Akkurat nå»-kortet?** I **Forsiden → Hero** velger du om
+> kortet skal vise kun neste arrangement, de neste to eller de neste tre. Arrangementene
+> hentes automatisk fra kalenderne — du trenger ikke legge dem inn manuelt.
 
 ---
 
@@ -313,17 +318,24 @@ Ting vi vet om, men er usikre på om det er verdt å gjøre noe med. Ført opp s
 
 Kritisk:
  - [ ] Sjekke hvordan alt fungerer på mobil. (Husk å sjekke flere forskjellige størrelser på skjermer)
+ - [ ] Fikse Admin på mobil.
+ - [~] Rework a navigasjon/toppmeny. *(Delvis: «Foreningen» → «Om oss», nedtrekket omorganisert (sider først, ankere sist), og gruppeoverskrifter støttes nå i menyen. Gjenstår under.)*
+     - [ ] "Hjem" kan bli fjernet.
+- [ ] "Medlemskap" i medlemskap i Lys-modus er i en veldig svak farge. 
 
 Medium:
+- [ ] Sjekke at "Legg til fadderukeprogrammet i din kalender" fungerer: iCal og Google Kalender.
+- [x] Flytte "Slik bestiller du" i merch til oppe i hero.
+- [x] Utvide "Akkurat nå" til å inkludere enten neste to arrangement med knapp/valg i admin om å velge om den viser kun neste arrangement, neste to arrangement (muligens neste tre?) .
+- [x] "Akkurat nå" under Hero kan fjernes i index.
+- [x] "Det du kan regne med" over Aporetisk aften kan fjernes i index. 
+
+Lav:
 - [ ] Be HF studentrådet om å oppdatere sidene deres og gi oss mer informasjon om hva de faktisk gjør. 
       - [ ] Hva gjør egentlig en PTV, ITV og FTV? 
       - [ ] Hvordan får vi kontakt med våre egne TVer?
 - [ ] Legge til side for møtereferat -> Kan tas i egen wiki, muligens. Fylle ut SAK / utvide den kan tas på denne wiki siden.
 - [ ] Sammenlign med https://www.mfplacebo.no/
-- [ ] Sjekke at "Legg til fadderukeprogrammet i din kalender" fungerer: iCal og Google Kalender.
-- [ ] Få Admin til å fungere på mobil.
-
-Lav:
 
 Ønsker:
 - [ ] Snakke med IFR/NTNU om API for automatisk oppdatering av emner for studiene.
@@ -331,10 +343,6 @@ Lav:
 
 Må gjøres før vi slapper av med å bygge nettsiden:
 - [ ] Sjekke på nytt hvordan alt oppfører seg på mobil og smalere skjermer.
-
-Page-builder Prosjekt:
-- [ ] Gjøre om prosjektet til et nytt repo som kan klones og lett gjøres om til andre linjeforeninger.
-- [ ] Må lages en readme som sier hva man må gjøre for å starte.
 
 </details>
 

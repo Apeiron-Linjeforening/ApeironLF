@@ -31,8 +31,8 @@
   /* ── BANNER — sidens topp-banner (subhero) ───────────────── */
   SectionTypes.define('banner', {
     label: 'Topp-banner', icon: '\u25A4',
-    desc: 'Sidens hode: tilbake-lenke, tittel og ingress.',
-    defaults: function () { return { back: 'Til forsiden', backHref: 'index.html', title: 'Ny side', lede: '' }; },
+    desc: 'Sidens hode: tilbake-lenke, tittel og ingress. Kan vise minimeny (\u00ABP\u00E5 denne siden\u00BB).',
+    defaults: function () { return { back: 'Til forsiden', backHref: 'index.html', title: 'Ny side', lede: '', toc: false }; },
     render: function (p, s, ctx) {
       var lede = (p.lede || ctx.preview)
         ? '<p class="subhero__lede">' + E(p.lede) + '</p>' : '';
@@ -43,6 +43,43 @@
         + '<h1>' + E(p.title || '') + '</h1>'
         + lede
         + '</div></section>';
+    },
+    // Minimeny (\u00ABP\u00E5 denne siden\u00BB): bygges fra seksjonenes data-screen-label,
+    // s\u00E5 den alltid speiler seksjonene som faktisk er p\u00E5 siden. Plasseres
+    // med lik luft mellom ingressen og vinduskanten (m\u00E5lt, ikke gjettet).
+    mount: function (el, p) {
+      if (!el || !p || !p.toc) return;
+      var inner = el.querySelector('.subhero__inner');
+      if (!inner) return;
+      var secs = [].filter.call(document.querySelectorAll('#page section[data-screen-label]'), function (s) { return s.id; });
+      if (!secs.length) return;
+      var toc = document.createElement('nav');
+      toc.className = 'hero-toc';
+      toc.setAttribute('aria-label', 'Innhold p\u00E5 denne siden');
+      var ttl = document.createElement('span');
+      ttl.className = 'hero-toc__ttl'; ttl.textContent = 'P\u00E5 denne siden';
+      toc.appendChild(ttl);
+      secs.forEach(function (s) {
+        var a = document.createElement('a');
+        a.href = '#' + s.id;
+        a.textContent = s.getAttribute('data-screen-label');
+        toc.appendChild(a);
+      });
+      inner.appendChild(toc);
+      var place = function () {
+        if (window.innerWidth <= 900) { toc.style.left = ''; return; }
+        var lede = inner.querySelector('.subhero__lede');
+        var vw = document.documentElement.clientWidth;
+        var textRight = lede ? lede.getBoundingClientRect().right : 660;
+        var gap = (vw - textRight - toc.offsetWidth) / 2;
+        if (gap < 24) gap = 24;
+        toc.style.left = Math.round(textRight + gap - inner.getBoundingClientRect().left) + 'px';
+      };
+      place();
+      // \u00E9n hero per side: bytt ut ev. gammel resize-lytter ved re-render
+      if (window.__heroTocPlace) window.removeEventListener('resize', window.__heroTocPlace);
+      window.__heroTocPlace = place;
+      window.addEventListener('resize', place);
     }
   });
 
@@ -54,7 +91,7 @@
     defaults: function () { return { eyebrow: '', heading: '', greek: '', greekSmall: '', paras: [], card: { title: '', body: '' }, teaser: null, stats: [] }; },
     render: function (p, s, ctx) {
       var paras = (p.paras || []).map(function (t, i) {
-        return '<p' + (i === 0 ? ' style="margin-top:1.4em"' : '') + '>' + E(t) + '</p>';
+        return '<p' + (i === 0 ? ' class="about__p-first"' : '') + '>' + E(t) + '</p>';
       }).join('\n          ');
       var greek = (p.greek || ctx.preview)
         ? '<div class="about__greek">' + E(p.greek) + '\n          <small>' + E(p.greekSmall) + '</small>\n        </div>' : '';
@@ -98,10 +135,25 @@
     render: function (p, s, ctx) {
       var cards = (p.cards || []).map(function (c, i) {
         var delay = i === 0 ? '' : ' d' + i;
+        // «imagesFrom: tillitsvalgte» → hent portrettene automatisk fra hvem som
+        // er satt som PTV/ITV/FTV i Hjelp (studier-kortenes holderImg). Faller
+        // tilbake til de manuelt valgte c.images hvis ingen innehavere er satt.
+        var imgs = c.images || [];
+        if (c.imagesFrom === 'tillitsvalgte') {
+          var tvCards = (window.HJELP_CONTENT && window.HJELP_CONTENT.studier && window.HJELP_CONTENT.studier.cards) || [];
+          var derived = tvCards.map(function (t) { return t && t.holderImg; }).filter(Boolean);
+          if (derived.length) imgs = derived;
+        }
+        var avatars = imgs.map(function (img) {
+          return '<img src="' + E(img) + '" alt="" loading="lazy">';
+        }).join('');
+        if (c.imagesMore) avatars += '<span class="ally__avatars-more">' + E(c.imagesMore) + '</span>';
+        var avRow = avatars ? '<div class="ally__avatars">' + avatars + '</div>' : '';
         return '<article class="ally reveal' + delay + '">'
           + '<span class="ally__glyph" aria-hidden="true">' + E(c.glyph) + '</span>'
           + '<span class="prog__level">' + E(c.level) + '</span>'
           + '<h3>' + E(c.title) + '</h3>'
+          + avRow
           + '<p>' + E(c.body) + '</p>'
           + '<div class="ally__links">' + linkRow(c.links) + '</div>'
           + '</article>';
@@ -110,7 +162,7 @@
       return '<section class="section allies" id="' + E(s.id || 'kort') + '"'
         + (p.screenLabel ? ' data-screen-label="' + E(p.screenLabel) + '"' : '') + '>'
         + '<div class="wrap">'
-        + '<div class="center" style="margin-bottom:54px">'
+        + '<div class="center center--head">'
         + '<span class="eyebrow eyebrow--center">' + E(p.eyebrow) + '</span>'
         + '<h2 class="h-section">' + E(p.heading) + '</h2>'
         + lede
@@ -247,7 +299,7 @@
         + '<div class="join__tiers" id="joinTiers"></div>'
         + '<h3>' + E(p.cardTitle || 'Medlemskap') + '</h3>'
         + '<ol class="join__steps" id="joinSteps"></ol>'
-        + '<a class="btn btn--maroon" href="' + E(p.ctaHref || 'index.html#kontakt') + '" style="width:100%;justify-content:center">' + E(p.ctaLabel || 'Meld deg inn i dag') + '</a>'
+        + '<a class="btn btn--maroon btn--full" href="' + E(p.ctaHref || 'index.html#kontakt') + '">' + E(p.ctaLabel || 'Meld deg inn i dag') + '</a>'
         + '</div>'
         + '</div></div></section>';
     }
@@ -266,13 +318,13 @@
           + '<div class="faq__a"><p>' + E(it.a) + '</p></div>'
           + '</div>';
       }).join('\n      ');
-      return '<section class="section" id="' + E(s.id || 'faq') + '" data-screen-label="FAQ">'
+      return '<section class="section faq-sec" id="' + E(s.id || 'faq') + '" data-screen-label="FAQ">'
         + '<div class="wrap">'
-        + '<div class="center" style="margin-bottom:54px">'
+        + '<div class="center center--head">'
         + '<span class="eyebrow eyebrow--center">' + E(p.eyebrow) + '</span>'
         + '<h2 class="h-section">' + E(p.heading) + '</h2>'
         + '</div>'
-        + '<div class="faq reveal" style="max-width:760px;margin:0 auto">' + items + '</div>'
+        + '<div class="faq reveal faq--narrow">' + items + '</div>'
         + '</div></section>';
     }
     // accordion wires fra app.js (.faq__q) — identisk markup, samme oppførsel

@@ -102,8 +102,8 @@
     var now = new Date(); now.setHours(0, 0, 0, 0);
     var upc = upcoming(now);
     var nxt = upc[0] || null;
-    // Meld neste Aporetisk-dato til Akkurat nå-panelet (apeiron-news.js).
-    try { if (window.apeironNewsNextEvent) window.apeironNewsNextEvent(state.live ? nxt : null, state.live, 'aporetisk'); } catch (_) {}
+    // Meld kommende Aporetisk-datoer til Akkurat nå-panelet (apeiron-news.js).
+    try { if (window.apeironNewsNextEvent) window.apeironNewsNextEvent(state.live ? upc : null, state.live, 'aporetisk'); } catch (_) {}
     // Live kalender uten kommende Aporetisk-datoer.
     var liveEmpty = state.live && !upc.length;
 

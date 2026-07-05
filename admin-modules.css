@@ -64,10 +64,16 @@
 .mod-styret .subed, .mod-begrep .subed { display: flex; flex-direction: column; gap: 3px; }
 .mod-styret .subed > label, .mod-begrep .subed > label { font-size: .63rem; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; color: var(--ink-soft); }
 .mod-styret .subed-rows, .mod-begrep .subed-rows { display: flex; flex-direction: column; gap: 7px; }
-.mod-styret .subed-row, .mod-begrep .subed-row { display: flex; gap: 6px; align-items: center; }
-.mod-styret .subed-row input, .mod-begrep .subed-row input { flex: 1; font-family: var(--body); font-size: .86rem; border: 1px solid var(--border); border-radius: 3px; padding: 6px 9px; background: var(--surface); }
-.mod-styret .subed-row input:focus, .mod-begrep .subed-row input:focus { outline: none; border-color: var(--navy); }
-.mod-styret .subed-row select, .mod-begrep .subed-row select { flex: 0 0 120px; font-family: var(--body); font-size: .82rem; border: 1px solid var(--border); border-radius: 3px; padding: 6px 7px; background: var(--surface); }
+.mod-styret .subed-row, .mod-begrep .subed-row { display: flex; gap: 6px; align-items: center; min-width: 0; }
+/* NB: «> input»/«> select» (direkte barn) — IKKE descendant-selektor. Raden kan
+   inneholde en fargevelger (.ape-color) med egen <select>/<input> inni; en
+   descendant-regel her kapret dem (flex: 0 0 120px = kan aldri krympe) og fikk
+   selecten til å flyte ut av fargevelger-boksen og legge seg bak ✕-knappen. */
+.mod-styret .subed-row > input, .mod-begrep .subed-row > input { flex: 1; min-width: 0; font-family: var(--body); font-size: .86rem; border: 1px solid var(--border); border-radius: 3px; padding: 6px 9px; background: var(--surface); }
+/* Fargekontrollen i tilleggsverv-raden får flex:1 inline — la den krympe med raden i stedet for å presse detaljruta bredere (side-scroll). */
+.mod-styret .subed-row > .ape-color, .mod-begrep .subed-row > .ape-color { min-width: 0; }
+.mod-styret .subed-row > input:focus, .mod-begrep .subed-row > input:focus { outline: none; border-color: var(--navy); }
+.mod-styret .subed-row > select, .mod-begrep .subed-row > select { flex: 0 0 120px; font-family: var(--body); font-size: .82rem; border: 1px solid var(--border); border-radius: 3px; padding: 6px 7px; background: var(--surface); }
 .mod-styret .subed-row .btn-mini, .mod-begrep .subed-row .btn-mini { width: 28px; height: 30px; flex: 0 0 auto; border: 1px solid var(--border); border-radius: 3px; background: var(--surface); cursor: pointer; font-size: .72rem; color: var(--ink-soft); display: flex; align-items: center; justify-content: center; }
 .mod-styret .subed-row .btn-mini:hover, .mod-begrep .subed-row .btn-mini:hover { background: rgba(35,39,64,.06); color: var(--navy); }
 .mod-styret .subed-row .btn-mini.x, .mod-begrep .subed-row .btn-mini.x { color: var(--maroon); border-color: rgba(118,17,15,.25); }
@@ -301,6 +307,12 @@
 .mod-hjelp .card-head { display: flex; align-items: center; gap: 10px; padding: 11px 14px; background: rgba(35,39,64,.06); border-bottom: 1px solid rgba(35,39,64,.1); }
 .mod-hjelp .fields { padding: 16px 18px; display: flex; flex-direction: column; gap: 11px; }
 .mod-hjelp .fg textarea { min-height: 60px; line-height: 1.5; resize: vertical; }
+.mod-hjelp .holder-fg { background: rgba(212,175,55,.06); border: 1px solid rgba(212,175,55,.28); border-radius: 6px; padding: 11px 13px; }
+.mod-hjelp .holder-fg .frow { margin-top: 6px; }
+.mod-hjelp .holder-fg label.sub { text-transform: none; letter-spacing: 0; font-size: .74rem; font-weight: 600; color: var(--ink-soft); margin-bottom: 3px; }
+.mod-hjelp .holder-preview { display: flex; align-items: center; gap: 8px; margin-top: 9px; min-height: 1px; font-size: .8rem; color: var(--ink-soft); }
+.mod-hjelp .holder-preview img { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(212,175,55,.6); }
+.mod-hjelp .holder-preview .holder-noimg { color: var(--ink-soft); }
 .mod-hjelp .fg.check { flex: 0 0 auto; flex-direction: row; align-items: center; gap: 6px; min-width: 0; }
 .mod-hjelp .fg.check input { width: auto; }
 .mod-hjelp .fg.check label { text-transform: none; letter-spacing: 0; font-size: .82rem; font-weight: 600; color: var(--navy); }
@@ -414,6 +426,15 @@
 .mod-forsiden .toggle-row .t-lbl, .mod-om-oss .toggle-row .t-lbl { flex: 1; }
 .mod-forsiden .toggle-row .t-lbl b, .mod-om-oss .toggle-row .t-lbl b { display: block; color: var(--navy); font-size: .92rem; }
 .mod-forsiden .toggle-row .t-lbl span, .mod-om-oss .toggle-row .t-lbl span { font-size: .78rem; color: var(--ink-soft); }
+/* Bryter-rad i Om oss (f.eks. minimeny av/på): gull-aksentert boks med
+   ikon, tekst, PÅ/AV-status og glidebryter — skal være umulig å overse. */
+.mod-om-oss .togrow { display: flex; align-items: center; gap: 14px; margin-top: 16px; padding: 14px 16px; background: rgba(212,175,55,.07); border: 1px solid rgba(212,175,55,.45); border-left: 3px solid var(--gold); border-radius: 6px; transition: background .15s, border-color .15s; }
+.mod-om-oss .togrow.is-off { background: rgba(35,39,64,.03); border-color: var(--border); border-left-color: rgba(35,39,64,.25); }
+.mod-om-oss .togrow__txt { flex: 1 1 auto; }
+.mod-om-oss .togrow__txt b { display: block; font-family: var(--body); font-size: .94rem; font-weight: 700; color: var(--navy); margin-bottom: 2px; }
+.mod-om-oss .togrow__txt span { font-size: .78rem; color: var(--ink-soft); line-height: 1.5; }
+.mod-om-oss .togrow__state { flex: 0 0 auto; font-size: .66rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--gold-ink); }
+.mod-om-oss .togrow.is-off .togrow__state { color: var(--ink-soft); }
 .mod-forsiden .switch, .mod-om-oss .switch { position: relative; width: 46px; height: 26px; flex: 0 0 auto; }
 .mod-forsiden .switch input, .mod-om-oss .switch input { opacity: 0; width: 0; height: 0; }
 .mod-forsiden .switch .sl, .mod-om-oss .switch .sl { position: absolute; inset: 0; background: rgba(35,39,64,.25); border-radius: 999px; transition: background .15s; cursor: pointer; }
@@ -614,6 +635,11 @@
 .mod-meny .kid-card .fg label { font-size: .58rem; }
 .mod-meny .btn-add-kid { padding: 5px 11px; font-size: .76rem; background: rgba(35,39,64,.05); color: var(--navy); border: 1px solid var(--border); border-radius: 4px; font-family: var(--body); font-weight: 600; cursor: pointer; }
 .mod-meny .btn-add-kid:hover { background: rgba(35,39,64,.1); }
+.mod-meny .btn-add-kid-heading { padding: 5px 11px; font-size: .76rem; background: rgba(212,175,55,.08); color: var(--gold-ink); border: 1px solid rgba(212,175,55,.4); border-radius: 4px; font-family: var(--body); font-weight: 600; cursor: pointer; }
+.mod-meny .btn-add-kid-heading:hover { background: rgba(212,175,55,.16); }
+.mod-meny .kid-card--heading { background: rgba(212,175,55,.06); border-color: rgba(212,175,55,.4); }
+.mod-meny .kid-card--heading input { text-transform: uppercase; letter-spacing: .08em; }
+.mod-meny .kid-tag { align-self: center; flex: 0 0 auto; font-size: .6rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--gold-ink); border: 1px solid rgba(212,175,55,.4); border-radius: 3px; padding: 3px 7px; }
 .mod-meny .kids-empty { font-size: .78rem; color: var(--ink-soft); font-style: italic; padding: 2px 0; }
 .mod-meny .np-desk-wrap { width: 100%; overflow: visible; border: 1px solid var(--border); border-radius: 8px; background: var(--navy); position: relative; z-index: 1; }
 .mod-meny #pv-desk { width: 100%; height: var(--nav-h, 76px); border: 0; display: block; border-radius: 7px; position: relative; z-index: 1; transition: height .16s ease; }
@@ -870,8 +896,13 @@
 .aps__preview .ic { opacity: .8; }
 .aps__hint { display: inline-flex; align-items: center; gap: 6px; font-size: .72rem; color: var(--gold-ink); background: rgba(212,175,55,.14); border: 1px solid rgba(212,175,55,.4); border-radius: 999px; padding: 3px 10px; }
 
-.aps__md { display: grid; grid-template-columns: 286px 1fr; }
-.aps--single .aps__md { grid-template-columns: 212px 1fr; }
+/* Innholdslista (nav) skal krympe FØR det man redigerer. Den får en clamp-bredde
+   som smalner med skjermen (ned mot ~160px), mens detaljruta er minmax(0, 1fr):
+   den fyller resten OG kan krympe helt til 0, slik at gitteret ALDRI blir bredere
+   enn ruta si — da kan det heller ikke bli vannrett scroll. Editoren får dermed
+   forholdsvis mer plass når det blir trangt. Under 760px stables de (drill-down). */
+.aps__md { display: grid; grid-template-columns: clamp(160px, 20vw, 286px) minmax(0, 1fr); }
+.aps--single .aps__md { grid-template-columns: clamp(150px, 18vw, 212px) minmax(0, 1fr); }
 .aps__nav { border-right: 1px solid var(--border); background: rgba(35,39,64,.02); display: flex; flex-direction: column; min-width: 0; }
 .aps__search { padding: 10px; border-bottom: 1px solid var(--border); }
 .aps__search input { width: 100%; font-family: var(--body); font-size: .87rem; padding: 8px 11px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface); color: var(--ink); }
@@ -902,6 +933,18 @@
 .aps__detail-h .dt .nm { font-family: var(--display); font-size: 1.35rem; font-weight: 600; color: var(--navy); line-height: 1.05; }
 .aps__detail-h .dt .ro { font-size: .82rem; color: var(--ink-soft); }
 .aps__detail .aps__adopted { display: block !important; }
+/* Kontroll som er flyttet opp på detalj-overskriftens linje ([data-aps-head]).
+   Vises kun der — i selve panelet (uadoptert) holdes den skjult. */
+.fg-head:not(.aps__head-adopted) { display: none; }
+.aps__detail-h .fg-head { margin-left: auto; display: flex; align-items: center; gap: 9px; cursor: default; }
+.aps__detail-h .fg-head > span { font-size: .62rem; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; color: var(--ink-soft); white-space: nowrap; }
+.aps__detail-h .fg-head select { font-family: var(--body); font-size: .84rem; color: var(--ink); border: 1px solid var(--border); border-radius: 4px; padding: 6px 9px; background: var(--surface); cursor: pointer; }
+.aps__detail-h .fg-head select:focus { outline: none; border-color: var(--navy); }
+@media (max-width: 620px) {
+  /* Smal detalj-kolonne: la kontrollen falle under overskriftsteksten. */
+  .aps__detail-h { flex-wrap: wrap; }
+  .aps__detail-h .fg-head { margin-left: 56px; }
+}
 .aps__detail .aps__adopted.meta-panel, .aps__detail .aps__banner-built .meta-panel { margin: 0; }
 
 .aps__tools { display: flex; gap: 6px; padding: 2px 4px 8px; }
@@ -954,7 +997,7 @@
 .aps__dot { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 auto; }
 .aps__dot.on { background: #1f8a4c; } .aps__dot.off { background: rgba(35,39,64,.25); }
 
-.aps__detail { padding: 18px 20px; min-width: 0; max-height: 72vh; overflow-y: auto; }
+.aps__detail { padding: 18px 20px; min-width: 0; max-height: 72vh; overflow: hidden auto; }
 .aps__detail .card, .aps__detail .pcard { border: none; box-shadow: none; padding: 0; margin: 0; background: none; }
 .aps__detail > .row-card { border: none; box-shadow: none; padding: 0; margin: 0; background: none; display: flex; flex-direction: column; gap: 11px; }
 .aps__detail > .row-card .drag-handle { display: none; }
@@ -1008,12 +1051,43 @@
 /* Chip-raden (tilleggsverv): tekst + fargevelger + slett på SAMME rad. */
 .aps__detail .arch-card .subed-row { flex-wrap: nowrap; align-items: center; }
 .aps__detail .arch-card .subed-row > input[type="text"] { flex: 1 1 60px; min-width: 0; }
+/* Samme sikring for det VANLIGE medlemskortet (ikke bare arkivkortet): la
+   bildekolonne-gitteret og feltene krympe med ruta i stedet for å beholde en
+   min-bredde som skyver innholdet ut til siden når detaljruta blir smal. */
+.aps__detail .card-body { grid-template-columns: 140px minmax(0, 1fr); }
+.aps__detail .fields, .aps__detail .fg { min-width: 0; }
+.aps__detail .fg input, .aps__detail .fg textarea, .aps__detail .fg select { max-width: 100%; }
+/* Toppen av kortet (navn + «Slett») og de vanlige felt-radene må også kunne
+   brytes/krympe, ellers holder de detaljruta bredere enn den har plass til. */
+.aps__detail .card-head, .aps__detail .aps__detail-h { flex-wrap: wrap; min-width: 0; }
+.aps__detail .card-title, .aps__detail .aps__detail-h .nm { min-width: 0; overflow-wrap: anywhere; }
+.aps__detail .frow { min-width: 0; }
+/* Chip-raden (tilleggsverv): tekstfelt + fargevelger + slett. Native <select>
+   nekter ofte å krympe under innholdet sitt, så raden ble ~noen px for bred og
+   fargeruta ble klippet av kant-kuttet (overflow:hidden). Løsning: la fargevelger
+   + slett BRYTE til ny linje når det blir trangt, i stedet for å klemmes sammen.
+   (Arkivkortet beholder én-linje via sin egen, mer spesifikke regel over.) */
+.aps__detail .subed-row { flex-wrap: wrap; }
+.aps__detail .subed-row > input[type="text"] { flex: 1 1 140px; min-width: 0; }
+.aps__detail .subed-row > .ape-color { flex: 1 1 160px; min-width: 0; }
+/* Fargevelgerens INNMAT må også kunne krympe. Dens egen CSS injiseres av
+   palette.js ved kjøring og kan være gammel i nettleser-cache; disse mer
+   spesifikke reglene gjelder uansett. Uten min-width:0 beholder native <select>
+   sin innholdsbredde, flyter UT av .ape-color-boksen og maler seg over
+   ✕-knappen ved siden av — det var «boksene går inn i hverandre». */
+.aps__detail .ape-color__row, .aps__detail .ape-color__crow { min-width: 0; }
+.aps__detail .ape-color__theme, .aps__detail .ape-color__name { min-width: 0; max-width: 100%; }
 .aps__back { border: none; background: none; color: var(--gold-ink); font-family: var(--body); font-size: .84rem; cursor: pointer; padding: 0 0 12px; text-decoration: underline; text-underline-offset: 2px; }
 .aps__back:hover { color: var(--navy); }
 .aps__detail .card.is-done .card-head { opacity: 1; }
 .aps__empty { color: var(--ink-soft); font-size: .92rem; padding: 40px 12px; text-align: center; line-height: 1.55; }
 
 .aps-ovw { padding: 4px 2px; }
+.aps-ovw__note { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: 6px; padding: 13px 16px; margin-bottom: 16px; font-size: .86rem; }
+.aps-ovw__note strong { display: block; color: var(--navy); font-size: .92rem; margin-bottom: 5px; }
+.aps-ovw__note p { color: var(--ink-soft); line-height: 1.5; margin: 0; }
+.aps-ovw__note .tv-goto { margin-top: 10px; padding: 6px 13px; background: rgba(212,175,55,.18); color: var(--gold-ink); border: 1px solid rgba(212,175,55,.5); border-radius: 4px; font-family: var(--body); font-size: .82rem; font-weight: 700; cursor: pointer; }
+.aps-ovw__note .tv-goto:hover { background: rgba(212,175,55,.3); }
 .aps-ovw__hi { font-family: var(--display); font-size: 1.45rem; color: var(--navy); }
 .aps-ovw__sub { font-size: .86rem; color: var(--ink-soft); margin: 2px 0 15px; }
 .aps-ovw__cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 9px; }
@@ -1032,10 +1106,42 @@
 .aps-orr .orr-nm { font-weight: 600; color: var(--navy); font-size: .9rem; }
 .aps-orr .orr-go { font-size: .8rem; color: var(--gold-ink); font-weight: 700; margin-left: auto; }
 
+/* «← Liste»-knappen i skall-hodet: bare synlig på mobil, og bare når man står
+   inne i detaljen (aps--mob-detail). Skjult på bred skjerm der begge rutene
+   uansett vises side om side. */
+.aps__mobback { display: none; align-items: center; gap: 6px; padding: 6px 12px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface); font-family: var(--body); font-size: .82rem; font-weight: 600; color: var(--navy); cursor: pointer; }
+.aps__mobback:hover { background: rgba(35,39,64,.05); border-color: rgba(212,175,55,.6); }
+
 @media (max-width: 760px) {
   .aps__md, .aps--single .aps__md { grid-template-columns: 1fr; }
   .aps__nav { border-right: none; border-bottom: 1px solid var(--border); }
   .aps__scroll { max-height: 240px; }
+
+  /* ── Mobil «drill-down» ──
+     Vis ENTEN listen ELLER detaljen, aldri begge stablet (det var det som gjorde
+     at innholdsmenyen spiste halve skjermen). aps--mob-detail settes av skallet
+     når man åpner et element; «← Liste» tar deg tilbake. */
+  .aps.aps--mob-detail .aps__nav { display: none; }
+  .aps:not(.aps--mob-detail) .aps__detail { display: none; }
+  /* Når bare listen vises får den fylle høyden i stedet for å stå i en 240px-boks. */
+  .aps:not(.aps--mob-detail) .aps__scroll { max-height: none; }
+  .panel-host.shell-on .aps:not(.aps--mob-detail) .aps__scroll { flex: 1 1 auto; }
+  /* I full-høyde-modus (shell-on): la den ene synlige ruta fylle høyden og
+     scrolle internt, i stedet for å vokse forbi skjermen og bli klippet. */
+  .panel-host.shell-on .aps .aps__md { display: block; }
+  .panel-host.shell-on .aps.aps--mob-detail .aps__detail { height: 100%; max-height: none; min-height: 0; overflow-y: auto; }
+  .panel-host.shell-on .aps:not(.aps--mob-detail) .aps__nav { height: 100%; }
+  /* «Oversikt»-knappen er overflødig ved siden av «← Liste» på den smale linja. */
+  .aps.aps--mob-detail .aps__home { display: none; }
+  .aps.aps--mob-detail .aps__mobback { display: inline-flex; }
+
+  /* Skall-hodet: la tittel og handlingsknapper flyte pent venstrejustert og
+     brytes jevnt, i stedet for at knappene dyttes ujevnt mot høyre. */
+  .aps__head { padding: 10px 13px 12px; row-gap: 9px; }
+  .aps__head .aps__sp { display: none; }
+  .aps__ttl { flex: 0 1 auto; }
+  /* Større, lettere trykkbare knapper på mobil. «Oversikt» litt bredere. */
+  .aps__home, .aps__preview, .aps__mobback { padding: 9px 18px; font-size: .86rem; }
 }
 
 /* Fast forhåndsvisnings-dokk nederst i skallet (opt-in: previewDock) — for
@@ -1048,3 +1154,38 @@
 .panel-host.shell-on .aps__dock { max-height: min(220px, 30vh); }
 /* Editoren har prioritet: rail+detalj kan ikke kollapse under dette — dokken krymper først. */
 .panel-host.shell-on .aps__md { min-height: 240px; }
+
+/* ════════════════════════════════════════════════════════════
+   REDIGERBARE FELT & SMÅKNAPPER — løft fra flaten (tema-bevisst)
+   Panelene/kortene ligger på --surface, og feltene lå OGSÅ på --surface,
+   så alt redigerbart gikk i ett med bakgrunnen. Alle inputs/selects/
+   textareas og små handlingsknapper får i stedet --field (hakket lysere
+   enn flaten per tema) + --field-border, så det man kan endre står ut —
+   konsistent med fargevelgeren (.ape-color), som bruker de samme
+   variablene. Gull-/navy-aksentknapper (btn-add, aps__seg.on osv.)
+   beholder aksentfargene sine.
+   ════════════════════════════════════════════════════════════ */
+.panel-host .fg input:not([type="checkbox"]):not([type="radio"]),
+.panel-host .fg textarea,
+.panel-host .fg select,
+.panel-host .subed-row > input,
+.panel-host .subed-row > select,
+.panel-host .subed-row .btn-mini,
+.panel-host .img-bar .ibtn,
+.panel-host .btn-ord,
+.panel-host .lay-switch__btns button,
+.aps__search input,
+.aps__seg,
+.aps__tool,
+.aps__home, .aps__preview, .aps__mobback,
+.aps__detail-h .fg-head select {
+  background: var(--field, var(--surface));
+  border-color: var(--field-border, var(--border));
+}
+/* Aktive/valgte tilstander skal fortsatt bruke aksentfargene sine. */
+.panel-host .lay-switch__btns button.active { background: var(--navy); border-color: var(--navy); }
+.aps__seg.on { background: var(--navy); border-color: var(--navy); }
+/* Fokus: behold navy-kanten fra basereglene. */
+.panel-host .fg input:focus, .panel-host .fg textarea:focus, .panel-host .fg select:focus,
+.panel-host .subed-row > input:focus, .panel-host .subed-row > select:focus,
+.aps__search input:focus { border-color: var(--navy); }

@@ -17,6 +17,7 @@
           var js = '/* admin-shortcuts.js — egendefinerte snarveier i Admin-senteret.\n'
             + '   Deles globalt med alle redaktører via Git. Redigeres i Admin → Oversikt\n'
             + '   (kortet «Snarveier») eller med «Legg til som snarvei» inne i en seksjon.\n'
+            + '   href peker INN i Admin-senteret: «admin.html#<panel>» eller «admin.html#<panel>/<seksjon>».\n'
             + '   Hvert element: { id, label, href, ico } */\n'
             + 'window.ADMIN_SHORTCUTS = ' + JSON.stringify(data, null, 2) + ';\n';
           AC.saveFile('admin-shortcuts.js', js);

@@ -1,5 +1,130 @@
 ## Siste endringer
 
+**05.07.26 · Tillitsvalgte (PTV/ITV/FTV): innehaver settes i Hjelp og portrettene følger med overalt — + dra-fiks i Hjelp**
+
+*Tillitsvalgte-innehaver*
+- **Notat + hurtiglenke i Styret-panelet:** PTV/ITV/FTV redigeres under Hjelp → «Faglig hjelp», ikke i Styret. Notatet vises både i klassisk visning og i «Hvor vil du begynne?»-oversikten (ny `overviewNote`-hook i PanelShell), med en knapp som hopper rett dit (`window.AdminNav`).
+- **Nytt felt «Hvem har vervet nå?» på FTV/ITV/PTV-kortene:** koble kortet til et styremedlem (henter navn + portrett automatisk fra Styret) eller skriv et fritt navn for personer utenfor styret. Vises som en «Nåværende: …»-pille (med portrett når det er koblet) på Hjelp-siden. Berørt: `admin-modules/hjelp.js`, `admin-panel-shell.js`, `admin.html`, `admin-modules.css`, `hjelp.html`.
+- **«Om oss» → Tillitsvalgte-teaseren henter nå portrettene automatisk** fra de samme innehaverne (`imagesFrom: "tillitsvalgte"` på kortet). Faller tilbake til manuelt valgte avatarer hvis ingen innehaver er satt. Oppdateres når Hjelp publiseres. Berørt: `om-sections.js`, `om.page.js`, `om-oss.html`, `admin-modules/om-oss.js`.
+
+*Bugfiks*
+- **Et vanlig klikk på et kort i Hjelp-panelet startet et dra** (samme feil som ble rettet for Meny/Footer 04.07.26), så man ikke fikk redigert felt. Hjelp-kortene er fulle redigeringsskjema med eget ⠿-håndtak, men `enableDragSort` manglet `handleOnly`, så hele kortet var gripbart. Nå armerer **kun ⠿-håndtaket** et dra; resten av kortet er til redigering/valg. Berørt: `admin-modules/hjelp.js`.
+
+**05.07.26 · Admin «Liste + detalj»: side-scroll fikset, fargevelgeren i chip-raden reparert, temabevisste felt**
+
+*Side-scroll og overlappende bokser (Styret m.fl.)*
+- **Bugfiks: man kunne scrolle vannrett ut av siden i «liste + detalj»-paneler** (f.eks. Styret → et styremedlem), og på smal skjerm gled bokser inn i hverandre. Rotårsaken var en gammel regel `.subed-row select { flex: 0 0 120px }` skrevet for da chip-raden hadde en enkel `<select>` som direkte barn — som *descendant*-selektor kapret den også `<select>`-en **inne i** fargevelgeren (`.ape-color`) og låste den til 120px uten krympemulighet. Den fløt da ut av fargevelger-boksen, la seg bak ✕-knappen/fargeruta og presset raden bredere enn ruta (= side-scroll). Reglene er nå avgrenset til direkte barn (`> input`/`> select`), så fargevelgerens innmat styres av sin egen CSS.
+- **Innholdslista krymper FØR editoren.** Master–detalj-gitteret var `286px 1fr` (der `1fr` aldri kan bli smalere enn innholdet); nå er nav-kolonnen `clamp(160px, 20vw, 286px)` og detaljruta `minmax(0, 1fr)` — kolonnene summerer alltid til rammens bredde, så vannrett overflyt er umulig, og det man redigerer beholder plassen når det blir trangt. Detaljruta har i tillegg `overflow: hidden auto` (aldri vannrett scrollefelt), og kortoverskrift, feltrader og bildegitter fikk `min-width: 0`/`flex-wrap` så innholdet faktisk får plass.
+- **Chip-raden (Tilleggsverv) fikk balansert plassfordeling.** Fargevelgeren ble sultefôret ned til ~30px fordi den fikk inline `flex: 1` (basis 0) mot tekstfeltets 140px-basis; nå starter begge fra rimelig basis (140/150px), og ved trange bredder bryter fargevelger + slett samlet til egen linje i stedet for å klemmes.
+- Verifisert med hodeløs nettleser (Playwright) på 880/1055/1400px: ingen overlapp, ingen overflyt, selecten leselig i alle bredder.
+
+*Temabevisste redigeringsfelt (alle paneler)*
+- **Redigerbare felt og småknapper gikk i ett med bakgrunnen** — panelene og feltene delte samme `--surface`-farge, mens fargevelgeren stakk seg ut som ren hvit (hardkodet `#fff`). Nye temavariabler `--field`/`--field-border` (et hakk lysere enn flaten per tema: varm `#fffdf6`, sval `#ffffff`, salvie `#fdfffa`) brukes nå av alle inputs/selects/textareas, chip-felt, ✕/✎/↑↓-knapper, søkefeltet og skall-knappene — konsistent løftet fra flaten, i alle tre temaer. Aksentknapper (gull/navy/maroon) og fokusramme er urørt.
+- **`palette.js` følger admin-temaet:** fargevelgerens hardkodede farger er byttet til `var(--field, #fff)` osv. — temastyrt i admin, uendret utseende på offentlige sider som ikke definerer variablene.
+- Cache-versjonering: `palette.js` lastes nå med versjonsparameter (var tidligere uversjonert, så fikser nådde ikke nettleseren).
+- Berørte filer: `admin-modules.css`, `admin.html`, `palette.js`, `admin-modules/styret.js`.
+
+**05.07.26 · Admin-senteret: gjennomgang av mobilvisningen (skuffmeny, drill-down, per-side angre)**
+
+*«Liste + detalj» på mobil*
+- **Ekte drill-down i stedet for to stablede ruter.** På smal skjerm ble søke-/innholdsmenyen og redigeringsskjemaet lagt oppå hverandre, så menyen spiste øvre halvdel av skjermen og man måtte scrolle forbi den hver gang. Nå vises **enten** listen **eller** detaljen: man lander på den søkbare listen (fyller høyden), åpner et element → detaljen fyller skjermen og scroller til topp, og en **«← Liste»**-knapp i skall-hodet tar deg tilbake. På bred skjerm er alt uendret (begge ruter side om side). Styres av klassen `aps--mob-detail` som skallet setter/fjerner.
+- **Skall-hodet rydder på mobil:** tittel og handlingsknapper flyter jevnt venstrejustert i stedet for å dyttes ujevnt til høyre, og «Oversikt»/«Forhåndsvisning»/«← Liste» er større og lettere å treffe.
+- **Den lille undertittelen ved siden av paneltittelen er fjernet** (`.aps__sub` — «3 samlinger», «Sidetekster», «Bygg siden» osv.) for alle paneler.
+- **«↩ Husker hvor du var»-merket er fjernet.**
+
+*Sidemenyen som skuff*
+- **På mobil ble sidemenyen tvunget til en 58px ikon-stripe uten etiketter** som spiste ~15 % av bredden og var vanskelig å tyde. Den ligger nå utenfor skjermen og åpnes som en **skuff via ☰-knappen** i toppen — med lesbare panelnavn, og lukkes automatisk når man velger et panel, trykker på bakteppet eller Esc. Hele bredden går til redigering.
+- **Sidemeny + «Liste + detalj» er nå standard på mobil** (uten å overstyre desktop, som beholder faner/klassisk) — smart standard basert på skjermbredde når intet er valgt.
+
+*Topplinja*
+- **Logoen er klikkbar → tilbake til nettsiden**, både desktop og mobil (bevarer innloggings-token). Den vesle «←»-pila er fjernet på mobil siden logoen tar over, og logoen fungerer samtidig som avstandsholder så «Logg inn»/⚙ ikke lenger dyttes ut av skjermen.
+
+*Upubliserte endringer*
+- **Endringsmerket vises nå også på mobil**, kompakt som «[N] Endringer» (var skjult før). Et klikk åpner som før oversikten over hva som er endret.
+- **Per-side «↺ Angre» i endrings-oversikten.** Hver endret side har egen angre-knapp som tilbakestiller *bare* den til sist publiserte versjon — reversibelt via angre-snackbaren, og den åpne siden re-monteres så feltene faktisk revertes. «↺ Angre alle» ligger fortsatt nederst. Topplinjas «Angre alle» er skjult på mobil (ligger i oversikten i stedet), så toppen ikke blir overfylt.
+- Den delte bekreftelses-modalen (`apModal`) har fått en valgfri tredje knapp (`extraLabel`) og en `onMount`-hook for egendefinert innhold.
+
+*Diverse fikser*
+- **Bugfiks: en «strek» nederst på siden (både mobil og desktop).** `#toast` manglet all CSS, så varsel-teksten ble skrevet inn nederst i vanlig sideflyt og aldri fjernet — siste varsel ble stående igjen. Varselet er nå en fast, sentrert pille som er skjult til den faktisk vises.
+- **Lukk-krysset (✕) i Innstillinger holder seg alltid i øvre høyre hjørne** når man blar i en lang modal (null-høyde sticky-lag), mens «Innstillinger»-tittelen scroller normalt.
+- **«Til toppen»-pil på mobil**, samme stil som på nettsiden — dukker opp når man har scrollet ned, og ruller riktig indre container (oversikt, panel eller detalj-rute) til topps.
+- Berørte filer: `admin.html`, `admin-panel-shell.js`, `admin-common.js`, `admin-modules.css`.
+
+**05.07.26 · «Akkurat nå»: eget «Senere»-oppsett for flere arrangement, klikkbar kunngjøring og tett kort i alle bredder**
+
+*«Akkurat nå»-kortet (forsiden)*
+- **Nytt oppsett når kortet viser flere arrangement.** Det neste arrangementet står som hovedhendelse med stort datokort og «Neste arrangement»-merkelapp; arrangement 2–3 samles i en svakt tonet «Senere»-blokk knyttet til en tynn gull-tidslinje (prikkene sentreres per rad, så de sitter riktig uansett radhøyde — og ved bare ett «senere»-arrangement vises kun prikken, ingen løs strek). Tidligere gjentok hver rad samme store datokort og merkelapp, som ble repetitivt og høyt.
+- **Hele kunngjøringsraden er nå klikkbar**, akkurat som arrangement-radene: til sin egen lenke om den har en, ellers til nyhetsarkivet (`nyheter.html`). Den gamle «Alle nyheter & arkiv»-knappen nederst i kortet er fjernet, og skillelinja på siste rad er strøket så kortets avrundede bunn blir ren.
+- **Kortet holder seg som en tett, avgrenset blokk i alle bredder** (samme prinsipp som merch-bestillingskortet) i stedet for å strekke seg fullt ut når hero-en stables. Ved ≤860px blir det en ryddig `max-width:440px`-blokk mot venstre — `width:100%` fyller automatisk smalere mobilskjermer og avgrenser bredere, så korte rader ikke lenger får store tomrom mellom tekst og pil.
+
+*Admin → Forsiden*
+- **«Akkurat nå»-innstillingen ligger nå på linje med «Hero øverst på Hjem»-overskriften** i stedet for nede blant Hero-feltene. Kompakt etikett + nedtrekk, høyrestilt i detalj-baren.
+- **Ny generisk mekanisme i «liste + detalj»-skallet:** et element merket `data-aps-head` inne i et seksjons-panel flyttes opp på detalj-overskriftens linje mens seksjonen er åpen, og tilbake til panelet når man forlater den. Elementet *flyttes* (aldri gjenskapes), så felt-id-er og hendelseslyttere holder seg intakte. Gjenbrukbart for andre paneler.
+- Innstillingen selv er uendret (`arr-maxevents` → `newsPanel.maxEvents`).
+- Berørte filer: `apeiron-news.js`, `styles.css`, `admin-modules/forsiden.js`, `admin-panel-shell.js`, `admin-modules.css`.
+
+**04.07.26 · Om oss: seksjonslenker lander nå presist rett under nav-en**
+
+*Anker-scroll (gjelder alle sider)*
+- **Bugfiks: `#seksjon`-lenker på Om oss tok deg litt for høyt** — en stripe av forrige seksjon ble synlig over den du hoppet til, og landingen var ujevn fra seksjon til seksjon. Årsaken: Om oss tegnes av JavaScript (`PageEngine`) *etter* at nettleseren gjør sitt native fragment-hopp, så den innebygde `scroll-padding-top`-landingen kappløp med rendringen og traff upresist.
+- **Ny `wireHashScroll` i `site-chrome.js` styrer anker-scrollet selv.** Den bruker nav-ens *faktiske* høyde som offset (ikke en fast `84px`-gjetning) og kjører på klikk, `hashchange` og innlasting med `#anker` — sistnevnte på nytt etter `load` + `fonts.ready`, så landingen blir presis når alt er lagt ut. Håndterer også modifiserte klikk, `href="#"`-plassholdere, kryss-side-lenker og allerede-håndterte hendelser, så nav/skuff/søk er urørt.
+- **Måler nav-en i «is-stuck»-tilstand.** Etter et scroll er nav-en alltid krympet (`padding:14px → 10px`), så den utvidede høyden ga ~8px for stor offset. Høyden måles nå usynlig i stuck-tilstand (transition av, les, gjenopprett — før neste maling). Et ekstra `+2px` tucker seksjonstoppen så vidt inn under nav-kanten, siden `offsetHeight` er avrundet til heltall mens den malte høyden kan være brøkdels-px (ellers lekker en 1px-stripe).
+- **`scroll-padding-top` er koblet til den målte nav-høyden:** `var(--nav-h, 84px)` i stedet for hardkodet `84px`, som fallback for ikke-JS/første maling.
+- Berørte filer: `site-chrome.js`, `styles.css`, samt cache-bust-versjonering av `styles.css`/`site-chrome.js` på alle sidene.
+
+**04.07.26 · Admin → Meny: et klikk på et menypunkt havner ikke lenger i dra-og-slipp**
+
+*Menyeditoren (liste + detalj)*
+- **Bugfiks: et vanlig klikk på et menypunkt starter ikke lenger et dra.** Menypunktene tegnes som fulle redigeringskort, og *hele* kortet var sorterbart — trykket man et sted på kortet som ikke var et felt (etikett, luft, undermeny-området) og pekeren skalv bare > 4 px, gled kortet inn i dra-og-slipp. Da ble det umulig å bare redigere tekst eller endre synlighet uten å dra. Nå kan et dra **kun** startes fra draghåndtaket `⠿`; resten av kortet er til redigering/valg som forventet.
+- **Ny `handleOnly`-modus i den delte dra-sorteringen (`enableDragSort`).** Når den er på, ignoreres «dra hele kortet»-oppførselen, og bare håndtaket armerer et dra. Slått på som standard for alle «liste + detalj»-paneler (Meny og Footer), siden radene der alltid er redigeringsskjema med eget `⠿`-håndtak. Kan overstyres per gruppe med `reorderHandleOnly: false`.
+- Berørte filer: `admin-common.js`, `admin-panel-shell.js`, `admin-modules/meny.js`.
+
+**04.07.26 · Forside + merch: «Akkurat nå» kan vise flere arrangement, ryddet kapittelbrudd, bestilling opp i merch-toppbildet**
+
+*«Akkurat nå»-kortet (forsiden)*
+- **Kortet kan nå vise de neste 1–3 arrangementene**, ikke bare det aller neste. Antallet velges i **Admin → Forsiden → Hero** («Kun neste arrangement» / «Neste to» / «Neste tre») og lagres i `index-content.js` som `newsPanel.maxEvents` (standard = 1, som før).
+- **Kalenderne melder nå inn hele lista** med kommende arrangement, ikke bare det første. `apeiron-news.js` slår sammen kildene (aktivitet/aporetisk/fadder), sorterer på tid, deduperer samme hendelse på tvers av kalendere, og viser de N øverste. Datainntaket (`apeironNewsNextEvent`) tar imot både ett arrangement (som før) og en liste — bakoverkompatibelt.
+- **Live forhåndsvisning:** når antallet endres i admin, tegner `apeiron-index.js` kortet på nytt (`window.apeironNewsRender`).
+
+*Forsiden — ryddet kapittelbrudd*
+- **«Akkurat nå»-kapittelbruddet over Oppslagstavla-teaseren er fjernet**, og **«Det du kan regne med» over Aporetisk Aften er fjernet**. Begge var rene dekor-etiketter (`.chapbreak`) uten funksjon; seksjonene beholder sitt eget innhold.
+
+*Merch — bestilling opp i toppbildet*
+- **«Slik bestiller du» er flyttet fra bunnen av merch-siden opp i toppbildet**, ved siden av «Merch»-tittelen (over seglet). Bestillings-banden er en kompakt utgave med de 4 stegene i et 2×2-rutenett, kortere intro og strammere padding, så den får plass uten å sprenge seksjonen. Produktrutenettet ligger som før øverst i produktseksjonen.
+- **Responsivt oppsett i tre trinn:** ≥ 980px står tittel og kort side om side, sentrert som ett par med fast avstand (ikke to like kolonner som driver fra hverandre, så det ikke blir stort tomrom på brede skjermer). Under 980px stables kortet under tittelen som en tett blokk (maks 600px, ikke strukket utover — seglet fyller høyre side). Under 560px går stegene til én kolonne. Terskelverdiene ble finjustert etter visuell gjennomgang på flere bredder.
+- Berørte filer: `index.html`, `merch.html`, `index-content.js`, `apeiron-news.js`, `apeiron-index.js`, `apeiron-events.js`, `apeiron-fadder.js`, `aporetisk-cal.js`, `admin-modules/forsiden.js`.
+
+**04.07.26 · Admin: snarveier peker nå inn i Admin-senteret, ikke til den publiserte siden**
+
+*Snarveier (Oversikt)*
+- **«Legg til som snarvei» lager nå en snarvei INN i Admin-senteret.** Før pekte snarveiene på den *publiserte* siden (`index.html#aporetisk`) og åpnet den i ny fane — altså den ferdige nettsiden, ikke redigeringsflaten. Nå peker de på det matchende panelet/seksjonen i admin (`admin.html#forsiden/aporetisk`), og et klikk hopper rett dit i samme fane. Gjelder både «+ Legg til snarvei»-plukkeren på Oversikt og «🔗 Legg til som snarvei»-knappen inne i en seksjon.
+- **Nytt href-format for snarveier:** `admin.html#<panel>` for et helt panel, `admin.html#<panel>/<seksjon>` for én seksjon. Deles globalt via `admin-shortcuts.js` som før. Den ene eksisterende snarveien (Aporetisk Aften) er migrert til det nye formatet.
+- **Hvert panel er nå sin egen «hel side»-snarvei.** Før ble Forsiden/Meny/Footer slått sammen til én oppføring fordi de alle pekte på `index.html`; nå får hvert synlige panel sin egen snarvei siden målet er panelet, ikke den delte siden.
+- **Dyp-lenking til seksjon.** Admin-senteret forstår nå `admin.html#<panel>/<seksjon>` ved oppstart, og «Liste + detalj»-skallet plukker opp ønsket seksjon ved mount (eller hopper dit via en hendelse hvis panelet allerede er åpent). Eldre snarveier som fremdeles peker på den publiserte siden åpnes som før i ny fane (bakoverkompatibelt).
+- Berørte filer: `admin.html`, `admin-panel-shell.js`, `admin-modules/shortcuts.js`, `admin-shortcuts.js`.
+
+**04.07.26 · Navigasjon + Om oss: ryddet meny, minimeny i banneret, lys/mørk rytme og subhero-konsolidering**
+
+*Hovedmenyen*
+- **«Foreningen» heter nå «Om oss»** og nedtrekket er omorganisert: de fem egne sidene (Om oss, Styret & tillitsvalgte, Tidligere styrer, Utmerkelser, Oppnåelser) står først, deretter de tre anker-snarveiene (Verv, Fellesskap & samarbeid, Lesesalen). Før sto sider og ankere blandet, så menyen så dobbelt så stor ut som innholdet den pekte til.
+- **Ny meny-byggekloss: gruppeoverskrift.** Et undermenypunkt kan nå være `{label, heading:true}` — en ikke-klikkbar overskrift med skillelinje, i både desktop-nedtrekk og mobilskuff. Brukes ikke i dagens meny (ble prøvd og valgt bort), men støttes fullt ut i Admin → Meny («+ Overskrift»-knapp, eget gulltonet kort) og overlever utkast/angre/eksport. Scrollspy og aktiv-markering er upåvirket (spør kun etter lenker).
+
+*Om oss-siden (visuelt løft)*
+- **Tone-systemet er koblet til bakgrunnene.** Seksjonsmotoren har alltid regnet ut `data-tone` per seksjon, men ingen CSS brukte den — hele midtdelen var én flat kremflate. Nå males `data-tone="navy"`-seksjoner som mørke bånd (token-re-pinning, samme oppskrift som marine-modusens alltid-mørke flater). «Møt styret» er første mørke bånd; tone-velgeren i Admin → Om oss har dermed endelig synlig effekt.
+- **Minimeny i banneret («På denne siden»).** Banner-seksjonen kan vise en gruppert innholdsmeny: glasspanel med gullkant på desktop (posisjon måles av JS så det alltid er lik luft mellom ingressen og vinduskanten), runde chips under ingressen på mobil. Bygges automatisk fra seksjonenes `data-screen-label` — skjules/flyttes en seksjon i admin, følger menyen med. Slås av/på per side i banner-panelet (`props.toc`).
+- **FAQ har fått eget bakgrunnsbånd** (`.faq-sec`, dypere pergament + hårlinje via `var(--line)` så den synes i begge fargemoduser) — siden slutter bevisst i stedet for å fade inn i footeren.
+- **Avatar-rader i kort.** Cardgrid-kort støtter valgfrie `images`/`imagesMore`-props som rendres som en rad overlappende, runde bilder (+ «+7»/«Deg?»-boble). Tatt i bruk i «Møt styret» med styrebilder; redigeres per kort i Admin → Om oss (kommaseparerte stier + boble-tekst). Kort uten bilder ser ut som før.
+
+*Admin*
+- **Banner-panelet i Om oss er ryddet.** «Tilbake-lenke (tekst)» og «Tilbake-lenke (URL)» ligger nå side ved side på én rad, med Tittel og Ingress i full bredde under — panelet er kortere og lettere å skanne.
+- **Minimeny-bryteren er gjort tydelig.** Av/på-valget for minimenyen er en egen gull-aksentert rad nederst i banner-panelet: tittel og forklaring til venstre, «PÅ»/«AV»-status og gull-glidebryter (delt `.switch`-komponent) til høyre. Hele boksen dempes til grå når menyen er avslått, så tilstanden synes på avstand. Forhåndsvisningen oppdateres live ved vipping.
+- **Rytme-vakten varsler nå på synlig flate, ikke tone-kategori.** Den gamle vakten ropte «samme tone» selv når naboseksjonene faktisk hadde ulik bakgrunn (lys tone gir ulik grunnflate per type: about = pergament, cardgrid/faq = dyp pergament, lesesal = krem). Nå regnes den faktiske flaten ut per seksjon, og varselet kommer kun når to naboer reelt flyter sammen — et varsel man kan ignorere skal ikke finnes. Hjelpeteksten over seksjonsbyggeren er oppdatert tilsvarende.
+
+*Kodeopprydding (ingen synlig endring)*
+- **Subhero-CSS samlet til én kanonisk blokk i `styles.css`.** Topp-banneret lå som klipp-og-lim-kopi i 12 HTML-sider, med reell drift mellom kopiene. Hver sides regler ble diffet mot referansen; kun tegn-for-tegn-identiske regler ble fjernet, mens ekte avvik står igjen som små inline-overstyringer med forklarende kommentar (gull tilbake-lenke på galleri/marked/merch/pensum, glød-effekt på hjelp/styret/oppnåelser/utmerkelser, smalere ingress m.m.). Fremtidige bannerendringer gjøres nå ett sted.
+- **Inline-stiler ut av seksjonsrendrerne.** Hardkodede `style="…"`-attributter i `om-sections.js` er erstattet med navngitte klasser med identiske verdier: `.center--head`, `.faq--narrow`, `.btn--full`, `.about__p-first`. Luft og bredder justeres heretter i `styles.css`, og kan nå overstyres i media queries.
+- Berørte filer: `nav-content.js`, `site-chrome.js`, `styles.css`, `om-sections.js`, `om.page.js`, `admin-modules/meny.js`, `admin-modules/om-oss.js`, `admin-modules.css`, samt subhero-opprydding i `om-oss.html`, `nyheter.html`, `oppslagstavla.html`, `galleri.html`, `hjelp.html`, `marked.html`, `merch.html`, `pensum.html`, `styret.html`, `styret-arkiv.html`, `oppnaelser.html`, `utmerkelser.html`.
+
 **29.06.26 · Kodekvalitet: fjernet ~212 linjer død CSS (foreldreløse klasser)**
 
 Etter postMessage-/JS-oppryddingen samme dag gikk vi gjennom stilarkene for *ubrukte CSS-klasser* — regler som ikke lenger matcher noe markup fordi komponentene er skrevet om. Hver klasse ble verifisert ubrukt på tvers av **alle** `*.html` og `*.js` (også klasser som bygges dynamisk i JS, f.eks. `'hg-mode-' + animasjon`) før den ble fjernet, og levende naboklasser er rørt urørt.

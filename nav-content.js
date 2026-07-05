@@ -5,10 +5,12 @@
    Rediger via Admin-senteret → Meny (eller for hånd her).
 
    Datamodell: window.SITE_NAV = liste med toppnivå-punkter.
-   Hvert punkt: { label, href, children?[{label,href}],
-   drawerOnly?  (kun mobil),  desktopOnly? (kun desktop) }.
+   Hvert punkt: { label, href, children?, drawerOnly? (kun mobil),
+   desktopOnly? (kun desktop) }. Barn: {label, href} — vanlig lenke,
+   eller {label, heading:true} — ikke-klikkbar gruppeoverskrift
+   med skillelinje (brukes til å gruppere undermenyen).
    Skriv hele «side.html#anker» i href — forkortes automatisk.
-   Sist oppdatert: 18.6.2026
+   Sist oppdatert: 4.7.2026
    ============================================================ */
 window.SITE_NAV = [
   {
@@ -60,7 +62,7 @@ window.SITE_NAV = [
     ]
   },
   {
-    "label": "Foreningen",
+    "label": "Om oss",
     "href": "om-oss.html",
     "children": [
       {
@@ -76,6 +78,14 @@ window.SITE_NAV = [
         "href": "styret-arkiv.html"
       },
       {
+        "label": "Utmerkelser",
+        "href": "utmerkelser.html"
+      },
+      {
+        "label": "Oppnåelser",
+        "href": "oppnaelser.html"
+      },
+      {
         "label": "Verv",
         "href": "styret.html#vervene"
       },
@@ -86,14 +96,6 @@ window.SITE_NAV = [
       {
         "label": "Lesesalen",
         "href": "om-oss.html#lesesalen"
-      },
-      {
-        "label": "Utmerkelser",
-        "href": "utmerkelser.html"
-      },
-      {
-        "label": "Oppnåelser",
-        "href": "oppnaelser.html"
       }
     ]
   },

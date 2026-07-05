@@ -53,7 +53,7 @@
         + '</div>'
         + '<div class="panel"><h2>Seksjoner <small>dra, velg tone, legg til eller fjern</small></h2>'
           + '<div class="panel-body">'
-            + '<p class="hint">Tonen styrer bakgrunnen. <b>Auto</b> veksler lys/mørk automatisk så rytmen aldri brekker; velg en fast tone for å bestemme selv. Topp-banneret ligger alltid øverst.</p>'
+            + '<p class="hint">Tonen styrer bakgrunnen: <b>Mørk</b> gir et mørkt bånd, <b>Lys</b> lar seksjonstypen bruke sin egen lyse flate, <b>Auto</b> veksler automatisk. Vakten under sier ifra kun hvis to naboseksjoner faktisk får samme bakgrunn. Topp-banneret ligger alltid øverst.</p>'
             + '<div class="builder" id="lst-sections"></div>'
             + '<div id="picker-host"></div>'
           + '</div>'
@@ -112,7 +112,18 @@
           return t;
         });
       }
-      function toneName(t) { return t === 'navy' ? 'mørk' : t === 'accent' ? 'aksent' : 'lys'; }
+      /* Rytme-vakten sammenligner den SYNLIGE flaten, ikke tone-bøtta:
+         «navy» maler alt mørkt, men lys tone gir ulik grunnflate per
+         seksjonstype (about = pergament, cardgrid/faq = dypere pergament,
+         lesesal = krem). Varsler derfor kun når to naboer faktisk får
+         samme bakgrunn — et varsel man kan ignorere skal ikke finnes. */
+      var TYPE_SURFACE = { banner: 'navy', about: 'paper', cardgrid: 'paper-2', lesesal: 'cream', join: 'maroon', faq: 'paper-2' };
+      function surfaceOf(s, resolvedTone) {
+        if (resolvedTone === 'navy') return 'navy';
+        if (resolvedTone === 'accent') return s.type === 'join' ? 'maroon' : 'accent';
+        return TYPE_SURFACE[s.type] || 'paper';
+      }
+      var SURFACE_NAME = { navy: 'mørk', paper: 'lys pergament', 'paper-2': 'dyp pergament', cream: 'krem', maroon: 'aksent', accent: 'aksent' };
       function secLabel(s) {
         var p = s.props || {};
         return p.title || p.heading || p.eyebrow || (SectionTypes.get(s.type) || {}).label || s.type;
@@ -153,10 +164,10 @@
           });
           hostEl.appendChild(row);
 
-          if (i > 0 && resolved[i] === resolved[i - 1] && (s.tone !== 'auto' || data.sections[i - 1].tone !== 'auto')) {
+          if (i > 0 && surfaceOf(s, resolved[i]) === surfaceOf(data.sections[i - 1], resolved[i - 1])) {
             var warn = document.createElement('div');
             warn.className = 'brow__warn';
-            warn.textContent = 'Samme tone (' + toneName(resolved[i]) + ') som seksjonen over. Vil du bytte for litt kontrast?';
+            warn.textContent = 'Samme bakgrunn (' + (SURFACE_NAME[surfaceOf(s, resolved[i])] || 'lik') + ') som seksjonen over — de vil flyte sammen. Bytt tone eller rekkefølge for kontrast.';
             hostEl.appendChild(warn);
           }
         });
@@ -322,11 +333,18 @@
               + '<div class="fg narrow"><label>Merkelapp</label><input data-k="level" value="' + esc(c.level) + '"></div>'
               + '<div class="fg"><label>Tittel</label><input data-k="title" value="' + esc(c.title) + '"></div></div>'
               + '<div class="fg"><label>Tekst</label><textarea data-k="body">' + esc(c.body) + '</textarea></div>'
+              + '<div class="frow"><div class="fg"><label>Avatar-bilder (kommaseparerte stier, valgfritt)</label><input data-imgs value="' + esc((c.images || []).join(', ')) + '" placeholder="assets/Styremedlemmer/Iver.jpg, …"></div>'
+              + '<div class="fg narrow"><label>Ekstra-boble</label><input data-k="imagesMore" value="' + esc(c.imagesMore || '') + '" placeholder="+7 eller Deg?"></div></div>'
+              + (c.imagesFrom === 'tillitsvalgte' ? '<div class="hint">📷 Avatarene hentes automatisk fra hvem som er satt som PTV/ITV/FTV i <b>Hjelp → «Faglig hjelp»</b>. Bildene over brukes bare som reserve hvis ingen innehaver er valgt der.</div>' : '')
               + '<div class="sub-h" style="margin-top:6px">Lenker</div><div class="card-links"></div>'
               + '<button class="btn-add" type="button" data-addlink>+ Ny lenke</button>'
             );
             row.setAttribute('data-idx', i);
             row.querySelectorAll('[data-k]').forEach(function (inp) { inp.addEventListener('input', function () { c[inp.getAttribute('data-k')] = inp.value; notify(); }); });
+            row.querySelector('[data-imgs]').addEventListener('input', function () {
+              c.images = this.value.split(',').map(function (x) { return x.trim(); }).filter(Boolean);
+              notify();
+            });
             wireCtrls(row, arr, i, rer, 'Kort', notify);
             var linksHost = row.querySelector('.card-links');
             function renderLinks() {
@@ -356,10 +374,23 @@
       var EDITORS = {
         banner: function (s, body, notify) {
           var p = s.props;
-          body.appendChild(field('Tilbake-lenke (tekst)', p, 'back', {}, notify));
-          body.appendChild(field('Tilbake-lenke (URL)', p, 'backHref', { ph: 'index.html' }, notify));
+          body.appendChild(frow([field('Tilbake-lenke (tekst)', p, 'back', {}, notify), field('Tilbake-lenke (URL)', p, 'backHref', { ph: 'index.html' }, notify)]));
           body.appendChild(field('Tittel', p, 'title', {}, notify));
           body.appendChild(field('Ingress', p, 'lede', { area: true }, notify));
+          var tocWrap = document.createElement('div'); tocWrap.className = 'togrow' + (p.toc ? '' : ' is-off');
+          tocWrap.innerHTML =
+            '<div class="togrow__txt"><b>Minimeny i banneret</b>'
+            + '<span>Viser «På denne siden»-menyen med hopp til hver seksjon. Bygges automatisk fra seksjonene på siden — skjules eller flyttes en seksjon, følger menyen med.</span></div>'
+            + '<span class="togrow__state">' + (p.toc ? 'På' : 'Av') + '</span>'
+            + '<label class="switch" title="Slå minimenyen av eller på"><input type="checkbox"' + (p.toc ? ' checked' : '') + '><span class="sl"></span></label>';
+          var st = tocWrap.querySelector('.togrow__state');
+          tocWrap.querySelector('input').addEventListener('change', function () {
+            p.toc = this.checked;
+            st.textContent = p.toc ? 'På' : 'Av';
+            tocWrap.classList.toggle('is-off', !p.toc);
+            notify();
+          });
+          body.appendChild(tocWrap);
         },
         about: function (s, body, notify) {
           var p = s.props;
@@ -445,7 +476,11 @@
           if (Array.isArray(p.items)) p.items = p.items.filter(function (x) { return (x.q && x.q.trim()) || (x.a && x.a.trim()); });
           if (Array.isArray(p.cards)) {
             p.cards = p.cards.filter(function (c) { return (c.title && c.title.trim()) || (c.body && c.body.trim()); });
-            p.cards.forEach(function (c) { if (Array.isArray(c.links)) c.links = c.links.filter(function (l) { return (l.label && l.label.trim()) || (l.href && l.href.trim()); }); });
+            p.cards.forEach(function (c) {
+              if (Array.isArray(c.links)) c.links = c.links.filter(function (l) { return (l.label && l.label.trim()) || (l.href && l.href.trim()); });
+              if (Array.isArray(c.images)) { c.images = c.images.filter(function (x) { return x && x.trim(); }); if (!c.images.length) delete c.images; }
+              if (!c.imagesMore) delete c.imagesMore;
+            });
           }
         });
         var content =

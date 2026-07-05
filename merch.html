@@ -24,31 +24,65 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="styles.css?v=20260704" />
 <style>
-/* ── Subpage header ── */
-.subhero {
-  background:
-    radial-gradient(100% 80% at 90% 0%, rgba(212,175,55,.12), transparent 55%),
-    radial-gradient(70% 60% at 5% 100%, rgba(118,17,15,.28), transparent 60%),
-    var(--navy);
-  color: var(--paper);
-  padding: 148px 0 72px;
-  position: relative;
-  overflow: hidden;
-}
+/* Felles .subhero-stil ligger i styles.css — under: kun denne sidens avvik */
+
 .subhero__seal {
   position: absolute; right: -4%; top: 50%; transform: translateY(-50%);
   width: min(44vw, 540px); opacity: .09; pointer-events: none;
   filter: drop-shadow(0 0 1px rgba(212,175,55,.4));
 }
 .subhero__inner { position: relative; max-width: var(--maxw); margin: 0 auto; padding: 0 28px; }
-.subhero h1 {
-  color: var(--paper);
-  font-size: clamp(3rem, 8vw, 6.5rem);
-  line-height: .95; letter-spacing: .01em; margin: .22em 0 .35em;
-}
 .subhero__lede { font-size: 1.18rem; color: rgba(244,236,217,.8); max-width: 52ch; line-height: 1.65; }
+
+/* Toppbilde med bestillingsinfo ved siden av tittelen.
+   Tittel + kort sentreres som ett par med fast avstand (ikke to like kolonner
+   som driver fra hverandre), så det ikke blir stort tomrom på brede skjermer. */
+.subhero--merch { padding-top: 118px; padding-bottom: 56px; }
+.subhero__inner--split {
+  display: grid;
+  grid-template-columns: minmax(300px, 460px) minmax(360px, 540px);
+  gap: 52px; justify-content: center; align-items: center;
+}
+.subhero__lead .subhero__lede { max-width: 42ch; margin-bottom: 0; }
+/* Bestillings-banden i toppbildet: kompakt, én kolonne, sitter over seglet.
+   Scopet under .subhero--merch så den vinner over .order-band-basisreglene under. */
+.subhero--merch .order-band--hero {
+  margin: 0; padding: 22px 26px; gap: 14px;
+  grid-template-columns: 1fr;
+  background: rgba(13, 16, 30, .55);
+  -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px);
+}
+.subhero--merch .order-band--hero .eyebrow { font-size: .72rem; letter-spacing: .16em; }
+.subhero--merch .order-band--hero h2 { font-size: 1.42rem; line-height: 1.15; margin: .18em 0 .3em; }
+.subhero--merch .order-band--hero > div > p { font-size: .9rem; line-height: 1.5; margin: 0; }
+/* Kompakte steg i 2×2-rutenett så hele kortet får plass i toppbildet */
+.subhero--merch .order-band--hero .order-steps { display: grid; grid-template-columns: 1fr 1fr; }
+.subhero--merch .order-band--hero .order-step {
+  grid-template-columns: 34px 1fr;
+  border-right: 1px solid rgba(212,175,55,.2);
+}
+.subhero--merch .order-band--hero .order-step:nth-child(2n) { border-right: 0; }
+.subhero--merch .order-band--hero .order-step:nth-child(n+3) { border-bottom: 0; }
+.subhero--merch .order-band--hero .order-step__n { font-size: 1.05rem; padding: 0; }
+.subhero--merch .order-band--hero .order-step__body { padding: 9px 12px; }
+.subhero--merch .order-band--hero .order-step h4 { font-size: .88rem; margin-bottom: .12em; }
+.subhero--merch .order-band--hero .order-step p { font-size: .76rem; line-height: 1.4; }
+/* Under 980px: stables under tittelen (ikke klemt side-om-side). Kortet holdes
+   som en tett blokk (ikke strukket utover) — seglet fyller høyre side. */
+@media (max-width: 980px) {
+  .subhero--merch { padding-top: 128px; }
+  .subhero__inner--split { grid-template-columns: 1fr; gap: 30px; justify-content: stretch; align-items: start; }
+  .subhero__lead .subhero__lede { max-width: 60ch; }
+  .subhero--merch .order-band--hero { max-width: 600px; }
+}
+/* Smale skjermer: stegene i én kolonne så teksten ikke klemmes */
+@media (max-width: 560px) {
+  .subhero--merch .order-band--hero .order-steps { grid-template-columns: 1fr; }
+  .subhero--merch .order-band--hero .order-step { border-right: 0; border-bottom: 1px solid rgba(212,175,55,.2); }
+  .subhero--merch .order-band--hero .order-step:last-child { border-bottom: 0; }
+}
 .subhero__back {
   display: flex; width: fit-content; align-items: center; gap: .5em;
   font-size: .82rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
@@ -488,41 +522,21 @@ html[data-mode="marine"] .cart-item__rm:hover { color: var(--navy); background: 
 <div id="site-nav"></div>
 
 <!-- ============ SUBPAGE HEADER ============ -->
-<section class="subhero">
+<section class="subhero subhero--merch">
   <img class="subhero__seal" src="assets/apeiron-logo.png" alt="" aria-hidden="true" />
-  <div class="subhero__inner">
-    <a class="subhero__back" href="index.html" id="ix-mc-back">Tilbake til forsiden</a>
-    <h1 id="ix-mc-title">Merch</h1>
-    <p class="subhero__lede" id="ix-mc-lede">Bær filosofien med deg. Alt av Apeiron-merch lages i begrenset opplag. Bestill via Vipps og hent på lesesalen.</p>
-  </div>
-</section>
+  <div class="subhero__inner subhero__inner--split">
+    <div class="subhero__lead">
+      <a class="subhero__back" href="index.html" id="ix-mc-back">Tilbake til forsiden</a>
+      <h1 id="ix-mc-title">Merch</h1>
+      <p class="subhero__lede" id="ix-mc-lede">Bær filosofien med deg. Alt av Apeiron-merch lages i begrenset opplag. Bestill via Vipps og hent på lesesalen.</p>
+    </div>
 
-<!-- frieze -->
-<div class="frieze" aria-hidden="true">
-  <div class="frieze__track">
-    <span>ΑΠΕΙΡΟΝ <i>✦</i> det uendelige <i>✦</i> ΦΙΛΟΣΟΦΙΑ <i>✦</i> visdomskjærlighet <i>✦</i> ΗΘΙΚΗ <i>✦</i> det gode liv <i>✦</i> ΛΟΓΟΣ <i>✦</i> fornuft &amp; tale <i>✦</i> </span>
-    <span>ΑΠΕΙΡΟΝ <i>✦</i> det uendelige <i>✦</i> ΦΙΛΟΣΟΦΙΑ <i>✦</i> visdomskjærlighet <i>✦</i> ΗΘΙΚΗ <i>✦</i> det gode liv <i>✦</i> ΛΟΓΟΣ <i>✦</i> fornuft &amp; tale <i>✦</i> </span>
-  </div>
-</div>
-
-<!-- ============ PRODUKTER ============ -->
-<section class="section" id="butikk">
-  <div class="wrap">
-
-    <!-- Redigerbar info-tekst (styres fra merch-admin → window.MERCH_INFO) -->
-    <div class="merch-info" id="merch-info" hidden></div>
-
-    <div class="merch-grid" id="merch-grid">
-      <!-- Rendres av merch-products.js -->
-    </div><!-- /merch-grid -->
-
-    <!-- ── Bestillingsinformasjon ── -->
-    <div class="order-band reveal">
+    <!-- ── Bestillingsinformasjon (i toppbildet, ved siden av tittelen) ── -->
+    <div class="order-band order-band--hero reveal">
       <div>
         <span class="eyebrow">Slik bestiller du</span>
-        <h2 class="h-section" style="font-size:clamp(1.9rem,3.5vw,2.8rem);">Enkel bestilling<br/>via Vipps</h2>
-        <p>All merch bestilles direkte fra Apeiron. Legg det du vil ha i handlekurven og send bestillingen. Betaling skjer via Vipps etter at vi har bekreftet. Vi svarer innen et par dager og avtaler henting på Dragvoll.</p>
-        <p>Spørsmål? Send oss en mail på <a href="mailto:apeironlinjeforening@gmail.com" style="color:var(--gold);">apeironlinjeforening@gmail.com</a> eller stikk innom lesesalen.</p>
+        <h2 class="h-section">Enkel bestilling via Vipps</h2>
+        <p>All merch bestilles direkte fra Apeiron. Legg i handlekurven, send bestillingen, så bekrefter vi og avtaler henting på Dragvoll. Spørsmål? <a href="mailto:apeironlinjeforening@gmail.com" style="color:var(--gold);">Send oss en mail</a>.</p>
       </div>
       <ol class="order-steps">
         <li class="order-step">
@@ -555,6 +569,27 @@ html[data-mode="marine"] .cart-item__rm:hover { color: var(--navy); background: 
         </li>
       </ol>
     </div>
+  </div>
+</section>
+
+<!-- frieze -->
+<div class="frieze" aria-hidden="true">
+  <div class="frieze__track">
+    <span>ΑΠΕΙΡΟΝ <i>✦</i> det uendelige <i>✦</i> ΦΙΛΟΣΟΦΙΑ <i>✦</i> visdomskjærlighet <i>✦</i> ΗΘΙΚΗ <i>✦</i> det gode liv <i>✦</i> ΛΟΓΟΣ <i>✦</i> fornuft &amp; tale <i>✦</i> </span>
+    <span>ΑΠΕΙΡΟΝ <i>✦</i> det uendelige <i>✦</i> ΦΙΛΟΣΟΦΙΑ <i>✦</i> visdomskjærlighet <i>✦</i> ΗΘΙΚΗ <i>✦</i> det gode liv <i>✦</i> ΛΟΓΟΣ <i>✦</i> fornuft &amp; tale <i>✦</i> </span>
+  </div>
+</div>
+
+<!-- ============ PRODUKTER ============ -->
+<section class="section" id="butikk">
+  <div class="wrap">
+
+    <!-- Redigerbar info-tekst (styres fra merch-admin → window.MERCH_INFO) -->
+    <div class="merch-info" id="merch-info" hidden></div>
+
+    <div class="merch-grid" id="merch-grid">
+      <!-- Rendres av merch-products.js -->
+    </div><!-- /merch-grid -->
 
   </div>
 </section>
@@ -565,7 +600,7 @@ html[data-mode="marine"] .cart-item__rm:hover { color: var(--navy); background: 
 <script src="footer-icons.js"></script>
 <script src="site-content.js"></script>
 <script src="nav-content.js"></script>
-<script src="site-chrome.js"></script>
+<script src="site-chrome.js?v=20260704c"></script>
 
 <script>
 (function () {

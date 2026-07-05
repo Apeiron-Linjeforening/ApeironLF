@@ -102,13 +102,16 @@
     var css =
       '.ape-color{display:flex;flex-direction:column;gap:7px;}' +
       '.ape-color__row{display:flex;align-items:center;gap:7px;}' +
-      '.ape-color__theme{flex:1;font-family:inherit;font-size:.82rem;padding:6px 7px;border:1px solid rgba(35,39,64,.2);border-radius:3px;background:#fff;}' +
+      // Farger via admin-temavariabler (--field/--field-border) med fallback til de
+      // gamle hardkodede verdiene, så kontrollen følger valgt tema i admin men ser
+      // uendret ut på sider som ikke definerer variablene.
+      '.ape-color__theme{flex:1;min-width:0;font-family:inherit;font-size:.82rem;padding:6px 7px;border:1px solid var(--field-border,rgba(35,39,64,.2));border-radius:3px;background:var(--field,#fff);}' +
       '.ape-color__prev{flex:0 0 auto;width:22px;height:22px;border-radius:4px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.18);}' +
       '.ape-color__custom{display:flex;flex-direction:column;gap:6px;padding:8px;border:1px dashed rgba(35,39,64,.24);border-radius:4px;background:rgba(35,39,64,.03);}' +
       '.ape-color__crow{display:flex;align-items:center;gap:6px;}' +
-      '.ape-color__lbl{flex:0 0 42px;font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5a5d72;}' +
-      '.ape-color__name{flex:1;font-family:inherit;font-size:.8rem;padding:5px 6px;border:1px solid rgba(35,39,64,.2);border-radius:3px;background:#fff;}' +
-      '.ape-color__hex{flex:0 0 auto;width:30px;height:28px;padding:0;border:1px solid rgba(35,39,64,.2);border-radius:3px;background:#fff;cursor:pointer;}' +
+      '.ape-color__lbl{flex:0 0 42px;font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft,#5a5d72);}' +
+      '.ape-color__name{flex:1;min-width:0;font-family:inherit;font-size:.8rem;padding:5px 6px;border:1px solid var(--field-border,rgba(35,39,64,.2));border-radius:3px;background:var(--field,#fff);}' +
+      '.ape-color__hex{flex:0 0 auto;width:30px;height:28px;padding:0;border:1px solid var(--field-border,rgba(35,39,64,.2));border-radius:3px;background:var(--field,#fff);cursor:pointer;}' +
       '.ape-color__custom[hidden]{display:none;}';
     var s = document.createElement('style');
     s.textContent = css;

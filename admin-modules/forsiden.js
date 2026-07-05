@@ -125,6 +125,9 @@
           + '</div>'
         + '</div>'
         + '<div class="panel" data-sec-key="hero"><h2>Hero <small>øverst på Hjem</small></h2>'
+          + '<label class="fg-head" data-aps-head title="Kortet «Akkurat nå» øverst til høyre i toppbildet viser de nærmeste arrangementene automatisk. Velg hvor mange det skal liste.">'
+            + '<span>«Akkurat nå»-kort</span>'
+            + '<select id="arr-maxevents"><option value="1">Neste arrangement</option><option value="2">Neste to</option><option value="3">Neste tre</option></select></label>'
           + '<div class="panel-body">'
             + '<div class="frow"><div class="fg narrow"><label>Tittel (før)</label><input type="text" id="hero-wm-pre"></div>'
             + '<div class="fg narrow"><label>Spesial-bokstav</label><input type="text" id="hero-wm-mid"></div>'
@@ -221,6 +224,7 @@
           mosaicSizes: 'varied', polaStyle: 'framed', dvdSize: 100,
           heading: 'Livet i Apeiron', lede: 'Glimt fra det sosiale livet i Apeiron: fester, fagkvelder og alt imellom.'
         }, d.heroGallery || {});
+        d.newsPanel = Object.assign({ maxEvents: 1 }, d.newsPanel || {});
         return d;
       }
       // Innholdsseksjoner på Hjem som kan endre rekkefølge (hero ligger fast øverst;
@@ -247,6 +251,7 @@
         if (!Array.isArray(data.kontakt.socials)) data.kontakt.socials = [];
         if (!Array.isArray(data.kontakt.faq)) data.kontakt.faq = [];
         data.heroGallery = Object.assign({}, f.heroGallery, data.heroGallery);
+        data.newsPanel = Object.assign({}, f.newsPanel, data.newsPanel);
         var ord = (Array.isArray(data.sectionOrder) ? data.sectionOrder : []).filter(function (k) { return SECTION_KEYS.indexOf(k) >= 0; });
         SECTION_KEYS.forEach(function (k) { if (ord.indexOf(k) < 0) ord.push(k); });
         data.sectionOrder = ord;
@@ -285,9 +290,12 @@
       }
       function renderFields() {
         Object.keys(FIELD_MAP).forEach(function (id) { var el = q(id); if (el) el.value = getPath(FIELD_MAP[id]) || ''; });
+        var me = q('arr-maxevents'); if (me) me.value = String((data.newsPanel && data.newsPanel.maxEvents) || 1);
       }
       function wireFields() {
         Object.keys(FIELD_MAP).forEach(function (id) { var el = q(id); if (!el) return; el.addEventListener('input', function () { setPath(FIELD_MAP[id], el.value); lazySave(); }); });
+        var me = q('arr-maxevents');
+        if (me) me.addEventListener('change', function () { setPath('newsPanel.maxEvents', parseInt(me.value, 10) || 1); lazySave(); });
       }
 
       function renderSocials() {
@@ -444,7 +452,7 @@
       function renderAll() { renderFields(); renderSocials(); renderHjemFaq(); renderHeroGallery(); }
 
       function exportFile() {
-        var out = { heroGallery: clone(data.heroGallery || {}), hero: clone(data.hero || {}), arr: clone(data.arr || {}), apo: clone(data.apo || {}), fadder: clone(data.fadder || {}), kontakt: clone(data.kontakt || {}) };
+        var out = { newsPanel: clone(data.newsPanel || { maxEvents: 1 }), heroGallery: clone(data.heroGallery || {}), hero: clone(data.hero || {}), arr: clone(data.arr || {}), apo: clone(data.apo || {}), fadder: clone(data.fadder || {}), kontakt: clone(data.kontakt || {}) };
         out.kontakt.socials = (out.kontakt.socials || []).filter(function (s) { return (s.label && s.label.trim()) || (s.href && s.href.trim()); });
         out.kontakt.faq = (out.kontakt.faq || []).filter(function (it) { return (it.q && it.q.trim()) || (it.a && it.a.trim()); });
         var content =

@@ -24,45 +24,17 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="styles.css?v=20260704" />
 <style>
-/* ── Subpage header ── */
-.subhero {
-  background:
-    radial-gradient(100% 80% at 90% 0%, rgba(212,175,55,.12), transparent 55%),
-    radial-gradient(70% 60% at 5% 100%, rgba(118,17,15,.28), transparent 60%),
-    var(--navy);
-  color: var(--paper);
-  padding: 148px 0 72px;
-  position: relative;
-  overflow: hidden;
-}
-.subhero__seal {
-  position: absolute; right: -4%; top: 50%; transform: translateY(-50%);
-  width: min(44vw, 540px); opacity: .09; pointer-events: none; z-index: 1;
-  filter: drop-shadow(0 0 1px rgba(212,175,55,.4));
-}
+/* Felles .subhero-stil ligger i styles.css — under: kun denne sidens avvik */
+
 .subhero::after {
   content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
   background-image:
     radial-gradient(70% 50% at 50% -10%, rgba(212,175,55,.07), transparent 70%);
   opacity: .7;
 }
-.subhero__inner { position: relative; z-index: 2; max-width: var(--maxw); margin: 0 auto; padding: 0 28px; }
-.subhero h1 {
-  color: var(--paper);
-  font-size: clamp(3rem, 8vw, 6.5rem);
-  line-height: .95; letter-spacing: .01em; margin: .22em 0 .35em;
-}
 .subhero__lede { font-size: 1.18rem; color: rgba(244,236,217,.8); max-width: 52ch; line-height: 1.65; }
-.subhero__back {
-  display: flex; width: fit-content; align-items: center; gap: .5em;
-  font-size: .82rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
-  color: rgba(244,236,217,.55); margin-bottom: .6em;
-  transition: color .2s;
-}
-.subhero__back:hover { color: var(--gold); }
-.subhero__back::before { content: "←"; font-style: normal; }
 
 /* ── Role grid ── */
 .role-grid {
@@ -89,6 +61,23 @@ html[data-mode="marine"] .role-card { border-left-color: var(--c-d, var(--gold))
 .role-card__note {
   font-size: .88rem; color: var(--ink-soft, #4a4d6a); margin-top: 6px; line-height: 1.55;
 }
+.role-card__holder {
+  display: inline-flex; align-items: center; gap: .5em;
+  align-self: flex-start;
+  margin: 2px 0 0;
+  padding: 5px 12px;
+  background: rgba(212,175,55,.12);
+  border: 1px solid rgba(212,175,55,.4);
+  border-radius: 999px;
+  font-size: .88rem; color: var(--ink);
+}
+.role-card__holder strong { font-weight: 700; }
+.role-card__holder-ic { font-size: 1em; line-height: 1; opacity: .85; }
+.role-card__holder-av {
+  width: 26px; height: 26px; border-radius: 50%; object-fit: cover;
+  border: 1px solid rgba(212,175,55,.6); flex: 0 0 auto; margin: -3px 0;
+}
+html[data-mode="marine"] .role-card__holder { background: rgba(212,175,55,.16); border-color: rgba(212,175,55,.5); }
 .role-card__note--warn {
   font-size: .9rem; color: var(--warm); font-weight: 600; margin: 2px 0 4px;
 }
@@ -351,7 +340,7 @@ html[data-mode="marine"] .akutt-card--life { background: #2e1c20; border-color: 
 <script src="footer-icons.js"></script>
 <script src="site-content.js"></script>
 <script src="nav-content.js"></script>
-<script src="site-chrome.js"></script>
+<script src="site-chrome.js?v=20260704c"></script>
 
 <script src="image-slot.js"></script>
 <script src="palette.js"></script>
@@ -414,6 +403,9 @@ html[data-mode="marine"] .akutt-card--life { background: #2e1c20; border-color: 
     return '<div class="role-card reveal ' + STAGGER[i % 4] + '" style="' + accentStyle + '">'
       + (c.eyebrow ? '<div class="role-card__eyebrow">' + esc(c.eyebrow) + '</div>' : '')
       + '<h3>' + esc(c.name) + '</h3>'
+      + (c.holder ? '<div class="role-card__holder">'
+          + (c.holderImg ? '<img class="role-card__holder-av" src="' + esc(c.holderImg) + '" alt="" loading="lazy">' : '<span class="role-card__holder-ic" aria-hidden="true">👤</span>')
+          + '<span>Nåværende: <strong>' + esc(c.holder) + '</strong></span></div>' : '')
       + paragraphs(c.desc)
       + (c.noteTop ? '<p class="role-card__note role-card__note--warn">' + c.noteTop + '</p>' : '')
       + (resp ? '<ul class="role-card__resp">' + resp + '</ul>' : '')

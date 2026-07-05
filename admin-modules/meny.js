@@ -57,9 +57,10 @@
       var esc = AC.esc;
 
       function modeOf(it) { if (it.drawerOnly) return 'drawer'; if (it.desktopOnly) return 'desktop'; return 'both'; }
+      function mapKid(c) { return { _id: c._id || uid(), label: c.label || '', href: c.href || '', heading: !!c.heading }; }
       function mapItem(it) {
         return { _id: uid(), label: it.label || '', href: it.href || '', mode: modeOf(it),
-          children: (it.children || []).map(function (c) { return { _id: uid(), label: c.label || '', href: c.href || '' }; }) };
+          children: (it.children || []).map(mapKid) };
       }
       function fresh() { var nav = (window.SITE_NAV && window.SITE_NAV.length) ? window.SITE_NAV : []; return nav.map(mapItem); }
 
@@ -83,7 +84,7 @@
               data = d.map(function (it) {
                 return { _id: it._id || uid(), label: it.label || '', href: it.href || '',
                   mode: (it.mode === 'drawer' || it.mode === 'desktop') ? it.mode : 'both',
-                  children: (it.children || []).map(function (c) { return { _id: c._id || uid(), label: c.label || '', href: c.href || '' }; }) };
+                  children: (it.children || []).map(mapKid) };
               });
               return;
             }
@@ -113,7 +114,7 @@
         data = (s.items || []).map(function (it) {
           return { _id: it._id || uid(), label: it.label || '', href: it.href || '',
             mode: (it.mode === 'drawer' || it.mode === 'desktop') ? it.mode : 'both',
-            children: (it.children || []).map(function (c) { return { _id: c._id || uid(), label: c.label || '', href: c.href || '' }; }) };
+            children: (it.children || []).map(mapKid) };
         });
         navAlign = snapAlign(s.align);
         renderItems(); applyAlignUI(); renderPreview();
@@ -130,14 +131,23 @@
 
       function kidCard(it, c) {
         var card = document.createElement('div');
-        card.className = 'kid-card'; card.setAttribute('data-id', c._id);
-        card.innerHTML =
-          '<span class="drag-handle kid-handle" title="Dra for å sortere">⠿</span>'
-          + '<div class="fg"><label data-help="Teksten som vises i nedtrekksmenyen / seksjonen.">Tekst</label><input type="text" data-f="label" placeholder="f.eks. Pensum"></div>'
-          + '<div class="fg"><label data-help="' + esc(HREF_HELP) + '">Adresse</label><div class="addr-wrap"><input type="text" data-f="href" placeholder="pensum.html"><button class="btn-loc" type="button" title="Velg side og seksjon">📍</button></div></div>'
-          + '<button class="btn-del-row" type="button" title="Fjern underpunkt">✕</button>';
+        card.className = 'kid-card' + (c.heading ? ' kid-card--heading' : ''); card.setAttribute('data-id', c._id);
+        if (c.heading) {
+          card.innerHTML =
+            '<span class="drag-handle kid-handle" title="Dra for å sortere">⠿</span>'
+            + '<div class="fg"><label data-help="Ikke-klikkbar gruppeoverskrift med skillelinje over. Brukes til å dele opp undermenyen, f.eks. «Snarveier».">Tekst</label><input type="text" data-f="label" placeholder="f.eks. Snarveier"></div>'
+            + '<span class="kid-tag">Overskrift</span>'
+            + '<button class="btn-del-row" type="button" title="Fjern overskrift">✕</button>';
+        } else {
+          card.innerHTML =
+            '<span class="drag-handle kid-handle" title="Dra for å sortere">⠿</span>'
+            + '<div class="fg"><label data-help="Teksten som vises i nedtrekksmenyen / seksjonen.">Tekst</label><input type="text" data-f="label" placeholder="f.eks. Pensum"></div>'
+            + '<div class="fg"><label data-help="' + esc(HREF_HELP) + '">Adresse</label><div class="addr-wrap"><input type="text" data-f="href" placeholder="pensum.html"><button class="btn-loc" type="button" title="Velg side og seksjon">📍</button></div></div>'
+            + '<button class="btn-del-row" type="button" title="Fjern underpunkt">✕</button>';
+        }
         card.querySelector('[data-f="label"]').value = c.label;
-        card.querySelector('[data-f="href"]').value = c.href;
+        var hrefEl = card.querySelector('[data-f="href"]');
+        if (hrefEl) hrefEl.value = c.href;
         card.querySelectorAll('[data-f]').forEach(function (el) { el.addEventListener('input', function () { c[el.getAttribute('data-f')] = el.value; lazySave(); }); });
         card.querySelector('.btn-del-row').addEventListener('click', function () { it.children = it.children.filter(function (x) { return x !== c; }); renderItems(); lazySave(); });
         wireLoc(card);
@@ -157,7 +167,7 @@
             + '<div class="fg narrow"><label data-help="' + esc(MODE_HELP) + '">Synlighet</label><select data-f="mode"><option value="both">Begge</option><option value="drawer">Kun mobil</option><option value="desktop">Kun desktop</option></select></div>'
             + '<button class="btn-del-row" type="button" title="Fjern menypunkt">✕</button>'
           + '</div>'
-          + '<div class="kids"><div class="kids-head"><span class="ttl">Undermeny (nedtrekk)</span><button class="btn-add-kid" type="button">+ Underpunkt</button></div><div class="kids-list"></div></div>';
+          + '<div class="kids"><div class="kids-head"><span class="ttl">Undermeny (nedtrekk)</span><button class="btn-add-kid-heading" type="button" data-help="Legg til en ikke-klikkbar gruppeoverskrift som deler opp undermenyen.">+ Overskrift</button><button class="btn-add-kid" type="button">+ Underpunkt</button></div><div class="kids-list"></div></div>';
         card.querySelector('[data-f="label"]').value = it.label;
         card.querySelector('[data-f="href"]').value = it.href;
         card.querySelector('[data-f="mode"]').value = it.mode;
@@ -170,8 +180,9 @@
         if (hasKids) { it.children.forEach(function (c) { kidsList.appendChild(kidCard(it, c)); }); }
         else { kidsList.innerHTML = '<div class="kids-empty">Ingen underpunkter, punktet blir en enkel lenke.</div>'; }
         card.querySelector('.btn-add-kid').addEventListener('click', function () { it.children.push({ _id: uid(), label: '', href: '' }); renderItems(); lazySave(); });
+        card.querySelector('.btn-add-kid-heading').addEventListener('click', function () { it.children.push({ _id: uid(), label: '', href: '', heading: true }); renderItems(); lazySave(); });
         AC.enableDragSort(kidsList, {
-          itemSelector: '.kid-card', handleSelector: '.kid-handle',
+          itemSelector: '.kid-card', handleSelector: '.kid-handle', handleOnly: true,
           onReorder: function (ids) { it.children.sort(function (a, b) { return ids.indexOf(a._id) - ids.indexOf(b._id); }); lazySave(); }
         });
         wireLoc(card.querySelector('.item-row'));
@@ -191,7 +202,7 @@
           .map(function (it) {
             var o = { label: it.label, href: it.href };
             var kids = (it.children || []).filter(function (c) { return (c.label || '').trim() || (c.href || '').trim(); });
-            if (kids.length) o.children = kids.map(function (c) { return { label: c.label, href: c.href }; });
+            if (kids.length) o.children = kids.map(function (c) { return c.heading ? { label: c.label, heading: true } : { label: c.label, href: c.href }; });
             if (it.mode === 'drawer') o.drawerOnly = true;
             if (it.mode === 'desktop') o.desktopOnly = true;
             return o;
@@ -257,8 +268,10 @@
           + '   Rediger via Admin-senteret → Meny (eller for hånd her).\n'
           + '\n'
           + '   Datamodell: window.SITE_NAV = liste med toppnivå-punkter.\n'
-          + '   Hvert punkt: { label, href, children?[{label,href}],\n'
-          + '   drawerOnly?  (kun mobil),  desktopOnly? (kun desktop) }.\n'
+          + '   Hvert punkt: { label, href, children?, drawerOnly? (kun mobil),\n'
+          + '   desktopOnly? (kun desktop) }. Barn: {label, href} — vanlig lenke,\n'
+          + '   eller {label, heading:true} — ikke-klikkbar gruppeoverskrift\n'
+          + '   med skillelinje (brukes til å gruppere undermenyen).\n'
           + '   Sist oppdatert: ' + new Date().toLocaleDateString('no-NO') + '\n'
           + '   ============================================================ */\n'
           + 'window.SITE_NAV = ' + JSON.stringify(out, null, 2) + ';\n'
@@ -292,7 +305,7 @@
       document.addEventListener('keydown', onKeydown);
 
       AC.enableDragSort(q('list-items'), {
-        itemSelector: '.item-card', handleSelector: '.item-handle',
+        itemSelector: '.item-card', handleSelector: '.item-handle', handleOnly: true,
         onReorder: function (ids) {
           var order = ids.filter(function (id) { return data.some(function (it) { return it._id === id; }); });
           data.sort(function (a, b) { return order.indexOf(a._id) - order.indexOf(b._id); });

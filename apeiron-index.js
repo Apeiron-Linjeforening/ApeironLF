@@ -172,6 +172,8 @@
       if (!d || d.type !== 'apeiron-index-preview') return;
       if (d.content) window.INDEX_CONTENT = d.content;
       renderIndex();
+      // «Akkurat nå»-kortet leser antall arrangement fra INDEX_CONTENT — tegn på nytt.
+      if (typeof window.apeironNewsRender === 'function') window.apeironNewsRender();
       document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
       notify();
     });

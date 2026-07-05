@@ -43,6 +43,7 @@
     return navData().filter(function (it) { return !it.drawerOnly; }).map(function (it) {
       if (hasKids(it)) {
         var sub = it.children.map(function (c) {
+          if (c.heading) return '<span class="nav__drop-heading">' + esc(c.label) + '</span>';
           return '<a href="' + esc(c.href) + '">' + esc(c.label) + '</a>';
         }).join('');
         return '<div class="nav__dropdown">' +
@@ -82,6 +83,7 @@
     var items = navData().map(function (it) {
       if (hasKids(it)) {
         var links = it.children.map(function (c) {
+          if (c.heading) return '<span class="drawer__group-label">' + esc(c.label) + '</span>';
           return '<a href="' + esc(c.href) + '">' + esc(c.label) + '</a>';
         }).join('');
         return '<div class="drawer__sec">' +
@@ -378,6 +380,69 @@
     onScroll();
   }
 
+  /* ─── Konsistent anker-scroll ───
+     Sidene tegnes av JS (PageEngine) ETTER at nettleseren gjør sitt native
+     fragment-hopp, så #seksjon-lenker lander upresist og ulikt fra seksjon til
+     seksjon. Vi styrer hoppet selv med den faktiske nav-høyden som offset, slik
+     at alle seksjoner tucker likt rett under nav-en — både ved klikk og ved
+     innlasting med #anker i URL-en. */
+  function wireHashScroll() {
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+    function navOffset() {
+      // Mål nav-en i «is-stuck»-tilstand: etter scrollet er den alltid krympet,
+      // så den utvidede høyden gir noen px for stor offset (en stripe av
+      // forrige seksjon blir synlig). Toggles usynlig før neste maling.
+      var nav = document.getElementById('nav');
+      if (!nav) return 84;
+      if (nav.classList.contains('is-stuck')) return nav.offsetHeight;
+      var prevTransition = nav.style.transition;
+      nav.style.transition = 'none';
+      nav.classList.add('is-stuck');
+      var h = nav.offsetHeight;
+      nav.classList.remove('is-stuck');
+      nav.style.transition = prevTransition;
+      return h;
+    }
+    function targetFor(hash) {
+      if (!hash || hash.charAt(0) !== '#' || hash.length < 2) return null;
+      var id; try { id = decodeURIComponent(hash.slice(1)); } catch (e) { id = hash.slice(1); }
+      return document.getElementById(id);
+    }
+    function goTo(el, smooth) {
+      // +2px: tuck seksjonstoppen så vidt inn under nav-kanten. offsetHeight er
+      // avrundet til heltall mens den malte nav-høyden kan være brøkdels-px,
+      // så eksakt kant-i-kant lekker en 1px-stripe av forrige seksjon.
+      var y = el.getBoundingClientRect().top + window.pageYOffset - navOffset() + 2;
+      window.scrollTo({ top: Math.max(0, y), behavior: (smooth && !reduce) ? 'smooth' : 'auto' });
+    }
+    // Klikk på lenker som peker til et anker på DENNE siden
+    document.addEventListener('click', function (e) {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      var a = e.target.closest ? e.target.closest('a[href]') : null;
+      if (!a) return;
+      var href = a.getAttribute('href');
+      var el = targetFor(href);
+      if (!el) return;
+      e.preventDefault();
+      goTo(el, true);
+      if (window.history && history.pushState) history.pushState(null, '', href);
+      else location.hash = href;
+    });
+    // Bakover/fremover og manuelle hash-endringer
+    window.addEventListener('hashchange', function () {
+      var el = targetFor(location.hash);
+      if (el) goTo(el, false);
+    });
+    // Innlasting med #anker: hopp på nytt når alt er lagt ut (seksjoner tegnet,
+    // bilder/fonter ferdig), så landingen blir presis.
+    if (location.hash && location.hash.length > 1) {
+      var jump = function () { var el = targetFor(location.hash); if (el) goTo(el, false); };
+      if (document.readyState === 'complete') jump();
+      else window.addEventListener('load', jump);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(jump);
+    }
+  }
+
   function init() {
     replaceAnchor('site-nav', buildNav() + buildDrawer());
     replaceAnchor('site-footer', buildFooter());
@@ -389,6 +454,7 @@
     if (navLinks) markActive();
     if (drawer) markActiveDrawer();
     wireNav();
+    wireHashScroll();
   }
 
   // Kjør så snart ankrene finnes (under parsing) så andre skript finner nav/footer.

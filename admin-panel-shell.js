@@ -80,6 +80,7 @@
     var LIST_KEY = '__list';
     var PREVIEW_SEL = cfg.previewSelector || '.preview-top';
     var adoptedNode = null, adoptedHome = null;
+    var adoptedHead = null, adoptedHeadHome = null;
     var dockNode = null, dockMarker = null;
     function isSettingsSel(s) { return useBanner && s && s.group === SET_KEY; }
     function isSectionSel(s) { return isSections && s && s.group === SEC_KEY; }
@@ -119,6 +120,12 @@
     /* ── primær-/sist-valgt oppløsning ── */
     function resolveSel() {
       if (overview) return null;
+      // Dyp-lenke fra en snarvei: hopp til ønsket seksjon ved første render etter mount.
+      if (isSections && cfg.page && window.AdminDeepLinkSection && window.AdminDeepLinkSection.panel === cfg.page.id) {
+        var _want = window.AdminDeepLinkSection.section;
+        window.AdminDeepLinkSection = null;
+        if (findSection(_want)) { sel = { group: SEC_KEY, id: _want }; return sel; }
+      }
       if (isSectionSel(sel)) { if (findSection(sel.id)) return sel; }
       if (isSettingsSel(sel)) return sel;
       if (isListSel(sel)) return sel;
@@ -146,12 +153,11 @@
       wrap.hidden = true;
       wrap.innerHTML =
         '<div class="aps__head">'
+          + '<button type="button" class="aps__mobback" data-aps-mobback aria-label="Tilbake til listen">← Liste</button>'
           + '<span class="aps__ttl">' + esc(cfg.title || '') + '</span>'
-          + '<span class="aps__sub">' + esc(cfg.subtitle || '') + '</span>'
           + '<span class="aps__sp"></span>'
           + '<button type="button" class="aps__home" data-aps-home>🗂 Oversikt</button>'
           + '<button type="button" class="aps__preview" data-aps-preview hidden><span class="ic">👁</span> Forhåndsvisning</button>'
-          + '<span class="aps__hint" data-aps-hint hidden>↩ Husker hvor du var</span>'
         + '</div>'
         + '<div class="aps__md">'
           + '<div class="aps__nav">'
@@ -184,10 +190,12 @@
       det.addEventListener('input', function () { clearTimeout(wrap._t); wrap._t = setTimeout(syncActiveRow, 150); });
       det.addEventListener('change', syncActiveRow);
       det.addEventListener('click', function (e) {
-        if (e.target.closest('[data-aps-back]')) { overview = true; renderDetail(); paintActive(); }
+        if (e.target.closest('[data-aps-back]')) { overview = true; renderDetail(); paintActive(); enterDetail(); }
       });
       var homeBtn = wrap.querySelector('[data-aps-home]');
-      if (homeBtn) homeBtn.addEventListener('click', function () { overview = true; renderDetail(); paintActive(); });
+      if (homeBtn) homeBtn.addEventListener('click', function () { overview = true; renderDetail(); paintActive(); enterDetail(); });
+      var mobBack = wrap.querySelector('[data-aps-mobback]');
+      if (mobBack) mobBack.addEventListener('click', exitDetail);
       var pvBtn = wrap.querySelector('[data-aps-preview]');
       if (pvBtn) {
         var pvTop = host.querySelector(PREVIEW_SEL);
@@ -240,7 +248,29 @@
         + '<span class="ro">' + (cur ? ('«' + esc(cur) + '»') : esc(cfg.banner.sub || 'Topptekst og banner')) + '</span></span>'
         + '<span class="chev">›</span></button>';
     }
+    // Et element merket [data-aps-head] inne i en seksjons-panel flyttes opp på
+    // linje med detalj-overskriften (aps__detail-h) mens seksjonen er åpen, og
+    // tilbake til panelet når man forlater den. Elementet FLYTTES (aldri
+    // gjenskapes), så felt-id-er og hendelseslyttere holder seg intakte.
+    function relocateHead(node, dest) {
+      if (!node || !dest) return;
+      var el = node.querySelector('[data-aps-head]');
+      if (!el) return;
+      var m = document.createElement('span'); m.className = 'aps__head-marker'; m.style.display = 'none';
+      if (el.parentNode) el.parentNode.insertBefore(m, el);
+      adoptedHeadHome = m; adoptedHead = el;
+      el.classList.add('aps__head-adopted');
+      dest.appendChild(el);
+    }
+    function restoreHead() {
+      if (adoptedHead && adoptedHeadHome) {
+        var el = adoptedHead; el.classList.remove('aps__head-adopted');
+        if (adoptedHeadHome.parentNode) adoptedHeadHome.parentNode.replaceChild(el, adoptedHeadHome);
+        adoptedHead = null; adoptedHeadHome = null;
+      }
+    }
     function parkAdopted() {
+      restoreHead();
       if (adoptedNode && adoptedHome) {
         var n = adoptedNode; n.classList.remove('aps__adopted');
         // Marker-elementet har fulgt med inn i .pv-editor (om den ble opprettet
@@ -416,7 +446,6 @@
         var p = b.getAttribute('data-aps-item').split('\u0001');
         b.classList.toggle('active', !overview && !!sel && p[0] === sel.group && p[1] === sel.id);
       });
-      var hint = wrap.querySelector('[data-aps-hint]'); if (hint) hint.hidden = overview || !sel;
     }
 
     /* ── detalj ── */
@@ -440,7 +469,9 @@
       if (rem) { var it = findItem(rem.group, rem.id); if (it) { var g = groupByKey(rem.group); var m = g.meta(it) || {};
         recent = '<div class="aps-ovw__recent"><div class="orr-lbl">Sist redigert</div>'
           + '<button type="button" class="aps-orr" data-aps-item="' + esc(rem.group) + '\u0001' + esc(rem.id) + '"><span class="av ' + esc(m.cls || '') + '">' + esc(m.av || '') + '</span><span class="orr-nm">' + esc(m.nm || '') + '</span><span class="orr-go">Åpne →</span></button></div>'; } }
-      return '<div class="aps-ovw"><div class="aps-ovw__hi">Hvor vil du begynne?</div>'
+      return '<div class="aps-ovw">'
+        + (cfg.overviewNote ? '<div class="aps-ovw__note" data-aps-note></div>' : '')
+        + '<div class="aps-ovw__hi">Hvor vil du begynne?</div>'
         + '<div class="aps-ovw__sub">Velg en seksjon, eller hopp til det du redigerte sist.</div>'
         + '<div class="aps-ovw__cards">' + cards + '</div>' + recent + '</div>';
     }
@@ -456,10 +487,12 @@
           var sh2 = document.createElement('div'); sh2.className = 'aps__detail-h';
           sh2.innerHTML = '<span class="av sq">' + esc(s.av || '✎') + '</span><div class="dt"><div class="nm">' + esc(s.label || '') + '</div><div class="ro">' + esc(s.sub || 'Sideseksjon') + '</div></div>';
           // «Legg til som snarvei» — for alle flyttbare seksjoner i paneler som
-          // har oppgitt sin side (cfg.page). Snarveien peker til seksjonen
-          // (side.html#seksjon-id) og deles globalt med alle redaktører via Git.
-          if (!s.fixed && cfg.page && cfg.page.href && window.AdminShortcuts && window.AdminShortcuts.addTarget) {
-            var scHref0 = cfg.page.href + '#' + s.id;
+          // har oppgitt sin side (cfg.page). Snarveien peker INN i Admin-senteret
+          // (admin.html#panel/seksjon) og deles globalt med alle redaktører via Git.
+          if (!s.fixed && cfg.page && cfg.page.id && window.AdminShortcuts && window.AdminShortcuts.addTarget) {
+            var scHref0 = window.AdminShortcuts.adminHref
+              ? window.AdminShortcuts.adminHref(cfg.page.id, s.id)
+              : ('admin.html#' + cfg.page.id + '/' + s.id);
             var scTarget = { id: (cfg.page.id || 'sec') + '-' + s.id, href: scHref0, label: s.label || cfg.page.label, ico: cfg.page.ico || '🔗' };
             var added0 = window.AdminShortcuts.hasHref(scHref0);
             var sbtn = document.createElement('button');
@@ -475,7 +508,7 @@
             sh2.appendChild(sbtn);
           }
           det.appendChild(sh2);
-          if (s.node) { adoptIntoDetail(s.node, det); }
+          if (s.node) { adoptIntoDetail(s.node, det); relocateHead(s.node, sh2); }
           else if (s.build) { var sbox = document.createElement('div'); sbox.className = 'aps__sec-built'; try { s.build(sbox); } catch (_) {} det.appendChild(sbox); }
           AC.enhanceHelp && AC.enhanceHelp(det);
         } else { det.innerHTML = '<div class="aps__empty">Fant ikke seksjonen.</div>'; }
@@ -508,7 +541,7 @@
           det.appendChild(ab);
         }
         if (lg.onReorder) {
-          AC.enableDragSort(listWrap, { itemSelector: lg.reorderItemSelector || '.row-card', handleSelector: lg.reorderHandleSelector || '.drag-handle', idAttr: lg.reorderIdAttr || 'data-id', onReorder: function (ids) { try { lg.onReorder(ids); } catch (_) {} } });
+          AC.enableDragSort(listWrap, { itemSelector: lg.reorderItemSelector || '.row-card', handleSelector: lg.reorderHandleSelector || '.drag-handle', idAttr: lg.reorderIdAttr || 'data-id', handleOnly: lg.reorderHandleOnly !== false, onReorder: function (ids) { try { lg.onReorder(ids); } catch (_) {} } });
         }
         AC.enhanceHelp && AC.enhanceHelp(det);
         det.scrollTop = 0;
@@ -516,6 +549,7 @@
       }
       if (!r) {
         det.innerHTML = launchpadHTML();
+        if (cfg.overviewNote) { var noteBox = det.querySelector('[data-aps-note]'); if (noteBox) { try { cfg.overviewNote(noteBox); } catch (_) {} } }
         det.querySelectorAll('[data-aps-sec]').forEach(function (b) {
           b.addEventListener('click', function () { select(SEC_KEY, b.getAttribute('data-aps-sec')); });
         });
@@ -588,7 +622,19 @@
     }
 
     /* ── handlinger ── */
-    function select(gk, id) { overview = false; sel = { group: gk, id: id }; writeRemember(); paintActive(); renderDetail(); }
+    /* Mobil «drill-down»: på smal skjerm vises ENTEN listen ELLER detaljen (styrt
+       av klassen aps--mob-detail), aldri begge stablet. enterDetail() åpner
+       detaljen (og scroller den til topp); exitDetail() går tilbake til listen.
+       På bred skjerm ignoreres klassen — begge rutene vises alltid side om side. */
+    function enterDetail() {
+      if (!wrap) return;
+      wrap.classList.add('aps--mob-detail');
+      var d = wrap.querySelector('[data-aps-detail]'); if (d) d.scrollTop = 0;
+    }
+    function exitDetail() {
+      if (wrap) wrap.classList.remove('aps--mob-detail');
+    }
+    function select(gk, id) { overview = false; sel = { group: gk, id: id }; writeRemember(); paintActive(); renderDetail(); enterDetail(); }
     function doAdd(gk) {
       var g = groupByKey(gk); if (!g || typeof g.onAdd !== 'function') return;
       var id = g.onAdd();
@@ -600,14 +646,14 @@
           sel = null; if (active()) { renderNav(); renderDetail(); }
         });
       }
-      if (g.listDetail) { sel = { group: gk, id: LIST_KEY }; writeRemember(); paintActive(); renderDetail();
+      if (g.listDetail) { sel = { group: gk, id: LIST_KEY }; writeRemember(); paintActive(); renderDetail(); enterDetail();
         setTimeout(function () { var inps = wrap.querySelectorAll('[data-aps-detail] .row-card:last-child input, [data-aps-detail] .row-card:last-child textarea'); if (inps.length) inps[0].focus(); }, 40); return; }
-      if (id) { sel = { group: gk, id: id }; writeRemember(); paintActive(); renderDetail();
+      if (id) { sel = { group: gk, id: id }; writeRemember(); paintActive(); renderDetail(); enterDetail();
         setTimeout(function () { var inp = wrap.querySelector('[data-aps-detail] input, [data-aps-detail] textarea'); if (inp) inp.focus(); }, 40); }
     }
 
     /* ── offentlig API ── */
-    function render() { ensureWrap(); resolveSel(); renderNav(); renderDetail(); }
+    function render() { ensureWrap(); resolveSel(); renderNav(); renderDetail(); exitDetail(); }
     function refresh() { if (!active()) return; ensureWrap(); renderNav(); renderDetail(); }
     function refreshItem(id) { if (!active()) return; renderNav(); if (!id || (sel && sel.id === id)) renderDetail(); else syncActiveRow(); }
     function layoutChanged() {
@@ -631,7 +677,14 @@
       if (pHost) pHost.classList.toggle('shell-on', on);
       if (on) { render(); dockPreview(); }
     }
-    function destroy() { parkAdopted(); if (wrap && wrap.parentNode) wrap.parentNode.removeChild(wrap); wrap = null; }
+    // Snarvei-navigasjon når panelet allerede er åpent: hopp rett til seksjonen.
+    function onGotoSection(e) {
+      var d = e && e.detail; if (!d || !isSections || !cfg.page || d.panel !== cfg.page.id) return;
+      if (findSection(d.section)) { overview = false; ensureWrap(); select(SEC_KEY, d.section); }
+    }
+    window.addEventListener('apeiron-goto-section', onGotoSection);
+
+    function destroy() { window.removeEventListener('apeiron-goto-section', onGotoSection); parkAdopted(); if (wrap && wrap.parentNode) wrap.parentNode.removeChild(wrap); wrap = null; }
 
     // Selv-helbredelse: hvis et fersk panel-mount kjørte layoutChanged før DOM-en
     // var ferdig (race med admin.html sin preview-/krom-oppsett), aktiver på neste tikk.
