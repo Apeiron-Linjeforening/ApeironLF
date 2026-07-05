@@ -1,5 +1,5 @@
 /* Innhold for forsiden (index.html / «Hjem») — TEKST-delene som endres ofte.
-   Sist oppdatert: 28.6.2026
+   Sist oppdatert: 5.7.2026
    Rediger direkte her, eller åpne Admin-senteret → Forsiden.
 
    Dekker forsiden (Hjem): hero + seksjons-introer (arrangementer/aporetisk/fadderuke) + kontakt.
@@ -9,7 +9,7 @@
 
 window.INDEX_CONTENT = {
   "newsPanel": {
-    "maxEvents": 1
+    "maxEvents": 2
   },
   "heroGallery": {
     "enabled": true,
