@@ -12,18 +12,11 @@ som kan bli utdaterte (priser, statuser) med *«sjekket DD.MM.ÅÅ»*.
 ## Kritisk
 
 - [ ] Sjekke hvordan alt fungerer på mobil. (Husk å sjekke flere forskjellige størrelser på skjermer)
-- [ ] Fikse Admin på mobil.
-- [~] Rework a navigasjon/toppmeny. *(Delvis: «Foreningen» → «Om oss», nedtrekket omorganisert (sider først, ankere sist), og gruppeoverskrifter støttes nå i menyen. Gjenstår under.)*
-    - [ ] "Hjem" kan bli fjernet.
 - [ ] "Medlemskap" i medlemskap i Lys-modus er i en veldig svak farge.
 
 ## Medium
 
 - [ ] Sjekke at "Legg til fadderukeprogrammet i din kalender" fungerer: iCal og Google Kalender.
-- [x] Flytte "Slik bestiller du" i merch til oppe i hero.
-- [x] Utvide "Akkurat nå" til å inkludere enten neste to arrangement med knapp/valg i admin om å velge om den viser kun neste arrangement, neste to arrangement (muligens neste tre?) .
-- [x] "Akkurat nå" under Hero kan fjernes i index.
-- [x] "Det du kan regne med" over Aporetisk aften kan fjernes i index.
 
 ## Lav
 
@@ -32,7 +25,6 @@ som kan bli utdaterte (priser, statuser) med *«sjekket DD.MM.ÅÅ»*.
       - [ ] Hvordan får vi kontakt med våre egne TVer?
 - [ ] Legge til side for møtereferat -> Kan tas i egen wiki, muligens. Fylle ut SAK / utvide den kan tas på denne wiki siden.
 - [ ] Sammenlign med https://www.mfplacebo.no/
-- [x] Arkivere eldre perioder av `CHANGELOG.md` til `docs/changelog-arkiv/<periode>.md` så fila forblir lesbar. *(Gjort 06.07.26 for juni; gjenta når fila vokser seg stor igjen.)*
 - [ ] Avklare lagring av merch-bilder hvis `content/merch-products.js` blir stor: eksterne filer i `assets/merch/` vs. base64 i egen fil? (Base64 er ~33 % større enn binærfil — eksterne filer er mindre totalt, men krever at admin publiserer bildefiler ved siden av datafila, slik Styret-panelet alt gjør.)
 
 ## Ønsker
