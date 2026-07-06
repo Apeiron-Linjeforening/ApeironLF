@@ -1,6 +1,6 @@
 /* ============================================================
    admin-modules/pensum.js — Pensum-siden (pensum.html) som C-modul.
-   Krever pensum-content.js (PENSUM_CONTENT), som skallet (admin.html) laster.
+   Krever content/pensum-content.js (PENSUM_CONTENT), som skallet (admin.html) laster.
    Live forhåndsvisning via pensum.html?preview=1.
    ============================================================ */
 (function () {
@@ -9,7 +9,7 @@
   AdminPanels.define('pensum', {
     title: 'Pensum',
     see: { href: 'pensum.html', label: 'Se Pensum ↗' },
-    exportName: 'pensum-content.js',
+    exportName: 'content/pensum-content.js',
 
     mount: function (host, AC) {
       host.innerHTML =
@@ -509,7 +509,7 @@
           + '   Format: **fet** og [tekst](adresse). Søk/filter ligger i pensum.html.\n'
           + '*/\n\n'
           + 'window.PENSUM_CONTENT = ' + JSON.stringify(out, null, 2) + ';\n';
-        AC.downloadBlob('pensum-content.js', content);
+        AC.downloadBlob('content/pensum-content.js', content);
         AC.toast('Fil lastet ned. Erstatt i GitHub og push!');
       }
 

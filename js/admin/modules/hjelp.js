@@ -1,7 +1,7 @@
 /* ============================================================
    admin-modules/hjelp.js — Hjelp & ressurser-editor som C-modul
    Erstatter hjelp-admin.html. Krever palette.js (createColorControl) og
-   hjelp-content.js (HJELP_CONTENT), som skallet (admin.html) laster.
+   content/hjelp-content.js (HJELP_CONTENT), som skallet (admin.html) laster.
    Bygger på den opprinnelige, velprøvde editor-logikken; eneste endringer:
    ingen egen innlogging/eksportknapp (skallet eier dem), og en destroy() som
    fjerner globale lyttere når man bytter panel.
@@ -12,7 +12,7 @@
   AdminPanels.define('hjelp', {
     title: 'Hjelp',
     see: { href: 'hjelp.html', label: 'Se Hjelp-siden ↗' },
-    exportName: 'hjelp-content.js',
+    exportName: 'content/hjelp-content.js',
 
     mount: function (host, AC) {
       host.innerHTML =
@@ -359,13 +359,13 @@
           + '                       holder, holderId, holderImg, resp[], contacts[], noteTop,\n'
           + '                       note, btnLabel, btnHref\n'
           + '                       holder    = navnet på den som har vervet nå (f.eks. FTV/ITV/PTV)\n'
-          + '                       holderId  = koblet styremedlem-id (styret-content.js), valgfri\n'
+          + '                       holderId  = koblet styremedlem-id (content/styret-content.js), valgfri\n'
           + '                       holderImg = portrett-sti hentet fra styremedlemmet, valgfri\n'
           + '   sifra.items[]     : "Si fra"-kortene. {icon, title, body}  — body tillater HTML\n'
           + '   sifra.cta         : gull-knappen. {label, href}\n'
           + '   akutt.cards[]     : nødnummer-kort. {name, num, numHref, when, life} */\n\n';
         var content = header + 'window.HJELP_CONTENT = ' + JSON.stringify(out, null, 2) + ';\n';
-        AC.saveFile('hjelp-content.js', content);
+        AC.saveFile('content/hjelp-content.js', content);
         showToast('Fil lastet ned. Erstatt i GitHub og push!');
       }
 

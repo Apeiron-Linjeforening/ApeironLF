@@ -1,7 +1,7 @@
 /* ============================================================
    admin-modules/footer.js — Footer-editor som C-modul
    Erstatter footer-admin.html. Krever globalene FOOTER_ICONS,
-   FOOTER_ICON_LABELS (footer-icons.js) og SITE_FOOTER (site-content.js),
+   FOOTER_ICON_LABELS (footer-icons.js) og SITE_FOOTER (content/site-content.js),
    som skallet (admin.html) laster.
    ============================================================ */
 (function () {
@@ -10,7 +10,7 @@
   AdminPanels.define('footer', {
     title: 'Footer',
     see: { href: 'index.html', label: 'Se nettsiden ↗' },
-    exportName: 'site-content.js',
+    exportName: 'content/site-content.js',
 
     mount: function (host, AC) {
       host.innerHTML =
@@ -24,7 +24,7 @@
             + '<li>Rediger feltene nedenfor. Endringene vises i forhåndsvisningen og lagres i nettleseren</li>'
             + '<li>Legg til, fjern eller dra for å sortere lenker</li>'
             + '<li>Trykk <b>☁ Publiser til GitHub</b> oppe til høyre</li>'
-            + '<li>Erstatt <code>site-content.js</code> i GitHub-repoet og push/commit</li>'
+            + '<li>Erstatt <code>content/site-content.js</code> i GitHub-repoet og push/commit</li>'
             + '<li>Cloudflare oppdaterer alle sider automatisk innen et minutt</li>'
           + '</ol>'
           + '<div class="tip-note">💾 Footeren er lik på alle sider. «Rapporter en feil»-knappen åpner en boks som bruker e-posten du setter her.</div>'
@@ -216,13 +216,13 @@
         };
         var content =
           '/* ============================================================\n'
-          + '   site-content.js — redigerbart innhold for delt footer\n'
+          + '   content/site-content.js — redigerbart innhold for delt footer\n'
           + '   Leses av site-chrome.js, som bygger footeren på alle sider.\n'
           + '   Redigeres via Admin-senteret → Footer.\n'
           + '   Sist oppdatert: ' + new Date().toLocaleDateString('no-NO') + '\n'
           + '   ============================================================ */\n'
           + 'window.SITE_FOOTER = ' + JSON.stringify(out, null, 2) + ';\n';
-        AC.saveFile('site-content.js', content);
+        AC.saveFile('content/site-content.js', content);
         AC.toast('Fil lastet ned. Erstatt i GitHub og push!');
       }
 

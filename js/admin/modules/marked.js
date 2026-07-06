@@ -1,6 +1,6 @@
 /* ============================================================
    admin-modules/marked.js — Pensum-markedet (marked.html) som C-modul
-   Krever marked-content.js (MARKED_CONTENT), som skallet (admin.html) laster.
+   Krever content/marked-content.js (MARKED_CONTENT), som skallet (admin.html) laster.
    Live forhåndsvisning via marked.html?preview=1.
    ============================================================ */
 (function () {
@@ -9,7 +9,7 @@
   AdminPanels.define('marked', {
     title: 'Marked',
     see: { href: 'marked.html', label: 'Se Marked ↗' },
-    exportName: 'marked-content.js',
+    exportName: 'content/marked-content.js',
 
     mount: function (host, AC) {
       host.innerHTML =
@@ -193,7 +193,7 @@
           + '   Rediger direkte her, eller åpne Admin-senteret → Marked.\n'
           + '*/\n\n'
           + 'window.MARKED_CONTENT = ' + JSON.stringify(out, null, 2) + ';\n';
-        AC.downloadBlob('marked-content.js', content);
+        AC.downloadBlob('content/marked-content.js', content);
         AC.toast('Fil lastet ned. Erstatt i GitHub og push!');
       }
 

@@ -9,7 +9,7 @@
   AdminPanels.define('medlemskap', {
     title: 'Medlemskap',
     see: { href: 'index.html#bli-medlem', label: 'Se «Bli medlem»' },
-    exportName: 'membership-config.js',
+    exportName: 'content/membership-config.js',
 
     mount: function (host, AC) {
       var LS_KEY = 'apeiron-membership-v1';
@@ -31,7 +31,7 @@
       var store = AC.createStore(LS_KEY, fresh);
       function norm() {
         // «Bli medlem»-introen ble tidligere redigert i Forsiden-panelet og lagret
-        // i index-content.js. Eldre lokale utkast mangler derfor intro-feltene —
+        // i content/index-content.js. Eldre lokale utkast mangler derfor intro-feltene —
         // vi seeder dem fra MEMBERSHIP_CONFIG, med fallback til INDEX_CONTENT.medlem.
         var c = window.MEMBERSHIP_CONFIG || {};
         var m = (window.INDEX_CONTENT && window.INDEX_CONTENT.medlem) || {};
@@ -59,7 +59,7 @@
           + '<strong>Slik oppdaterer du medlemskapsprisene</strong>'
           + '<ol><li>Rediger Vipps-info, prisnivåer og innmeldingsstegene nedenfor</li>'
           + '<li>Trykk <b>☁ Publiser til GitHub</b> oppe til høyre</li>'
-          + '<li>Erstatt <code>membership-config.js</code> i GitHub-repoet og commit/push</li>'
+          + '<li>Erstatt <code>content/membership-config.js</code> i GitHub-repoet og commit/push</li>'
           + '<li>Cloudflare oppdaterer nettsiden automatisk innen et minutt</li></ol>'
           + '<div class="tip-note">💾 Endringer lagres automatisk i nettleseren. Last ned filen for å publisere.</div>'
         + '</div>'
@@ -217,12 +217,12 @@
           })
         };
         var js = '/* ============================================================\n'
-          + '   membership-config.js — medlemskapspriser og innmeldingsinfo\n'
+          + '   content/membership-config.js — medlemskapspriser og innmeldingsinfo\n'
           + '   Redigeres via Admin-senteret → Medlemskap (last ned og erstatt denne filen).\n'
           + '   ============================================================ */\n'
           + 'window.MEMBERSHIP_CONFIG = ' + JSON.stringify(out, null, 2) + ';\n';
-        AC.saveFile('membership-config.js', js);
-        AC.toast('Lastet ned membership-config.js');
+        AC.saveFile('content/membership-config.js', js);
+        AC.toast('Lastet ned content/membership-config.js');
       }
 
       /* ── live forhåndsvisning (index.html?preview=1&solo=bli-medlem) ── */

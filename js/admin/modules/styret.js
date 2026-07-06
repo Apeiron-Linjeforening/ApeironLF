@@ -1,13 +1,13 @@
 /* ============================================================
    admin-modules/styret.js — Styret-editor som C-modul
    Krever palette.js (createColorControl), admin-image-editor.js
-   (AdminImageEditor) og styret-content.js (STYRET_CONTENT).
+   (AdminImageEditor) og content/styret-content.js (STYRET_CONTENT).
 
    Bilder lagres som EGNE filer: medlemskortet får en sti
    (assets/styret/<id>.webp), mens bytene ligger i IndexedDB
    (AdminCommon.imgGet/Set) og lastes ned som egne bildefiler ved
    publisering (samme flyt som innholdsfila — ingen zip). Slik holder
-   styret-content.js seg liten.
+   content/styret-content.js seg liten.
 
    I tillegg: arkiv over tidligere styrer (period, sammendrag,
    høydepunkter, medlemmer med notat) — vises på styret.html
@@ -19,7 +19,7 @@
   AdminPanels.define('styret', {
     title: 'Styret',
     see: { href: 'styret.html', label: 'Se Styret-siden ↗' },
-    exportName: 'styret-content.js',
+    exportName: 'content/styret-content.js',
 
     searchEntries: function () {
       var d = window.AdminCommon.readDraftOr('apeiron-styret-v1', 'STYRET_CONTENT') || {};
@@ -55,8 +55,8 @@
             + '<li>Rediger innholdet nedenfor. Klikk på et felt for å redigere det</li>'
             + '<li>Last opp portrett ved å <b>klikke på bildefeltet</b> eller dra et bilde inn, så åpnes redigeringsvinduet (flytt, zoom, roter, speilvend, lys/kontrast/metning)</li>'
             + '<li>Arkivér et avtroppende styre med <b>+ Arkivér nåværende styre</b>, og skriv notater om hva styret og hvert medlem gjorde</li>'
-            + '<li>Trykk <b>☁ Publiser til GitHub</b> oppe til høyre, så <code>styret-content.js</code> og portrettene committes automatisk til <code>assets/styret/</code></li>'
-            + '<li><em>Reserve hvis publisering svikter: «↓ Last ned alle endrede» nederst i Oversikt, så lastes <code>styret-content.js</code> + portrettene ned, som du legger i <code>assets/styret/</code>.</em></li>'
+            + '<li>Trykk <b>☁ Publiser til GitHub</b> oppe til høyre, så <code>content/styret-content.js</code> og portrettene committes automatisk til <code>assets/styret/</code></li>'
+            + '<li><em>Reserve hvis publisering svikter: «↓ Last ned alle endrede» nederst i Oversikt, så lastes <code>content/styret-content.js</code> + portrettene ned, som du legger i <code>assets/styret/</code>.</em></li>'
           + '</ol>'
           + '<div class="tip-note">💾 Endringer lagres automatisk i nettleseren din. Bilder lagres som egne filer (ikke inni innholdsfila), så fila holder seg liten, og de committes til <code>assets/styret/</code> når du publiserer. Tomt portrett viser initialene som fallback.</div>'
         + '</div>'
@@ -805,7 +805,7 @@
           + '   archive[]    : tidligere styrer { period, heading, summary, highlights[],\n'
           + '                  members[]{ name, role, initials, img, note, tags } }. */\n\n'
           + 'window.STYRET_CONTENT = ' + JSON.stringify(out, null, 2) + ';\n';
-        AC.saveFile('styret-content.js', content);
+        AC.saveFile('content/styret-content.js', content);
 
         // last ned hvert refererte bilde som EGEN fil (samme flyt som innholdsfila — ingen zip)
         var refs = referencedPaths();
@@ -824,7 +824,7 @@
                 AC.saveBlob(it.name, new Blob([it.bytes], { type: 'image/webp' }));
               }, idx * 220);
             });
-            AC.toast('Lastet ned styret-content.js + ' + items.length + ' bilde' + (items.length === 1 ? '' : 'r') + '. Legg bildene i assets/styret/ og push!');
+            AC.toast('Lastet ned content/styret-content.js + ' + items.length + ' bilde' + (items.length === 1 ? '' : 'r') + '. Legg bildene i assets/styret/ og push!');
           } else {
             AC.toast('Fil lastet ned. Erstatt i GitHub og push!');
           }

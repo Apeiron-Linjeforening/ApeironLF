@@ -474,7 +474,9 @@
     var blob = new Blob([content], { type: 'text/javascript;charset=utf-8' });
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
-    a.href = url; a.download = filename;
+    // Nedlastingsnavn = siste ledd av stien: «content/x.js» lastes ned som
+    // «x.js». Full sti brukes kun som repo-sti ved publisering (capture over).
+    a.href = url; a.download = String(filename).split('/').pop();
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
     URL.revokeObjectURL(url);
   }

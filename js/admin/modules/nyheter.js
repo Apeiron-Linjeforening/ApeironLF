@@ -1,6 +1,6 @@
 /* ============================================================
    admin-modules/nyheter.js — Nyheter-editor som C-modul
-   Erstatter nyheter-admin.html. Krever news-content.js (NEWS_CONTENT), som
+   Erstatter nyheter-admin.html. Krever content/news-content.js (NEWS_CONTENT), som
    skallet (admin.html) laster. Live forhåndsvisning via index.html?preview=1.
    ============================================================ */
 (function () {
@@ -9,7 +9,7 @@
   AdminPanels.define('nyheter', {
     title: 'Nyheter',
     see: { href: 'nyheter.html', label: 'Se nyheter ↗' },
-    exportName: 'news-content.js',
+    exportName: 'content/news-content.js',
 
     searchEntries: function () {
       var d = window.AdminCommon.readDraftOr('apeiron-news-v1', 'NEWS_CONTENT') || {};
@@ -210,7 +210,7 @@
       function exportFile() {
         var header =
           '/* ============================================================\n'
-          + '   news-content.js — nyheter, kunngjøringer og beskjeder\n'
+          + '   content/news-content.js — nyheter, kunngjøringer og beskjeder\n'
           + '   Sist oppdatert: ' + new Date().toLocaleDateString('no-NO') + '\n'
           + '   Redigeres i Admin-senteret → Nyheter, eller rett her.\n'
           + '\n'
@@ -221,7 +221,7 @@
           + '   subhero: topp-banneret (tilbake-lenke, tittel, ingress).\n'
           + '   ============================================================ */\n\n'
           + 'window.NEWS_CONTENT = ' + JSON.stringify({ subhero: data.subhero, items: data.items }, null, 2) + ';\n';
-        AC.saveFile('news-content.js', header);
+        AC.saveFile('content/news-content.js', header);
         AC.toast('Fil lastet ned. Erstatt i GitHub og push!');
       }
 

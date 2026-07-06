@@ -5,7 +5,7 @@ Google Sheets + Apps Script som gratis «backend»: handlekurven sender bestilli
 til et Sheet og varsler styret på e-post.
 
 > Nyheter og hastebeskjeder på forsiden styres nå i repoet via Admin-senteret →
-> Nyheter (`news-content.js`) og trenger ingen Google Sheets-kobling. Den gamle
+> Nyheter (`content/news-content.js`) og trenger ingen Google Sheets-kobling. Den gamle
 > «trådløse» nyhets-/hastebeskjed-kanalen er fjernet.
 
 ---

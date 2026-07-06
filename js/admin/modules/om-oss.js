@@ -1,7 +1,7 @@
 /* ============================================================
    admin-modules/om-oss.js — «Om oss»-bygger (Page Builder)
    ------------------------------------------------------------
-   PAGE-native: redigerer window.OM_PAGE (om.page.js) — en ordnet
+   PAGE-native: redigerer window.OM_PAGE (content/om.page.js) — en ordnet
    liste av typede seksjoner { id, type, tone, enabled, props }.
 
    To deler:
@@ -15,7 +15,7 @@
      fargebytte      → apeiron-page-tone     (kun data-tone)
      tekstredigering → apeiron-section-update (kun den ene seksjonen)
      struktur        → apeiron-page-preview   (full tegning)
-   Eksporterer om.page.js.
+   Eksporterer content/om.page.js.
    ============================================================ */
 (function () {
   'use strict';
@@ -31,7 +31,7 @@
   AdminPanels.define('om-oss', {
     title: 'Om oss',
     see: { href: 'om-oss.html', label: 'Se Om oss ↗' },
-    exportName: 'om.page.js',
+    exportName: 'content/om.page.js',
 
     mount: function (host, AC) {
       host.innerHTML =
@@ -484,15 +484,15 @@
           }
         });
         var content =
-          '/* «Om oss» som DATA — Apeiron Page Builder (om.page.js)\n'
+          '/* «Om oss» som DATA — Apeiron Page Builder (content/om.page.js)\n'
           + '   Sist oppdatert: ' + new Date().toLocaleDateString('no-NO') + '\n'
           + '   Hver seksjon: { id, type, tone, enabled?, props }. Motoren (section-engine.js)\n'
           + '   tegner lista; typene bor i om-sections.js. Rediger i Admin → Om oss.\n'
-          + '   Bilder: assets/lesesalen/ · medlemspriser: membership-config.js\n'
+          + '   Bilder: assets/lesesalen/ · medlemspriser: content/membership-config.js\n'
           + '*/\n\n'
           + 'window.OM_PAGE = ' + JSON.stringify(out, null, 2) + ';\n';
-        AC.downloadBlob('om.page.js', content);
-        AC.toast('Fil lastet ned. Erstatt om.page.js i GitHub og push!');
+        AC.downloadBlob('content/om.page.js', content);
+        AC.toast('Fil lastet ned. Erstatt content/om.page.js i GitHub og push!');
       }
 
       /* ════════ PREVIEW-RAMME (skalering) ════════ */

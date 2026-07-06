@@ -1,7 +1,7 @@
 /* ============================================================
    admin-modules/galleri.js — Galleri-siden (galleri.html) som C-modul.
    Styrer bare topp-banneret; bildene hentes fra Google Drive.
-   Krever galleri-content.js (GALLERI_CONTENT). Live preview via
+   Krever content/galleri-content.js (GALLERI_CONTENT). Live preview via
    galleri.html?preview=1.
    ============================================================ */
 (function () {
@@ -10,7 +10,7 @@
   AdminPanels.define('galleri', {
     title: 'Galleri',
     see: { href: 'galleri.html', label: 'Se Galleri ↗' },
-    exportName: 'galleri-content.js',
+    exportName: 'content/galleri-content.js',
 
     mount: function (host, AC) {
       host.innerHTML =
@@ -88,7 +88,7 @@
           + '   Bildene hentes automatisk fra Google Drive.\n'
           + '*/\n\n'
           + 'window.GALLERI_CONTENT = ' + JSON.stringify(out, null, 2) + ';\n';
-        AC.downloadBlob('galleri-content.js', content);
+        AC.downloadBlob('content/galleri-content.js', content);
         AC.toast('Fil lastet ned. Erstatt i GitHub og push!');
       }
 

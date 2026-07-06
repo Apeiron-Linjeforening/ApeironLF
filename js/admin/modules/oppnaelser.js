@@ -1,7 +1,7 @@
 /* ============================================================
    admin-modules/oppnaelser.js — Oppnåelser-editor som C-modul
    Erstatter oppnaelser-admin.html. Krever palette.js (createColorControl) og
-   oppnaelser-content.js (OPPNAELSER_CONTENT), som skallet (admin.html) laster.
+   content/oppnaelser-content.js (OPPNAELSER_CONTENT), som skallet (admin.html) laster.
    ============================================================ */
 (function () {
   'use strict';
@@ -9,7 +9,7 @@
   AdminPanels.define('oppnaelser', {
     title: 'Oppnåelser',
     see: { href: 'oppnaelser.html', label: 'Se Oppnåelser-siden ↗' },
-    exportName: 'oppnaelser-content.js',
+    exportName: 'content/oppnaelser-content.js',
 
     searchEntries: function () {
       var d = window.AdminCommon.readDraftOr('apeiron-oppnaelser-v1', 'OPPNAELSER_CONTENT') || {};
@@ -160,7 +160,7 @@
           + '   awards[].giver : hvem som delte ut / arrangerte.\n'
           + '   awards[].accent: fargestripe — palettnavn ("" = gull) eller { light, dark }. */\n\n'
           + 'window.OPPNAELSER_CONTENT = ' + JSON.stringify(out, null, 2) + ';\n';
-        AC.saveFile('oppnaelser-content.js', content);
+        AC.saveFile('content/oppnaelser-content.js', content);
         AC.toast('Fil lastet ned. Erstatt i GitHub og push!');
       }
 

@@ -1,7 +1,7 @@
 /* ============================================================
    admin-modules/utmerkelser.js — Utmerkelser-editor som C-modul
    Erstatter utmerkelser-admin.html. Krever palette.js (createColorControl) og
-   utmerkelser-content.js (UTMERKELSER_CONTENT), som skallet (admin.html) laster.
+   content/utmerkelser-content.js (UTMERKELSER_CONTENT), som skallet (admin.html) laster.
    ============================================================ */
 (function () {
   'use strict';
@@ -9,7 +9,7 @@
   AdminPanels.define('utmerkelser', {
     title: 'Utmerkelser',
     see: { href: 'utmerkelser.html', label: 'Se Utmerkelser-siden ↗' },
-    exportName: 'utmerkelser-content.js',
+    exportName: 'content/utmerkelser-content.js',
 
     searchEntries: function () {
       var d = window.AdminCommon.readDraftOr('apeiron-utmerkelser-v1', 'UTMERKELSER_CONTENT') || {};
@@ -189,7 +189,7 @@
           + '   people[].honor : selve utmerkelsen, vises stort.\n'
           + '   people[].accent: fargestripe — palettnavn ("" = gull) eller { light, dark }. */\n\n'
           + 'window.UTMERKELSER_CONTENT = ' + JSON.stringify(out, null, 2) + ';\n';
-        AC.saveFile('utmerkelser-content.js', content);
+        AC.saveFile('content/utmerkelser-content.js', content);
         AC.toast('Fil lastet ned. Erstatt i GitHub og push!');
       }
 

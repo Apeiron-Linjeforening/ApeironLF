@@ -1,6 +1,6 @@
 /* ============================================================
    admin-modules/begrep.js — Begrep-editor (utgaver/podkast/film) som C-modul
-   Erstatter begrep-admin.html. Krever palette.js og begrep-content.js
+   Erstatter begrep-admin.html. Krever palette.js og content/begrep-content.js
    (BEGREP_CONTENT), som skallet (admin.html) laster.
    Live forhåndsvisning via begrep.html?preview=1.
    ============================================================ */
@@ -10,7 +10,7 @@
   AdminPanels.define('begrep', {
     title: 'Begrep',
     see: { href: 'begrep.html', label: 'Se Begrep-siden ↗' },
-    exportName: 'begrep-content.js',
+    exportName: 'content/begrep-content.js',
 
     searchEntries: function () {
       var d = window.AdminCommon.readDraftOr('apeiron-begrep-v1', 'BEGREP_CONTENT') || {};
@@ -231,7 +231,7 @@
           + '   img/poster: "assets/begrep/filnavn.png", base64-bilde fra admin, eller null.\n'
           + '   Tall i statistikk-stripen telles automatisk fra listene. */\n\n'
           + 'window.BEGREP_CONTENT = ' + JSON.stringify(data, null, 2) + ';\n';
-        AC.saveFile('begrep-content.js', content);
+        AC.saveFile('content/begrep-content.js', content);
         AC.toast('Fil lastet ned. Erstatt i GitHub og push!');
       }
 

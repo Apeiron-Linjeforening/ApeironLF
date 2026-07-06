@@ -1,6 +1,6 @@
 /* ============================================================
    admin-modules/meny.js — Meny-editor som C-modul
-   Erstatter meny-admin.html. Krever nav-content.js (SITE_NAV) + footer-icons.js,
+   Erstatter meny-admin.html. Krever content/nav-content.js (SITE_NAV) + footer-icons.js,
    som skallet (admin.html) laster. Dobbel live-preview (desktop + mobil) via
    srcdoc som laster den ekte site-chrome.js. Angre/gjør-om + stedvelger.
    Rydder opp globale lyttere + body-popover på destroy.
@@ -11,7 +11,7 @@
   AdminPanels.define('meny', {
     title: 'Meny',
     see: { href: 'index.html', label: 'Se nettsiden ↗' },
-    exportName: 'nav-content.js',
+    exportName: 'content/nav-content.js',
 
     mount: function (host, AC) {
       host.innerHTML =
@@ -298,7 +298,7 @@
         var out = cleanNav();
         var content =
           '/* ============================================================\n'
-          + '   nav-content.js — redigerbar meny for hele nettstedet\n'
+          + '   content/nav-content.js — redigerbar meny for hele nettstedet\n'
           + '   Leses av site-chrome.js, som bygger BÅDE header-menyen og\n'
           + '   mobilmenyen (skuffen) fra denne ene lista — på alle sider.\n'
           + '   Rediger via Admin-senteret → Meny (eller for hånd her).\n'
@@ -312,7 +312,7 @@
           + '   ============================================================ */\n'
           + 'window.SITE_NAV = ' + JSON.stringify(out, null, 2) + ';\n'
           + 'window.SITE_NAV_CONFIG = { align: ' + Number(navAlign) + ' };\n';
-        AC.saveFile('nav-content.js', content);
+        AC.saveFile('content/nav-content.js', content);
         AC.toast('Fil lastet ned. Erstatt i GitHub og push!');
       }
 

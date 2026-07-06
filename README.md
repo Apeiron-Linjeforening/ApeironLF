@@ -243,7 +243,7 @@ Lurer du på noe som ikke står her, spør styret, den KI-modellen som er best p
 ## Slik er nettsiden bygd (kort)
 
 Statisk side (HTML/CSS/JS), ingen byggesteg. Meny og footer bygges sentralt fra
-`nav-content.js` / `site-content.js` via `js/site-chrome.js` og injiseres på alle sider.
+`content/nav-content.js` / `content/site-content.js` via `js/site-chrome.js` og injiseres på alle sider.
 Sideinnhold ligger i data-filer (`*-content.js` / `*-config.js`), ikke hardkodet i HTML.
 
 **All redigering skjer i ett samlet Admin-senter (`admin.html`):** et skall som
@@ -287,7 +287,7 @@ Ting vi vet om, men er usikre på om det er verdt å gjøre noe med. Ført opp s
 - **Merch: én farge kan bare kobles til ett bilde.** Har du to bilder av samme farge (f.eks. for- og bakside av samme genser), kan bare det ene knyttes til fargen. Velger man samme farge på bilde nummer to, flyttes koblingen dit. Lite problem i praksis (kunden ser uansett hele galleriet via miniatyrstripa). Å støtte flere bilder pr. farge ville kreve en mer kompleks datamodell.
 - **Meny og footer vises et lite øyeblikk etter at siden lastes.** De bygges av `js/site-chrome.js` i nettleseren (for å slippe byggesteg og holde alt i én fil). På treg forbindelse kan man så vidt se at de «popper inn». Menyen er fast posisjonert, så selve innholdet hopper ikke. Alternativet (byggesteg) ble vurdert og valgt bort, se diskusjon i commit-historikk.
 - **Footer/meny krever JavaScript.** Med JS avslått vises ikke meny/footer. Gjelder en svært liten andel besøkende; resten av siden bruker uansett JS (kalender, søk, kurv).
-- **Bilder lagres som base64 i datafilene.** Mange/store produktbilder gjør `merch-products.js` stor. Admin skalerer ned til maks 900px webp, men mange bilder kan likevel bli tungt. Vurder eksterne bildefiler (`assets/merch/...`) hvis filene blir veldig store (vurdering ligger i [TODO.md](TODO.md)).
+- **Bilder lagres som base64 i datafilene.** Mange/store produktbilder gjør `content/merch-products.js` stor. Admin skalerer ned til maks 900px webp, men mange bilder kan likevel bli tungt. Vurder eksterne bildefiler (`assets/merch/...`) hvis filene blir veldig store (vurdering ligger i [TODO.md](TODO.md)).
 
 </details>
 

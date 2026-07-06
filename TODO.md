@@ -33,7 +33,7 @@ som kan bli utdaterte (priser, statuser) med *«sjekket DD.MM.ÅÅ»*.
 - [ ] Legge til side for møtereferat -> Kan tas i egen wiki, muligens. Fylle ut SAK / utvide den kan tas på denne wiki siden.
 - [ ] Sammenlign med https://www.mfplacebo.no/
 - [x] Arkivere eldre perioder av `CHANGELOG.md` til `docs/changelog-arkiv/<periode>.md` så fila forblir lesbar. *(Gjort 06.07.26 for juni; gjenta når fila vokser seg stor igjen.)*
-- [ ] Avklare lagring av merch-bilder hvis `merch-products.js` blir stor: eksterne filer i `assets/merch/` vs. base64 i egen fil? (Base64 er ~33 % større enn binærfil — eksterne filer er mindre totalt, men krever at admin publiserer bildefiler ved siden av datafila, slik Styret-panelet alt gjør.)
+- [ ] Avklare lagring av merch-bilder hvis `content/merch-products.js` blir stor: eksterne filer i `assets/merch/` vs. base64 i egen fil? (Base64 er ~33 % større enn binærfil — eksterne filer er mindre totalt, men krever at admin publiserer bildefiler ved siden av datafila, slik Styret-panelet alt gjør.)
 
 ## Ønsker
 

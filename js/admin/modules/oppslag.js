@@ -1,6 +1,6 @@
 /* ============================================================
    admin-modules/oppslag.js — Oppslagstavla-editor som C-modul
-   Erstatter oppslagstavla-admin.html. Krever palette.js og oppslag-content.js
+   Erstatter oppslagstavla-admin.html. Krever palette.js og content/oppslag-content.js
    (OPPSLAG_CONTENT), som skallet (admin.html) laster.
    Live forhåndsvisning via oppslagstavla.html?preview=1.
    Rydder opp (destroy) etter body-monterte crop-/stedvelger-elementer +
@@ -12,7 +12,7 @@
   AdminPanels.define('oppslag', {
     title: 'Oppslagstavla',
     see: { href: 'oppslagstavla.html', label: 'Se Oppslagstavla ↗' },
-    exportName: 'oppslag-content.js',
+    exportName: 'content/oppslag-content.js',
 
     mount: function (host, AC) {
       host.innerHTML =
@@ -179,7 +179,7 @@
           + '   posters[].accent    : pin-/aksentfarge — palettnavn ("" = gull) eller { light, dark }.\n'
           + '   posters[].done      : true = arkivert (vises i «Tidligere oppslag»). */\n\n'
           + 'window.OPPSLAG_CONTENT = ' + JSON.stringify(out, null, 2) + ';\n';
-        AC.saveFile('oppslag-content.js', content);
+        AC.saveFile('content/oppslag-content.js', content);
         AC.toast('Fil lastet ned. Erstatt i GitHub og push!');
       }
 

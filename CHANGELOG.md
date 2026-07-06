@@ -1,5 +1,23 @@
 ## Siste endringer
 
+**06.07.26 · Filstruktur-rydding del 2: innholdsfilene → `content/` — publiseringsstiene i admin-modulene oppdatert tilsvarende**
+
+*Flytting (git mv, historikken følger med)*
+- **`content/`** rommer nå alle 17 filene Admin-senteret publiserer: `*-content.js` (begrep, galleri, hjelp, index, marked, news, oppnaelser, oppslag, pensum, site, styret, utmerkelser), `om.page.js`, `nav-content.js`, `merch-products.js`, `membership-config.js` og `admin-shortcuts.js`. Rot har nå bare HTML-sidene + `api-config.js` og topp-dokumentene.
+- **`api-config.js` blir fortsatt på rot** — Cloudflare injiserer Google-API-nøkkelen på den stien i prod (kalender/Drive er avhengig av den), og sperrelista i `functions/api/github/commit.js` blokkerer den ved eksakt rotsti.
+
+*Publiseringen følger med (dette er hele poenget med runden)*
+- **Hver admin-moduls `exportName`/`saveFile`/`downloadBlob`-sti er oppdatert til `content/…`** — verifisert at alle 17 publiseringsstier peker på eksisterende filer. `functions/` (serverkoden) er uendret; `commit.js` har ingen sti-liste og godtar `content/` som før.
+- **Nedlastingsnavn ved manuell eksport:** `downloadBlob` bruker nå siste ledd av stien som filnavn, så manuell nedlasting fortsatt gir `begrep-content.js` (ikke `content_begrep-content.js`). Repostien brukes kun ved publisering. Hjelpetekstene modulene genererer («Erstatt … i GitHub-repoet») viser nå `content/`-stien.
+- **iCal/kalender og Cloudflare upåvirket:** kalenderskriptene (`js/apeiron-events.js`, `js/apeiron-fadder.js`, `js/aporetisk-cal.js`) går mot eksterne Google-URL-er og leser nøkkelen fra `window` (api-config) — ingen lokale sti-avhengigheter. `_headers` (CSP), `robots.txt`, `sitemap.xml` og `.gitignore` er uendret.
+
+*Referanser og docs*
+- Alle `src`-referanser i HTML-sidene peker på `content/…`; sidescriptene leser som før via `window`-globaler (omtalene der er bare kommentarer).
+- Docs: `content/`-stier i README, VEDLIKEHOLD (inkl. nytt mappetre og omskrevet advarsel: innholdsfil og admin-modul må alltid flyttes i takt), TODO og `docs/`. Historiske CHANGELOG-oppføringer står urørt.
+- Verifisert med statisk referansesjekk (alle `src`/`href` → eksisterende fil), lokal servertest (200 på alt) og kontroll av alle publiseringsstier.
+- **NB etter deploy:** admin-faner som var åpne før deployen må lastes på nytt — en gammel fane ville publisert til de gamle rotstiene. Test med en liten publisering rett etter deploy.
+- Berørt: 17 filer flyttet til `content/`, `src`-referanser i alle HTML-sidene, alle `js/admin/modules/*.js`, `js/admin/admin-common.js` (nedlastingsnavn), `README.md`, `VEDLIKEHOLD.md`, `TODO.md`, `docs/admin-arkitektur.md`.
+
 **06.07.26 · Filstruktur-rydding: CSS → `css/`, sidescript → `js/`, admin-kode → `js/admin/` — publiseringen urørt**
 
 *Ny mappestruktur (alt flyttet med `git mv`, så historikken følger med)*

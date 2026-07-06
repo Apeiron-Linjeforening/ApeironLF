@@ -153,7 +153,7 @@ git push                 # Cloudflare oppdaterer siden automatisk
 `file:///[mappe]/ApeironLF/index.html`
 
 **Se en admin-endring lokalt før push:** admin-panelene laster alltid **ned** den
-oppdaterte datafila (f.eks. `merch-products.js`). Legg den nedlastede fila over den
+oppdaterte datafila (f.eks. `content/merch-products.js`). Legg den nedlastede fila over den
 tilsvarende fila i din lokale klone og oppdater nettleseren.
 
 > Tidligere fantes en «skriv rett til repo-fila»-funksjon (File System Access), men den
@@ -182,7 +182,7 @@ Hver modul med søkbart innhold har en `searchEntries()`-funksjon som mater søk
 Alt dette gjøres normalt i Admin-senteret. Men hver del kan også redigeres for hånd i
 sin `*-content.js`-fil, nyttig for drift, feilsøk og bulk-endringer.
 
-### 👥 Styret: `styret-content.js`
+### 👥 Styret: `content/styret-content.js`
 
 Både `styret.html` og `styret-arkiv.html` (og forside-teaseren) leser fra denne fila.
 `window.STYRET_CONTENT` har seksjonene `board`/`verv` (overskrifter), `members`, `roles`
@@ -198,7 +198,7 @@ og `archive`.
   bildefiler** (én og én, ingen zip) ved publisering. Legg dem i `assets/styret/`.
   Tomt `img` = bare initialer.
 
-### 🛍️ Merch: `merch-products.js`
+### 🛍️ Merch: `content/merch-products.js`
 
 Hvert produkt er et objekt i `window.MERCH_PRODUCTS`:
 
@@ -225,20 +225,20 @@ Hvert produkt er et objekt i `window.MERCH_PRODUCTS`:
 > `assets/merch/...`). Hoved = `images[0]`. `colorImages: { "Fargenavn": indeks }` bytter
 > hovedbildet når en farge velges.
 
-### 📰 Begrep: `begrep-content.js`
+### 📰 Begrep: `content/begrep-content.js`
 
 `window.BEGREP_CONTENT` med seksjonene `meta`, `issues`, `podcasts`, `films`,
 `christmas`. Bilder: `null` (plassholder), `"assets/begrep/fil.png"` eller base64 fra
 admin. `meta` rommer bl.a. `email` og `orderFormUrl`.
 
-### 🆘 Hjelp: `hjelp-content.js`
+### 🆘 Hjelp: `content/hjelp-content.js`
 
 `window.HJELP_CONTENT` med seksjonene `hero`, `sifra`, `studier`, `helse`, `fysisk`,
 `akutt`. Ressurskort (`*.cards[]`): `eyebrow`, `accent`, `name`, `desc`, `resp[]`,
 `contacts[]`, `noteTop`, `note`, `btnLabel`, `btnHref`. Tom linje i `desc` = nytt avsnitt.
 `contacts` og «Si fra»-tekst tillater HTML (lenker, `<strong>`).
 
-### 📰 Nyheter: `news-content.js`
+### 📰 Nyheter: `content/news-content.js`
 
 `window.NEWS_CONTENT = { items: [...] }`. Felt per nyhet (forklart øverst i fila):
 `place` (`panel`/`arrangement`/`aporetisk`/`fadderuke`), `urgent`, `title`, `text`
@@ -249,13 +249,13 @@ Google Sheet-systemet er borte.
 > **Neste arrangement** i «Akkurat nå»-kortet hentes automatisk fra
 > arrangementskalenderne (aktivitet/aporetisk/fadder), og legges ikke inn som nyhet.
 > Kortet kan vise de neste **1–3** arrangementene — antallet velges i
-> **Admin → Forsiden → Hero** og lagres som `newsPanel.maxEvents` i `index-content.js`.
+> **Admin → Forsiden → Hero** og lagres som `newsPanel.maxEvents` i `content/index-content.js`.
 > `js/apeiron-news.js` slår sammen kildene, sorterer på tid og deduperer samme hendelse
 > som står i flere kalendere.
 
 ### 🏛️ Forsiden
 
-Forsidens tekster (toppbilde, om-seksjon, FAQ, kontakt) ligger i `index-content.js` og
+Forsidens tekster (toppbilde, om-seksjon, FAQ, kontakt) ligger i `content/index-content.js` og
 redigeres i Admin → Forsiden med live preview. Samme fil har `newsPanel.maxEvents`
 (1–3) som styrer hvor mange kommende arrangement «Akkurat nå»-kortet lister.
 
@@ -263,7 +263,7 @@ redigeres i Admin → Forsiden med live preview. Samme fil har `newsPanel.maxEve
 
 Om oss-siden er **datadrevet via en seksjonsmotor**, ikke én fast HTML-mal. Tre filer:
 
-- `om.page.js` (`window.OM_PAGE`) — en ordnet liste av typede seksjoner
+- `content/om.page.js` (`window.OM_PAGE`) — en ordnet liste av typede seksjoner
   `{ id, type, tone, enabled?, props }`. Dette er innholdet, redigert i Admin → Om oss.
 - `js/om-sections.js` — registrerer seksjons**typene** (`banner`, `about`, `cardgrid`,
   `lesesal`, `join`, `faq`); hver eier sin `defaults`/`render`/`mount` ett sted.
@@ -289,7 +289,7 @@ luft på hver side), chips under ingressen på mobil.
 
 **Galleribilder på forsiden.** Admin → Forsiden har et eget panel som kan vise
 bilder fra galleriet på forsiden, **av som standard**. Innstillingene ligger i
-`heroGallery` i `index-content.js`; `js/apeiron-hero-gallery.js` (+ `css/hero-gallery.css`)
+`heroGallery` i `content/index-content.js`; `js/apeiron-hero-gallery.js` (+ `css/hero-gallery.css`)
 rendrer dem og henter bilder **tilfeldig fra hele Drive-galleriet** (samme
 `ROOT_FOLDER_ID` som Galleri-siden), bufret 6 t i nettleseren. Fire stiler
 (A rullende bånd · B mosaikk · C polaroider · D svevende bak hero), fem D-animasjoner
@@ -304,7 +304,7 @@ forhåndsvisningen overlever navigasjon.
 ## Pensum
 
 Pensum redigeres i **Admin-senteret → Pensum** (eget panel siden 21.06.26). Innholdet
-ligger i `pensum-content.js` (`window.PENSUM_CONTENT`) og gjengis av `js/apeiron-pensum.js`;
+ligger i `content/pensum-content.js` (`window.PENSUM_CONTENT`) og gjengis av `js/apeiron-pensum.js`;
 søk/filter/trekkspill-logikken bor i `pensum.html`.
 
 - **Emner** er gruppert per **seksjon** og redigeres som sammenleggbare kort (kode, navn,
@@ -460,17 +460,19 @@ gjengis ikke her, så den ikke drifter fra guiden.) Kort:
 
 ## Filstruktur
 
-Repoet er organisert i mapper etter rolle. **Viktig:** HTML-sidene og
-innholdsfilene som Admin-senteret publiserer (`*-content.js`, `om.page.js`,
-`nav-content.js`, `site-content.js`, `merch-products.js`, `membership-config.js`,
-`admin-shortcuts.js`) ligger med vilje på rot — flyttes de, må stien også endres
-i tilhørende admin-modul (`exportName`/`saveFile`), ellers publiserer admin til
-feil sti.
+Repoet er organisert i mapper etter rolle. **Viktig:** filene i `content/` er
+de Admin-senteret publiserer til GitHub — stien står hardkodet i tilhørende
+admin-modul (`exportName`/`saveFile`). Flyttes eller omdøpes en innholdsfil, må
+stien endres i modulen samtidig, ellers publiserer admin til feil sti. HTML-sidene
+ligger på rot med vilje (URL-ene til de publiserte sidene skal ikke endres), og
+`api-config.js` må ligge på rot (sperrelista i `functions/api/github/commit.js`
+blokkerer den ved eksakt rotsti, og Cloudflare injiserer nøkkelen der).
 
 ```
 ApeironLF/
 ├── *.html              Sidene (URL-ene er uendret)
-├── *-content.js m.fl.  Innholdsfiler som publiseres via Admin-senteret
+├── api-config.js       Gitignorert stub; Cloudflare injiserer nøkkelen i prod
+├── content/            Innholdsfiler som publiseres via Admin-senteret
 ├── css/                All CSS (styles.css, admin-*.css, hero-gallery.css)
 ├── js/                 Renderere og funksjonalitet for de offentlige sidene
 │   ├── vendor/         Tredjepartsbibliotek (minisearch.min.js)
@@ -485,39 +487,39 @@ ApeironLF/
 
 | Fil | Hva det er |
 | --- | --- |
-| `index.html` | Forsiden «Hjem»: toppbilde, om, FAQ, kontakt (tekst fra `index-content.js`) |
-| `om-oss.html` | «Om oss»-siden (skall; tegnes av Page Builder fra `om.page.js`) |
+| `index.html` | Forsiden «Hjem»: toppbilde, om, FAQ, kontakt (tekst fra `content/index-content.js`) |
+| `om-oss.html` | «Om oss»-siden (skall; tegnes av Page Builder fra `content/om.page.js`) |
 | `nyheter.html` | Nyhetsside med arkiv |
-| `oppslagstavla.html` | Oppslagstavla: plakater (fra `oppslag-content.js`) |
-| `pensum.html` | Pensum-oversikt (fra `pensum-content.js`) |
-| `styret.html` | Styret og styreverv (fra `styret-content.js`) |
-| `styret-arkiv.html` | Arkiv over tidligere styrer (fra `archive[]` i `styret-content.js`) |
-| `begrep.html` | Begrep-tidsskriftet (fra `begrep-content.js`) |
-| `merch.html` | Merch-butikk (fra `merch-products.js`) |
+| `oppslagstavla.html` | Oppslagstavla: plakater (fra `content/oppslag-content.js`) |
+| `pensum.html` | Pensum-oversikt (fra `content/pensum-content.js`) |
+| `styret.html` | Styret og styreverv (fra `content/styret-content.js`) |
+| `styret-arkiv.html` | Arkiv over tidligere styrer (fra `archive[]` i `content/styret-content.js`) |
+| `begrep.html` | Begrep-tidsskriftet (fra `content/begrep-content.js`) |
+| `merch.html` | Merch-butikk (fra `content/merch-products.js`) |
 | `marked.html` | Kjøp & bytte (pensum-marked) |
 | `galleri.html` | Bildegalleri (henter automatisk fra Google Drive) |
-| `hjelp.html` | Hjelp & ressurser (fra `hjelp-content.js`) |
-| `oppnaelser.html` | Oppnåelser / milepæler (fra `oppnaelser-content.js`) |
-| `utmerkelser.html` | Utmerkelser / priser (fra `utmerkelser-content.js`) |
+| `hjelp.html` | Hjelp & ressurser (fra `content/hjelp-content.js`) |
+| `oppnaelser.html` | Oppnåelser / milepæler (fra `content/oppnaelser-content.js`) |
+| `utmerkelser.html` | Utmerkelser / priser (fra `content/utmerkelser-content.js`) |
 | `admin.html` | **Admin-senter**: én inngang for all redigering; mounter modulene |
 
 **Innholds- og innstillingsfiler (redigeres via Admin-senteret)**
 
 | Fil | Hva det er |
 | --- | --- |
-| `index-content.js` | Forsidens tekster (Admin → Forsiden) |
-| `om.page.js` | Om oss-innhold som typede seksjoner (Admin → Om oss, Page Builder) |
-| `news-content.js` | Nyheter/beskjeder (Admin → Nyheter) |
-| `oppslag-content.js` | Oppslagstavla-plakater (Admin → Oppslagstavla) |
-| `styret-content.js` | Styremedlemmer og verv (Admin → Styret) |
-| `begrep-content.js` | Begrep-siden (Admin → Begrep) |
-| `hjelp-content.js` | Hjelp-siden (Admin → Hjelp) |
-| `oppnaelser-content.js` | Oppnåelser (Admin → Oppnåelser) |
-| `utmerkelser-content.js` | Utmerkelser (Admin → Utmerkelser) |
-| `merch-products.js` | Merch-produkter (Admin → Merch) |
-| `membership-config.js` | Medlemskap: priser/Vipps/steg (Admin → Medlemskap) |
-| `nav-content.js` | Lenkene i hovedmenyen (Admin → Meny). Undermeny-barn er `{label, href}`, eller `{label, heading:true}` = ikke-klikkbar gruppeoverskrift |
-| `site-content.js` | Footer-lenker og sosiale ikoner (Admin → Footer) |
+| `content/index-content.js` | Forsidens tekster (Admin → Forsiden) |
+| `content/om.page.js` | Om oss-innhold som typede seksjoner (Admin → Om oss, Page Builder) |
+| `content/news-content.js` | Nyheter/beskjeder (Admin → Nyheter) |
+| `content/oppslag-content.js` | Oppslagstavla-plakater (Admin → Oppslagstavla) |
+| `content/styret-content.js` | Styremedlemmer og verv (Admin → Styret) |
+| `content/begrep-content.js` | Begrep-siden (Admin → Begrep) |
+| `content/hjelp-content.js` | Hjelp-siden (Admin → Hjelp) |
+| `content/oppnaelser-content.js` | Oppnåelser (Admin → Oppnåelser) |
+| `content/utmerkelser-content.js` | Utmerkelser (Admin → Utmerkelser) |
+| `content/merch-products.js` | Merch-produkter (Admin → Merch) |
+| `content/membership-config.js` | Medlemskap: priser/Vipps/steg (Admin → Medlemskap) |
+| `content/nav-content.js` | Lenkene i hovedmenyen (Admin → Meny). Undermeny-barn er `{label, href}`, eller `{label, heading:true}` = ikke-klikkbar gruppeoverskrift |
+| `content/site-content.js` | Footer-lenker og sosiale ikoner (Admin → Footer) |
 | `js/merch-config.js` | Merch-bestilling: Apps Script-URL, Vipps, token |
 | `api-config.js` | Lokal stub for Google-API-nøkkel (gitignorert; settes i prod av Cloudflare) |
 
@@ -526,16 +528,16 @@ ApeironLF/
 | Fil | Hva det er |
 | --- | --- |
 | `js/site-chrome.js` | Bygger meny + footer på alle sider |
-| `js/apeiron-index.js` | Rendrer forsiden fra `index-content.js` |
-| `js/apeiron-hero-gallery.js` | Galleribilder på forsiden (stil A/B/C/D + DVD), live fra Drive. Styres av `heroGallery` i `index-content.js`; krever `css/hero-gallery.css`. Av som standard |
+| `js/apeiron-index.js` | Rendrer forsiden fra `content/index-content.js` |
+| `js/apeiron-hero-gallery.js` | Galleribilder på forsiden (stil A/B/C/D + DVD), live fra Drive. Styres av `heroGallery` i `content/index-content.js`; krever `css/hero-gallery.css`. Av som standard |
 | `js/section-engine.js` | Page Builder-motor: tegner en seksjonsliste, setter `data-tone` (Om oss) |
 | `js/om-sections.js` | Seksjonstypene for Om oss (banner, about, cardgrid, lesesal, join, faq) |
-| `om.page.js` | Om oss som data (seksjonsliste); redigeres i Admin → Om oss |
-| `js/apeiron-news.js` | «Akkurat nå»-kort + beskjeder (leser `news-content.js`) |
+| `content/om.page.js` | Om oss som data (seksjonsliste); redigeres i Admin → Om oss |
+| `js/apeiron-news.js` | «Akkurat nå»-kort + beskjeder (leser `content/news-content.js`) |
 | `js/apeiron-events.js` | Henter arrangementer fra Google Kalender |
 | `js/apeiron-fadder.js` | Henter fadderuke-program fra Google Kalender |
 | `js/aporetisk-cal.js` | Kalender for Aporetisk Aften |
-| `js/membership.js` | Fyller «Bli medlem»-kortet fra `membership-config.js` |
+| `js/membership.js` | Fyller «Bli medlem»-kortet fra `content/membership-config.js` |
 | `js/merch-cart.js` | Handlekurv + bestilling på merch-siden |
 | `js/report.js` | «Rapporter en feil»-boksen (alle sider) |
 | `js/app.js` | Forside-interaksjoner: FAQ, scroll-reveal, statistikk-teller |
@@ -557,7 +559,7 @@ ApeironLF/
 | `js/admin/admin-panel-shell.js` | PanelShell: «Liste + detalj»-visningen (søkbar navigator + ett skjema om gangen), delt av alle panelene |
 | `js/admin/admin-image-editor.js` | Gjenbrukbart bilderedigeringsvindu (flytt/zoom/roter/speilvend/lys/kontrast) |
 | `js/admin/admin-github.js` | Klient-siden av GitHub-publiseringen (snakker med `functions/api/github/`) |
-| `admin-shortcuts.js` | Egendefinerte snarveier i Admin-senteret (publiseres via `js/admin/modules/shortcuts.js`) |
+| `content/admin-shortcuts.js` | Egendefinerte snarveier i Admin-senteret (publiseres via `js/admin/modules/shortcuts.js`) |
 | `css/admin-common.css` | Delt stil for admin-skallet |
 | `css/admin-modules.css` | Per-modul admin-stil (klasse-scopet, f.eks. `.mod-merch`) |
 | `js/admin/modules/` | Én fil per editor: nyheter, oppslag, forsiden, om-oss, styret, merch, begrep, medlemskap, hjelp, meny, footer, oppnaelser, utmerkelser, pensum, galleri, marked — pluss `shortcuts` (usynlig, kun publisering av snarveier) |

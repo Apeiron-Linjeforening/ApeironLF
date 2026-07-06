@@ -1,7 +1,7 @@
 /* ============================================================
    admin-modules/forsiden.js — Forsiden (Hjem): Hero + Kontakt, som C-modul
    Erstatter index-admin.html. Krever footer-icons.js (FOOTER_ICON_LABELS) og
-   index-content.js (INDEX_CONTENT), som skallet (admin.html) laster.
+   content/index-content.js (INDEX_CONTENT), som skallet (admin.html) laster.
    Live forhåndsvisning via index.html?preview=1.
    ============================================================ */
 (function () {
@@ -10,7 +10,7 @@
   AdminPanels.define('forsiden', {
     title: 'Forsiden',
     see: { href: 'index.html', label: 'Se Hjem ↗' },
-    exportName: 'index-content.js',
+    exportName: 'content/index-content.js',
 
     mount: function (host, AC) {
       host.innerHTML =
@@ -461,11 +461,11 @@
           + '   Rediger direkte her, eller åpne Admin-senteret → Forsiden.\n'
           + '\n'
           + '   Dekker forsiden (Hjem): hero + seksjons-introer (arrangementer/aporetisk/fadderuke) + kontakt.\n'
-          + '   «Bli medlem» (intro, fordeler, priser) ligger nå i membership-config.js (Medlemskap-panelet).\n'
+          + '   «Bli medlem» (intro, fordeler, priser) ligger nå i content/membership-config.js (Medlemskap-panelet).\n'
           + '   «Om oss» + FAQ ligger på om-oss.html → om-content.js (Om oss-panelet).\n'
           + '*/\n\n'
           + 'window.INDEX_CONTENT = ' + JSON.stringify(out, null, 2) + ';\n';
-        AC.downloadBlob('index-content.js', content);
+        AC.downloadBlob('content/index-content.js', content);
         AC.toast('Fil lastet ned. Erstatt i GitHub og push!');
       }
 

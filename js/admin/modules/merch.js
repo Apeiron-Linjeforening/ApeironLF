@@ -1,7 +1,7 @@
 /* ============================================================
    admin-modules/merch.js — Merch-editor (produkter) som C-modul
    Erstatter merch-admin.html. Krever palette.js (createColorControl,
-   APEIRON_ANIMATED) og merch-products.js (MERCH_PRODUCTS / MERCH_INFO),
+   APEIRON_ANIMATED) og content/merch-products.js (MERCH_PRODUCTS / MERCH_INFO),
    som skallet (admin.html) laster. Live forhåndsvisning via merch.html?preview=1.
    Bildegalleri pr. produkt med bilderedigering (via AdminImageEditor),
    farge-bilde-kobling, badge, fargekontroller. Rydder opp på destroy.
@@ -12,7 +12,7 @@
   AdminPanels.define('merch', {
     title: 'Merch',
     see: { href: 'merch.html', label: 'Se merch-siden ↗' },
-    exportName: 'merch-products.js',
+    exportName: 'content/merch-products.js',
 
     searchEntries: function () {
       var d = window.AdminCommon.readDraftOr('apeiron-merch-v1', 'MERCH_PRODUCTS');
@@ -366,12 +366,12 @@
           + 'window.MERCH_INFO = ' + JSON.stringify(info) + ';\n\n'
           + 'window.MERCH_INFO_LABEL = ' + JSON.stringify(infoLabel) + ';\n\n'
           + 'window.MERCH_PRODUCTS = ' + JSON.stringify(products, null, 2) + ';\n';
-        AC.saveFile('merch-products.js', content);
+        AC.saveFile('content/merch-products.js', content);
         AC.toast('Fil lastet ned. Erstatt i GitHub og push!');
       }
 
       q('reset-btn').addEventListener('click', function () {
-        if (!confirm('Dette sletter alle ueksporterte endringer og laster inn siste publiserte versjon fra merch-products.js. Fortsette?')) return;
+        if (!confirm('Dette sletter alle ueksporterte endringer og laster inn siste publiserte versjon fra content/merch-products.js. Fortsette?')) return;
         localStorage.removeItem(LS_KEY); localStorage.removeItem(LS_INFO_KEY); localStorage.removeItem(LS_INFO_LABEL_KEY); localStorage.removeItem(LS_SUBHERO_KEY);
         products = fromPublished(); normalizeProducts(); info = window.MERCH_INFO || ''; infoLabel = (window.MERCH_INFO_LABEL != null ? window.MERCH_INFO_LABEL : 'Merk'); subhero = Object.assign({}, window.MERCH_SUBHERO || {});
         renderInfo(); renderSubhero(); renderAll(); AC.toast('Tilbakestilt til publisert versjon'); pushPreview();
