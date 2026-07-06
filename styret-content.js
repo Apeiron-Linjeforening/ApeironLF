@@ -1,5 +1,5 @@
 /* Innhold for Styret-siden (styret.html) + arkivsiden (styret-arkiv.html).
-   Sist oppdatert: 21.6.2026
+   Sist oppdatert: 6.7.2026
    Rediger direkte her, eller åpne Admin-senteret → Styret.
 
    members[].img : sti til egen bildefil (assets/styret/…webp). Bildene
@@ -291,13 +291,6 @@ window.STYRET_CONTENT = {
       "resp": [
         "Forbedre samarbeid mellom linjeforeningene"
       ]
-    },
-    {
-      "id": "rmqf72zb7yk0",
-      "name": "",
-      "accent": "",
-      "desc": "",
-      "resp": []
     }
   ],
   "archive": [
