@@ -66,6 +66,20 @@
     var EDGE   = 64;    // px-sone øverst/nederst som auto-scroller
     var MAXSPD = 20;    // maks scroll-fart pr. frame
 
+    // Finn elementet som FAKTISK ruller. Panelene ligger i .panel-host
+    // (position:absolute; overflow-y:auto), så siden ruller IKKE på window —
+    // window.scrollBy traff ingenting og auto-scroll «virket ikke». Da kunne
+    // kort som er høyere enn skjermen heller ikke dras forbi hverandre, siden
+    // man ikke fikk rullet under draget. Vi ruller nærmeste scrollbare forelder.
+    function scrollParent(el) {
+      for (var p = el; p; p = p.parentElement) {
+        if (p === document.body || p === document.documentElement) break;
+        var oy = getComputedStyle(p).overflowY;
+        if ((oy === 'auto' || oy === 'scroll') && p.scrollHeight > p.clientHeight + 1) return p;
+      }
+      return null;   // ingen intern scroller → fall tilbake på window
+    }
+
     container.addEventListener('pointerdown', function (e) {
       if (e.button != null && e.button !== 0) return;
       var handle = e.target.closest && e.target.closest(handleSel);
@@ -96,7 +110,7 @@
       if (dragEl.hasAttribute && dragEl.hasAttribute('data-fixed')) return;
 
       var startX = e.clientX, startY = e.clientY;
-      var dragging = false, ph = null, offX = 0, offY = 0, lastY = startY, raf = null;
+      var dragging = false, ph = null, offX = 0, offY = 0, lastY = startY, raf = null, scroller = null;
       var startOrder = null;
       var armed = !longPress, holdTimer = null;
       var HOLD_MS = opts.holdToDrag ? 150 : 320, HOLD_CANCEL = 10;
@@ -120,6 +134,7 @@
 
       function begin() {
         dragging = true;
+        scroller = scrollParent(container);
         if (dragEl) dragEl.classList.remove('drag-pending');
         startOrder = currentIds().join('\u0001');
         var r = dragEl.getBoundingClientRect();
@@ -144,10 +159,17 @@
 
       function autoScroll() {
         raf = requestAnimationFrame(autoScroll);
-        var vh = window.innerHeight, spd = 0;
-        if (lastY < EDGE) spd = -Math.ceil((EDGE - lastY) / EDGE * MAXSPD);
-        else if (lastY > vh - EDGE) spd = Math.ceil((lastY - (vh - EDGE)) / EDGE * MAXSPD);
-        if (spd) { window.scrollBy(0, spd); positionPlaceholder(lastY); }
+        // Kantsonene måles mot den synlige flaten til det som faktisk ruller
+        // (scroll-forelderen), ikke hele vinduet — ellers ville sonene ligge
+        // utenfor panelet når panelet bare dekker deler av skjermen.
+        var top = 0, bottom = window.innerHeight, spd = 0;
+        if (scroller) { var sr = scroller.getBoundingClientRect(); top = sr.top; bottom = sr.bottom; }
+        if (lastY < top + EDGE) spd = -Math.min(MAXSPD, Math.ceil((top + EDGE - lastY) / EDGE * MAXSPD));
+        else if (lastY > bottom - EDGE) spd = Math.min(MAXSPD, Math.ceil((lastY - (bottom - EDGE)) / EDGE * MAXSPD));
+        if (spd) {
+          if (scroller) scroller.scrollTop += spd; else window.scrollBy(0, spd);
+          positionPlaceholder(lastY);
+        }
       }
 
       function onMove(ev) {

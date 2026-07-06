@@ -15,8 +15,6 @@
     mount: function (host, AC) {
       host.innerHTML =
         '<section class="preview-top">'
-          + '<h3>Forhåndsvisning</h3>'
-          + '<p class="pp-sub">Slik ser footeren ut nederst på alle sider. Bytt mellom 🖥 og 📱 for desktop- og mobilbredde. Oppdateres mens du skriver.</p>'
           + '<div class="fpv-wrap"><iframe id="pv-foot" title="Forhåndsvisning av footeren" scrolling="no"></iframe></div>'
         + '</section>'
         + '<div class="tip">'
@@ -176,21 +174,27 @@
       // Forhåndsvisningen er den EKTE footeren: vi laster styles.css + site-chrome.js
       // i en iframe med utkastet injisert, slik at den ser nøyaktig ut som på sidene
       // — og får samme 🖥/📱-veksler (telefon-ramme i mobilmodus) som de andre panelene.
-      function frameDoc() {
+      function frameDoc(hideBrand) {
+        var hb = hideBrand ? '.footer .wrap>img,.footer__name,.footer__tag{display:none !important;}' : '';
+        // klikk-og-dra for å scrolle (simulerer touch) når innholdet er høyere enn ruta
+        var drag = '(function(){function se(){return document.scrollingElement||document.documentElement;}function sc(){var s=se();return s.scrollHeight>s.clientHeight+2;}var dn=false,sy=0,st=0;function cur(){document.body.style.cursor=sc()?"grab":"";}setTimeout(cur,120);document.addEventListener("mousedown",function(e){if(!sc())return;dn=true;sy=e.clientY;st=se().scrollTop;document.body.style.cursor="grabbing";e.preventDefault();});document.addEventListener("mousemove",function(e){if(!dn)return;se().scrollTop=st-(e.clientY-sy);});window.addEventListener("mouseup",function(){if(!dn)return;dn=false;cur();});})();';
         return '<!DOCTYPE html><html lang="no"><head><meta charset="utf-8">'
           + '<link rel="preconnect" href="https://fonts.googleapis.com">'
           + '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
           + '<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">'
           + '<link rel="stylesheet" href="styles.css">'
-          + '<style>html,body{margin:0;background:transparent;}.footer{margin:0;}</style>'
+          + '<style>html,body{margin:0;background:transparent;}.footer{margin:0;}' + hb
+          + '*{scrollbar-width:none;-ms-overflow-style:none;}*::-webkit-scrollbar{width:0;height:0;display:none;}</style>'
           + '</head><body data-mode="paper"><div id="site-footer"></div>'
           + '<scr' + 'ipt>window.SITE_FOOTER=' + JSON.stringify(previewData()) + ';</scr' + 'ipt>'
           + '<scr' + 'ipt src="footer-icons.js"></scr' + 'ipt>'
           + '<scr' + 'ipt src="site-chrome.js"></scr' + 'ipt>'
+          + '<scr' + 'ipt>' + drag + '</scr' + 'ipt>'
           + '</body></html>';
       }
       function fitFoot() {
         var fr = q('pv-foot'); if (!fr) return;
+        if (host.classList.contains('fpv-collapsed')) return;   // ikke mål mens previewen er foldet (iframen er display:none = høyde 0)
         try {
           var ft = fr.contentDocument && fr.contentDocument.querySelector('.footer');
           if (ft) fr.style.height = Math.max(160, ft.offsetHeight) + 'px';
@@ -199,7 +203,7 @@
       function renderPreview() {
         var fr = q('pv-foot'); if (!fr) return;
         fr.onload = fitFoot;
-        fr.srcdoc = frameDoc();
+        fr.srcdoc = frameDoc(true);   // inline desktop-preview: skjul branding (kortere)
       }
       window.addEventListener('resize', fitFoot);
       function exportFile() {
@@ -247,7 +251,7 @@
         rail: 'collections',
         title: 'Footer', subtitle: '2 lister',
         remember: 'apeiron-footer-shell-sel',
-        previewDock: true,
+        previewDock: false,
         launchpad: false,
         banner: { label: 'Tekst & rapporter-lenke', current: function () { return data.name || ''; }, adopt: function () { return host.querySelector('[data-footer-banner]'); } },
         groups: [
@@ -277,11 +281,73 @@
       bind('m-rep-subject', function (v) { data.report.subject = v; });
       renderAll();
       applyPanelLayout();
+      // flytt previewen ut av bunn-dokken, opp mellom «Footer»-hodet (.aps__head) og
+      // innholdet (.aps__md), samme grep som meny.
+      var fPvBtn = host.querySelector('.aps__preview'); if (fPvBtn) fPvBtn.hidden = true;
+      var fPrev = host.querySelector('.preview-top');
+      var fMd = host.querySelector('.aps .aps__md');
+      if (fPrev && fMd && fMd.parentNode) fMd.parentNode.insertBefore(fPrev, fMd);
+
+      // Preview-knapper i «Footer»-hodet: «📱 Vis mobil» + fold-sammen. Alltid høyrestilt.
+      host.classList.add('fpv-on');
+      var fStyle = document.createElement('style');
+      fStyle.textContent = '.fpv-btns{margin-left:auto;display:flex;gap:8px}'
+        + '.fpv-btn{border:1px solid #d9d2c2;background:#fff;color:#232740;border-radius:8px;padding:6px 13px;font-size:12.5px;cursor:pointer;font-family:inherit}.fpv-btn:hover{border-color:#cdbf95}'
+        + '.fpv-on.fpv-collapsed .preview-top{display:none !important}'
+        + '.fpv-modal{position:fixed;inset:0;z-index:99999;background:rgba(20,22,36,.55);display:flex;align-items:center;justify-content:center;padding:20px}'
+        + '.fpv-modal[hidden]{display:none}'
+        + '.fpv-card{background:#f4f1ea;border-radius:16px;padding:16px;box-shadow:0 24px 60px rgba(0,0,0,.35);display:flex;flex-direction:column;align-items:center;max-height:96vh;overflow:auto}'
+        + '.fpv-mhead{position:sticky;top:0;z-index:3;background:#f4f1ea;display:flex;align-items:center;gap:12px;width:100%;margin-bottom:10px;padding:4px 0;font-weight:600;font-size:13px;color:#232740}'
+        + '.fpv-close{margin-left:auto;border:1px solid #d9d2c2;background:#fff;border-radius:8px;padding:6px 12px;font-size:12.5px;cursor:pointer;font-family:inherit;color:#232740}'
+        + '.fpv-phone{border:8px solid #1a1d30;border-radius:30px;overflow:hidden;background:#232740;width:430px;height:680px;max-width:calc(100vw - 40px)}'
+        + '.fpv-phone iframe{border:0;width:100%;height:100%;background:#232740}'
+        + '.fpv-warn{margin:0 0 12px;max-width:430px;font-size:11.5px;line-height:1.4;color:#8a2b2b;background:#fdeaea;border:1px solid #e6b3b3;border-radius:8px;padding:7px 11px;text-align:center}'
+        + '.fpv-rotbox{position:relative;overflow:hidden;background:transparent;margin:0 auto}'
+        + '.fpv-rotbox iframe{position:absolute;top:0;left:0;border:0;background:transparent;transform-origin:0 0;transform:rotate(90deg) translateY(-100%)}'
+        + '.fpv-rothint{margin-top:10px;max-width:300px;font-size:11px;color:#6b6f86;text-align:center}';
+      document.head.appendChild(fStyle);
+
+      // mobil-forhåndsvisning som overlegg (på body, så skallet ikke skjuler den)
+      var fMobModal = document.createElement('div'); fMobModal.className = 'fpv-modal'; fMobModal.hidden = true;
+      fMobModal.innerHTML = '<div class="fpv-card"><div class="fpv-mhead"><span>📱 Footer på mobil</span><button class="fpv-close" type="button">✕ Lukk</button></div><div class="fpv-warn">⚠ Footeren kan se ganske annerledes ut på ulike mobiler. Skjermbredde og tekststørrelse varierer.</div><div class="fpv-phone"><iframe id="pv-foot-mob" title="Mobil-forhåndsvisning av footeren"></iframe></div></div>';
+      document.body.appendChild(fMobModal);
+      var fMobFrame = fMobModal.querySelector('#pv-foot-mob');
+      fMobModal.querySelector('.fpv-close').addEventListener('click', function () { fMobModal.hidden = true; });
+      fMobModal.addEventListener('click', function (e) { if (e.target === fMobModal) fMobModal.hidden = true; });
+
+      // 90-graders forhåndsvisning som overlegg (som meny sin roterte visning)
+      var fRotModal = document.createElement('div'); fRotModal.className = 'fpv-modal'; fRotModal.hidden = true;
+      fRotModal.innerHTML = '<div class="fpv-card"><div class="fpv-mhead"><span>🔄 Footer i 90°</span><button class="fpv-close" type="button">✕ Lukk</button></div><div class="fpv-rotbox"><iframe id="pv-foot-rot" title="90-graders forhåndsvisning av footeren"></iframe></div><div class="fpv-rothint">Footeren er snudd 90° så den brede desktop-visningen får plass på en smal skjerm. Lukk for å redigere.</div></div>';
+      document.body.appendChild(fRotModal);
+      var fRotFrame = fRotModal.querySelector('#pv-foot-rot');
+      var fRotBox = fRotModal.querySelector('.fpv-rotbox');
+      fRotModal.querySelector('.fpv-close').addEventListener('click', function () { fRotModal.hidden = true; });
+      fRotModal.addEventListener('click', function (e) { if (e.target === fRotModal) fRotModal.hidden = true; });
+      function fRotSize() { var L = Math.max(500, window.innerHeight - 150); fRotFrame.style.width = L + 'px'; fRotBox.style.height = L + 'px'; }
+      function fRotFit() { var FH = 300; try { var ft = fRotFrame.contentDocument && fRotFrame.contentDocument.querySelector('.footer'); if (ft) FH = Math.max(160, ft.offsetHeight); } catch (e) {} fRotFrame.style.height = FH + 'px'; fRotBox.style.width = FH + 'px'; }
+      function fRotOpen() { fRotSize(); fRotFrame.onload = fRotFit; fRotFrame.srcdoc = frameDoc(true); fRotModal.hidden = false; }
+      function fRotResize() { if (!fRotModal.hidden) { fRotSize(); fRotFit(); } }
+      window.addEventListener('resize', fRotResize);
+
+      function fEsc(e) { if (e.key === 'Escape') { fMobModal.hidden = true; fRotModal.hidden = true; } }
+      document.addEventListener('keydown', fEsc);
+
+      // knapper i hodet, gruppert i en høyrestilt beholder (margin-left:auto)
+      var fHead = host.querySelector('.aps__head');
+      var fBtns = document.createElement('span'); fBtns.className = 'fpv-btns';
+      var fMobBtn = document.createElement('button'); fMobBtn.type = 'button'; fMobBtn.className = 'fpv-btn'; fMobBtn.textContent = '📱 Vis mobil';
+      fMobBtn.addEventListener('click', function () { fMobFrame.srcdoc = frameDoc(false); fMobModal.hidden = false; });   // mobil: vis branding (ekte mobil-footer)
+      var fRotBtn = document.createElement('button'); fRotBtn.type = 'button'; fRotBtn.className = 'fpv-btn'; fRotBtn.textContent = '🔄 90° visning';
+      fRotBtn.addEventListener('click', fRotOpen);
+      var fToggle = document.createElement('button'); fToggle.type = 'button'; fToggle.className = 'fpv-btn'; fToggle.textContent = '▾ Skjul forhåndsvisning';
+      fToggle.addEventListener('click', function () { var c = host.classList.toggle('fpv-collapsed'); fToggle.textContent = c ? '▸ Vis forhåndsvisning' : '▾ Skjul forhåndsvisning'; if (!c) { requestAnimationFrame(fitFoot); } });
+      fBtns.appendChild(fMobBtn); fBtns.appendChild(fRotBtn); fBtns.appendChild(fToggle);
+      if (fHead) { var fHome = fHead.querySelector('[data-aps-home]'); if (fHome) fHead.insertBefore(fBtns, fHome); else fHead.appendChild(fBtns); }
 
       AC.viewSwitch({ list: q('list-links'), key: 'apeiron-footer-links-view-v1', help: 'Velg hvordan lenke-radene vises mens du redigerer her i admin. Påvirker bare redigeringsvisningen, ikke nettsiden.' });
       AC.viewSwitch({ list: q('list-social'), key: 'apeiron-footer-social-view-v1', help: 'Velg hvordan de sosiale lenkene vises mens du redigerer her i admin. Påvirker bare redigeringsvisningen, ikke nettsiden.' });
 
-      return { export: exportFile, destroy: function () { window.removeEventListener('resize', fitFoot); window.removeEventListener('apeiron-panellayout', applyPanelLayout); if (shell) shell.destroy(); } };
+      return { export: exportFile, destroy: function () { window.removeEventListener('resize', fitFoot); window.removeEventListener('apeiron-panellayout', applyPanelLayout); if (shell) shell.destroy(); document.removeEventListener('keydown', fEsc); window.removeEventListener('resize', fRotResize); if (fMobModal && fMobModal.parentNode) fMobModal.parentNode.removeChild(fMobModal); if (fRotModal && fRotModal.parentNode) fRotModal.parentNode.removeChild(fRotModal); if (fStyle && fStyle.parentNode) fStyle.parentNode.removeChild(fStyle); host.classList.remove('fpv-on'); } };
     }
   });
 })();

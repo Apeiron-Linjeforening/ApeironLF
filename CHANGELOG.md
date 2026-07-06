@@ -1,5 +1,37 @@
 ## Siste endringer
 
+**06.07.26 · Footer-admin: samme forhåndsvisning som meny (kompakt, ut av dokken, fold + mobil + 90-graders)**
+
+*Forhåndsvisning (Admin → Footer)*
+- **Flyttet ut av bunn-dokken**, opp mellom «Footer»-hodet (`.aps__head`) og innholdet (`.aps__md`), samme grep som meny. `previewDock` er slått av; skallets egen preview-knapp skjules.
+- **Kortere inline-preview:** logo, «APEIRON» og taglinen skjules i desktop-previewen (injisert CSS), så den starter rett på lenkene.
+- **«▾ Skjul forhåndsvisning»:** fold-knapp som skjuler previewen for mer redigeringsplass. Knappene i hodet er alltid høyrestilt, også på mobil (der skallet ellers venstrestiller dem fordi `.aps__sp`-spaceren skjules).
+- **«📱 Vis mobil»:** åpner footeren i mobilbredde (telefon-ramme, 430px) som overlegg, med branding (den ekte mobil-footeren), og en rød merknad om at footeren varierer mellom mobiler.
+- **«🔄 90° visning»** (alltid synlig): åpner footeren rotert 90° som overlegg, slik meny sin roterte visning gjør, så den brede desktop-footeren får plass på en smal skjerm via skjermhøyden. Høyden måles og strimmelen tilpasses automatisk.
+- Berørt: `admin-modules/footer.js`.
+
+*Delte fikser (meny + footer)*
+- **Klikk-og-dra for å scrolle i mobil-previewen** (simulerer touch), aktiveres bare når innholdet er høyere enn ruta.
+- **✕ Lukk holder seg alltid tilgjengelig** i overleggene: modal-hodet er sticky og kortet scroller internt, så knappen ikke dyttes av toppen på små skjermer.
+- **Bugfiks (footer):** var previewen foldet og bredden endret seg, ble høyden feil ved utfolding (avkuttet). Nå måles ikke høyden mens den er foldet, og den re-måles ved utfolding.
+- **Bugfiks (meny):** baren ble litt for lav hvis man redigerte mens den var kollapset (høyden ble målt på en skjult iframe). Nå måles den ikke mens baren er skjult, og re-måles når den vises igjen.
+- Berørt: `admin-modules/footer.js`, `admin-modules/meny.js`.
+
+**06.07.26 · Meny-admin: ny forhåndsvisning av menylinja (kompakt, flyttet ut av bunn-dokken, rotert på smal skjerm)**
+
+*Forhåndsvisning (Admin → Meny)*
+- **Desktop-forhåndsvisningen viser nå kun det redaktøren styrer: logoen + menypunktene.** Modus-knapp, søk og hamburger skjules (injisert CSS i preview-iframen), og logoen er skalert ned så den står mer på linje med menytekstene. Nav-spacerne beholdes, så «Plassering på menylinja» (venstre/sentrert/høyre) gjenspeiles i previewen.
+- **Flyttet ut av bunn-dokken.** `previewDock` er slått av for meny; menylinja ligger nå som en tett stripe **rett under «Meny»-hodet, over rail + «Menypunkter»** (satt inn mellom `.aps__head` og `.aps__md`), uten luft rundt.
+- **Knappene «📱 Vis mobil» og «🖥 Desktop» ligger i panel-hodet** ved siden av «Oversikt». «Vis mobil» åpner den ekte hamburgerskuffen som overlegg (låst åpen); «Desktop» åpner menylinja **rotert 90°** som overlegg. Den bruker skjermhøyden i stedet for bredden, så hele den brede linja får plass på en smal skjerm.
+- **Innholdsbasert kollaps uten flimring:** når logo + menypunkter ikke får plass i panelet, skjules inline-stripa og «🖥 Desktop» dukker opp. Iframen melder nødvendig bredde (`needW`), og admin sammenligner mot tilgjengelig bredde, og måler aldri en skjult iframe, så terskelen skifter kun én gang hver vei.
+- Nedtrekk vises på hover (stripa vokser nedover og legger seg oppå uten å reflowe); mobilskuffen er låst (✕ er død); scrollbars skjult i previewen. Berørt: `admin-modules/meny.js`.
+
+**05.07.26 · Admin dra-og-slipp: auto-scroll virker igjen, så store kort kan sorteres**
+
+*Bugfiks (alle admin-paneler)*
+- **Store kort/seksjoner kunne ikke flyttes, og det var ingen auto-scroll under draget** (f.eks. Meny → «Hva skjer»/«Om oss» med mange underpunkter blir høyere enn skjermen). Én rotårsak, to symptomer: auto-scroll i `enableDragSort` kalte `window.scrollBy(...)`, men panelene ruller **internt i `.panel-host`** (`position:absolute; overflow-y:auto`) — vinduet selv ruller aldri, så scroll-kallet traff ingenting. Uten scrolling under draget når man aldri slippepunktet for et kort som er høyere enn skjermen.
+- Nå finner draget nærmeste faktisk scrollbare forelder (`scrollParent`) og ruller den; kantsonene øverst/nederst måles mot scrollerens synlige flate, ikke hele vinduet. Faller tilbake på `window` om ingen intern scroller finnes, så offentlige/andre lister er upåvirket. Gjelder alle paneler, siden de deler `AC.enableDragSort`. Berørt: `admin-common.js`.
+
 **05.07.26 · Tillitsvalgte (PTV/ITV/FTV): innehaver settes i Hjelp og portrettene følger med overalt — + dra-fiks i Hjelp**
 
 *Tillitsvalgte-innehaver*

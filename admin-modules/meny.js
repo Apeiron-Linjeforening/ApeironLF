@@ -16,8 +16,8 @@
     mount: function (host, AC) {
       host.innerHTML =
         '<div class="desk-preview-bar">'
-          + '<div class="dpb-cap">Desktop: menylinje <span class="dpb-hint">Vist i din skjermbredde, slik menylinja faktisk ser ut. <b>Får punktene ikke plass, bytter linja automatisk til hamburgermeny.</b> Undermenyene ser du utvidet i mobil-forhåndsvisningen til høyre.</span></div>'
-          + '<div class="np-desk-wrap"><iframe id="pv-desk" title="Desktop-forhåndsvisning" scrolling="no"></iframe></div>'
+          + '<div class="mpv-top"><span class="mpv-btns"><button class="mpv-btn ghost" id="mpv-desk-btn" type="button">🖥 Desktop</button><button class="mpv-btn" id="mpv-mob-btn" type="button">📱 Vis mobil</button></span></div>'
+          + '<div class="np-desk-wrap" id="mpv-wrap"><iframe id="pv-desk" title="Desktop-forhåndsvisning" scrolling="no"></iframe></div>'
         + '</div>'
         + '<div class="editor-grid"><div class="editor">'
           + '<div class="hist-bar"><button class="btn-hist" id="undo-btn" type="button" title="Angre (Ctrl/Cmd+Z)" disabled>↶ Angre</button><button class="btn-hist" id="redo-btn" type="button" title="Gjør om (Ctrl/Cmd+Shift+Z)" disabled>↷ Gjør om</button></div>'
@@ -44,10 +44,41 @@
             + '<div class="list" id="list-items"></div>'
           + '</div>'
         + '</div>'
-        + '<aside class="preview-pane"><h3>Mobil</h3><p class="pp-sub">Hamburgermenyen: skuffen vises åpen med alle seksjoner utvidet.</p><div class="np-mob-wrap"><iframe id="pv-mob" title="Mobil-forhåndsvisning" scrolling="no"></iframe></div></aside>'
         + '</div>';
 
       var q = function (id) { return host.querySelector('#' + id); };
+      host.classList.add('mpv-on');
+
+      /* Injisert i preview-iframen: hindre navigasjon, meld nav-høyde/kollaps +
+         nedtrekk-hover, og åpne mobilskuffen låst. Ingen </scr+ipt> inni. */
+      var MPV_DEMO = '(function(){document.addEventListener("click",function(ev){var a=ev.target.closest&&ev.target.closest("a");if(a)ev.preventDefault();},true);function nw(){var nav=document.getElementById("nav");if(!nav)return 0;var b=nav.querySelector(".nav__brand"),l=nav.querySelector(".nav__links");var bw=b?Math.ceil(b.getBoundingClientRect().width):0;var lw=l?Math.ceil(l.scrollWidth):0;var cs=nav.ownerDocument.defaultView.getComputedStyle(nav);var pad=(parseFloat(cs.paddingLeft)||0)+(parseFloat(cs.paddingRight)||0);return bw+lw+Math.ceil(pad)+40;}function fit(){var n=document.getElementById("nav");if(n)parent.postMessage({t:"fit",needW:nw()},"*");}window.addEventListener("resize",function(){setTimeout(fit,0);});window.addEventListener("message",function(e){if(e.data&&e.data.t==="remeasure")fit();});function bd(){[].forEach.call(document.querySelectorAll(".nav__dropdown"),function(dd){if(dd.__d)return;dd.__d=1;dd.addEventListener("mouseenter",function(){parent.postMessage({t:"drop-open"},"*");});dd.addEventListener("mouseleave",function(){parent.postMessage({t:"drop-close"},"*");});dd.addEventListener("focusin",function(){parent.postMessage({t:"drop-open"},"*");});dd.addEventListener("focusout",function(){parent.postMessage({t:"drop-close"},"*");});});}function od(){var d=document.getElementById("drawer");if(!d)return;d.style.transition="none";d.classList.add("is-open");[].forEach.call(d.querySelectorAll(".drawer__sec"),function(s){s.classList.add("is-open");var b=s.querySelector(".drawer__sec-head");if(b)b.setAttribute("aria-expanded","true");});var cb=document.getElementById("drawerClose");if(cb)cb.style.pointerEvents="none";var bg=document.getElementById("burger");if(bg)bg.style.pointerEvents="none";if(window.MutationObserver){var mo=new MutationObserver(function(){if(!d.classList.contains("is-open"))d.classList.add("is-open");});mo.observe(d,{attributes:true,attributeFilter:["class"]});}}var t=0;(function w(){if(document.querySelector(".nav")){bd();fit();if(window.__openDrawer)od();}else if(t++<80){setTimeout(w,40);}})();if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){setTimeout(fit,0);});})();';
+
+      // klikk-og-dra for å scrolle (simulerer touch) når innholdet er høyere enn ruta
+      var MPV_DRAG = '(function(){function se(){return document.scrollingElement||document.documentElement;}function sc(){var s=se();return s.scrollHeight>s.clientHeight+2;}var dn=false,sy=0,st=0;function cur(){document.body.style.cursor=sc()?"grab":"";}setTimeout(cur,120);document.addEventListener("mousedown",function(e){if(!sc())return;dn=true;sy=e.clientY;st=se().scrollTop;document.body.style.cursor="grabbing";e.preventDefault();});document.addEventListener("mousemove",function(e){if(!dn)return;se().scrollTop=st-(e.clientY-sy);});window.addEventListener("mouseup",function(){if(!dn)return;dn=false;cur();});})();';
+
+      var MPV_CSS = '.mpv-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px}'
+        + '.mpv-subtitle{font-size:.8rem;color:#6b6f86;font-weight:400;margin-left:10px;align-self:center}'
+        + '.mpv-btns{margin-left:auto;display:flex;gap:8px}'
+        + '.mpv-btn{border:1px solid #232740;background:#232740;color:#fff;border-radius:8px;padding:6px 13px;font-size:12.5px;cursor:pointer;font-family:inherit}'
+        + '.mpv-btn.ghost{background:#fff;color:#232740;border-color:#d9d2c2}'
+        + '#mpv-desk-btn{display:none}'
+        + '.mpv-on .desk-preview-bar{padding:0 !important;margin:0 !important;box-shadow:none !important;background:transparent !important}'
+        + '.mpv-on .np-desk-wrap{position:relative;overflow:visible;border:1px solid #e3ded2;border-radius:10px;background:#232740}'
+        + '.mpv-on #pv-desk{position:absolute;top:0;left:0;z-index:5;border:0;background:transparent;transition:height .15s ease}'
+        + '.mpv-hint{font-size:11px;color:#6b6f86;margin-top:6px}'
+        + '.mpv-modal{position:fixed;inset:0;z-index:99999;background:rgba(20,22,36,.55);display:flex;align-items:center;justify-content:center;padding:20px}'
+        + '.mpv-modal[hidden]{display:none}'
+        + '.mpv-card{background:#f4f1ea;border-radius:16px;padding:16px;box-shadow:0 24px 60px rgba(0,0,0,.35);max-height:96vh;overflow:auto;display:flex;flex-direction:column;align-items:center}'
+        + '.mpv-head{position:sticky;top:0;z-index:3;background:#f4f1ea;display:flex;align-items:center;gap:12px;width:100%;margin-bottom:10px;padding:4px 0;font-weight:600;font-size:13px;color:#232740}'
+        + '.mpv-close{margin-left:auto;border:1px solid #d9d2c2;background:#fff;border-radius:8px;padding:6px 12px;font-size:12.5px;cursor:pointer;font-family:inherit;color:#232740}'
+        + '.mpv-phone{border:8px solid #1a1d30;border-radius:26px;overflow:hidden;background:#232740;width:322px;height:520px}'
+        + '.mpv-phone iframe{border:0;width:100%;height:100%;background:#232740}'
+        + '.mpv-rotbox{position:relative;overflow:hidden;background:transparent;align-self:flex-end}'
+        + '.mpv-rotbox iframe{position:absolute;top:0;left:0;border:0;background:transparent;transform-origin:0 0;transform:rotate(90deg) translateY(-100%)}'
+        + '.mpv-rothint{font-size:11px;color:#6b6f86;text-align:center;margin-top:8px;max-width:280px}'
+        + '.mpv-on.mpv-collapsed .desk-preview-bar{display:none !important}'
+        + '.mpv-on.mpv-collapsed #mpv-desk-btn{display:inline-block}';
+
       var LS_KEY = 'apeiron-nav-v1';
       var LS_ALIGN = 'apeiron-nav-align-v1';
       var navAlign = 0;
@@ -210,44 +241,49 @@
       }
 
       function frameDoc(navJson, openDrawer) {
-        var extra = openDrawer
-          ? '<scr' + 'ipt>setTimeout(function(){var d=document.getElementById("drawer");if(d){d.style.transition="none";d.classList.add("is-open");d.querySelectorAll(".drawer__sec").forEach(function(s){s.classList.add("is-open");});}},70);</scr' + 'ipt>'
-          : '';
         var bg = openDrawer ? '#232740' : 'transparent';
         var navBg = openDrawer ? '' : '.nav{background:#232740 !important;}';
+        // Desktop-previewen: logo + menypunktene (skjul modus, søk, burger).
+        // Spacerne beholdes så «Plassering på menylinja» (venstre/sentrert/høyre) vises.
+        var linksOnly = openDrawer ? '' : '.nav__color-toggle,.nav__search-btn,.nav__burger{display:none !important;}.nav__links{display:flex !important;}'
+          + '.nav__brand{gap:8px !important;}.nav__brand img{width:24px !important;height:24px !important;}.nav__brand .nm{font-size:1.05rem !important;}.nav__brand .sub{font-size:.48rem !important;margin-top:2px !important;}';
+        var drawerFix = openDrawer ? '.drawer{padding-top:52px !important;}.drawer__close{top:12px !important;right:14px !important;}' : '';
+        var flag = openDrawer ? '<scr' + 'ipt>window.__openDrawer=true;</scr' + 'ipt>' : '';
         return '<!DOCTYPE html><html lang="no"><head><meta charset="utf-8">'
           + '<link rel="preconnect" href="https://fonts.googleapis.com">'
           + '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
           + '<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">'
           + '<link rel="stylesheet" href="styles.css">'
-          + '<style>html,body{margin:0;background:' + bg + ';min-height:100%;}.nav{position:static !important;}' + navBg + 'body::before{display:none !important;}</style>'
+          + '<style>html,body{margin:0;background:' + bg + ';min-height:100%;}.nav{position:static !important;}' + navBg + linksOnly + drawerFix + 'body::before{display:none !important;}*{scrollbar-width:none;-ms-overflow-style:none;}*::-webkit-scrollbar{width:0;height:0;display:none;}</style>'
           + '</head><body data-mode="paper"><div id="site-nav"></div>'
+          + flag
           + '<scr' + 'ipt>window.SITE_NAV=' + navJson + ';window.SITE_NAV_CONFIG={align:' + Number(navAlign) + '};window.SITE_FOOTER={};</scr' + 'ipt>'
           + '<scr' + 'ipt src="footer-icons.js"></scr' + 'ipt>'
           + '<scr' + 'ipt src="site-chrome.js"></scr' + 'ipt>'
-          + extra + '</body></html>';
+          + '<scr' + 'ipt>' + MPV_DEMO + '</scr' + 'ipt>'
+          + '<scr' + 'ipt>' + MPV_DRAG + '</scr' + 'ipt>'
+          + '</body></html>';
       }
+      var mpvDropOpen = false, pvMobEl = null, pvRotEl = null;
       function renderPreview() {
         var navJson = JSON.stringify(cleanNav());
-        var desk = q('pv-desk'), mob = q('pv-mob');
+        var desk = q('pv-desk');
         if (desk) { desk.onload = fitDesk; desk.srcdoc = frameDoc(navJson, false); }
-        if (mob) mob.srcdoc = frameDoc(navJson, true);
+        if (pvMobEl) pvMobEl.srcdoc = frameDoc(navJson, true);
+        if (pvRotEl) pvRotEl.srcdoc = frameDoc(navJson, false);
       }
       function fitDesk() {
         var f = q('pv-desk'); if (!f) return;
-        var wrap = f.parentElement;
-        var W = wrap.clientWidth;
-        var contentW = Math.max(W, 1180);
-        var scale = W / contentW;
-        f.style.width = contentW + 'px';
-        f.style.transformOrigin = 'top left';
-        f.style.transform = scale < 1 ? 'scale(' + scale + ')' : 'none';
-        var h = 80;
+        if (host.classList.contains('mpv-collapsed')) return;   // ikke mål mens baren er skjult (iframen har høyde 0)
+        var wrap = f.parentElement;                 // .np-desk-wrap
+        var h = 60;
         try { var n = f.contentDocument && f.contentDocument.querySelector('.nav'); if (n) h = n.offsetHeight; } catch (e) {}
-        h = Math.max(56, h);
-        f.style.setProperty('--nav-h', h + 'px');
-        f.style.setProperty('--nav-h-open', (h + 260) + 'px');
-        wrap.style.height = Math.round(h * Math.min(1, scale)) + 2 + 'px';
+        h = Math.max(46, h);
+        // Absolutt-posisjonert: vokser nedover (og legger seg oppå) når nedtrekket
+        // er åpent, uten å reflowe. Boksen beholder høyde = kun linja.
+        f.style.width = '100%';
+        f.style.height = (mpvDropOpen ? (h + 320) : h) + 'px';
+        wrap.style.height = h + 2 + 'px';
         measureLayout();
       }
       function measureLayout() {
@@ -411,6 +447,50 @@
         btn.addEventListener('click', function (e) { e.preventDefault(); openLocPicker(input); });
       }
 
+      /* ── ny preview-UI: kompakt desktop-linje + mobil/rotert-overlegg (på body) ── */
+      var mpvStyle = document.createElement('style'); mpvStyle.textContent = MPV_CSS; document.head.appendChild(mpvStyle);
+      var mobModal = document.createElement('div'); mobModal.className = 'mpv-modal'; mobModal.hidden = true;
+      mobModal.innerHTML = '<div class="mpv-card"><div class="mpv-head"><span>📱 Mobil (skuff)</span><button class="mpv-close" type="button">✕ Lukk</button></div><div class="mpv-phone"><iframe id="pv-mob" title="Mobil-forhåndsvisning" scrolling="no"></iframe></div></div>';
+      document.body.appendChild(mobModal);
+      var deskModal = document.createElement('div'); deskModal.className = 'mpv-modal'; deskModal.hidden = true;
+      deskModal.innerHTML = '<div class="mpv-card mpv-card--rot"><div class="mpv-head"><span>🖥 Menylinja (rotert)</span><button class="mpv-close" type="button">✕ Lukk</button></div><div class="mpv-rotbox"><iframe id="pv-desk-rot" title="Rotert forhåndsvisning" scrolling="no"></iframe></div><div class="mpv-rothint">Menylinja er snudd 90° så hele bredden får plass. Lukk for å redigere.</div></div>';
+      document.body.appendChild(deskModal);
+      pvMobEl = mobModal.querySelector('#pv-mob');
+      pvRotEl = deskModal.querySelector('#pv-desk-rot');
+      var mpvRotBox = deskModal.querySelector('.mpv-rotbox');
+      function mpvSizeRot() { var B = Math.min(360, Math.max(240, window.innerWidth - 96)); var L = Math.max(700, window.innerHeight - 150); mpvRotBox.style.width = B + 'px'; mpvRotBox.style.height = L + 'px'; pvRotEl.style.width = L + 'px'; pvRotEl.style.height = B + 'px'; }
+      q('mpv-mob-btn').addEventListener('click', function () { mobModal.hidden = false; });
+      q('mpv-desk-btn').addEventListener('click', function () { mpvSizeRot(); deskModal.hidden = false; });
+      mobModal.querySelector('.mpv-close').addEventListener('click', function () { mobModal.hidden = true; });
+      deskModal.querySelector('.mpv-close').addEventListener('click', function () { deskModal.hidden = true; });
+      mobModal.addEventListener('click', function (e) { if (e.target === mobModal) mobModal.hidden = true; });
+      deskModal.addEventListener('click', function (e) { if (e.target === deskModal) deskModal.hidden = true; });
+      function mpvEsc(e) { if (e.key === 'Escape') { mobModal.hidden = true; deskModal.hidden = true; } }
+      document.addEventListener('keydown', mpvEsc);
+      function mpvWinResize() { if (!deskModal.hidden) mpvSizeRot(); }
+      window.addEventListener('resize', mpvWinResize);
+      // Innholdsbasert kollaps uten flimring: iframen melder nødvendig bredde (mpvNeedW),
+      // og vi sammenligner mot bredden baren HAR (container-bredden). Måler aldri en skjult
+      // iframe, så ingen vis-igjen/skjul-oscillasjon.
+      var mpvNeedW = 0;
+      function mpvCheckFit() {
+        var bar = host.querySelector('.desk-preview-bar');
+        var avail = bar && bar.parentNode ? bar.parentNode.clientWidth : 0;
+        if (!mpvNeedW || !avail) return;
+        var was = host.classList.contains('mpv-collapsed');
+        var now = avail < mpvNeedW;
+        host.classList.toggle('mpv-collapsed', now);
+        if (was && !now) requestAnimationFrame(fitDesk);   // ble synlig igjen: re-mål høyden
+      }
+      function mpvMessage(e) {
+        var d = e.data || {}; var desk = q('pv-desk');
+        if (d.t === 'fit') { fitDesk(); if (desk && e.source === desk.contentWindow) { if (d.needW > 0) mpvNeedW = d.needW; mpvCheckFit(); } }
+        else if (d.t === 'drop-open' && desk && e.source === desk.contentWindow) { mpvDropOpen = true; fitDesk(); }
+        else if (d.t === 'drop-close' && desk && e.source === desk.contentWindow) { mpvDropOpen = false; fitDesk(); }
+      }
+      window.addEventListener('message', mpvMessage);
+      window.addEventListener('resize', mpvCheckFit);
+
       loadData(); AC.draftBaseline(LS_KEY, data); loadAlign(); renderItems(); applyAlignUI(); renderPreview();
       measureLayout(); setTimeout(measureLayout, 120);
       pushHistory(); buildPicker(); enrichLive();
@@ -423,7 +503,7 @@
         rail: 'collections', launchpad: false, mountAtTop: true,
         title: 'Meny', subtitle: 'Menypunkter',
         remember: 'apeiron-meny-shell-sel',
-        previewDock: true, previewSelector: '.desk-preview-bar',
+        previewDock: false, previewSelector: '.desk-preview-bar',
         banner: { label: 'Plassering på menylinja', sub: 'Hvor punktene ligger på desktop-linja', current: function () { return null; }, adopt: function () { return host.querySelector('.align-sec'); } },
         groups: [{
           key: 'items', label: 'Menypunkter', addLabel: 'Nytt menypunkt', listDetail: true, icon: '☰', idOf: function (it) { return it._id; },
@@ -437,6 +517,22 @@
       function applyPanelLayout() { shell.layoutChanged(); }
       window.addEventListener('apeiron-panellayout', applyPanelLayout);
       applyPanelLayout();
+      // skjul skallets egen «👁 Forhåndsvisning»-knapp, vi har egne knapper i bar-en
+      var mpvPvBtn = host.querySelector('.aps__preview'); if (mpvPvBtn) mpvPvBtn.hidden = true;
+      // flytt HELE preview-baren ned: inn i skallet, mellom «Meny»-hodet (.aps__head)
+      // og innholdet (.aps__md), altså rett over rail + «Menypunkter».
+      var mpvBar = host.querySelector('.desk-preview-bar');
+      var mpvMd = host.querySelector('.aps .aps__md');
+      if (mpvBar && mpvMd && mpvMd.parentNode) mpvMd.parentNode.insertBefore(mpvBar, mpvMd);
+      else if (mpvBar) host.insertBefore(mpvBar, host.firstChild);
+      // flytt knappene opp i «Meny»-hodet, ved siden av «Oversikt», baren blir ren
+      var mpvHead = host.querySelector('.aps__head');
+      var mpvBtns = host.querySelector('.mpv-btns');
+      if (mpvHead && mpvBtns) {
+        var mpvHome = mpvHead.querySelector('[data-aps-home]');
+        if (mpvHome) mpvHead.insertBefore(mpvBtns, mpvHome); else mpvHead.appendChild(mpvBtns);
+        var mpvEmptyTop = host.querySelector('.mpv-top'); if (mpvEmptyTop && !mpvEmptyTop.children.length && mpvEmptyTop.parentNode) mpvEmptyTop.parentNode.removeChild(mpvEmptyTop);
+      }
 
       return {
         export: exportFile,
@@ -449,6 +545,14 @@
           window.removeEventListener('resize', locWinResize);
           if (pop && pop.parentNode) pop.parentNode.removeChild(pop);
           pop = null;
+          document.removeEventListener('keydown', mpvEsc);
+          window.removeEventListener('resize', mpvWinResize);
+          window.removeEventListener('resize', mpvCheckFit);
+          window.removeEventListener('message', mpvMessage);
+          if (mpvStyle && mpvStyle.parentNode) mpvStyle.parentNode.removeChild(mpvStyle);
+          if (mobModal && mobModal.parentNode) mobModal.parentNode.removeChild(mobModal);
+          if (deskModal && deskModal.parentNode) deskModal.parentNode.removeChild(deskModal);
+          host.classList.remove('mpv-on');
         }
       };
     }
