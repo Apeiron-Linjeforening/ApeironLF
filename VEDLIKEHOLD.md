@@ -73,7 +73,7 @@ eller G1-commiten, som utløser en ny Cloudflare-deploy.
 ### Caching: når blir en endring synlig for besøkende? (kort: automatisk, ved neste sidelast)
 
 **Du trenger ikke gjøre noe for at endringer skal vises.** Cloudflare Pages serverer
-*hver* fil — både innhold (`*-content.js`) og kode (`styles.css`, `admin-modules.css`
+*hver* fil — både innhold (`*-content.js`) og kode (`css/styles.css`, `css/admin-modules.css`
 osv.) — med denne HTTP-headeren:
 
 ```
@@ -88,7 +88,7 @@ kopien, raskt) eller **`200`** med den nye fila. Resultatet: en publisert endrin
 for besøkende ved **neste sidelast**, uten forsinkelse fra gammel cache. Det finnes
 heller **ingen service worker** som kunne overstyrt dette og holdt på gamle filer.
 
-**`?v=…`-stemplene på kodefilene** (f.eks. `admin-modules.css?v=20260705a` i `admin.html`)
+**`?v=…`-stemplene på kodefilene** (f.eks. `css/admin-modules.css?v=20260705a` i `admin.html`)
 er derfor et «bånd og bukseseler»-tiltak, ikke en nødvendighet på dette oppsettet — de
 tvinger en garantert hard oppfriskning, men Cloudflares revalidering ordner ferskhet
 uansett. Endrer du en kodefil, kan du gjerne bumpe stempelet til ny verdi (dato +
@@ -164,11 +164,11 @@ tilsvarende fila i din lokale klone og oppdater nettleseren.
 ## Admin-arkitektur
 
 `admin.html` er et **skall** som mounter editor-moduler inline. Panelene ligger i
-`admin-modules/<id>.js` (én fil per editor — se lista i [Filstruktur](#filstruktur)) og
-deler fundament gjennom `admin-common.js` (datalager `createStore`, drag-sortering,
+`js/admin/modules/<id>.js` (én fil per editor — se lista i [Filstruktur](#filstruktur)) og
+deler fundament gjennom `js/admin/admin-common.js` (datalager `createStore`, drag-sortering,
 hjelpebobler, nedlasting, panel-registeret `AdminPanels`). Per-modul-CSS ligger
-klasse-scopet i `admin-modules.css`. Visningen «Liste + detalj» (Oversikt →
-«Panelvisning») deles av alle panelene via `admin-panel-shell.js` (PanelShell).
+klasse-scopet i `css/admin-modules.css`. Visningen «Liste + detalj» (Oversikt →
+«Panelvisning») deles av alle panelene via `js/admin/admin-panel-shell.js` (PanelShell).
 
 Full beskrivelse: [`docs/admin-arkitektur.md`](docs/admin-arkitektur.md).
 
@@ -250,7 +250,7 @@ Google Sheet-systemet er borte.
 > arrangementskalenderne (aktivitet/aporetisk/fadder), og legges ikke inn som nyhet.
 > Kortet kan vise de neste **1–3** arrangementene — antallet velges i
 > **Admin → Forsiden → Hero** og lagres som `newsPanel.maxEvents` i `index-content.js`.
-> `apeiron-news.js` slår sammen kildene, sorterer på tid og deduperer samme hendelse
+> `js/apeiron-news.js` slår sammen kildene, sorterer på tid og deduperer samme hendelse
 > som står i flere kalendere.
 
 ### 🏛️ Forsiden
@@ -265,12 +265,12 @@ Om oss-siden er **datadrevet via en seksjonsmotor**, ikke én fast HTML-mal. Tre
 
 - `om.page.js` (`window.OM_PAGE`) — en ordnet liste av typede seksjoner
   `{ id, type, tone, enabled?, props }`. Dette er innholdet, redigert i Admin → Om oss.
-- `om-sections.js` — registrerer seksjons**typene** (`banner`, `about`, `cardgrid`,
+- `js/om-sections.js` — registrerer seksjons**typene** (`banner`, `about`, `cardgrid`,
   `lesesal`, `join`, `faq`); hver eier sin `defaults`/`render`/`mount` ett sted.
-- `section-engine.js` — motoren som tegner lista og setter `data-tone` per seksjon.
+- `js/section-engine.js` — motoren som tegner lista og setter `data-tone` per seksjon.
 
 **Tone-rytme:** hver seksjon har en `tone` (`auto`/`paper`/`navy`/`accent`). Motoren
-regner ut faktisk tone og setter `data-tone` på seksjonen; `styles.css` maler
+regner ut faktisk tone og setter `data-tone` på seksjonen; `css/styles.css` maler
 `data-tone="navy"` som et mørkt bånd (token-re-pinning). `auto` veksler lys/mørk så to
 like ikke havner ved siden av hverandre. Velg fast tone i admin for å bestemme selv;
 rytme-vakten i admin varsler kun når to naboer faktisk får **samme synlige flate**.
@@ -289,7 +289,7 @@ luft på hver side), chips under ingressen på mobil.
 
 **Galleribilder på forsiden.** Admin → Forsiden har et eget panel som kan vise
 bilder fra galleriet på forsiden, **av som standard**. Innstillingene ligger i
-`heroGallery` i `index-content.js`; `apeiron-hero-gallery.js` (+ `hero-gallery.css`)
+`heroGallery` i `index-content.js`; `js/apeiron-hero-gallery.js` (+ `css/hero-gallery.css`)
 rendrer dem og henter bilder **tilfeldig fra hele Drive-galleriet** (samme
 `ROOT_FOLDER_ID` som Galleri-siden), bufret 6 t i nettleseren. Fire stiler
 (A rullende bånd · B mosaikk · C polaroider · D svevende bak hero), fem D-animasjoner
@@ -304,7 +304,7 @@ forhåndsvisningen overlever navigasjon.
 ## Pensum
 
 Pensum redigeres i **Admin-senteret → Pensum** (eget panel siden 21.06.26). Innholdet
-ligger i `pensum-content.js` (`window.PENSUM_CONTENT`) og gjengis av `apeiron-pensum.js`;
+ligger i `pensum-content.js` (`window.PENSUM_CONTENT`) og gjengis av `js/apeiron-pensum.js`;
 søk/filter/trekkspill-logikken bor i `pensum.html`.
 
 - **Emner** er gruppert per **seksjon** og redigeres som sammenleggbare kort (kode, navn,
@@ -343,30 +343,30 @@ Den regenereres automatisk når du publiserer fra Admin-senteret.
 
 | Fil | Hva den er | Redigeres |
 | --- | --- | --- |
-| `site-search.js` | Selve søkefunksjonen (overlay, tastatur, MiniSearch-motor) | Sjelden, kun ved endret *oppførsel* |
-| `minisearch.min.js` | Søkemotor-biblioteket (MiniSearch v7, vendet inn, ingen CDN). Lastes **før** `site-search.js` | Aldri, bytt kun ved versjonsoppgradering |
-| `search-index.js` | **Auto-generert** liste over alle treff. Lastes på alle sider | **Aldri for hånd**, genereres ved «Publiser» |
-| `search-base.js` | Statiske treff som *ikke* kommer fra en admin-modul (sider, seksjoner, emner) | For hånd, ved behov |
+| `js/site-search.js` | Selve søkefunksjonen (overlay, tastatur, MiniSearch-motor) | Sjelden, kun ved endret *oppførsel* |
+| `js/vendor/minisearch.min.js` | Søkemotor-biblioteket (MiniSearch v7, vendet inn, ingen CDN). Lastes **før** `js/site-search.js` | Aldri, bytt kun ved versjonsoppgradering |
+| `js/search-index.js` | **Auto-generert** liste over alle treff. Lastes på alle sider | **Aldri for hånd**, genereres ved «Publiser» |
+| `js/search-base.js` | Statiske treff som *ikke* kommer fra en admin-modul (sider, seksjoner, emner) | For hånd, ved behov |
 
 **Motoren:** søket bruker **MiniSearch** med en norsk stemmer (bøyning: «studieretninger»
 finner «studieretning») og fuzzy-treff (skrivefeil: «filosfi» finner «filosofi»). Faller
 automatisk tilbake til enkel delstreng-scoring hvis biblioteket ikke skulle laste. Indeksen
-bygges i nettleseren fra `search-index.js` ved hver sidelast, så nytt publisert innhold er
+bygges i nettleseren fra `js/search-index.js` ved hver sidelast, så nytt publisert innhold er
 automatisk søkbart. Uregelmessige ord stemmeren bommer på legges i `SYN`-lista øverst i
-`site-search.js`.
+`js/site-search.js`.
 
-> Nye sider må laste `minisearch.min.js` **før** `site-search.js` (rett etter `search-index.js`).
+> Nye sider må laste `js/vendor/minisearch.min.js` **før** `js/site-search.js` (rett etter `js/search-index.js`).
 
 - **Dynamiske treff** kommer fra modulenes `searchEntries()` (styremedlemmer,
   merch-produkter, Begrep-podkast, oppnåelser, utmerkelser, nyheter).
 - **Statiske treff** (Forsiden/Om oss/Galleri, seksjoner, pensum-emner) ligger i
-  `search-base.js`.
+  `js/search-base.js`.
 
 **Oppdatering (automatisk):** ved «↓ Last ned» / «Last ned alle endrede» lastes
-`search-index.js` ned i tillegg **hvis** søkeinnholdet har endret seg. Legg den ved
+`js/search-index.js` ned i tillegg **hvis** søkeinnholdet har endret seg. Legg den ved
 committen.
 
-**Rediger `search-base.js` for hånd** kun ved nytt som ikke finnes i en admin-modul (ny
+**Rediger `js/search-base.js` for hånd** kun ved nytt som ikke finnes i en admin-modul (ny
 side, ny seksjon, nytt emne):
 
 ```js
@@ -375,13 +375,13 @@ side, ny seksjon, nytt emne):
 
 `g` må være en kjent gruppe: `Startside`, `Nyheter`, `Om oss`, `Styret`, `Heder`,
 `Pensum`, `Merch`, `Begrep`, `Galleri`. (Ny gruppe må også legges i `ICONS` og
-`GROUP_ORDER` øverst i `site-search.js`.)
+`GROUP_ORDER` øverst i `js/site-search.js`.)
 
-> ⚠️ **Rediger aldri `search-index.js` direkte**. Den overskrives ved neste publisering.
+> ⚠️ **Rediger aldri `js/search-index.js` direkte**. Den overskrives ved neste publisering.
 
 ### Oppdatere søkemotoren (MiniSearch): kun ved behov
 
-`minisearch.min.js` er **frosset** på én versjon (MiniSearch v7) og oppdateres aldri av
+`js/vendor/minisearch.min.js` er **frosset** på én versjon (MiniSearch v7) og oppdateres aldri av
 seg selv. Du trenger **ikke** vedlikeholde den. Biblioteket kjører i nettleseren på våre
 egne statiske data, så det er ingen sikkerhetsgrunn til å oppgradere. Gjør det **bare** hvis
 en nyere versjon gir noe dere faktisk vil ha, eller for å rette en konkret feil.
@@ -391,7 +391,7 @@ Slik oppdaterer du (engangsjobb: «bytt ut den ene fila og test»):
 1. **Hent det nye UMD-bygget.** Last ned fra et CDN og bytt versjonsnummeret til det nyeste:
    `https://cdn.jsdelivr.net/npm/minisearch@7.1.0/dist/umd/index.min.js`
    (fila som starter med `!function(t,e)…` og definerer `window.MiniSearch`).
-2. **Lagre den over `minisearch.min.js`**, *samme filnavn*. Da slipper du å røre
+2. **Lagre den over `js/vendor/minisearch.min.js`**, *samme filnavn*. Da slipper du å røre
    sidene; alle peker allerede på det navnet.
 3. **Test søket:** åpne en side, trykk **⌘/Ctrl + K**, og søk på noe med bøyning
    («studieretninger» skal finne «studieretning») og en skrivefeil («filosfi» skal finne
@@ -399,9 +399,9 @@ Slik oppdaterer du (engangsjobb: «bytt ut den ene fila og test»):
 4. **Commit/push** den ene fila.
 
 > ⚠️ **Hovedversjon-hopp (f.eks. v7 → v8)** kan endre hvordan biblioteket kalles.
-> `site-search.js` bruker tre ting: `new MiniSearch({…})`, `.addAll(…)` og
+> `js/site-search.js` bruker tre ting: `new MiniSearch({…})`, `.addAll(…)` og
 > `.search(q, { prefix, fuzzy, boost, combineWith })`. Endrer en storversjon noen av disse,
-> må `site-search.js` justeres tilsvarende. Innenfor samme storversjon (v7.x) er det et rent
+> må `js/site-search.js` justeres tilsvarende. Innenfor samme storversjon (v7.x) er det et rent
 > drop-in-bytte. Er du i tvil, la utvikleren ta hovedversjon-hopp så API-et sjekkes samtidig.
 
 ---
@@ -411,10 +411,10 @@ Slik oppdaterer du (engangsjobb: «bytt ut den ene fila og test»):
 Nettsiden er statisk og har ingen egen server. Merch-bestillinger håndteres med Googles
 gratisverktøy:
 
-- **Handlekurven** på `merch.html` (`merch-cart.js`) sender bestillingen som JSON.
+- **Handlekurven** på `merch.html` (`js/merch-cart.js`) sender bestillingen som JSON.
 - Et **Google Apps Script** (web-app) skriver den til et **Google Sheet** og sender
   **e-postvarsel** til styret.
-- `merch-config.js` peker på web-app-adressen + Vipps-info + bot-filter-token.
+- `js/merch-config.js` peker på web-app-adressen + Vipps-info + bot-filter-token.
 
 ```
 Handlekurv (merch.html) ──POST JSON──▶ Apps Script (/exec) ──▶ Google Sheet + e-post
@@ -423,7 +423,7 @@ Handlekurv (merch.html) ──POST JSON──▶ Apps Script (/exec) ──▶ G
 Er web-app-adressen ikke satt, faller siden tilbake til en ferdigutfylt
 **e-post-bestilling**, så «Send bestilling» aldri blir død.
 
-### Innstillinger i `merch-config.js`
+### Innstillinger i `js/merch-config.js`
 
 ```js
 window.MERCH_ORDER_ENDPOINT = '';          // web-app-URL (slutter på /exec)
@@ -459,6 +459,27 @@ gjengis ikke her, så den ikke drifter fra guiden.) Kort:
 ---
 
 ## Filstruktur
+
+Repoet er organisert i mapper etter rolle. **Viktig:** HTML-sidene og
+innholdsfilene som Admin-senteret publiserer (`*-content.js`, `om.page.js`,
+`nav-content.js`, `site-content.js`, `merch-products.js`, `membership-config.js`,
+`admin-shortcuts.js`) ligger med vilje på rot — flyttes de, må stien også endres
+i tilhørende admin-modul (`exportName`/`saveFile`), ellers publiserer admin til
+feil sti.
+
+```
+ApeironLF/
+├── *.html              Sidene (URL-ene er uendret)
+├── *-content.js m.fl.  Innholdsfiler som publiseres via Admin-senteret
+├── css/                All CSS (styles.css, admin-*.css, hero-gallery.css)
+├── js/                 Renderere og funksjonalitet for de offentlige sidene
+│   ├── vendor/         Tredjepartsbibliotek (minisearch.min.js)
+│   └── admin/          Admin-senterets kode
+│       └── modules/    Én editor-modul per område
+├── assets/             Bilder
+├── docs/               Teknisk dokumentasjon og oppsettsguider
+└── functions/          Cloudflare Pages Functions (GitHub-publisering, server-side)
+```
 
 **Sider (HTML)**
 
@@ -497,49 +518,49 @@ gjengis ikke her, så den ikke drifter fra guiden.) Kort:
 | `membership-config.js` | Medlemskap: priser/Vipps/steg (Admin → Medlemskap) |
 | `nav-content.js` | Lenkene i hovedmenyen (Admin → Meny). Undermeny-barn er `{label, href}`, eller `{label, heading:true}` = ikke-klikkbar gruppeoverskrift |
 | `site-content.js` | Footer-lenker og sosiale ikoner (Admin → Footer) |
-| `merch-config.js` | Merch-bestilling: Apps Script-URL, Vipps, token |
+| `js/merch-config.js` | Merch-bestilling: Apps Script-URL, Vipps, token |
 | `api-config.js` | Lokal stub for Google-API-nøkkel (gitignorert; settes i prod av Cloudflare) |
 
 **Renderere og funksjonalitet (røres normalt ikke)**
 
 | Fil | Hva det er |
 | --- | --- |
-| `site-chrome.js` | Bygger meny + footer på alle sider |
-| `apeiron-index.js` | Rendrer forsiden fra `index-content.js` |
-| `apeiron-hero-gallery.js` | Galleribilder på forsiden (stil A/B/C/D + DVD), live fra Drive. Styres av `heroGallery` i `index-content.js`; krever `hero-gallery.css`. Av som standard |
-| `section-engine.js` | Page Builder-motor: tegner en seksjonsliste, setter `data-tone` (Om oss) |
-| `om-sections.js` | Seksjonstypene for Om oss (banner, about, cardgrid, lesesal, join, faq) |
+| `js/site-chrome.js` | Bygger meny + footer på alle sider |
+| `js/apeiron-index.js` | Rendrer forsiden fra `index-content.js` |
+| `js/apeiron-hero-gallery.js` | Galleribilder på forsiden (stil A/B/C/D + DVD), live fra Drive. Styres av `heroGallery` i `index-content.js`; krever `css/hero-gallery.css`. Av som standard |
+| `js/section-engine.js` | Page Builder-motor: tegner en seksjonsliste, setter `data-tone` (Om oss) |
+| `js/om-sections.js` | Seksjonstypene for Om oss (banner, about, cardgrid, lesesal, join, faq) |
 | `om.page.js` | Om oss som data (seksjonsliste); redigeres i Admin → Om oss |
-| `apeiron-news.js` | «Akkurat nå»-kort + beskjeder (leser `news-content.js`) |
-| `apeiron-events.js` | Henter arrangementer fra Google Kalender |
-| `apeiron-fadder.js` | Henter fadderuke-program fra Google Kalender |
-| `aporetisk-cal.js` | Kalender for Aporetisk Aften |
-| `membership.js` | Fyller «Bli medlem»-kortet fra `membership-config.js` |
-| `merch-cart.js` | Handlekurv + bestilling på merch-siden |
-| `report.js` | «Rapporter en feil»-boksen (alle sider) |
-| `app.js` | Forside-interaksjoner: FAQ, scroll-reveal, statistikk-teller |
-| `theme.js` | Lys/mørk-modus: setter `data-mode` før første paint |
-| `palette.js` | Felles fargesystem (lys/mørk per navngitt farge) |
-| `footer-icons.js` | Delt ikonsett for footeren |
-| `image-slot.js` | Gjenbrukbar bildekomponent (`<image-slot>`) |
-| `site-search.js` | Søkefunksjon (overlay + MiniSearch-motor) |
-| `minisearch.min.js` | Søkemotor-bibliotek (MiniSearch v7, vendet inn) |
-| `search-base.js` | Statiske søketreff: input til indeksen |
-| `search-index.js` | Auto-generert søkeindeks (rediger aldri for hånd) |
-| `styles.css` | All styling for de offentlige sidene. Rommer den **felles** `.subhero`-toppbanner-stilen (per-side avvik ligger inline i den enkelte HTML-en) |
+| `js/apeiron-news.js` | «Akkurat nå»-kort + beskjeder (leser `news-content.js`) |
+| `js/apeiron-events.js` | Henter arrangementer fra Google Kalender |
+| `js/apeiron-fadder.js` | Henter fadderuke-program fra Google Kalender |
+| `js/aporetisk-cal.js` | Kalender for Aporetisk Aften |
+| `js/membership.js` | Fyller «Bli medlem»-kortet fra `membership-config.js` |
+| `js/merch-cart.js` | Handlekurv + bestilling på merch-siden |
+| `js/report.js` | «Rapporter en feil»-boksen (alle sider) |
+| `js/app.js` | Forside-interaksjoner: FAQ, scroll-reveal, statistikk-teller |
+| `js/theme.js` | Lys/mørk-modus: setter `data-mode` før første paint |
+| `js/palette.js` | Felles fargesystem (lys/mørk per navngitt farge) |
+| `js/footer-icons.js` | Delt ikonsett for footeren |
+| `js/image-slot.js` | Gjenbrukbar bildekomponent (`<image-slot>`) |
+| `js/site-search.js` | Søkefunksjon (overlay + MiniSearch-motor) |
+| `js/vendor/minisearch.min.js` | Søkemotor-bibliotek (MiniSearch v7, vendet inn) |
+| `js/search-base.js` | Statiske søketreff: input til indeksen |
+| `js/search-index.js` | Auto-generert søkeindeks (rediger aldri for hånd) |
+| `css/styles.css` | All styling for de offentlige sidene. Rommer den **felles** `.subhero`-toppbanner-stilen (per-side avvik ligger inline i den enkelte HTML-en) |
 
 **Admin (Admin-senteret)**
 
 | Fil | Hva det er |
 | --- | --- |
-| `admin-common.js` | Delt admin-logikk: `createStore`, drag-sortering, hjelpebobler, nedlasting, `AdminPanels` |
-| `admin-panel-shell.js` | PanelShell: «Liste + detalj»-visningen (søkbar navigator + ett skjema om gangen), delt av alle panelene |
-| `admin-image-editor.js` | Gjenbrukbart bilderedigeringsvindu (flytt/zoom/roter/speilvend/lys/kontrast) |
-| `admin-github.js` | Klient-siden av GitHub-publiseringen (snakker med `functions/api/github/`) |
-| `admin-shortcuts.js` | Egendefinerte snarveier i Admin-senteret (publiseres via `admin-modules/shortcuts.js`) |
-| `admin-common.css` | Delt stil for admin-skallet |
-| `admin-modules.css` | Per-modul admin-stil (klasse-scopet, f.eks. `.mod-merch`) |
-| `admin-modules/` | Én fil per editor: nyheter, oppslag, forsiden, om-oss, styret, merch, begrep, medlemskap, hjelp, meny, footer, oppnaelser, utmerkelser, pensum, galleri, marked — pluss `shortcuts` (usynlig, kun publisering av snarveier) |
+| `js/admin/admin-common.js` | Delt admin-logikk: `createStore`, drag-sortering, hjelpebobler, nedlasting, `AdminPanels` |
+| `js/admin/admin-panel-shell.js` | PanelShell: «Liste + detalj»-visningen (søkbar navigator + ett skjema om gangen), delt av alle panelene |
+| `js/admin/admin-image-editor.js` | Gjenbrukbart bilderedigeringsvindu (flytt/zoom/roter/speilvend/lys/kontrast) |
+| `js/admin/admin-github.js` | Klient-siden av GitHub-publiseringen (snakker med `functions/api/github/`) |
+| `admin-shortcuts.js` | Egendefinerte snarveier i Admin-senteret (publiseres via `js/admin/modules/shortcuts.js`) |
+| `css/admin-common.css` | Delt stil for admin-skallet |
+| `css/admin-modules.css` | Per-modul admin-stil (klasse-scopet, f.eks. `.mod-merch`) |
+| `js/admin/modules/` | Én fil per editor: nyheter, oppslag, forsiden, om-oss, styret, merch, begrep, medlemskap, hjelp, meny, footer, oppnaelser, utmerkelser, pensum, galleri, marked — pluss `shortcuts` (usynlig, kun publisering av snarveier) |
 
 **Dokumentasjon og oppsett**
 

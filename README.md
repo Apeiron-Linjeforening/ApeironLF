@@ -243,20 +243,20 @@ Lurer du på noe som ikke står her, spør styret, den KI-modellen som er best p
 ## Slik er nettsiden bygd (kort)
 
 Statisk side (HTML/CSS/JS), ingen byggesteg. Meny og footer bygges sentralt fra
-`nav-content.js` / `site-content.js` via `site-chrome.js` og injiseres på alle sider.
+`nav-content.js` / `site-content.js` via `js/site-chrome.js` og injiseres på alle sider.
 Sideinnhold ligger i data-filer (`*-content.js` / `*-config.js`), ikke hardkodet i HTML.
 
 **All redigering skjer i ett samlet Admin-senter (`admin.html`):** et skall som
-mounter tynne editor-moduler fra `admin-modules/<område>.js`. Modulene deler
-`admin-common.js` (datalager `createStore`, drag-sortering, hjelpebobler, `saveFile`,
-panel-registeret `AdminPanels`) og `admin-modules.css` (klasse-scopet stil per modul).
+mounter tynne editor-moduler fra `js/admin/modules/<område>.js`. Modulene deler
+`js/admin/admin-common.js` (datalager `createStore`, drag-sortering, hjelpebobler, `saveFile`,
+panel-registeret `AdminPanels`) og `css/admin-modules.css` (klasse-scopet stil per modul).
 Hver modul har live forhåndsvisning. Redigeringsløkka er
 *rediger → **☁ Publiser til GitHub** → Cloudflare bygger (~1 min)*; en nedlastings-backup
 finnes for manuell publisering (se [VEDLIKEHOLD.md](VEDLIKEHOLD.md)).
 Full arkitekturforklaring: [docs/admin-arkitektur.md](docs/admin-arkitektur.md).
 
 **To redigeringsvisninger (Oversikt → «Panelvisning»):** alle panelene kan vises som
-**Liste + detalj**, et delt `admin-panel-shell.js` (PanelShell) med en smal, søkbar
+**Liste + detalj**, et delt `js/admin/admin-panel-shell.js` (PanelShell) med en smal, søkbar
 navigator + ett skjema om gangen, eller som **Klassisk (Legacy)**, den opprinnelige
 visningen med kort i full bredde. Valget lagres i nettleseren. PanelShell gjenbruker
 modulenes egne kort-byggere, så all logikk (bilder, lagring, angre, publisering) er felles
@@ -285,7 +285,7 @@ Ting vi vet om, men er usikre på om det er verdt å gjøre noe med. Ført opp s
 <summary><b>Vis de fire punktene</b></summary>
 
 - **Merch: én farge kan bare kobles til ett bilde.** Har du to bilder av samme farge (f.eks. for- og bakside av samme genser), kan bare det ene knyttes til fargen. Velger man samme farge på bilde nummer to, flyttes koblingen dit. Lite problem i praksis (kunden ser uansett hele galleriet via miniatyrstripa). Å støtte flere bilder pr. farge ville kreve en mer kompleks datamodell.
-- **Meny og footer vises et lite øyeblikk etter at siden lastes.** De bygges av `site-chrome.js` i nettleseren (for å slippe byggesteg og holde alt i én fil). På treg forbindelse kan man så vidt se at de «popper inn». Menyen er fast posisjonert, så selve innholdet hopper ikke. Alternativet (byggesteg) ble vurdert og valgt bort, se diskusjon i commit-historikk.
+- **Meny og footer vises et lite øyeblikk etter at siden lastes.** De bygges av `js/site-chrome.js` i nettleseren (for å slippe byggesteg og holde alt i én fil). På treg forbindelse kan man så vidt se at de «popper inn». Menyen er fast posisjonert, så selve innholdet hopper ikke. Alternativet (byggesteg) ble vurdert og valgt bort, se diskusjon i commit-historikk.
 - **Footer/meny krever JavaScript.** Med JS avslått vises ikke meny/footer. Gjelder en svært liten andel besøkende; resten av siden bruker uansett JS (kalender, søk, kurv).
 - **Bilder lagres som base64 i datafilene.** Mange/store produktbilder gjør `merch-products.js` stor. Admin skalerer ned til maks 900px webp, men mange bilder kan likevel bli tungt. Vurder eksterne bildefiler (`assets/merch/...`) hvis filene blir veldig store (vurdering ligger i [TODO.md](TODO.md)).
 

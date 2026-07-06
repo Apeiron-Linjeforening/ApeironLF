@@ -1,5 +1,28 @@
 ## Siste endringer
 
+**06.07.26 · Filstruktur-rydding: CSS → `css/`, sidescript → `js/`, admin-kode → `js/admin/` — publiseringen urørt**
+
+*Ny mappestruktur (alt flyttet med `git mv`, så historikken følger med)*
+- **`css/`** — `styles.css`, `hero-gallery.css`, `admin-common.css`, `admin-modules.css`.
+- **`js/`** — alle renderere og sidescript (`apeiron-*.js`, `site-chrome.js`, `theme.js`, `palette.js`, `section-engine.js`, `om-sections.js`, `search-*.js`, `site-search.js`, `membership.js`, `merch-cart.js`, `merch-config.js`, `image-slot.js`, `footer-icons.js`, `report.js`, `app.js`, `aporetisk-cal.js`).
+- **`js/vendor/`** — `minisearch.min.js` (tredjepartsbibliotek for seg).
+- **`js/admin/`** — `admin-common.js`, `admin-panel-shell.js`, `admin-github.js`, `admin-image-editor.js`; **`admin-modules/` → `js/admin/modules/`**.
+- Rot gikk fra ~60 løse filer til HTML-sidene + innholdsfilene.
+
+*Bevisst IKKE flyttet (publiseringen fungerer nøyaktig som før)*
+- **Alle HTML-sidene blir på rot** — URL-ene til de publiserte sidene er uendret (sitemap/SEO/bokmerker upåvirket).
+- **De 17 filene Admin-senteret publiserer til GitHub blir på rot:** `*-content.js`, `om.page.js`, `nav-content.js`, `site-content.js`, `merch-products.js`, `membership-config.js`, `admin-shortcuts.js`. Admin-modulenes `exportName`/`saveFile`-stier er dermed urørt, og `functions/` (serverkoden) er ikke endret med én linje. Verifisert: alle 17 publiseringsstier peker fortsatt på eksisterende filer.
+- **`api-config.js` blir på rot** — sperrelista i `functions/api/github/commit.js` blokkerer den ved eksakt rotsti, så en flytting ville svekket vaktholdet.
+
+*Referanse-oppdateringer*
+- Alle `src`/`href` i samtlige HTML-sider peker på de nye stiene (`?v=`-stemplene er beholdt).
+- Forhåndsvisningene i Admin → Meny/Footer bygger preview-HTML med `css/styles.css`, `js/footer-icons.js` og `js/site-chrome.js`.
+- CSS-filene hadde ingen relative `url()`-bildereferanser, så flyttingen til `css/` endrer ingen bildestier.
+- Docs: sti-omtaler oppdatert i `README.md`, `VEDLIKEHOLD.md`, `TODO.md` og `docs/`; filstruktur-seksjonen i VEDLIKEHOLD har fått mappetre + advarsel om at rotfilene admin publiserer ikke kan flyttes uten å endre admin-modulene. Historiske omtaler her i CHANGELOG står med vilje urørt.
+- Verifisert med statisk referansesjekk (alle `src`/`href` → eksisterende fil) og lokal servertest (200 på alle sider og flyttede ressurser).
+- **NB etter deploy:** alle som har admin åpen i nettleseren må laste siden på nytt (nye script-stier); test gjerne med en liten publisering.
+- Berørt: 48 filer flyttet, referanser oppdatert i alle HTML-sidene, `js/admin/modules/meny.js`, `js/admin/modules/footer.js`, `README.md`, `VEDLIKEHOLD.md`, `TODO.md`, `docs/admin-arkitektur.md`, `docs/github-publisering-oppsett.md`, `docs/apps-script-oppsett.md`.
+
 **06.07.26 · Dokumentasjonsrydding: faktarettinger, TODO.md, avduplisering og lenkesjekk i CI**
 
 *Faktarettinger (docs hadde seilt fra koden)*

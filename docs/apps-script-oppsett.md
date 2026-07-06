@@ -155,7 +155,7 @@ function doPost(e) {
 
 ## Steg 4 - Lim URL-en inn i nettsiden
 
-Åpne `merch-config.js` i repoet og lim inn URL-en:
+Åpne `js/merch-config.js` i repoet og lim inn URL-en:
 
 ```javascript
 window.MERCH_ORDER_ENDPOINT = 'https://script.google.com/macros/s/AKfycb...../exec';
@@ -186,7 +186,7 @@ Det kan kun **skrive** bestillinger - ingen kan lese ut data. Hovedrisikoen er
 automatiske spam-bestillinger. To enkle lag filtrerer bort bots:
 
 1. **Delt token:** velg en tilfeldig streng (24+ tegn) og sett den **likt** to steder:
-   - `merch-config.js`: `window.MERCH_ORDER_TOKEN = '...'`
+   - `js/merch-config.js`: `window.MERCH_ORDER_TOKEN = '...'`
    - Apps Script: `var ORDER_TOKEN = '...'`
    Skriptet avviser da forespørsler uten riktig token. Husk **Ny versjon** etter endring.
 2. **Honeypot:** handlekurven har et skjult felt som bots fyller ut, men ikke mennesker.
@@ -197,7 +197,7 @@ automatiske spam-bestillinger. To enkle lag filtrerer bort bots:
 > **skriv**-endepunkt har filteret reell verdi: det fjerner nær sagt all automatisk
 > drive-by-spam (falske bestillinger + e-postvarsler), som er riktig nivå for en
 > linjeforenings-merchside. Ikke lim den ekte `SHEET_ID`-en eller `/exec`-URL-en inn i
-> denne guiden (den publiseres) - hold dem i Apps Script og `merch-config.js`.
+> denne guiden (den publiseres) - hold dem i Apps Script og `js/merch-config.js`.
 
 ## Personvern (kort)
 

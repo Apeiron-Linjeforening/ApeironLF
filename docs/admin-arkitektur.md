@@ -39,13 +39,13 @@ frittstående `*-admin.html`-filer er slettet.
   en modul-vert (`#panel-host`). Panel-registeret (`PANELS`) lister hvert
   område; alle mountes nå inline som moduler (den gamle `file`-iframe-veien
   for ikke-migrerte paneler er ikke lenger i bruk).
-- **`admin-common.js`** — delt logikk. Nye byggeklosser for moduler:
+- **`js/admin/admin-common.js`** — delt logikk. Nye byggeklosser for moduler:
   - `AdminCommon.createStore(lsKey, freshFn)` — utkast-lager (auto-lagre i
     localStorage, `save/lazySave/reset`).
   - `AdminCommon.esc`, `enhanceHelp`, `enableDragSort`, `saveFile`, `toast`.
   - `window.AdminPanels` — register. Moduler kaller `AdminPanels.define(id, def)`.
-- **`admin-common.css`** — delt stil.
-- **`admin-modules/<id>.js`** — én modul per editor. Hver definerer
+- **`css/admin-common.css`** — delt stil.
+- **`js/admin/modules/<id>.js`** — én modul per editor. Hver definerer
   `{ title, see, exportName, mount(host, AC) }`. `mount` bygger editoren inn i
   `host`, kobler opp alt, og returnerer `{ export }` som skallets «Last ned»-
   knapp kaller.
@@ -58,7 +58,7 @@ marked, snarveier) — den autoritative lista er filstruktur-tabellen i
 [VEDLIKEHOLD.md](../VEDLIKEHOLD.md#filstruktur).
 
 I tillegg deler alle panelene nå to redigeringsvisninger via
-`admin-panel-shell.js` (**PanelShell**): «Liste + detalj» (smal, søkbar
+`js/admin/admin-panel-shell.js` (**PanelShell**): «Liste + detalj» (smal, søkbar
 navigator + ett skjema om gangen) og «Klassisk» (kort i full bredde).
 PanelShell gjenbruker modulenes egne kort-byggere, så bilder, lagring, angre og
 publisering er felles logikk mellom visningene.

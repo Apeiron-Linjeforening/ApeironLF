@@ -764,8 +764,8 @@ body { font-family: var(--body); background: var(--app-bg); color: var(--ink); d
   .admin-to-top, .admin-to-top.is-visible { transition: opacity .2s ease, visibility .2s; transform: none; }
 }
 </style>
-<link rel="stylesheet" href="admin-common.css">
-<link rel="stylesheet" href="admin-modules.css?v=20260705h">
+<link rel="stylesheet" href="css/admin-common.css">
+<link rel="stylesheet" href="css/admin-modules.css?v=20260705h">
 </head>
 <body>
 
@@ -945,14 +945,14 @@ body { font-family: var(--body); background: var(--app-bg); color: var(--ink); d
 <div class="toast" id="toast"></div>
 <div id="bulk-host" class="ph-wrap" aria-hidden="true" style="position:fixed;left:-10000px;top:0;width:880px;height:1px;overflow:hidden;opacity:0;pointer-events:none;"></div>
 
-<script src="admin-common.js?v=20260705a"></script>
-<script src="admin-panel-shell.js?v=20260705b"></script>
-<script src="admin-github.js"></script>
+<script src="js/admin/admin-common.js?v=20260705a"></script>
+<script src="js/admin/admin-panel-shell.js?v=20260705b"></script>
+<script src="js/admin/admin-github.js"></script>
 <!-- C-moduler: paneler som mountes inline i skallet (erstatter frittstående *-admin.html etter hvert) -->
-<script src="palette.js?v=20260705b"></script>
-<script src="admin-image-editor.js"></script>
+<script src="js/palette.js?v=20260705b"></script>
+<script src="js/admin/admin-image-editor.js"></script>
 <script src="membership-config.js"></script>
-<script src="footer-icons.js"></script>
+<script src="js/footer-icons.js"></script>
 <script src="site-content.js"></script>
 <script src="admin-shortcuts.js"></script>
 <script src="hjelp-content.js"></script>
@@ -961,8 +961,8 @@ body { font-family: var(--body); background: var(--app-bg); color: var(--ink); d
 <script src="merch-products.js"></script>
 <script src="oppnaelser-content.js"></script>
 <script src="utmerkelser-content.js"></script>
-<script src="section-engine.js"></script>
-<script src="om-sections.js"></script>
+<script src="js/section-engine.js"></script>
+<script src="js/om-sections.js"></script>
 <script src="om.page.js"></script>
 <script src="index-content.js"></script>
 <script src="styret-content.js"></script>
@@ -971,26 +971,26 @@ body { font-family: var(--body); background: var(--app-bg); color: var(--ink); d
 <script src="marked-content.js"></script>
 <script src="galleri-content.js"></script>
 <script src="pensum-content.js"></script>
-<script src="admin-modules/medlemskap.js?v=20260628f"></script>
-<script src="admin-modules/footer.js"></script>
-<script src="admin-modules/hjelp.js?v=20260705c"></script>
-<script src="admin-modules/oppnaelser.js"></script>
-<script src="admin-modules/utmerkelser.js"></script>
-<script src="admin-modules/om-oss.js"></script>
-<script src="admin-modules/forsiden.js?v=20260628a"></script>
-<script src="admin-modules/shortcuts.js"></script>
-<script src="admin-modules/styret.js?v=20260705b"></script>
-<script src="admin-modules/begrep.js"></script>
-<script src="admin-modules/oppslag.js"></script>
-<script src="admin-modules/nyheter.js"></script>
-<script src="admin-modules/meny.js"></script>
-<script src="admin-modules/merch.js"></script>
-<script src="admin-modules/marked.js"></script>
-<script src="admin-modules/galleri.js"></script>
-<script src="admin-modules/pensum.js"></script>
+<script src="js/admin/modules/medlemskap.js?v=20260628f"></script>
+<script src="js/admin/modules/footer.js"></script>
+<script src="js/admin/modules/hjelp.js?v=20260705c"></script>
+<script src="js/admin/modules/oppnaelser.js"></script>
+<script src="js/admin/modules/utmerkelser.js"></script>
+<script src="js/admin/modules/om-oss.js"></script>
+<script src="js/admin/modules/forsiden.js?v=20260628a"></script>
+<script src="js/admin/modules/shortcuts.js"></script>
+<script src="js/admin/modules/styret.js?v=20260705b"></script>
+<script src="js/admin/modules/begrep.js"></script>
+<script src="js/admin/modules/oppslag.js"></script>
+<script src="js/admin/modules/nyheter.js"></script>
+<script src="js/admin/modules/meny.js"></script>
+<script src="js/admin/modules/merch.js"></script>
+<script src="js/admin/modules/marked.js"></script>
+<script src="js/admin/modules/galleri.js"></script>
+<script src="js/admin/modules/pensum.js"></script>
 <!-- Søk: statiske treff (input) + auto-generert indeks (sammenligningsgrunnlag) -->
-<script src="search-base.js"></script>
-<script src="search-index.js"></script>
+<script src="js/search-base.js"></script>
+<script src="js/search-index.js"></script>
 <script>
 (function () {
   // module:true  → mountes inline via AdminPanels (admin-modules/<id>.js)

@@ -182,13 +182,13 @@
           + '<link rel="preconnect" href="https://fonts.googleapis.com">'
           + '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
           + '<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">'
-          + '<link rel="stylesheet" href="styles.css">'
+          + '<link rel="stylesheet" href="css/styles.css">'
           + '<style>html,body{margin:0;background:transparent;}.footer{margin:0;}' + hb
           + '*{scrollbar-width:none;-ms-overflow-style:none;}*::-webkit-scrollbar{width:0;height:0;display:none;}</style>'
           + '</head><body data-mode="paper"><div id="site-footer"></div>'
           + '<scr' + 'ipt>window.SITE_FOOTER=' + JSON.stringify(previewData()) + ';</scr' + 'ipt>'
-          + '<scr' + 'ipt src="footer-icons.js"></scr' + 'ipt>'
-          + '<scr' + 'ipt src="site-chrome.js"></scr' + 'ipt>'
+          + '<scr' + 'ipt src="js/footer-icons.js"></scr' + 'ipt>'
+          + '<scr' + 'ipt src="js/site-chrome.js"></scr' + 'ipt>'
           + '<scr' + 'ipt>' + drag + '</scr' + 'ipt>'
           + '</body></html>';
       }
