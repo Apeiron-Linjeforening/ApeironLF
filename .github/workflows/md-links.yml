@@ -1,0 +1,31 @@
+# Lenkesjekk for dokumentasjonen: fanger brutte interne lenker og ankre i
+# .md-filene ved hver push/PR som endrer dem. Kjører i --offline-modus, så
+# eksterne URL-er sjekkes IKKE (ingen røde kryss fordi en ekstern side er treg).
+# CHANGELOG.md og changelog-arkivene er utelatt med vilje (historiske lenker
+# vedlikeholdes ikke).
+name: Lenkesjekk (Markdown)
+
+on:
+  push:
+    paths: ["**.md", ".github/workflows/md-links.yml"]
+  pull_request:
+    paths: ["**.md", ".github/workflows/md-links.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  lychee:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Sjekk interne lenker og ankre
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --offline
+            --include-fragments
+            --no-progress
+            --exclude-path docs/changelog-arkiv
+            README.md VEDLIKEHOLD.md TODO.md docs/*.md
+          fail: true

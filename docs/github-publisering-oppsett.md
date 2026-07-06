@@ -1,6 +1,9 @@
-# G1 — «Lagre = commit»: oppsett av GitHub-publisering
+# «Lagre = commit»: oppsett av GitHub-publisering
 
-Med G1 kan styret trykke **☁ Publiser til GitHub** i admin, og endringene
+*(Denne funksjonen omtales som «G1» i CHANGELOG og eldre notater — kodenavnet for
+den første Git-milepælen i veikartet. Fila het tidligere `g1-oppsett.md`.)*
+
+Med dette oppsettet kan styret trykke **☁ Publiser til GitHub** i admin, og endringene
 committes rett til repoet — ingen nedlasting, ingen manuell push. Fortsatt
 100 % statisk og gratis (Cloudflare Pages Functions + GitHub OAuth).
 
@@ -19,7 +22,7 @@ serveren og når aldri nettleseren.
    (eller via organisasjonen som eier repoet).
 2. Fyll inn:
    - **Application name:** `Apeiron Admin`
-   - **Homepage URL:** `https://DIN-SIDE` (f.eks. `https://apeiron.pages.dev` eller eget domene)
+   - **Homepage URL:** `https://DIN-SIDE` (i dag: `https://apeironlf.pages.dev`, eller eget domene)
    - **Authorization callback URL:** `https://DIN-SIDE/api/github/callback`
 3. Opprett appen. Noter **Client ID**, og klikk **Generate a new client secret**
    og kopier hemmeligheten (vises bare én gang).
@@ -35,7 +38,7 @@ Cloudflare-dashbordet → ditt Pages-prosjekt → **Settings → Environment var
 |---|---|---|
 | `GITHUB_CLIENT_ID` | fra OAuth-appen | |
 | `GITHUB_CLIENT_SECRET` | fra OAuth-appen | merk som **Encrypt** |
-| `GITHUB_REPO` | `eier/repo-navn` | f.eks. `apeiron-ntnu/nettside` |
+| `GITHUB_REPO` | `eier/repo-navn` | i dag: `Apeiron-Linjeforening/ApeironLF` |
 | `GITHUB_BRANCH` | `main` | valgfri (default `main`) |
 | `GITHUB_SCOPE` | `public_repo` | bruk `repo` hvis repoet er **privat** |
 | `ALLOWED_LOGINS` | `brukernavn1,brukernavn2` | valgfri, men **anbefalt** — kun disse GitHub-brukerne får publisere |

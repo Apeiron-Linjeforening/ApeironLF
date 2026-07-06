@@ -20,7 +20,8 @@ Apps Script).
 9. [Filstruktur](#filstruktur)
 10. [Synlighet i søkemotorer og KI (SEO)](#synlighet-i-søkemotorer-og-ki-seo)
 11. [Sikkerhet og konfigurasjon](#sikkerhet-og-konfigurasjon)
-12. [Første gangs oppsett (Cloudflare)](#første-gangs-oppsett-cloudflare)
+12. [Vedlikehold av dokumentasjonen](#vedlikehold-av-dokumentasjonen)
+13. [Første gangs oppsett (Cloudflare)](#første-gangs-oppsett-cloudflare)
 
 ---
 
@@ -43,7 +44,7 @@ Functions (`functions/api/github/`); tokenet ligger i en httpOnly-cookie og når
 nettleseren. Cookien varer **30 dager** (`setCookie(…, 2592000)` i `callback.js`, og
 standard i `_common.js`), så redaktører slipper å logge inn på nytt hver økt. Engangs-
 oppsett (GitHub OAuth-app + miljøvariabler) er beskrevet i
-[docs/g1-oppsett.md](docs/g1-oppsett.md).
+[docs/github-publisering-oppsett.md](docs/github-publisering-oppsett.md).
 
 **Konfliktsjekk ved samtidig redigering:** rett før en commit spør admin
 `/api/github/latest` (se `functions/api/github/latest.js`) om branchen har flyttet seg
@@ -162,10 +163,12 @@ tilsvarende fila i din lokale klone og oppdater nettleseren.
 
 ## Admin-arkitektur
 
-`admin.html` er et **skall** som mounter editor-moduler inline. De 13 panelene ligger i
-`admin-modules/<id>.js` og deler fundament gjennom `admin-common.js` (datalager
-`createStore`, drag-sortering, hjelpebobler, nedlasting, panel-registeret `AdminPanels`).
-Per-modul-CSS ligger klasse-scopet i `admin-modules.css`.
+`admin.html` er et **skall** som mounter editor-moduler inline. Panelene ligger i
+`admin-modules/<id>.js` (én fil per editor — se lista i [Filstruktur](#filstruktur)) og
+deler fundament gjennom `admin-common.js` (datalager `createStore`, drag-sortering,
+hjelpebobler, nedlasting, panel-registeret `AdminPanels`). Per-modul-CSS ligger
+klasse-scopet i `admin-modules.css`. Visningen «Liste + detalj» (Oversikt →
+«Panelvisning») deles av alle panelene via `admin-panel-shell.js` (PanelShell).
 
 Full beskrivelse: [`docs/admin-arkitektur.md`](docs/admin-arkitektur.md).
 
@@ -388,8 +391,8 @@ Slik oppdaterer du (engangsjobb: «bytt ut den ene fila og test»):
 1. **Hent det nye UMD-bygget.** Last ned fra et CDN og bytt versjonsnummeret til det nyeste:
    `https://cdn.jsdelivr.net/npm/minisearch@7.1.0/dist/umd/index.min.js`
    (fila som starter med `!function(t,e)…` og definerer `window.MiniSearch`).
-2. **Lagre den over `minisearch.min.js`**, *samme filnavn*. Da slipper du å røre de 14
-   sidene; de peker allerede på det navnet.
+2. **Lagre den over `minisearch.min.js`**, *samme filnavn*. Da slipper du å røre
+   sidene; alle peker allerede på det navnet.
 3. **Test søket:** åpne en side, trykk **⌘/Ctrl + K**, og søk på noe med bøyning
    («studieretninger» skal finne «studieretning») og en skrivefeil («filosfi» skal finne
    «filosofi»). Virker det som før, er du i mål.
@@ -443,77 +446,15 @@ Endepunktet er offentlig (skriv-bare, ingen kan lese ut data). To lag:
 
 ### Oppsett (kort)
 
-Full guide: [`docs/apps-script-oppsett.md`](docs/apps-script-oppsett.md). Kort:
+Full guide — **inkludert selve Apps Script-koden og kolonneoverskriftene** — ligger
+ett sted: [`docs/apps-script-oppsett.md`](docs/apps-script-oppsett.md). (Koden
+gjengis ikke her, så den ikke drifter fra guiden.) Kort:
 
-1. Google Sheet med overskrifter `Tidspunkt | Navn | E-post | Telefon | Bestilling | Kommentar | Total` (A1–G1)
-2. **Utvidelser → Apps Script**, lim inn koden (bytt plassholdere), lagre
+1. Google Sheet med kolonneoverskriftene fra guiden
+2. **Utvidelser → Apps Script**, lim inn koden fra guiden (bytt plassholdere), lagre
 3. **Distribuer → Web-app**: «Kjør som: Meg», «Tilgang: Alle». Godkjenn
 4. Kopier `…/exec`-URL inn i `MERCH_ORDER_ENDPOINT`
 5. Senere endringer: **Distribuer → Administrer distribusjoner → Ny versjon** (samme URL)
-
-<details>
-<summary><b>Hele Apps Script-koden (klikk for å vise)</b></summary>
-
-```javascript
-// ── Apeiron: mottak av merch-bestillinger ──
-var STYRE_EPOST = 'DIN_STYRE_EPOST@example.com';   // ← hvem som varsles
-var SHEET_ID    = 'DITT_GOOGLE_SHEET_ID';          // ← ID fra Sheet-URL (…/d/DETTE/edit)
-var ORDER_TOKEN = 'EN_HEMMELIG_TILFELDIG_STRENG';  // ← samme som MERCH_ORDER_TOKEN
-
-function doPost(e) {
-  try {
-    var data = JSON.parse(e.postData.contents);
-
-    if (ORDER_TOKEN && data.token !== ORDER_TOKEN) {
-      return ContentService
-        .createTextOutput(JSON.stringify({ ok: false, error: 'unauthorized' }))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-
-    var linjer = (data.items || []).map(function (it) {
-      var v = [];
-      if (it.size)  v.push('str: ' + it.size);
-      if (it.color) v.push('farge: ' + it.color);
-      var variant = v.length ? ' (' + v.join(', ') + ')' : '';
-      var linjepris = (it.lineTotal != null) ? it.lineTotal
-                    : (it.price != null ? it.price * it.qty : null);
-      var pris = (linjepris != null) ? ' – ' + linjepris + ',–' : '';
-      return '• ' + it.qty + '× ' + it.name + variant + pris;
-    }).join('\n');
-
-    var total = (data.total != null) ? data.total : '';
-
-    var sheet = SpreadsheetApp.openById(SHEET_ID).getSheets()[0];
-    sheet.appendRow([
-      new Date(), data.name || '', data.email || '', data.phone || '',
-      linjer, data.comment || '', total
-    ]);
-
-    MailApp.sendEmail({
-      to: STYRE_EPOST,
-      subject: 'Ny merch-bestilling fra ' + (data.name || 'ukjent'),
-      body: 'Ny bestilling mottatt:\n\n'
-        + 'Navn: ' + (data.name || '') + '\n'
-        + 'E-post: ' + (data.email || '') + '\n'
-        + 'Telefon: ' + (data.phone || '') + '\n\n'
-        + linjer + '\n\n'
-        + 'Totalt: ' + total + ',–\n\n'
-        + (data.comment ? 'Kommentar: ' + data.comment + '\n\n' : '')
-        + 'Se hele oversikten i Google Sheet.'
-    });
-
-    return ContentService
-      .createTextOutput(JSON.stringify({ ok: true }))
-      .setMimeType(ContentService.MimeType.JSON);
-  } catch (err) {
-    return ContentService
-      .createTextOutput(JSON.stringify({ ok: false, error: String(err) }))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}
-```
-
-</details>
 
 ---
 
@@ -592,20 +533,27 @@ function doPost(e) {
 | Fil | Hva det er |
 | --- | --- |
 | `admin-common.js` | Delt admin-logikk: `createStore`, drag-sortering, hjelpebobler, nedlasting, `AdminPanels` |
+| `admin-panel-shell.js` | PanelShell: «Liste + detalj»-visningen (søkbar navigator + ett skjema om gangen), delt av alle panelene |
 | `admin-image-editor.js` | Gjenbrukbart bilderedigeringsvindu (flytt/zoom/roter/speilvend/lys/kontrast) |
+| `admin-github.js` | Klient-siden av GitHub-publiseringen (snakker med `functions/api/github/`) |
+| `admin-shortcuts.js` | Egendefinerte snarveier i Admin-senteret (publiseres via `admin-modules/shortcuts.js`) |
 | `admin-common.css` | Delt stil for admin-skallet |
 | `admin-modules.css` | Per-modul admin-stil (klasse-scopet, f.eks. `.mod-merch`) |
-| `admin-modules/` | Én fil per editor (13 moduler: nyheter, oppslag, forsiden, om-oss, styret, merch, begrep, medlemskap, hjelp, meny, footer, oppnaelser, utmerkelser) |
+| `admin-modules/` | Én fil per editor: nyheter, oppslag, forsiden, om-oss, styret, merch, begrep, medlemskap, hjelp, meny, footer, oppnaelser, utmerkelser, pensum, galleri, marked — pluss `shortcuts` (usynlig, kun publisering av snarveier) |
 
 **Dokumentasjon og oppsett**
 
 | Fil | Hva det er |
 | --- | --- |
-| `README.md` | Oversikt + brukerveiledning (endre innhold via Admin-senteret), to-do og domene-status |
+| `README.md` | Oversikt + brukerveiledning (endre innhold via Admin-senteret) |
 | `VEDLIKEHOLD.md` | Denne fila: teknisk drift og dokumentasjon |
-| `CHANGELOG.md` | Logg over hva som er gjort |
-| `docs/admin-arkitektur.md` | Skall+modul-arkitekturen for Admin-senteret |
-| `docs/apps-script-oppsett.md` | Google Sheet + Apps Script-guide (merch-bestilling) |
+| `TODO.md` | To-do-lista og domene-status |
+| `CHANGELOG.md` | Logg over hva som er gjort (siste periode) |
+| `docs/changelog-arkiv/` | Arkiverte changelog-perioder (eldre oppføringer flyttes hit, én fil per periode) |
+| `docs/admin-arkitektur.md` | Skall+modul-arkitekturen for Admin-senteret + veikart mot klonbar mal |
+| `docs/apps-script-oppsett.md` | Google Sheet + Apps Script-guide (merch-bestilling) — **eneste** sted Apps Script-koden vedlikeholdes |
+| `docs/github-publisering-oppsett.md` | Engangsoppsett av «Publiser til GitHub» (OAuth-app + Cloudflare-miljøvariabler) |
+| `docs/eierskap-og-overlevering.template.md` | Tom mal: hvem eier hva + sjekkliste ved styreskifte (utfylt kopi holdes privat, gitignorert) |
 | `.gitignore` | Hva git hopper over (bl.a. `api-config.js`, `Plan F.html`) |
 | `.github/dependabot.yml` | Ukentlig sjekk av GitHub Actions-avhengigheter |
 | `_headers` | Cloudflare Pages: HTTP-sikkerhetsheadere (trygg basis, uten CSP) |
@@ -644,11 +592,11 @@ admin, publisering eller hvordan siden ser ut.
 | Hva | Hvor | Rolle |
 | --- | --- | --- |
 | `robots.txt` | rot | Slipper inn alle crawlere (også KI), nekter `/admin.html` + `/api/`, peker til sitemap |
-| `sitemap.xml` | rot | Liste over de 14 offentlige sidene med `lastmod`/`priority` |
+| `sitemap.xml` | rot | Liste over alle offentlige sider med `lastmod`/`priority` |
 | JSON-LD (`Organization`) | `index.html` `<head>` | Forteller hvem Apeiron er (NTNU, Dragvoll, 1981, sosiale lenker) |
 | JSON-LD (`AboutPage`) | `om-oss.html` `<head>` | Fyldig, ærlig beskrivelse av foreningen + `knowsAbout` (fagområder) |
-| `<link rel="canonical">` | alle 14 sider | Offisiell adresse per side — hindrer duplikat-telling |
-| `og:*` + `twitter:*` | alle 14 sider | Pene delingskort på Facebook/LinkedIn/X |
+| `<link rel="canonical">` | alle offentlige sider | Offisiell adresse per side — hindrer duplikat-telling |
+| `og:*` + `twitter:*` | alle offentlige sider | Pene delingskort på Facebook/LinkedIn/X |
 | `google-site-verification` | `index.html` `<head>` | Verifiserer eierskap i Google Search Console — **må ikke fjernes** |
 
 **Vedlikehold — to ting å huske:**
@@ -684,7 +632,9 @@ admin, publisering eller hvordan siden ser ut.
 > 👉 **Hvem eier hva, og hvordan overleveres det til neste styre?** Se
 > [docs/eierskap-og-overlevering.template.md](docs/eierskap-og-overlevering.template.md) — en ikke-teknisk
 > oversikt over kontoer (domene, Cloudflare, GitHub, Google), hvor innlogginger ligger,
-> løpende vedlikehold og en sjekkliste for styreskifte.
+> løpende vedlikehold og en sjekkliste for styreskifte. Malen er tom med vilje: styret
+> bruker den **utfylte, private kopien** (`docs/eierskap-og-overlevering.md`, gitignorert
+> — skal også ligge i foreningens Drive/passordmanager).
 
 - **`api-config.js`** er en gitignorert lokal stub for Google-API-nøkkelen. I produksjon
   injiseres nøkkelen av Cloudflare, og **commit aldri** en ekte nøkkel. Nøkkelen er
@@ -719,6 +669,25 @@ admin, publisering eller hvordan siden ser ut.
   force-push og sletting.
 - Galleri bruker en Google-API-nøkkel via `window.GOOGLE_API_KEY`; Drive-mappa må deles
   «Alle med lenken kan se».
+
+---
+
+## Vedlikehold av dokumentasjonen
+
+Dokumentasjonen har historisk hatt lett for å drifte fra koden (paneltall, dupliserte
+kodesnutter, utdaterte begrensninger). Tre regler holder den frisk:
+
+1. **Én kilde per faktum.** Tall, lister og kode skal stå **ett** sted; alle andre
+   steder lenker dit. Eksempler: modul-lista bor i [Filstruktur](#filstruktur),
+   Apps Script-koden bor kun i [docs/apps-script-oppsett.md](docs/apps-script-oppsett.md).
+   Unngå å hardkode antall («13 paneler») i løpende tekst — skriv «alle panelene».
+2. **Datostemple flyktige påstander.** Priser, statuser og «sjekket mot live»-utsagn
+   merkes med *«sjekket DD.MM.ÅÅ»*, slik cache-avsnittet og domene-tabellen i
+   [TODO.md](TODO.md) gjør. Da ser leseren selv når noe bør sjekkes på nytt.
+3. **Les docs mot koden ved styreskifte.** Sjekklista i eierskaps-malen har et eget
+   punkt for dette. En automatisk lenkesjekk
+   (`.github/workflows/md-links.yml`) fanger dessuten brutte interne lenker og ankre i
+   `.md`-filene ved hver push.
 
 ---
 

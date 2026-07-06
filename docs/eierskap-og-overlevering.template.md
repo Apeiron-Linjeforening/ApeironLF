@@ -9,7 +9,7 @@
 > **Den UTFYLTE versjonen** (med ekte detaljer) skal IKKE ligge her. Lag en kopi som
 > heter `docs/eierskap-og-overlevering.md` (den er git-ignorert, så den pushes aldri),
 > eller — best — legg den i foreningens **private Google Drive / passordmanager** der
-> styret nnår den. Aldri skriv ekte detaljer inn i *denne* fila.
+> styret når den. Aldri skriv ekte detaljer inn i *denne* fila.
 
 **Hva er dette?** En oversikt over *hvem som eier hva* bak Apeiron-nettsiden, og en
 sjekkliste for å overlevere det trygt til neste styre. Du trenger **ikke** å være teknisk
@@ -147,7 +147,7 @@ dem, men det er greit å vite at de finnes:
 | `ALLOWED_LOGINS` | Hvem som får publisere (GitHub-brukernavn) | Cloudflare-miljøvariabler |
 | Google API-nøkkel | Lar siden hente kalender og bilder | Cloudflare (injiseres som `api-config.js`) |
 
-> Detaljert teknisk oppsett: [g1-oppsett.md](g1-oppsett.md) (GitHub-publisering) og
+> Detaljert teknisk oppsett: [github-publisering-oppsett.md](github-publisering-oppsett.md) (GitHub-publisering) og
 > [apps-script-oppsett.md](apps-script-oppsett.md) (merch). Disse trengs bare hvis noe
 > skal settes opp på nytt.
 
@@ -209,6 +209,7 @@ Gå gjennom denne sammen — gammelt og nytt styre — én gang i året.
 **Kunnskap:**
 - [ ] Ny teknisk ansvarlig har lest [README.md](../README.md) (innhold) og [VEDLIKEHOLD.md](../VEDLIKEHOLD.md) (drift)
 - [ ] Avtroppende har vist hvordan man publiserer og angrer en publisering
+- [ ] Skummet dokumentasjonen mot koden: stemmer README/VEDLIKEHOLD fortsatt? (Dokumentasjonen driftes også — se «Vedlikehold av dokumentasjonen» i VEDLIKEHOLD.md)
 
 ---
 

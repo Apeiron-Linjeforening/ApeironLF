@@ -12,11 +12,12 @@ Nettsiden er ren HTML/CSS/JS på Cloudflare Pages. Alt innhold ligger i
 data-filer i repoet (`*-content.js`, `*-config.js`). Redigeringsløkka er:
 
 ```
-Rediger i admin  →  Last ned data-fil  →  commit/push til GitHub  →  Cloudflare bygger (~1 min)
+Rediger i admin  →  ☁ Publiser til GitHub (commit via API)  →  Cloudflare bygger (~1 min)
 ```
 
 Ingen server, ingen database, ingen løpende kostnad. Det overlever at styret
-byttes ut hvert år, og alt ligger versjonert i git.
+byttes ut hvert år, og alt ligger versjonert i git. (En nedlastings-backup for
+manuell commit finnes som reserveløsning — se [VEDLIKEHOLD.md](../VEDLIKEHOLD.md).)
 
 **Forhåndsvisning bor på sidene, ikke i admin.** Hvert admin-panel legger den
 ekte siden i en ramme med `?preview=1`; sidens eget innholds-script lytter på
@@ -28,8 +29,8 @@ previewene fungerer.
 ## C — skall + moduler (FERDIG)
 
 **Mål (oppnådd):** samle alle editorene i ett skall (`admin.html`) med tynne
-moduler, i stedet for 13 frittstående `*-admin.html`-filer som dupliserte ramme,
-innlogging, varsler og eksport. Alle 13 panelene er nå moduler, og samtlige
+moduler, i stedet for frittstående `*-admin.html`-filer som dupliserte ramme,
+innlogging, varsler og eksport. Alle panelene er nå moduler, og samtlige
 frittstående `*-admin.html`-filer er slettet.
 
 ### Slik er det bygd
@@ -51,13 +52,16 @@ frittstående `*-admin.html`-filer er slettet.
 
 ### Migrering — fullført
 
-Alle 13 panelene er migrert til moduler, og de frittstående `*-admin.html`-filene
-er slettet:
+Alle panelene er migrert til moduler, og de frittstående `*-admin.html`-filene
+er slettet. Nye paneler har kommet til etter migreringen (pensum, galleri,
+marked, snarveier) — den autoritative lista er filstruktur-tabellen i
+[VEDLIKEHOLD.md](../VEDLIKEHOLD.md#filstruktur).
 
-- [x] medlemskap, hjelp, meny, footer
-- [x] styret, begrep, om-oss, forsiden (index), oppslagstavla, nyheter
-- [x] merch (størst — egen `.pcard`-struktur)
-- [x] oppnåelser, utmerkelser
+I tillegg deler alle panelene nå to redigeringsvisninger via
+`admin-panel-shell.js` (**PanelShell**): «Liste + detalj» (smal, søkbar
+navigator + ett skjema om gangen) og «Klassisk» (kort i full bredde).
+PanelShell gjenbruker modulenes egne kort-byggere, så bilder, lagring, angre og
+publisering er felles logikk mellom visningene.
 
 ### Hvorfor C er riktig fundament
 
@@ -68,19 +72,22 @@ stegene.
 
 ---
 
-## Neste: git-basert CMS-følelse (FREMTID)
+## G1 — git-basert CMS-følelse (FERDIG)
 
-**Smerten i dag:** «lagre» betyr last-ned-fil + commit. Det føles ikke som
-Squarespace.
+**Smerten som var:** «lagre» betydde last-ned-fil + manuell commit. Det føltes
+ikke som Squarespace.
 
-**Løsning uten server:** et git-basert CMS (f.eks. Decap/TinaCMS-mønsteret) der
-«Lagre» **committer direkte til GitHub** via GitHub sin API og en OAuth-innlogging
-— fortsatt statisk, fortsatt gratis på Cloudflare. Da forsvinner nedlasting +
-manuell commit; redaktøren ser bare «Lagre → live om et minutt».
+**Løsningen (i drift):** «Lagre» **committer direkte til GitHub** via GitHubs
+API og en OAuth-innlogging — fortsatt statisk, fortsatt gratis på Cloudflare
+(Pages Functions i `functions/api/github/`). Redaktøren ser bare
+«☁ Publiser til GitHub → live om et minutt». Rundt dette finnes også
+konfliktsjekk ved samtidig redigering, «Sist publisert»-visning og
+«↩ Angre siste publisering». C-modulene beholdt sin `export` (den driver
+nedlastings-backupen) og fikk commit-veien i tillegg.
 
-Dette er så nær Squarespace-følelsen man kommer uten å ta på seg en server og
-løpende kostnad. C-modulene kan beholde sin `export`, men få i tillegg en
-`commit`-vei.
+Engangsoppsettet (OAuth-app + miljøvariabler) står i
+[github-publisering-oppsett.md](github-publisering-oppsett.md);
+driftsdetaljene i [VEDLIKEHOLD.md](../VEDLIKEHOLD.md).
 
 ---
 
@@ -97,12 +104,13 @@ Klon repoet  →  åpne admin  →  bygg sin egen side  →  publiser
 Veien dit, byggesteinene i rekkefølge:
 
 1. **C** — modulær admin (fundament). ✅ **ferdig**
-2. **Sider/seksjoner som data** ← *vi er her nå* — sidelisten og seksjonene i en side blir
-   redigerbare data, ikke hardkodet HTML. Admin får «+ Ny side / + Ny seksjon».
-3. **Tema i admin** — farge-, font- og logo-tokens redigerbare (bygger på at
+2. **G1: Git-CMS-innlogging** — «lagre = commit», så ikke-tekniske styrer slipper
+   GitHub helt. ✅ **ferdig**
+3. **Sider/seksjoner som data** ← *vi er her nå* — sidelisten og seksjonene i en side blir
+   redigerbare data, ikke hardkodet HTML (Om oss-siden er allerede datadrevet via
+   seksjonsmotoren). Admin får «+ Ny side / + Ny seksjon».
+4. **Tema i admin** — farge-, font- og logo-tokens redigerbare (bygger på at
    siden allerede bruker CSS-variabler).
-4. **Git-CMS-innlogging** — «lagre = commit», så ikke-tekniske styrer slipper
-   GitHub helt.
 5. **Oppsett-veiviser** — førstegangs «hva heter foreningen / farger / logo»
    som fyller startdataene ved kloning.
 

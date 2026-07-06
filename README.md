@@ -12,13 +12,16 @@ Statisk side (HTML/CSS/JS) på Cloudflare Pages, uten byggesteg og uten avhengig
 
 ## 📚 Dokumentasjon
 
-| Dokument | Hva det er |
-| --- | --- |
-| 📖 **README** (du er her) | Oversikt + **brukerveiledning**: endre innhold via Admin-senteret |
-| 🔧 **[VEDLIKEHOLD.md](VEDLIKEHOLD.md)** | Teknisk drift: publisering, lokal kjøring, manuell redigering, filstruktur, Apps Script |
-| 🏗️ **[docs/admin-arkitektur.md](docs/admin-arkitektur.md)** | Hvordan Admin-senteret er bygd + veikart mot klonbar mal |
-| 🛒 **[docs/apps-script-oppsett.md](docs/apps-script-oppsett.md)** | Steg-for-steg: merch-bestilling (Google Sheet + Apps Script) |
-| 📝 **[CHANGELOG.md](CHANGELOG.md)** | Logg over hva som er gjort |
+| Dokument | For hvem | Hva det er |
+| --- | --- | --- |
+| 📖 **README** (du er her) | Styret | Oversikt + **brukerveiledning**: endre innhold via Admin-senteret |
+| 🔧 **[VEDLIKEHOLD.md](VEDLIKEHOLD.md)** | Drifter | Teknisk drift: publisering, lokal kjøring, manuell redigering, filstruktur, Apps Script |
+| 🗝️ **[docs/eierskap-og-overlevering.template.md](docs/eierskap-og-overlevering.template.md)** | Styret | «Nøkkelknippet»: hvem eier hva + sjekkliste ved styreskifte (mal — den utfylte kopien holdes privat) |
+| 🏗️ **[docs/admin-arkitektur.md](docs/admin-arkitektur.md)** | Drifter | Hvordan Admin-senteret er bygd + veikart mot klonbar mal |
+| ☁️ **[docs/github-publisering-oppsett.md](docs/github-publisering-oppsett.md)** | Drifter | Engangsoppsett av «Publiser til GitHub» (OAuth + Cloudflare-miljøvariabler) |
+| 🛒 **[docs/apps-script-oppsett.md](docs/apps-script-oppsett.md)** | Drifter | Steg-for-steg: merch-bestilling (Google Sheet + Apps Script) |
+| ✅ **[TODO.md](TODO.md)** | Begge | To-do-lista og domene-status |
+| 📝 **[CHANGELOG.md](CHANGELOG.md)** | Begge | Logg over hva som er gjort |
 
 > 🗺️ `Plan F.html` (lokalt, gitignorert) holder veikartet videre: WYSIWYG-redigering →
 > klonbar mal, og en handoff av hvor vi står.
@@ -27,36 +30,16 @@ Statisk side (HTML/CSS/JS) på Cloudflare Pages, uten byggesteg og uten avhengig
 
 ## 🧭 Innhold
 
-
 **For redaktører (styret):**
-- [🌐 Apeiron: Linjeforeningens nettside](#-apeiron-linjeforeningens-nettside)
-  - [📚 Dokumentasjon](#-dokumentasjon)
-  - [🧭 Innhold](#-innhold)
-- [Slik endrer du innhold på Apeiron-nettsiden](#slik-endrer-du-innhold-på-apeiron-nettsiden)
-  - [1. Åpne Admin-senteret](#1-åpne-admin-senteret)
-  - [2. Slik redigerer du](#2-slik-redigerer-du)
-  - [3. Slik publiserer du (gjør endringene synlige for alle)](#3-slik-publiserer-du-gjør-endringene-synlige-for-alle)
-  - [4. Hva styrer hva](#4-hva-styrer-hva)
-  - [5. Deler som styres utenfor Admin-senteret](#5-deler-som-styres-utenfor-admin-senteret)
-    - [📅 Arrangementer → Google Kalender](#-arrangementer--google-kalender)
-    - [🎓 Fadderuke → Google Kalender](#-fadderuke--google-kalender)
-    - [📷 Galleri → Google Drive](#-galleri--google-drive)
-      - [Hvordan mappene må ligge](#hvordan-mappene-må-ligge)
-      - [Tre ting som er lett å gjøre feil](#tre-ting-som-er-lett-å-gjøre-feil)
-      - [Legg til bilder fra et nytt arrangement](#legg-til-bilder-fra-et-nytt-arrangement)
-  - [6. Trenger du noe mer avansert?](#6-trenger-du-noe-mer-avansert)
-  - [Slik er nettsiden bygd (kort)](#slik-er-nettsiden-bygd-kort)
-  - [Synlighet i søkemotorer og KI](#synlighet-i-søkemotorer-og-ki)
-  - [Kjente begrensninger og usikkerheter](#kjente-begrensninger-og-usikkerheter)
-  - [To-do](#to-do)
-  - [Domene](#domene)
-  - [Lisens](#lisens)
+- [Slik endrer du innhold](#slik-endrer-du-innhold-på-apeiron-nettsiden) — Admin-senteret: redigere og publisere
+- [Hva styrer hva](#4-hva-styrer-hva) — hvilket panel som styrer hvilken del av siden
+- [Deler som styres utenfor Admin-senteret](#5-deler-som-styres-utenfor-admin-senteret) — arrangementer, fadderuke, galleri
 
 **For utviklere / drift:**
 - [Slik er nettsiden bygd (kort)](#slik-er-nettsiden-bygd-kort)
+- [Synlighet i søkemotorer og KI](#synlighet-i-søkemotorer-og-ki)
 - [Kjente begrensninger og usikkerheter](#kjente-begrensninger-og-usikkerheter)
-- [To-do og veikart](#to-do)
-- [Domene](#domene)
+- [To-do og domene-status → TODO.md](TODO.md)
 - [Lisens](#lisens)
 
 ---
@@ -120,7 +103,7 @@ eller pushe manuelt.
 4. Vent ca. ett minutt. Nettsiden oppdaterer seg selv automatisk.
 
 > 💡 **Hvem kan publisere?** Bare GitHub-kontoer som er satt opp med tilgang (se
-> [docs/g1-oppsett.md](docs/g1-oppsett.md)). Hver publisering merkes med hvem som gjorde den,
+> [docs/github-publisering-oppsett.md](docs/github-publisering-oppsett.md)). Hver publisering merkes med hvem som gjorde den,
 > og toppen viser **«Sist publisert: navn · tidspunkt»**.
 
 > 👥 **Jobber dere flere samtidig?** Har noen andre publisert de samme sidene etter at du
@@ -253,7 +236,7 @@ publiseringen fungerer under panseret. Alt det ligger i
 > studieretning (Felles · Filosofi · Etikk · Master), og du kan legge til, dele opp eller
 > gi nye farger til seksjonene, og fanene og merkene på siden følger automatisk med.
 
-Lurer du på noe som ikke står her, spør styret, den KI modellen som er best på koding i den tid du leser dette eller den som vedlikeholder nettsiden.
+Lurer du på noe som ikke står her, spør styret, den KI-modellen som er best på koding idet du leser dette, eller den som vedlikeholder nettsiden.
 
 ---
 
@@ -270,9 +253,9 @@ panel-registeret `AdminPanels`) og `admin-modules.css` (klasse-scopet stil per m
 Hver modul har live forhåndsvisning. Redigeringsløkka er
 *rediger → **☁ Publiser til GitHub** → Cloudflare bygger (~1 min)*; en nedlastings-backup
 finnes for manuell publisering (se [VEDLIKEHOLD.md](VEDLIKEHOLD.md)).
-Full arkitekturforklaring: [docs/admin-arkitektur.md](/docs/admin-arkitektur.md).
+Full arkitekturforklaring: [docs/admin-arkitektur.md](docs/admin-arkitektur.md).
 
-**To redigeringsvisninger (Oversikt → «Panelvisning»):** alle 16 paneler kan vises som
+**To redigeringsvisninger (Oversikt → «Panelvisning»):** alle panelene kan vises som
 **Liste + detalj**, et delt `admin-panel-shell.js` (PanelShell) med en smal, søkbar
 navigator + ett skjema om gangen, eller som **Klassisk (Legacy)**, den opprinnelige
 visningen med kort i full bredde. Valget lagres i nettleseren. PanelShell gjenbruker
@@ -299,90 +282,12 @@ nytt domene) står i **[VEDLIKEHOLD.md → Synlighet i søkemotorer og KI (SEO)]
 Ting vi vet om, men er usikre på om det er verdt å gjøre noe med. Ført opp så de ikke glemmes, ikke nødvendigvis feil som må fikses.
 
 <details>
-<summary><b>Vis de fem punktene</b></summary>
+<summary><b>Vis de fire punktene</b></summary>
 
 - **Merch: én farge kan bare kobles til ett bilde.** Har du to bilder av samme farge (f.eks. for- og bakside av samme genser), kan bare det ene knyttes til fargen. Velger man samme farge på bilde nummer to, flyttes koblingen dit. Lite problem i praksis (kunden ser uansett hele galleriet via miniatyrstripa). Å støtte flere bilder pr. farge ville kreve en mer kompleks datamodell.
 - **Meny og footer vises et lite øyeblikk etter at siden lastes.** De bygges av `site-chrome.js` i nettleseren (for å slippe byggesteg og holde alt i én fil). På treg forbindelse kan man så vidt se at de «popper inn». Menyen er fast posisjonert, så selve innholdet hopper ikke. Alternativet (byggesteg) ble vurdert og valgt bort, se diskusjon i commit-historikk.
 - **Footer/meny krever JavaScript.** Med JS avslått vises ikke meny/footer. Gjelder en svært liten andel besøkende; resten av siden bruker uansett JS (kalender, søk, kurv).
-- **`_headers` har ingen Content-Security-Policy (CSP).** Fila er gjenopprettet med en trygg basisversjon (X-Frame-Options, nosniff, Referrer-Policy, HSTS, Permissions-Policy), men *uten* CSP. En CSP må skreddersys etter Google Calendar/Drive/Fonts og inline-skriptene siden bruker, ellers blokkeres egen funksjonalitet. Kan legges til senere ved behov (krever testing).
-- **Bilder lagres som base64 i datafilene.** Mange/store produktbilder gjør `merch-products.js` stor. Admin skalerer ned til maks 900px webp, men mange bilder kan likevel bli tungt. Vurder eksterne bildefiler (`assets/merch/...`) hvis filene blir veldig store. Vil ikke å lagre de eksternt bare gjøre bildene større? -> lagre de i base64 i egen fil?
-
-</details>
-
----
-
-## To-do
-
-<details>
-<summary><b>Åpne to-do-lista</b></summary>
-
-Kritisk:
- - [ ] Sjekke hvordan alt fungerer på mobil. (Husk å sjekke flere forskjellige størrelser på skjermer)
- - [ ] Fikse Admin på mobil.
- - [~] Rework a navigasjon/toppmeny. *(Delvis: «Foreningen» → «Om oss», nedtrekket omorganisert (sider først, ankere sist), og gruppeoverskrifter støttes nå i menyen. Gjenstår under.)*
-     - [ ] "Hjem" kan bli fjernet.
-- [ ] "Medlemskap" i medlemskap i Lys-modus er i en veldig svak farge. 
-
-Medium:
-- [ ] Sjekke at "Legg til fadderukeprogrammet i din kalender" fungerer: iCal og Google Kalender.
-- [x] Flytte "Slik bestiller du" i merch til oppe i hero.
-- [x] Utvide "Akkurat nå" til å inkludere enten neste to arrangement med knapp/valg i admin om å velge om den viser kun neste arrangement, neste to arrangement (muligens neste tre?) .
-- [x] "Akkurat nå" under Hero kan fjernes i index.
-- [x] "Det du kan regne med" over Aporetisk aften kan fjernes i index. 
-
-Lav:
-- [ ] Be HF studentrådet om å oppdatere sidene deres og gi oss mer informasjon om hva de faktisk gjør. 
-      - [ ] Hva gjør egentlig en PTV, ITV og FTV? 
-      - [ ] Hvordan får vi kontakt med våre egne TVer?
-- [ ] Legge til side for møtereferat -> Kan tas i egen wiki, muligens. Fylle ut SAK / utvide den kan tas på denne wiki siden.
-- [ ] Sammenlign med https://www.mfplacebo.no/
-
-Ønsker:
-- [ ] Snakke med IFR/NTNU om API for automatisk oppdatering av emner for studiene.
-- [ ] Automatisk tema endring av sidene: Jul, 17. mai, påske, halloween, fadderukene, frigjøringsdagen, HMS bursdag (legge dette til i en admin fil, muligens... HMS er gammel) + mulighet til å skru de av, endre bilder, farger osv.
-
-Må gjøres før vi slapper av med å bygge nettsiden:
-- [ ] Sjekke på nytt hvordan alt oppfører seg på mobil og smalere skjermer.
-
-</details>
-
----
-
-## Domene
-
-- [ ] Vurdere om vi skal få bedre domene.
-
-**NTNU-alternativ (`apeiron.org.ntnu.no`) viser nå til nettsiden**
-
-> 🔁 **Sjekk at redirecten er 301 (permanent), ikke 302 (midlertidig).** En 301 lar
-> NTNU-domenets autoritet «arve» over til nettsiden i søkemotorer; en 302 gjør det ikke.
-> Test i terminal:
-> ```
-> curl -sI https://apeiron.org.ntnu.no | grep -i "^HTTP\|^location"
-> ```
-> Se etter `HTTP/.. 301` (bra) eller `308` (også permanent). Får du `302`/`307`, be den
-> som satte opp redirecten (IT/IFR) om å gjøre den permanent.
-
-<details>
-<summary><b>Domene-status og priser</b></summary>
-
-| Domene                 | Status      | Pris       | Registrar            |
-| ------------------------| -------------| ------------| ----------------------|
-| apeiron.no             | **Tatt**    | –          | –                    |
-| apeiron.org            | **Tatt**    | –          | –                    |
-| apeironntnu.no         | **Ledig** ✅ | 149 kr/år  | Loopia               |
-| apeironntnu.org        | **Ledig** ✅ | 169 kr/år  | Loopia               |
-| apeironntnu.org        | **Ledig** ✅ | 275 kr/år  | Domeneshop           |
-| apeironntnu.org        | **Ledig** ✅ | $11.20 /år | Cloudflare Registrar |
-| apeironntnu.com        | **Ledig** ✅ | $10.46 /år | Cloudflare Registrar |
-| apeironntnu.net        | **Ledig** ✅ | $11.86 /år | Cloudflare Registrar |
-| apeironntnu.online     | **Ledig** ✅ | 9 kr /år   | Loopia               |
-| apeironlf.org          | **Ledig** ✅ | $11.20 /år | Cloudflare Registrar |
-| apeironlf.com          | **Ledig** ✅ | $10.46 /år | Cloudflare Registrar |
-| apeironlf.no           | **Ledig** ✅ | 99 kr /år  | Domeneshop           |
-| apeironlf.no + .online | **Ledig** ✅ | 99 kr /år  | Domeneshop           |
-
-Merk: Cloudflare Registrar støtter ikke .no-domener. For .org er Cloudflare billigst.
+- **Bilder lagres som base64 i datafilene.** Mange/store produktbilder gjør `merch-products.js` stor. Admin skalerer ned til maks 900px webp, men mange bilder kan likevel bli tungt. Vurder eksterne bildefiler (`assets/merch/...`) hvis filene blir veldig store (vurdering ligger i [TODO.md](TODO.md)).
 
 </details>
 
