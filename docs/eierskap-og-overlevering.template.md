@@ -207,9 +207,9 @@ Gå gjennom denne sammen — gammelt og nytt styre — én gang i året.
 - [ ] Google API-nøkkelen er fortsatt låst til riktig domene (Google Cloud Console)
 
 **Kunnskap:**
-- [ ] Ny teknisk ansvarlig har lest [README.md](../README.md) (innhold) og [VEDLIKEHOLD.md](../VEDLIKEHOLD.md) (drift)
+- [ ] Ny teknisk ansvarlig har lest [BRUKERVEILEDNING.md](../BRUKERVEILEDNING.md) (innhold) og [VEDLIKEHOLD.md](../VEDLIKEHOLD.md) (drift)
 - [ ] Avtroppende har vist hvordan man publiserer og angrer en publisering
-- [ ] Skummet dokumentasjonen mot koden: stemmer README/VEDLIKEHOLD fortsatt? (Dokumentasjonen driftes også — se «Vedlikehold av dokumentasjonen» i VEDLIKEHOLD.md)
+- [ ] Skummet dokumentasjonen mot koden: stemmer BRUKERVEILEDNING/VEDLIKEHOLD fortsatt? (Dokumentasjonen driftes også — se «Vedlikehold av dokumentasjonen» i VEDLIKEHOLD.md)
 
 ---
 

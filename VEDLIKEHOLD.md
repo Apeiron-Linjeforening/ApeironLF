@@ -5,7 +5,7 @@ filstruktur, manuell redigering og de tekniske integrasjonene (Google Kalender/D
 Apps Script).
 
 > 👉 Skal du bare **endre innhold** (nyheter, styret, merch, bilder osv.)? Da hører du
-> hjemme i **brukerveiledningen i [README.md](README.md)**. Alt innhold redigeres i
+> hjemme i **[BRUKERVEILEDNING.md](BRUKERVEILEDNING.md)**. Alt innhold redigeres i
 > Admin-senteret, uten å røre kode. Vanlige brukere skal **aldri** redigere kodefiler direkte på GitHub.
 
 **Innhold**
@@ -107,7 +107,7 @@ likevel frem. Verdien betyr ingenting teknisk; det eneste som teller er at den e
 ## Endre filer på GitHub eller lokalt
 
 > Dette er drifter-arbeid. Innholdsredaktører gjør alt i Admin-senteret og laster bare
-> opp de nedlastede filene (steg 3 i brukerveiledningen i [README.md](README.md)).
+> opp de nedlastede filene (steg 3 i [BRUKERVEILEDNING.md](BRUKERVEILEDNING.md)).
 
 **Alternativ A: direkte på GitHub.com (enklest, ingen installasjon):**
 
@@ -568,7 +568,8 @@ ApeironLF/
 
 | Fil | Hva det er |
 | --- | --- |
-| `README.md` | Oversikt + brukerveiledning (endre innhold via Admin-senteret) |
+| `README.md` | Landingsside: hva prosjektet er + peker til riktig dokument |
+| `BRUKERVEILEDNING.md` | Brukerveiledning for styret: endre innhold via Admin-senteret, kalender og galleri |
 | `VEDLIKEHOLD.md` | Denne fila: teknisk drift og dokumentasjon |
 | `TODO.md` | To-do-lista og domene-status |
 | `CHANGELOG.md` | Logg over hva som er gjort (siste periode) |
@@ -711,6 +712,9 @@ kodesnutter, utdaterte begrensninger). Tre regler holder den frisk:
    punkt for dette. En automatisk lenkesjekk
    (`.github/workflows/md-links.yml`) fanger dessuten brutte interne lenker og ankre i
    `.md`-filene ved hver push.
+
+> 🗺️ `Plan F.html` (lokalt, gitignorert) holder veikartet videre: WYSIWYG-redigering →
+> klonbar mal, og en handoff av hvor vi står.
 
 ---
 

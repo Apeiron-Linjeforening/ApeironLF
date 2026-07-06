@@ -27,5 +27,5 @@ jobs:
             --include-fragments
             --no-progress
             --exclude-path docs/changelog-arkiv
-            README.md VEDLIKEHOLD.md TODO.md docs/*.md
+            README.md BRUKERVEILEDNING.md VEDLIKEHOLD.md TODO.md docs/*.md
           fail: true

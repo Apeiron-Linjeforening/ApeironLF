@@ -1,5 +1,12 @@
 ## Siste endringer
 
+**06.07.26 · Dokumentasjon: brukerveiledningen skilt ut i egen `BRUKERVEILEDNING.md` — README er nå en kort landingsside**
+
+- **`BRUKERVEILEDNING.md` (ny):** hele redaktørveiledningen fra README (Admin-senteret, publisering, «Hva styrer hva», kalender/fadderuke, galleri) + to nye deler: en «Hva vil du gjøre?»-tabell øverst og en **Feilsøking**-seksjon med de vanligste spørsmålene (ser ikke endringen min, får ikke publisert, konfliktvarsel, angre publisering, mistet utkast, arrangement/galleribilder vises ikke). Fem skjermbilder av admin er lagt inn (`assets/docs/admin-{oversikt,redigering,forhandsvisning,publisering,endringer}.webp`), og README har fått skjermbilde av forsiden (`assets/docs/forside.webp`).
+- **Dokumentasjonen matcher nå den faktiske admin-toppen:** knappen omtales som **☁ Publiser** (ikke «☁ Publiser til GitHub») og innlogging som **Logg inn**; «… upubliserte endringer»-oversikten og **↺ Angre alle** er beskrevet; «Panelvisning» refereres til Innstillinger (⚙), ikke Oversikt.
+- **`README.md` slanket til landingsside:** hva prosjektet er + «Hva vil du gjøre?»-triage + dokumentasjonstabell + «Slik er nettsiden bygd», SEO og kjente begrensninger. «Vibrasjonskoding»-linja flyttet ned til bunnen; Plan F-notatet flyttet til VEDLIKEHOLD → «Vedlikehold av dokumentasjonen».
+- **Referanser oppdatert:** VEDLIKEHOLD (3 steder + dok-tabellen), eierskaps-malen (sjekklista), admin.html (snarveien «Veiledning» peker nå på `BRUKERVEILEDNING.md`, samt kodekommentar), og `md-links.yml` sjekker den nye fila. Verifisert med lokal lenke-/ankersjekk over alle `.md`-filene.
+
 **06.07.26 · Filstruktur-rydding del 2: innholdsfilene → `content/` — publiseringsstiene i admin-modulene oppdatert tilsvarende**
 
 *Flytting (git mv, historikken følger med)*
