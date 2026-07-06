@@ -10,6 +10,10 @@
        aspect,               // ønsket bredde/høyde på resultatet (1 = kvadrat). Standard 1
        outSize,              // lengste side i px på resultatet. Standard 700
        quality,              // webp-kvalitet 0..1. Standard 0.88
+       targetKB,             // størrelsesbudsjett: senk kvaliteten trinnvis til
+                             //   resultatet er under targetKB kB (gulv q≈0.45).
+                             //   Standard 150 (innholdsbilde-tak); portretter/
+                             //   ikoner sender lavere, f.eks. 30. 0 = av.
        title,                // tittel i vinduet
        applyLabel,           // tekst på «Bruk»-knappen
        onApply(dataUrl),     // kalles med ferdig webp-dataURL
@@ -298,6 +302,9 @@
     pending = {
       outSize: opts.outSize || 700,
       quality: opts.quality || 0.88,
+      // Standard: innholdsbilde-tak på 150 kB. Send targetKB: 0 for å skru av,
+      // eller et lavere tall (f.eks. 30) for portretter/ikoner.
+      targetKB: opts.targetKB == null ? 150 : opts.targetKB,
       onApply: opts.onApply || function () {},
       onCancel: opts.onCancel || function () {}
     };
@@ -335,7 +342,28 @@
     canvas.width = ow; canvas.height = oh;
     var ctx = canvas.getContext('2d');
     paint(ctx, scale);
-    return canvas.toDataURL('image/webp', pending.quality);
+    var q = pending.quality;
+    var url = canvas.toDataURL('image/webp', q);
+    // Valgfritt størrelsesbudsjett: senk webp-kvaliteten trinnvis til bildet er
+    // under targetKB (gulv q≈0.45, så portrettet ikke blir grumsete). Samme
+    // canvas re-enkodes hver runde, så kvalitetstrinnene bygger seg ikke opp.
+    if (pending.targetKB) {
+      var budget = pending.targetKB * 1024;
+      while (bytesOf(url) > budget && q > 0.45) {
+        q = Math.max(0.45, Math.round((q - 0.08) * 100) / 100);
+        url = canvas.toDataURL('image/webp', q);
+      }
+    }
+    return url;
+  }
+
+  // Antall bytes en dataURL faktisk veier (base64 → binær), uten å dekode den.
+  function bytesOf(dataUrl) {
+    var i = dataUrl.indexOf(',');
+    var b64 = i >= 0 ? dataUrl.slice(i + 1) : dataUrl;
+    var pad = 0;
+    if (b64.charAt(b64.length - 1) === '=') pad = b64.charAt(b64.length - 2) === '=' ? 2 : 1;
+    return Math.floor(b64.length * 3 / 4) - pad;
   }
 
   function close(apply) {

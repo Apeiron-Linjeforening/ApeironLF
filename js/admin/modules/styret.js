@@ -216,7 +216,12 @@
       }
 
       function memberPath(m) { return 'assets/styret/' + m.id + '.webp'; }
-      function archPath(a, m) { return 'assets/styret/arkiv/' + a.id + '-' + m.id + '.webp'; }
+      // Arkivbilder samles i én mappe per styreperiode, f.eks.
+      // «assets/styret/arkiv/2025-2026/<medlem-id>.webp», så arkiv-mappen ikke
+      // renner over med årevis av portretter. Slug = perioden med «/» → «-» og
+      // uten mellomrom; faller tilbake på arkiv-id-en om perioden er tom.
+      function periodSlug(a) { var s = String(a && a.period || '').trim().replace(/\s*\/\s*/g, '-').replace(/[^\w-]+/g, ''); return s || (a && a.id) || 'ukjent'; }
+      function archPath(a, m) { return 'assets/styret/arkiv/' + periodSlug(a) + '/' + m.id + '.webp'; }
       // visnings-URL: cache (ikke-committet) ellers selve stien/data:
       function imgSrc(obj) { if (!obj || !obj.img) return ''; return imgCache[obj.img] || obj.img; }
       // øyeblikksbilde av et bildes tilstand (sti + faktiske bytes) for ANGRE
@@ -264,7 +269,9 @@
       function openEditor(target, src) {
         if (!window.AdminImageEditor) { alert('Bilderedigereren er ikke lastet.'); return; }
         AdminImageEditor.open({
-          src: src, aspect: 1, outSize: 700, quality: 0.86, round: true,
+          // Portrett-tak på 30 kB (lavere enn innholdsbilde-standarden på 150),
+          // så både styremedlem- og arkivbilder holder seg små.
+          src: src, aspect: 1, outSize: 700, quality: 0.86, round: true, targetKB: 30,
           title: target.title || 'Rediger portrett',
           applyLabel: 'Bruk bilde',
           onApply: function (dataUrl) {
@@ -798,6 +805,7 @@
           + '\n'
           + '   members[].img : sti til egen bildefil (assets/styret/…webp). Bildene\n'
           + '                   lastes ned som egne filer — legg dem i assets/styret/.\n'
+          + '                   Arkivportretter samles per periode i assets/styret/arkiv/<periode>/.\n'
           + '   members[].tags: tilleggsverv som chips. color = palettnavn ("maroon"),\n'
           + '                    eller { light, dark } med palettnavn/hex for egendefinert.\n'
           + '   roles[].accent: fargestripe — palettnavn ("" = gull) eller { light, dark }.\n'

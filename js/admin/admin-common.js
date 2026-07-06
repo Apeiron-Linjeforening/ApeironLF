@@ -425,7 +425,7 @@
       if (!window.AdminImageEditor) { alert('Bilderedigereren er ikke lastet.'); return; }
       window.AdminImageEditor.open({
         src: src, aspect: aspect, aspects: opts.aspects, outSize: opts.outSize || 1000, quality: opts.quality || 0.86,
-        round: !!opts.round, title: opts.title || 'Rediger bilde', applyLabel: 'Bruk bilde',
+        targetKB: opts.targetKB, round: !!opts.round, title: opts.title || 'Rediger bilde', applyLabel: 'Bruk bilde',
         onApply: function (url) { var prev = (opts.get && opts.get()) || null; opts.set(url); refresh(url); checkImageSize(url); if (opts.afterChange) opts.afterChange(url); undoable('Bilde endret', function () { opts.set(prev); refresh(prev || ''); if (opts.afterChange) opts.afterChange(prev); }); },
         onError: function () { try { toast('Det gamle bildet kunne ikke lastes. Velg et nytt.'); } catch (_) {} imgPick(openEd); }
       });

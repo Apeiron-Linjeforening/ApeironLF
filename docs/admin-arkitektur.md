@@ -49,6 +49,12 @@ frittstående `*-admin.html`-filer er slettet.
   `{ title, see, exportName, mount(host, AC) }`. `mount` bygger editoren inn i
   `host`, kobler opp alt, og returnerer `{ export }` som skallets «Last ned»-
   knapp kaller.
+- **`js/admin/admin-image-editor.js`** — delt bilderedigerer (beskjær, roter,
+  filtre). Komprimerer alt ved opplasting i nettleseren: nedskalering + webp med
+  et størrelsestak per panel (`targetKB`, default 150 kB; portretter 30, merch/
+  plakat 250). Bytene lagres i IndexedDB og pakkes/committes ved publisering, så
+  innholdsfilene holder seg små. Detaljer og tak-tabell:
+  [VEDLIKEHOLD.md → Bildekomprimering](../VEDLIKEHOLD.md#bildekomprimering-skjer-automatisk-ved-opplasting).
 
 ### Migrering — fullført
 

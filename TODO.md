@@ -18,9 +18,6 @@ som kan bli utdaterte (priser, statuser) med *«sjekket DD.MM.ÅÅ»*.
 ## Medium
 
 - [ ] Sjekke at "Legg til fadderukeprogrammet i din kalender" fungerer: iCal og Google Kalender.
-- [ ] Galleribilder på forsiden virker ikke til å være like tilfeldig vag av bilder som ønsket - Se hva vi kan gjøre for å ta et bredere valg av bilder som vises.
-- [ ] "Synlighet" for galleribilder på forsiden må justeres. 100% skal være 100%, 80% skal være 80% osv osv.
-- [ ] Galleribilder på forsiden: Svevende bilder bak hero - krysstoning. Bilder blir byttet ut før de toner ut. De burde ikke bli byttet ut. Nye bilder burde komme til syne og tone ut. Om man skrur på "klipp bildene ved navigasjonsbaren" dukker alle bildene opp på en linje rett under nav baren. Mange bilder går ikke på høyresiden av siden - skaper et tomrom. Seksjonen bildene vises blir ikke større om skjermbredden blir høyere.
 
 ## Lav
 

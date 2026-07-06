@@ -169,10 +169,10 @@ window.OM_PAGE = {
             "level": "Styret",
             "title": "Styret 2025/26",
             "images": [
-              "assets/Styremedlemmer/Iver.jpg",
-              "assets/Styremedlemmer/Dagny.jpg",
-              "assets/Styremedlemmer/Dennis.jpg",
-              "assets/Styremedlemmer/Helene.jpg"
+              "assets/styret/m4.webp",
+              "assets/styret/m3.webp",
+              "assets/styret/m2.webp",
+              "assets/styret/m9.webp"
             ],
             "imagesMore": "+7",
             "body": "Leder, nestleder, økonomi, sosialansvarlig, faddersjef, fagansvarlig og resten av gjengen som driver foreningen gjennom året.",
@@ -189,9 +189,9 @@ window.OM_PAGE = {
             "title": "Tillitsvalgte",
             "imagesFrom": "tillitsvalgte",
             "images": [
-              "assets/Styremedlemmer/AnnaF.jpg",
-              "assets/Styremedlemmer/Fredrik.jpg",
-              "assets/Styremedlemmer/Karoline.jpg"
+              "assets/styret/m6.webp",
+              "assets/styret/Fredrik.webp",
+              "assets/styret/m10.webp"
             ],
             "body": "Studentenes stemme inn mot institutt og program, de som tar med seg tilbakemeldingene dine dit beslutningene tas.",
             "links": [

@@ -333,7 +333,7 @@
               + '<div class="fg narrow"><label>Merkelapp</label><input data-k="level" value="' + esc(c.level) + '"></div>'
               + '<div class="fg"><label>Tittel</label><input data-k="title" value="' + esc(c.title) + '"></div></div>'
               + '<div class="fg"><label>Tekst</label><textarea data-k="body">' + esc(c.body) + '</textarea></div>'
-              + '<div class="frow"><div class="fg"><label>Avatar-bilder (kommaseparerte stier, valgfritt)</label><input data-imgs value="' + esc((c.images || []).join(', ')) + '" placeholder="assets/Styremedlemmer/Iver.jpg, …"></div>'
+              + '<div class="frow"><div class="fg"><label>Avatar-bilder (kommaseparerte stier, valgfritt)</label><input data-imgs value="' + esc((c.images || []).join(', ')) + '" placeholder="assets/styret/m4.webp, …"></div>'
               + '<div class="fg narrow"><label>Ekstra-boble</label><input data-k="imagesMore" value="' + esc(c.imagesMore || '') + '" placeholder="+7 eller Deg?"></div></div>'
               + (c.imagesFrom === 'tillitsvalgte' ? '<div class="hint">📷 Avatarene hentes automatisk fra hvem som er satt som PTV/ITV/FTV i <b>Hjelp → «Faglig hjelp»</b>. Bildene over brukes bare som reserve hvis ingen innehaver er valgt der.</div>' : '')
               + '<div class="sub-h" style="margin-top:6px">Lenker</div><div class="card-links"></div>'

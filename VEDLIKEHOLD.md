@@ -175,6 +175,31 @@ Full beskrivelse: [`docs/admin-arkitektur.md`](docs/admin-arkitektur.md).
 Hver modul med søkbart innhold har en `searchEntries()`-funksjon som mater søkeindeksen
 (se [Slik fungerer søket](#slik-fungerer-søket)).
 
+### Bildekomprimering (skjer automatisk ved opplasting)
+
+Alle bilder som lastes opp/redigeres i admin komprimeres **i nettleseren før lagring** — det
+finnes ingen server eller byggesteg. To ting skjer: bildet **skaleres ned** til panelets
+`outSize` (lengste side), og webp-**kvaliteten senkes trinnvis** (gulv q≈0.45) kun hvis fila
+fremdeles er over et størrelsesbudsjett (`targetKB`). Logikken bor i
+`js/admin/admin-image-editor.js` (`renderOut`), med default-tak på **150 kB** (innholdsbilde).
+Paneler som bruker `AdminCommon.wireImageField` arver default; andre sender egne verdier.
+
+| Panel | Rute | Maks px | Tak |
+| --- | --- | --- | --- |
+| Styret (medlemmer + arkiv) | bilderedigereren | 700 | **30 kB** (portrett) |
+| Merch | redigerer + bulk-opplasting | 1000 / 900 | **250 kB** |
+| Oppslag (plakater) | wireImageField | 1400 | **250 kB** |
+| Utmerkelser | wireImageField | 700 | 150 kB |
+| Oppnåelser | wireImageField | 1100 | 150 kB |
+| Begrep | wireImageField | 1000 | 150 kB |
+| Om oss (avatarer) | wireImageField | 1000 | 150 kB |
+
+Vil du endre et tak: sett `targetKB` i panelets `AdminImageEditor.open(...)` / `wireImageField(...)`-kall
+(`targetKB: 0` skrur av klemma). Merch har en egen bulk-sti (`toWebp` i `merch.js`) med samme
+budsjett innbakt. Retningslinje for tallene: portretter/ikoner ~30 kB, vanlige innholdsbilder
+~150 kB, store/detaljerte bilder (produkt, plakat) ~250 kB. **NB:** dette gjelder kun bilder
+lagt inn via admin — bilder du legger direkte i `assets/` må komprimeres for hånd (f.eks. `cwebp`).
+
 ---
 
 ## Manuell redigering av innholdsfilene
@@ -192,9 +217,9 @@ og `archive`.
   `""` nøytral, `"maroon"`, `"gold"`, eller `{ light, dark }`)
 - `roles[]`: `name`, `desc`, `resp[]`, `eyebrow`, `accent` (fargestripe)
 - `archive[]`: tidligere styrer `{ period, heading, summary, highlights[], members[] }`
-- **Bilder lagres som egne filer, ikke base64.** `img` er en sti: eldre bilder i
-  `assets/Styremedlemmer/filnavn.jpg`, nye fra admin i `assets/styret/<id>.webp`
-  (arkivbilder i `assets/styret/arkiv/`). Admin laster portrettene ned som **egne
+- **Bilder lagres som egne filer, ikke base64.** `img` er en sti: portretter ligger
+  i `assets/styret/<id>.webp` (arkivbilder samlet per periode i
+  `assets/styret/arkiv/<periode>/<id>.webp`). Admin laster portrettene ned som **egne
   bildefiler** (én og én, ingen zip) ved publisering. Legg dem i `assets/styret/`.
   Tomt `img` = bare initialer.
 
@@ -285,7 +310,7 @@ luft på hver side), chips under ingressen på mobil.
 `imagesMore` (tekst-boble, f.eks. «+7» eller «Deg?»), redigerbare per kort i admin.
 
 > Bildene til «Møt styret»-kortene gjenbruker styreportrettene i
-> `assets/Styremedlemmer/`. Lesesal-galleriet: se [Lesesalen: bilder](#lesesalen-bilder).
+> `assets/styret/`. Lesesal-galleriet: se [Lesesalen: bilder](#lesesalen-bilder).
 
 **Galleribilder på forsiden.** Admin → Forsiden har et eget panel som kan vise
 bilder fra galleriet på forsiden, **av som standard**. Innstillingene ligger i
@@ -588,8 +613,7 @@ ApeironLF/
 
 | Mappe | Hva det er |
 | --- | --- |
-| `assets/Styremedlemmer/` | Eldre/manuelt opplastede styreportretter (nye legges i `assets/styret/`) |
-| `assets/styret/` | Styreportretter fra admin (`<id>.webp`); arkivbilder i `assets/styret/arkiv/` |
+| `assets/styret/` | Styreportretter (`<id>.webp`); arkivbilder per periode i `assets/styret/arkiv/<periode>/` |
 | `assets/begrep/` | Bilder for Begrep-innhold |
 | `assets/merch/` | Bilder for merch-produkter (alternativ til base64) |
 | `assets/lesesalen/` | Lesesal-bildene på forsiden (`lesesal1.jpg` …) |

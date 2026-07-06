@@ -61,6 +61,10 @@ De fleste paneler lar deg legge til, slette og **dra for å endre rekkefølge** 
 (medlemmer, produkter, nyheter osv.), og laste opp bilder ved å klikke på bildefeltet
 eller dra et bilde inn.
 
+> 💡 **Du trenger ikke å forminske bilder selv.** Når du laster opp et bilde, krymper
+> admin det automatisk til en passende størrelse (du kan trygt laste opp rett fra
+> telefonen). Store bilder blir mindre uten at du merker noe, så sidene laster raskt.
+
 ![Nyheter-panelet i redigeringsmodus: listen over nyheter til venstre, skjemaet for den valgte nyheten til høyre](assets/docs/admin-redigering.webp)
 
 Knappen **Forhåndsvisning** øverst til høyre viser siden slik den blir. I noen paneler

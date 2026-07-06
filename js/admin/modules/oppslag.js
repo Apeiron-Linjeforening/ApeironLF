@@ -104,7 +104,7 @@
           zone: card.querySelector('.img-zone'),
           get: function () { return p.img || ''; },
           set: function (url) { p.img = url || null; },
-          aspect: 3 / 4, aspects: [0.75, 1, 1.3333], outSize: 1400, quality: 0.9,
+          aspect: 3 / 4, aspects: [0.75, 1, 1.3333], outSize: 1400, quality: 0.9, targetKB: 250,
           title: 'Rediger plakat: ' + (p.title || ''),
           afterChange: lazySave
         });

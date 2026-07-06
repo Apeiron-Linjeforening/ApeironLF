@@ -1,9 +1,10 @@
 /* Innhold for Styret-siden (styret.html) + arkivsiden (styret-arkiv.html).
-   Sist oppdatert: 6.7.2026
+   Sist oppdatert: 7.7.2026
    Rediger direkte her, eller åpne Admin-senteret → Styret.
 
    members[].img : sti til egen bildefil (assets/styret/…webp). Bildene
                    lastes ned som egne filer — legg dem i assets/styret/.
+                   Arkivportretter samles per periode i assets/styret/arkiv/<periode>/.
    members[].tags: tilleggsverv som chips. color = palettnavn ("maroon"),
                     eller { light, dark } med palettnavn/hex for egendefinert.
    roles[].accent: fargestripe — palettnavn ("" = gull) eller { light, dark }.
@@ -33,7 +34,7 @@ window.STYRET_CONTENT = {
       "name": "Stian Lauritzen",
       "role": "Leder",
       "initials": "SL",
-      "img": "assets/Styremedlemmer/Stian.jpg",
+      "img": "assets/styret/m1.webp",
       "tags": [
         {
           "label": "ITV",
@@ -46,7 +47,7 @@ window.STYRET_CONTENT = {
       "name": "Dennis Cleophas",
       "role": "Nestleder",
       "initials": "DC",
-      "img": "assets/Styremedlemmer/Dennis.jpg",
+      "img": "assets/styret/m2.webp",
       "tags": [
         {
           "label": "HIV",
@@ -59,7 +60,7 @@ window.STYRET_CONTENT = {
       "name": "Dagny Flakne",
       "role": "Økonomiansvarlig",
       "initials": "DN",
-      "img": "assets/Styremedlemmer/Dagny.jpg",
+      "img": "assets/styret/m3.webp",
       "tags": [
         {
           "label": "HIV",
@@ -72,7 +73,7 @@ window.STYRET_CONTENT = {
       "name": "Iver N. Edvardsen",
       "role": "Sosialansvarlig",
       "initials": "INE",
-      "img": "assets/Styremedlemmer/Iver.jpg",
+      "img": "assets/styret/m4.webp",
       "tags": [
         {
           "label": "S.A.K",
@@ -101,7 +102,7 @@ window.STYRET_CONTENT = {
       "name": "Natalie Bellingmo",
       "role": "PR-ansvarlig",
       "initials": "NB",
-      "img": "assets/Styremedlemmer/Natalie.jpg",
+      "img": "assets/styret/m5.webp",
       "tags": []
     },
     {
@@ -109,7 +110,7 @@ window.STYRET_CONTENT = {
       "name": "Anna Fagerli",
       "role": "Faddersjef",
       "initials": "AF",
-      "img": "assets/Styremedlemmer/AnnaF.jpg",
+      "img": "assets/styret/m6.webp",
       "tags": []
     },
     {
@@ -117,7 +118,7 @@ window.STYRET_CONTENT = {
       "name": "Robin M. Søraker",
       "role": "Fagansvarlig",
       "initials": "RMS",
-      "img": "assets/Styremedlemmer/Robin.jpg",
+      "img": "assets/styret/m7.webp",
       "tags": []
     },
     {
@@ -125,7 +126,7 @@ window.STYRET_CONTENT = {
       "name": "Martin R. Skauge",
       "role": "Potet",
       "initials": "MRS",
-      "img": "assets/Styremedlemmer/Martin.png",
+      "img": "assets/styret/m8.webp",
       "tags": [
         {
           "label": "PTV",
@@ -138,7 +139,7 @@ window.STYRET_CONTENT = {
       "name": "Helene P. Ruud",
       "role": "Potet",
       "initials": "HPR",
-      "img": "assets/Styremedlemmer/Helene.jpg",
+      "img": "assets/styret/m9.webp",
       "tags": []
     },
     {
@@ -146,7 +147,7 @@ window.STYRET_CONTENT = {
       "name": "Karoline B. Holthe",
       "role": "Potet",
       "initials": "KBH",
-      "img": "assets/Styremedlemmer/Karoline.jpg",
+      "img": "assets/styret/m10.webp",
       "tags": []
     },
     {
@@ -154,7 +155,7 @@ window.STYRET_CONTENT = {
       "name": "Fredrik C.F. Rosenfors",
       "role": "S.A.K",
       "initials": "FCFR",
-      "img": "assets/Styremedlemmer/Fredrik2.jpg",
+      "img": "assets/styret/m11.webp",
       "tags": [
         {
           "label": "ASAP",
@@ -306,7 +307,7 @@ window.STYRET_CONTENT = {
           "name": "Stian Lauritzen",
           "role": "Leder",
           "initials": "SL",
-          "img": "assets/Styremedlemmer/Stian.jpg",
+          "img": "assets/styret/arkiv/2025-2026/ammqmvwhqlju7.webp",
           "note": "",
           "tags": [
             {
@@ -320,7 +321,7 @@ window.STYRET_CONTENT = {
           "name": "Dennis Cleophas",
           "role": "Nestleder",
           "initials": "DC",
-          "img": "assets/Styremedlemmer/Dennis.jpg",
+          "img": "assets/styret/arkiv/2025-2026/ammqmvwhql7dg.webp",
           "note": "",
           "tags": [
             {
@@ -334,7 +335,7 @@ window.STYRET_CONTENT = {
           "name": "Dagny Flakne",
           "role": "Økonomiansvarlig",
           "initials": "DN",
-          "img": "assets/Styremedlemmer/Dagny.jpg",
+          "img": "assets/styret/arkiv/2025-2026/ammqmvwhqlz42.webp",
           "note": "",
           "tags": [
             {
@@ -348,7 +349,7 @@ window.STYRET_CONTENT = {
           "name": "Iver N. Edvardsen",
           "role": "Sosialansvarlig",
           "initials": "INE",
-          "img": "assets/Styremedlemmer/Iver.jpg",
+          "img": "assets/styret/arkiv/2025-2026/ammqmvwhqmli5.webp",
           "note": "",
           "tags": [
             {
@@ -378,7 +379,7 @@ window.STYRET_CONTENT = {
           "name": "Natalie Bellingmo",
           "role": "PR-ansvarlig",
           "initials": "NB",
-          "img": "assets/Styremedlemmer/Natalie.jpg",
+          "img": "assets/styret/arkiv/2025-2026/ammqmvwhqmfj1.webp",
           "note": "",
           "tags": []
         },
@@ -387,7 +388,7 @@ window.STYRET_CONTENT = {
           "name": "Anna Fagerli",
           "role": "Faddersjef",
           "initials": "AF",
-          "img": "assets/Styremedlemmer/AnnaF.jpg",
+          "img": "assets/styret/arkiv/2025-2026/ammqmvwhqm81j.webp",
           "note": "",
           "tags": []
         },
@@ -396,7 +397,7 @@ window.STYRET_CONTENT = {
           "name": "Robin M. Søraker",
           "role": "Fagansvarlig",
           "initials": "RMS",
-          "img": "assets/Styremedlemmer/Robin.jpg",
+          "img": "assets/styret/arkiv/2025-2026/ammqmvwhqmcmt.webp",
           "note": "",
           "tags": []
         },
@@ -405,7 +406,7 @@ window.STYRET_CONTENT = {
           "name": "Fredrik C.F. Rosenfors",
           "role": "S.A.K",
           "initials": "FCFR",
-          "img": "assets/Styremedlemmer/Fredrik2.jpg",
+          "img": "assets/styret/arkiv/2025-2026/ammqmvwhqmb84.webp",
           "note": "",
           "tags": [
             {
@@ -419,7 +420,7 @@ window.STYRET_CONTENT = {
           "name": "Martin R. Skauge",
           "role": "Potet",
           "initials": "MRS",
-          "img": "assets/Styremedlemmer/Martin.png",
+          "img": "assets/styret/arkiv/2025-2026/ammqmvwhqm7rp.webp",
           "note": "",
           "tags": [
             {
@@ -433,7 +434,7 @@ window.STYRET_CONTENT = {
           "name": "Helene P. Ruud",
           "role": "Potet",
           "initials": "HPR",
-          "img": "assets/Styremedlemmer/Helene.jpg",
+          "img": "assets/styret/arkiv/2025-2026/ammqmvwhqm176.webp",
           "note": "",
           "tags": []
         },
@@ -442,7 +443,7 @@ window.STYRET_CONTENT = {
           "name": "Karoline B. Holthe",
           "role": "Potet",
           "initials": "KBH",
-          "img": "assets/Styremedlemmer/Karoline.jpg",
+          "img": "assets/styret/arkiv/2025-2026/ammqmvwhqmcj6.webp",
           "note": "",
           "tags": []
         }

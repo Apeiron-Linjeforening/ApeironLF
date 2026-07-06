@@ -128,7 +128,10 @@
               var canvas = document.createElement('canvas');
               canvas.width = w; canvas.height = h;
               canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-              var _u = canvas.toDataURL('image/webp', 0.82);
+              // Produktbilde-tak på 250 kB: senk kvaliteten trinnvis (gulv 0.45)
+              // til fila er under taket — samme budsjett som bilderedigereren.
+              var q = 0.82, _u = canvas.toDataURL('image/webp', q);
+              while (_u.length * 0.75 > 250 * 1024 && q > 0.45) { q = Math.max(0.45, q - 0.08); _u = canvas.toDataURL('image/webp', q); }
               if (window.AdminCommon) AdminCommon.checkImageSize(_u);
               resolve(_u);
             };
@@ -204,7 +207,7 @@
           var idx = Number(b.getAttribute('data-i'));
           var pp = prod(prodId); if (!pp || !pp.images[idx]) return;
           window.AdminImageEditor.open({
-            src: pp.images[idx], aspect: 1, aspects: [1, 0.75, 1.3333], outSize: 1000, quality: 0.85,
+            src: pp.images[idx], aspect: 1, aspects: [1, 0.75, 1.3333], outSize: 1000, quality: 0.85, targetKB: 250,
             title: 'Rediger bilde', applyLabel: 'Bruk bilde',
             onApply: function (url) { var prev = pp.images[idx]; pp.images[idx] = url; if (window.AdminCommon) AdminCommon.checkImageSize(url); syncPrimary(pp); renderGallery(prodId); lazySave(); AC.undoable('Bilde endret', function () { var q2 = prod(prodId); if (q2 && q2.images[idx] != null) { q2.images[idx] = prev; syncPrimary(q2); renderGallery(prodId); lazySave(); } }); }
           });

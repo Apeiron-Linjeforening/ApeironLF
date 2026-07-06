@@ -67,9 +67,9 @@
     'assets/lesesalen/lesesal10.jpg', 'assets/lesesalen/lesesal11.jpg', 'assets/lesesalen/lesesal12.jpg',
     'assets/lesesalen/lesesal15.jpg', 'assets/lesesalen/lesesal16.jpg',
     'assets/oppnaelser/Volleyball26.webp',
-    'assets/Styremedlemmer/Iver.jpg', 'assets/Styremedlemmer/Dagny.jpg', 'assets/Styremedlemmer/Helene.jpg',
-    'assets/Styremedlemmer/Robin.jpg', 'assets/Styremedlemmer/Natalie.jpg', 'assets/Styremedlemmer/Karoline.jpg',
-    'assets/Styremedlemmer/Stian.jpg'
+    'assets/styret/m4.webp', 'assets/styret/m3.webp', 'assets/styret/m9.webp',
+    'assets/styret/m7.webp', 'assets/styret/m5.webp', 'assets/styret/m10.webp',
+    'assets/styret/m1.webp'
   ];
 
   function key() { return window.GOOGLE_API_KEY || ''; }
