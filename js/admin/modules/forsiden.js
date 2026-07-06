@@ -93,7 +93,7 @@
                 + '<div class="frow">'
                   + '<div class="fg narrow" data-hg="count"><label><span id="hg-count-label">Antall bilder</span>: <output id="hg-count-v"></output><span class="hg-help" title="Hvor mange bilder (eller rammer for DVD) som vises samtidig. De byttes ut og oppdateres automatisk.">?</span></label><input type="range" id="hg-count" min="3" max="16" step="1"></div>'
                   + '<div class="fg narrow" data-hg="opacity"><label>Synlighet: <output id="hg-opacity-v"></output><span class="hg-help" title="Hvor sterkt bildene vises. 100% = full styrke; lavere verdi legger et mørkere slør over for å dempe dem.">?</span></label><input type="range" id="hg-opacity" min="10" max="100" step="5"></div>'
-                  + '<div class="fg narrow" data-hg="speed"><label>Hastighet: <output id="hg-speed-v"></output><span class="hg-help" title="Hvor raskt bildene beveger seg. 100% = standard fart.">?</span></label><input type="range" id="hg-speed" min="50" max="150" step="10"></div>'
+                  + '<div class="fg narrow" data-hg="speed"><label><span id="hg-speed-label">Hastighet</span>: <output id="hg-speed-v"></output><span class="hg-help" id="hg-speed-help" title="Hvor raskt bildene beveger seg. 100% = standard fart.">?</span></label><input type="range" id="hg-speed" min="50" max="150" step="10"></div>'
                   + '<div class="fg narrow" data-hg="size"><label>Størrelse: <output id="hg-size-v"></output><span class="hg-help" title="Størrelsen kan bare justeres når du har én ramme. Med flere rammer får de varierte, tilfeldige størrelser.">?</span></label><input type="range" id="hg-size" min="50" max="200" step="10"></div>'
                 + '</div>'
               + '</div>'
@@ -367,7 +367,8 @@
         q('hg-count').value = g.count; q('hg-count-v').textContent = g.count;
         var op = Math.round((g.opacity != null ? g.opacity : 0.8) * 100);
         q('hg-opacity').value = op; q('hg-opacity-v').textContent = op + '%';
-        q('hg-speed').value = g.speed; q('hg-speed-v').textContent = g.speed + '%';
+        // Hastighet/varighet settes av setSpeedControl() (via updateHgVis), som
+        // velger enhet (% eller sekunder) ut fra animasjonen.
         q('hg-direction').value = g.direction || 'up-left';
         q('hg-animation').value = g.animation || 'diagonal';
         q('hg-navclip').checked = !!g.navClip;
@@ -384,6 +385,7 @@
         var style = q('hg-style').value, anim = q('hg-animation').value, isD = style === 'D';
         setDirectionOptions(style);
         setCountRange();
+        setSpeedControl();
         function show(name, on) { host.querySelectorAll('[data-hg="' + name + '"]').forEach(function (el) { el.classList.toggle('hg-hidden', !on); }); }
         show('placement', !isD);
         show('animation', isD);
@@ -419,6 +421,31 @@
         if (lbl) lbl.textContent = isDvd ? 'Antall rammer' : 'Antall bilder';
         if (data.heroGallery) data.heroGallery.count = cur;
       }
+      // Hastighets-kontrollen skifter enhet etter animasjon: D-animasjoner der
+      // bildene toner/glir bort (alt utenom DVD) styres i faktiske SEKUNDER
+      // («Varighet per bilde»); DVD og bånd bruker fart i PROSENT.
+      function setSpeedControl() {
+        var style = q('hg-style').value, anim = q('hg-animation').value;
+        var slider = q('hg-speed'), lbl = q('hg-speed-label'), out = q('hg-speed-v'), help = q('hg-speed-help');
+        var g = data.heroGallery || {};
+        var secMode = (style === 'D' && anim !== 'dvd');
+        if (secMode) {
+          slider.min = 4; slider.max = 40; slider.step = 1;
+          var s = (g.durationSec != null ? g.durationSec : 12);
+          if (s < 4) s = 4; if (s > 40) s = 40;
+          slider.value = s; out.textContent = s + ' s';
+          if (lbl) lbl.textContent = 'Varighet per bilde';
+          if (help) help.title = 'Hvor mange sekunder hvert bilde bruker på å tone/gli inn og ut igjen.';
+          slider.dataset.unit = 'sec';
+        } else {
+          slider.min = 50; slider.max = 150; slider.step = 10;
+          var sp = (g.speed != null ? g.speed : 100);
+          slider.value = sp; out.textContent = sp + '%';
+          if (lbl) lbl.textContent = 'Hastighet';
+          if (help) help.title = 'Hvor raskt bildene beveger seg. 100% = standard fart.';
+          slider.dataset.unit = 'pct';
+        }
+      }
       function setDirectionOptions(style) {
         var sel = q('hg-direction');
         var optsD = [['up-left', 'Opp mot venstre'], ['up-right', 'Opp mot høyre'], ['up', 'Rett opp'], ['left', 'Mot venstre'], ['right', 'Mot høyre']];
@@ -445,7 +472,11 @@
         bindSelect('hg-pola', 'polaStyle');
         q('hg-count').addEventListener('input', function () { data.heroGallery.count = parseInt(this.value, 10); q('hg-count-v').textContent = this.value; updateHgVis(); lazySave(); });
         q('hg-opacity').addEventListener('input', function () { data.heroGallery.opacity = parseInt(this.value, 10) / 100; q('hg-opacity-v').textContent = this.value + '%'; lazySave(); });
-        q('hg-speed').addEventListener('input', function () { data.heroGallery.speed = parseInt(this.value, 10); q('hg-speed-v').textContent = this.value + '%'; lazySave(); });
+        q('hg-speed').addEventListener('input', function () {
+          if (this.dataset.unit === 'sec') { data.heroGallery.durationSec = parseInt(this.value, 10); q('hg-speed-v').textContent = this.value + ' s'; }
+          else { data.heroGallery.speed = parseInt(this.value, 10); q('hg-speed-v').textContent = this.value + '%'; }
+          lazySave();
+        });
         q('hg-heading').addEventListener('input', function () { data.heroGallery.heading = this.value; lazySave(); });
         q('hg-lede').addEventListener('input', function () { data.heroGallery.lede = this.value; lazySave(); });
       }

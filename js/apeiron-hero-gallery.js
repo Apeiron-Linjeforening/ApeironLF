@@ -25,7 +25,8 @@
     placement: 'top',          // 'top' | 'before-medlem'  (kun A/B/C)
     count: 10,
     opacity: 0.8,              // 0..1
-    speed: 100,                // 40..200 (%) — høyere = raskere
+    speed: 100,                // 40..200 (%) — høyere = raskere (DVD/bånd)
+    durationSec: 12,           // sek per bilde for D-animasjoner der bilder toner/glir bort
     direction: 'up-left',      // up-left | up-right | up | left | right
     animation: 'diagonal',     // diagonal | vertical | kenburns | crossfade (kun D)
     navClip: true,             // kun D
@@ -57,7 +58,7 @@
   // ── Drive-henting (samme kilde som galleri.html) ──
   var DRIVE = 'https://www.googleapis.com/drive/v3/files';
   var ROOT_FOLDER_ID = '1EAhJQDIqptfYN8QhBsl49xS110JCpota';
-  var POOL_KEY = 'apeiron-hg-pool-v1';
+  var POOL_KEY = 'apeiron-hg-pool-v2';
   var POOL_TTL = 6 * 3600 * 1000;
 
   // Lokale reservebilder (brukes hvis Drive er utilgjengelig, f.eks. uten API-nøkkel lokalt).
@@ -119,11 +120,14 @@
     });
 
     function fetchImages(folders) {
-      shuffle(folders); folders = folders.slice(0, 24);
+      // Bredere utvalg: flere mapper og flere bilder per mappe. Vi dropper
+      // orderBy:'name' (som alltid ga de samme alfabetisk-første bildene) og
+      // henter et større knippe per mappe, så shuffle+kapp gir reell variasjon.
+      shuffle(folders); folders = folders.slice(0, 40);
       var pending = folders.length;
       if (!pending) { poolCache = FALLBACK.slice(); cb(poolCache); return; }
       folders.forEach(function (fid) {
-        getJson(driveUrl({ q: "'" + fid + "' in parents and mimeType contains 'image/' and trashed=false", fields: 'files(id)', orderBy: 'name', pageSize: '10' }), function (e3, d3) {
+        getJson(driveUrl({ q: "'" + fid + "' in parents and mimeType contains 'image/' and trashed=false", fields: 'files(id)', pageSize: '50' }), function (e3, d3) {
           if (!e3 && d3.files) d3.files.forEach(function (f) { ids.push(f.id); });
           if (--pending === 0) finish();
         });
@@ -132,7 +136,7 @@
     function finish() {
       if (!ids.length) { poolCache = FALLBACK.slice(); cb(poolCache); return; }
       shuffle(ids);
-      try { sessionStorage.setItem(POOL_KEY, JSON.stringify({ t: Date.now(), ids: ids.slice(0, 60) })); } catch (e) {}
+      try { sessionStorage.setItem(POOL_KEY, JSON.stringify({ t: Date.now(), ids: ids.slice(0, 150) })); } catch (e) {}
       poolCache = ids.map(thumbUrl); cb(poolCache);
     }
   }
@@ -192,15 +196,12 @@
     var floats = document.createElement('div');
     floats.className = 'hg-d-floats hg-mode-' + c.animation + (c.navClip ? ' hg-clip' : '');
     floats.style.setProperty('--hg-clip', navH + 'px');
+    // «Synlighet» = hvor synlige/lyse bildene er for øyet. Vi styrer LYSSTYRKE
+    // (filter: brightness), IKKE opasitet — så bildene forblir solide og
+    // overlappende bilder ikke «smelter» inn i hverandre. 100 % = full styrke.
+    floats.style.setProperty('--vis', (c.opacity == null ? 1 : c.opacity));
     var veil = document.createElement('div');
     veil.className = 'hg-d-veil' + (c.animation === 'dvd' ? ' hg-d-veil--flat' : '');
-    if (c.animation === 'dvd') {
-      // «Synlighet» = hvor synlige bildene er: 100% → ingen slør (fullt synlig,
-      // solide bilder), lavere verdi → mørkere slør over hele flaten. Ingen
-      // transparency på selve bildene.
-      var veilA = Math.max(0, Math.min(0.85, 1 - (c.opacity == null ? 0.8 : c.opacity)));
-      veil.style.background = 'rgba(26, 29, 51, ' + veilA.toFixed(2) + ')';
-    }
 
     // Sett inn først (etter seglet) så vi kan måle rammen før vi fyller den.
     var seal = hero.querySelector('.hero__seal');
@@ -208,15 +209,20 @@
     else { hero.insertBefore(floats, hero.firstChild); hero.insertBefore(veil, floats.nextSibling); }
     injected.push(floats, veil);
 
-    var W = floats.clientWidth || hero.clientWidth || 1200;
-    var H = floats.clientHeight || (hero.clientHeight - (c.navClip ? navH : 0)) || 600;
+    // Mål mot faktisk hero-/vindusstørrelse, med et gulv på synlig høyde/bredde.
+    // Bruk Math.max (IKKE ||): en tidlig eller skjult måling gir clientHeight = 0,
+    // og med klipping ble det da 0 - navH = negativt (men «truthy»), som klemte
+    // alle bildene ned til én stripe rett under nav-baren. Det var «klipp»-buggen.
+    var vw = window.innerWidth || 1280, vh = window.innerHeight || 800;
+    var clipTop = c.navClip ? navH : 0;
+    var W = Math.max(floats.clientWidth || 0, hero.clientWidth || 0, vw, 320);
+    var H = Math.max(floats.clientHeight || 0, (hero.clientHeight || 0) - clipTop, vh - clipTop, 360);
 
     if (c.animation === 'dvd') { renderDvd(c, pool, floats, W, H); return; }
 
     // Translate-avstand: største av målt ramme og selve vinduet + margin, så
     // start/slutt ligger utenfor rammen selv om heroen vokser etter måling
     // (skrift/«Akkurat nå»-kortet laster og gjør heroen høyere etterpå).
-    var vw = window.innerWidth || 1280, vh = window.innerHeight || 800;
     var DIRV = dirVectors(Math.max(W, vw) + 500, Math.max(H, vh) + 500);
     var n = Math.max(3, Math.min(16, c.count));
     var dir = (c.animation === 'vertical') ? 'up' : c.direction;
@@ -257,18 +263,26 @@
       pos.push(chosen || { x: Math.random() * Math.max(1, W - d.w), y: Math.random() * Math.max(1, H - d.h) });
     }
 
+    // Krysstoning holder rede på alle bildene så et nytt bilde ikke lander oppå
+    // et som nettopp dukket opp (se scheduleSwap).
+    var sprites = [];
+
     for (var i = 0; i < n; i++) {
       var w = dims[i].w, h = dims[i].h;
       var el = document.createElement('div');
       el.className = 'hg-fp';
-      // Egen varighet per animasjon: Ken Burns / krysstoning er merkbart
-      // raskere enn den lange driften. Tilfeldig fase, så de ikke synkroniserer.
-      var base;
-      if (c.animation === 'kenburns') base = 14 + Math.random() * 8;       // 14–22 s
-      else if (c.animation === 'crossfade') base = 8 + Math.random() * 6;  // 8–14 s
-      else base = 28 + Math.random() * 22;                                 // 28–50 s
-      var dur = base * (100 / c.speed);
-      var delay = -(Math.random() * dur);
+      // «Varighet per bilde» (sekunder) styrer syklustiden direkte for D-
+      // animasjonene. Liten tilfeldig variasjon (±15 %) så bildene ikke
+      // synkroniserer og bytter/toner i takt.
+      var secs = (c.durationSec != null ? c.durationSec : 12);
+      var dur = Math.max(2, secs) * (0.85 + Math.random() * 0.30);
+      // Fordel fasene JEVNT utover syklusen (ikke rent tilfeldig), så bildene
+      // toner inn/ut spredt i tid — ikke en stor bunke som dukker opp samtidig
+      // og så forsvinner samtidig og etterlater tomrom. Liten jitter så det ikke
+      // føles mekanisk.
+      var phase = (i + (Math.random() * 0.6 - 0.3)) / n;
+      if (phase < 0) phase += 1; else if (phase >= 1) phase -= 1;
+      var delay = -(dur * phase);
       var kb = '';
       if (c.animation === 'kenburns') {
         kb = '--kbs:' + (1.14 + Math.random() * 0.12).toFixed(3) + ';'
@@ -278,7 +292,7 @@
       var css = 'left:' + Math.round(pos[i].x) + 'px;'
         + 'top:' + Math.round(pos[i].y) + 'px;'
         + 'width:' + w + 'px;height:' + h + 'px;'
-        + '--o:' + c.opacity + ';--r:' + (Math.random() * 10 - 5).toFixed(1) + 'deg;'
+        + '--r:' + (Math.random() * 10 - 5).toFixed(1) + 'deg;'
         + '--d:' + dur.toFixed(1) + 's;--dl:' + delay.toFixed(1) + 's;'
         + kb
         + '--tx0:' + v.x0 + ';--ty0:' + v.y0 + ';--tx1:' + v.x1 + ';--ty1:' + v.y1 + ';';
@@ -288,7 +302,11 @@
       el.appendChild(im);
       floats.appendChild(el);
 
-      if (c.animation === 'crossfade') scheduleSwap(im, dur, -delay, pool);
+      if (c.animation === 'crossfade') {
+        var sp = { el: el, im: im, w: w, h: h, x: pos[i].x, y: pos[i].y, bornAt: Date.now() };
+        sprites.push(sp);
+        scheduleSwap(sp, sprites, pool, W, H);
+      }
     }
   }
 
@@ -335,8 +353,9 @@
       el.className = 'hg-dvd' + (bare ? ' hg-dvd--logo' : (card ? ' hg-dvd--card' : ''));
       el.style.width = sz + 'px';
       el.style.height = fh + 'px';
-      // DVD: bildene er alltid SOLIDE (ingen transparency). «Synlighet»-verdien
-      // styrer i stedet sløret over flaten (se veil under) — hvor synlige de er.
+      // Bildene er SOLIDE (opacity 1) så overlappende rammer ikke «smelter»
+      // sammen. «Synlighet» styrer i stedet lysstyrken via filter (--vis på
+      // container) — hvor synlige de er for øyet.
       el.style.opacity = '1';
       var layers = [];
       for (var j = 0; j < K; j++) {
@@ -440,14 +459,47 @@
     rafId = window.requestAnimationFrame(step);
   }
 
-  function scheduleSwap(imgEl, durSec, offsetSec, pool) {
-    // Bytt bilde nær bunnen av fade-syklusen (opacity ~0).
-    var period = durSec * 1000;
-    var t = setInterval(function () {
+  // Hvor lenge et bilde regnes som «nettopp dukket opp» og derfor skjermes mot
+  // at et annet bilde lander oppå det.
+  var HG_PROTECT_MS = 5000;
+  function rectsOverlap(ax, ay, aw, ah, bx, by, bw, bh) {
+    return ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by;
+  }
+  function scheduleSwap(sp, sprites, pool, W, H) {
+    // Krysstoning: vi bytter bilde på nettleserens «animationiteration»-hendelse,
+    // som fyrer NØYAKTIG ved hver syklus-slutt (opacity 0) og KUN én gang per
+    // syklus — perfekt synket med fade-animasjonen. Ingen setInterval-drift som
+    // kunne bytte bildet mens det var synlig eller flere ganger per syklus.
+    sp.el.addEventListener('animationiteration', function () {
+      var now = Date.now();
+      // Nytt tilfeldig bilde (mens dette er usynlig).
       var nx = pool[Math.floor(Math.random() * pool.length)];
-      if (nx) imgEl.src = nx;
-    }, period);
-    timers.push(t);
+      if (nx) sp.im.src = nx;
+      // Ny posisjon. To hensyn: (1) HARD regel — aldri oppå et bilde som dukket
+      // opp i løpet av de siste HG_PROTECT_MS. (2) MYKT mål — blant de gyldige
+      // kandidatene velger vi den som ligger lengst fra nærmeste andre bilde, så
+      // store tomrom fylles i stedet for at bildene klumper seg. Prøv flere
+      // kandidater; fall tilbake til en fri tilfeldig plass om ingen er gyldige.
+      var chosen = null, bestScore = -1, fallback = null;
+      for (var t = 0; t < 40; t++) {
+        var cx = Math.round(Math.random() * Math.max(1, W - sp.w));
+        var cy = Math.round(Math.random() * Math.max(1, H - sp.h));
+        fallback = { x: cx, y: cy };
+        var acx = cx + sp.w / 2, acy = cy + sp.h / 2, near = Infinity, ok = true;
+        for (var k = 0; k < sprites.length; k++) {
+          var o = sprites[k];
+          if (o === sp) continue;
+          if ((now - o.bornAt) < HG_PROTECT_MS && rectsOverlap(cx, cy, sp.w, sp.h, o.x, o.y, o.w, o.h)) { ok = false; break; }
+          var dx = acx - (o.x + o.w / 2), dy = acy - (o.y + o.h / 2), d2 = dx * dx + dy * dy;
+          if (d2 < near) near = d2;
+        }
+        if (ok && near > bestScore) { bestScore = near; chosen = { x: cx, y: cy }; }
+      }
+      if (!chosen) chosen = fallback || { x: Math.round(Math.random() * Math.max(1, W - sp.w)), y: Math.round(Math.random() * Math.max(1, H - sp.h)) };
+      sp.x = chosen.x; sp.y = chosen.y; sp.bornAt = now;
+      sp.el.style.left = sp.x + 'px';
+      sp.el.style.top = sp.y + 'px';
+    });
   }
 
   // ── A: rullende bånd ──
@@ -605,6 +657,18 @@
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', render);
   else render();
+
+  // Bygg D-galleriet på nytt når vinduet endrer størrelse, så bildene fyller den
+  // nye bredden (ingen tomrom til høyre) og seksjonen vokser med skjermen.
+  // Debounced, og puljen er cachet, så re-render er billig.
+  var __rzT = null;
+  window.addEventListener('resize', function () {
+    if (__rzT) clearTimeout(__rzT);
+    __rzT = setTimeout(function () {
+      var c = cfg();
+      if (c.enabled && c.style === 'D') render();
+    }, 250);
+  });
 
   // ── Live forhåndsvisning fra Admin → Forsiden ──
   if (IS_PREVIEW) {

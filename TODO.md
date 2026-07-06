@@ -12,11 +12,15 @@ som kan bli utdaterte (priser, statuser) med *«sjekket DD.MM.ÅÅ»*.
 ## Kritisk
 
 - [ ] Sjekke hvordan alt fungerer på mobil. (Husk å sjekke flere forskjellige størrelser på skjermer)
-- [ ] "Medlemskap" i medlemskap i Lys-modus er i en veldig svak farge.
+- [ ] "Medlemskap" i medlemskap under "om oss" i Lys-modus er i en veldig svak farge. Dette kan hinte til en feil i koden. Medlemskap seksjonene burde være identiske utifra Admin.
+- [ ] Forhåndsvisning for mobil i admin suger og er ikke standarisert over alle panelene.
 
 ## Medium
 
 - [ ] Sjekke at "Legg til fadderukeprogrammet i din kalender" fungerer: iCal og Google Kalender.
+- [ ] Galleribilder på forsiden virker ikke til å være like tilfeldig vag av bilder som ønsket - Se hva vi kan gjøre for å ta et bredere valg av bilder som vises.
+- [ ] "Synlighet" for galleribilder på forsiden må justeres. 100% skal være 100%, 80% skal være 80% osv osv.
+- [ ] Galleribilder på forsiden: Svevende bilder bak hero - krysstoning. Bilder blir byttet ut før de toner ut. De burde ikke bli byttet ut. Nye bilder burde komme til syne og tone ut. Om man skrur på "klipp bildene ved navigasjonsbaren" dukker alle bildene opp på en linje rett under nav baren. Mange bilder går ikke på høyresiden av siden - skaper et tomrom. Seksjonen bildene vises blir ikke større om skjermbredden blir høyere.
 
 ## Lav
 
@@ -26,6 +30,9 @@ som kan bli utdaterte (priser, statuser) med *«sjekket DD.MM.ÅÅ»*.
 - [ ] Legge til side for møtereferat -> Kan tas i egen wiki, muligens. Fylle ut SAK / utvide den kan tas på denne wiki siden.
 - [ ] Sammenlign med https://www.mfplacebo.no/
 - [ ] Avklare lagring av merch-bilder hvis `content/merch-products.js` blir stor: eksterne filer i `assets/merch/` vs. base64 i egen fil? (Base64 er ~33 % større enn binærfil — eksterne filer er mindre totalt, men krever at admin publiserer bildefiler ved siden av datafila, slik Styret-panelet alt gjør.)
+
+## Venter på svar
+ - [ ] Vi har sendt melding til IFR om å muligens få API til studieretninger, emner og pensum. 
 
 ## Ønsker
 

@@ -1,5 +1,20 @@
 ## Siste endringer
 
+**06.07.26 · Galleribilder på forsiden (stil D «svevende bak hero»): flere feilrettinger og forbedringer**
+
+*Feilrettinger*
+- **«Klipp bildene ved navigasjonsbaren» klemte alle bildene til én stripe rett under nav-baren.** Årsak: en `||`-kjede i høydemålingen — når `hero.clientHeight` ble målt som `0` (før layout / skjult preview-iframe) og klipping var på, ble mellomleddet `0 − navH = −72` (som er «truthy»), så høyden ble negativ og alle bildene fikk `y ≈ 0`. Byttet til `Math.max(...)` med et positivt gulv (synlig høyde/bredde) for både bredde og høyde, så en tidlig/negativ måling aldri kan kollapse plasseringen.
+- **«Synlighet» gjorde bildene gjennomsiktige, så overlappende bilder «smeltet» sammen.** Nå styrer «Synlighet» *lysstyrke* (`filter: brightness(--vis)`) i stedet for opasitet — bildene forblir solide og dekker hverandre, mens 100 % = full styrke, 80 % = 80 % osv. Gjelder alle D-stiler (også DVD, der det tidligere ble snudd til et mørkt slør). Det gamle DVD-sløret er nøytralisert.
+- **Krysstoning byttet bilde mens det var synlig (og 2–3 ganger per syklus).** `setInterval` drev ut av synk med CSS-animasjonen. Byttet skjer nå på nettleserens `animationiteration`-hendelse, som fyrer nøyaktig ved fade-bunnen (opacity 0) og kun én gang per syklus. Fade-vinduet er dessuten litt utvidet (`0–6 %` og `94–100 %` holdes usynlig) så byttet garantert skjer skjult.
+- **Seksjonen vokste ikke med skjermbredden, og bilder nådde ikke høyre side (tomrom).** Lagt til en debounced `resize`-lytter som bygger D-galleriet på nytt mot den nye bredden.
+
+*Forbedringer*
+- **Bredere/mer tilfeldig bildeutvalg:** dropper `orderBy:'name'` (som alltid ga de samme alfabetisk-første bildene), henter flere mapper (24 → 40) og flere bilder per mappe (10 → 50), og hever puljetaket 60 → 150. Cache-nøkkelen er bumpet til `v2` så den nye puljen tas i bruk med én gang.
+- **Krysstoning: nye bilder toner inn på nye, tilfeldige steder** (ikke lenger faste «luker»), og et nytt bilde lander **aldri oppå et bilde som dukket opp de siste 5 sekundene** (hard regel). Blant de gyldige plassene velges den som ligger **lengst fra nærmeste andre bilde**, så store tomrom fylles i stedet for at bildene klumper seg.
+- **Jevn fordeling i tid:** fase-forskyvningen er nå jevnt fordelt utover syklusen (med litt jitter) i stedet for rent tilfeldig, så bildene ikke dukker opp i én stor bunke og forsvinner samtidig. Gjelder alle D-animasjoner (krysstoning, diagonal, loddrett, Ken Burns).
+- **Hastighet vises i faktiske sekunder** for animasjonene der bildene toner/glir bort (krysstoning, diagonal, loddrett, Ken Burns): admin-slideren heter nå «Varighet per bilde» (4–40 s) og lagres i nytt felt `durationSec`, brukt direkte som syklustid (± litt variasjon). DVD-sprett og rullende bånd beholder fart i prosent (der forsvinner ikke bildene).
+- Berørt: `js/apeiron-hero-gallery.js`, `css/hero-gallery.css`, `js/admin/modules/forsiden.js`.
+
 **06.07.26 · Dokumentasjon: brukerveiledningen skilt ut i egen `BRUKERVEILEDNING.md` — README er nå en kort landingsside**
 
 - **`BRUKERVEILEDNING.md` (ny):** hele redaktørveiledningen fra README (Admin-senteret, publisering, «Hva styrer hva», kalender/fadderuke, galleri) + to nye deler: en «Hva vil du gjøre?»-tabell øverst og en **Feilsøking**-seksjon med de vanligste spørsmålene (ser ikke endringen min, får ikke publisert, konfliktvarsel, angre publisering, mistet utkast, arrangement/galleribilder vises ikke). Fem skjermbilder av admin er lagt inn (`assets/docs/admin-{oversikt,redigering,forhandsvisning,publisering,endringer}.webp`), og README har fått skjermbilde av forsiden (`assets/docs/forside.webp`).
