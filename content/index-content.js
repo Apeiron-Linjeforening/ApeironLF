@@ -1,9 +1,9 @@
 /* Innhold for forsiden (index.html / «Hjem») — TEKST-delene som endres ofte.
-   Sist oppdatert: 5.7.2026
+   Sist oppdatert: 6.7.2026
    Rediger direkte her, eller åpne Admin-senteret → Forsiden.
 
    Dekker forsiden (Hjem): hero + seksjons-introer (arrangementer/aporetisk/fadderuke) + kontakt.
-   «Bli medlem» (intro, fordeler, priser) ligger nå i membership-config.js (Medlemskap-panelet).
+   «Bli medlem» (intro, fordeler, priser) ligger nå i content/membership-config.js (Medlemskap-panelet).
    «Om oss» + FAQ ligger på om-oss.html → om-content.js (Om oss-panelet).
 */
 
@@ -15,11 +15,11 @@ window.INDEX_CONTENT = {
     "enabled": true,
     "style": "D",
     "placement": "top",
-    "count": 3,
-    "opacity": 0.8,
+    "count": 10,
+    "opacity": 1,
     "speed": 100,
-    "direction": "up-left",
-    "animation": "dvd",
+    "direction": "left",
+    "animation": "crossfade",
     "navClip": false,
     "dvdMotif": "photos",
     "mosaicSizes": "varied",
