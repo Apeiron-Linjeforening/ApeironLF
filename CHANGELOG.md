@@ -1,5 +1,16 @@
 ## Siste endringer
 
+**07.07.26 · Ny «Ny student?»-side + Hjelp-siden redesignet (lærdom fra sammenligning med MF Placebo)**
+
+*Nytt*
+- **«Ny student?»-side (`ny-student.html`):** praktisk guide for nye filosofi- og etikkstudenter på Dragvoll. Innhold: sjekkliste før semesterstart (nummererte steg), «bli kjent med Apeiron» (velkomstkort + engasjer-CTA), «finn fram på Dragvoll» (stedskort) og FAQ. Redigeres i nytt Admin-panel **Ny student** (`content/ny-student-content.js` + `js/admin/modules/ny-student.js`). Lagt til i menyen som eget toppnivå-punkt ved siden av «Hjelp & støtte», samt i footer og `sitemap.xml`.
+- **Hero-broen på forsiden delt i to lenker:** «Ny student? [Se våre tips → ny-student.html] og [bli kjent med Apeiron → om-oss.html]». Redigerbar i Admin → Forsiden (introtekst + to lenker med tekst og adresse). `hero.bridge` er nå et objekt `{ intro, tips:{label,href}, about:{label,href} }`.
+
+*Endret*
+- **Hjelp-siden redesignet** for å bli kortere og mer skannbar: «Si fra» som mørkt handlingsbånd med chips; «Hvem kan hjelpe deg?» + «Faglig» og «Psykisk» + «Fysisk» som to-kolonne sammenleggbare rader (bygget i ETT rutenett så venstre og høyre kort ligger på lik linje); nødnumre stablet tre per rad med rødt kort på de livstruende; fargestripene fjernet. Datamodellen (`hjelp-content.js`) og admin-panelet er uendret: skann-linja utledes fra `desc`, chip-kanalen fra `body`. Seksjonsrekkefølgen er nå fast, så dra-sortering i admin påvirker ikke Hjelp-siden.
+- **TODO:** lagt til punkt om e-postliste/nyhetsbrev som infokanal.
+- Berørt: `ny-student.html`, `content/ny-student-content.js`, `js/admin/modules/ny-student.js`, `hjelp.html`, `index.html`, `content/index-content.js`, `js/apeiron-index.js`, `js/admin/modules/forsiden.js`, `content/nav-content.js`, `content/site-content.js`, `sitemap.xml`, `admin.html`, `css/admin-modules.css`, `TODO.md`.
+
 **06.07.26 · Galleribilder på forsiden (stil D «svevende bak hero»): flere feilrettinger og forbedringer**
 
 *Feilrettinger*

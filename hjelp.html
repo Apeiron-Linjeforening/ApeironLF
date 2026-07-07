@@ -26,216 +26,101 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="css/styles.css?v=20260704" />
 <style>
-/* Felles .subhero-stil ligger i styles.css — under: kun denne sidens avvik */
+/* ── Hjelp-siden: komponent-stil (subhero/help-nav/section arves fra styles.css) ── */
 
-.subhero::after {
-  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
-  background-image:
-    radial-gradient(70% 50% at 50% -10%, rgba(212,175,55,.07), transparent 70%);
-  opacity: .7;
-}
-.subhero__lede { font-size: 1.18rem; color: rgba(244,236,217,.8); max-width: 52ch; line-height: 1.65; }
+/* Seksjonsspacing + mørke bånd */
+.section       { padding: 68px 0; }
+.section--dark { background: var(--navy); color: var(--on-dark); }
+.section--dark .eyebrow  { color: var(--gold); }
+.section--dark .h-section{ color: var(--on-dark); }
+.section--dark .lede     { color: rgba(244,236,217,.82); }
 
-/* ── Role grid ── */
-.role-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 22px;
-  margin-top: 2.5em;
-}
-.role-card {
-  background: var(--card, #f7f3ec);
-  border: 1px solid var(--line);
-  /* Stripefarge: --c-l/--c-d settes inline fra palette.js. Standard = gull. */
-  border-left: 4px solid var(--c-l, var(--gold));
-  border-radius: 4px;
-  padding: 28px 26px;
-  display: flex; flex-direction: column; gap: 10px;
-  transition: transform .22s ease, box-shadow .25s ease, border-color .25s ease;
-}
-html[data-mode="marine"] .role-card { border-left-color: var(--c-d, var(--gold)); }
-.role-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 22px 44px -28px rgba(35,39,64,.5);
-}
-.role-card__note {
-  font-size: .88rem; color: var(--ink-soft, #4a4d6a); margin-top: 6px; line-height: 1.55;
-}
-.role-card__holder {
-  display: inline-flex; align-items: center; gap: .5em;
-  align-self: flex-start;
-  margin: 2px 0 0;
-  padding: 5px 12px;
-  background: rgba(212,175,55,.12);
-  border: 1px solid rgba(212,175,55,.4);
-  border-radius: 999px;
-  font-size: .88rem; color: var(--ink);
-}
-.role-card__holder strong { font-weight: 700; }
-.role-card__holder-ic { font-size: 1em; line-height: 1; opacity: .85; }
-.role-card__holder-av {
-  width: 26px; height: 26px; border-radius: 50%; object-fit: cover;
-  border: 1px solid rgba(212,175,55,.6); flex: 0 0 auto; margin: -3px 0;
-}
-html[data-mode="marine"] .role-card__holder { background: rgba(212,175,55,.16); border-color: rgba(212,175,55,.5); }
-.role-card__note--warn {
-  font-size: .9rem; color: var(--warm); font-weight: 600; margin: 2px 0 4px;
-}
-
-.role-card__eyebrow {
-  font-family: var(--body); font-size: .65rem; font-weight: 700;
-  letter-spacing: .28em; text-transform: uppercase;
-  color: var(--accent-ink, var(--navy));
-  opacity: .6;
-}
-.role-card h3 {
-  font-family: var(--display); font-size: 1.45rem; font-weight: 600;
-  color: var(--ink); line-height: 1.1; margin: 0;
-}
-.role-card p {
-  font-size: .95rem; color: var(--ink-soft, #4a4d6a);
-  line-height: 1.65; margin: 0;
-}
-.role-card__resp {
-  list-style: none; margin: 6px 0 0; padding: 0;
-  display: flex; flex-direction: column; gap: 5px;
-}
-.role-card__resp li {
-  position: relative; padding-left: 16px;
-  font-size: .9rem; color: var(--ink);
-  line-height: 1.5;
-}
-.role-card__resp li::before {
-  content: "–"; position: absolute; left: 0;
-  color: var(--warm); font-weight: 700;
-}
-.role-card__contact {
-  font-size: .9rem; color: var(--ink);
-  margin-top: 4px;
-}
-.role-card__url {
-  font-size: .82rem; color: var(--ink-soft, #4a4d6a);
-  margin-top: 2px; word-break: break-all;
-}
-
-/* ── Si fra kategorier-grid ── */
-.sifra-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 14px;
-  margin-top: 2em;
-}
-.sifra-item {
-  background: var(--card, #f7f3ec);
-  border: 1px solid var(--line);
-  border-radius: 4px;
-  padding: 18px 20px;
-  font-size: .92rem;
-  color: var(--ink);
-  line-height: 1.5;
-}
-.sifra-item__icon {
-  font-size: 1.4rem;
-  display: block;
-  margin-bottom: 8px;
-}
-
-/* ── Hurtignav / oversikt i subhero ── */
-.help-nav {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 12px;
-  margin-top: 2.4em;
-}
-.help-nav__card {
-  display: flex; flex-direction: column; gap: 4px;
-  background: rgba(244,236,217,.08);
-  border: 1px solid rgba(212,175,55,.3);
-  border-radius: 5px;
-  padding: 14px 16px;
-  color: var(--on-dark);
-  transition: transform .2s ease, background .2s ease, border-color .2s ease;
-}
-.help-nav__card:hover {
-  transform: translateY(-3px);
-  background: rgba(244,236,217,.14);
-  border-color: var(--gold);
-}
-.help-nav__card strong {
-  font-family: var(--display);
-  font-size: 1.12rem; font-weight: 600;
-  display: flex; align-items: center; gap: .4em;
-}
-.help-nav__card strong::after {
-  content: "↓"; font-size: .9em; color: var(--gold);
-  margin-left: auto;
-}
-.help-nav__card span {
-  font-size: .82rem; line-height: 1.45;
-  color: rgba(244,236,217,.72);
-}
-.help-nav__card--akutt {
-  border-color: rgba(212,87,80,.6);
-  background: rgba(118,17,15,.32);
-}
-.help-nav__card--akutt:hover {
-  border-color: #e0857d;
-  background: rgba(118,17,15,.46);
-}
+/* Hurtignav-kort i subhero (samme som forsiden) */
+.help-nav { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap: 12px; margin-top: 2.4em; }
+.help-nav__card { display: flex; flex-direction: column; gap: 4px; background: rgba(244,236,217,.08);
+  border: 1px solid rgba(212,175,55,.3); border-radius: 5px; padding: 14px 16px; color: var(--on-dark);
+  transition: transform .2s ease, background .2s ease, border-color .2s ease; }
+.help-nav__card:hover { transform: translateY(-3px); background: rgba(244,236,217,.14); border-color: var(--gold); }
+.help-nav__card strong { font-family: var(--display); font-size: 1.12rem; font-weight: 600; display: flex; align-items: center; gap: .4em; }
+.help-nav__card strong::after { content: "↓"; font-size: .9em; color: var(--gold); margin-left: auto; }
+.help-nav__card span { font-size: .82rem; line-height: 1.45; color: rgba(244,236,217,.72); }
+.help-nav__card--akutt { border-color: rgba(212,87,80,.6); background: rgba(118,17,15,.32); }
+.help-nav__card--akutt:hover { border-color: #e0857d; background: rgba(118,17,15,.46); }
 .help-nav__card--akutt strong::after { color: #e0857d; }
 
-/* ── Akutt / krise-seksjon ── */
-.akutt-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 16px;
-  margin-top: 2em;
-}
-.akutt-card {
-  display: flex; flex-direction: column; gap: 8px;
-  background: var(--card, #f7f3ec);
-  border: 1px solid rgba(118,17,15,.18);
-  border-left: 5px solid var(--maroon);
-  border-radius: 4px;
-  padding: 22px 24px;
-  transition: transform .22s ease, box-shadow .25s ease, border-color .25s ease;
-}
-.akutt-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 22px 44px -28px rgba(35,39,64,.5);
-  border-left-color: #a32420;
-}
-.akutt-card--life {
-  background: #fbeeed;
-  border-color: rgba(118,17,15,.4);
-}
-.akutt-card__num {
-  font-family: var(--display);
-  font-size: 2.1rem; font-weight: 700;
-  color: var(--warm); line-height: 1;
-  text-decoration: none;
-  display: inline-flex; align-items: baseline; gap: .3em;
-}
-.akutt-card__num:hover { text-decoration: underline; }
-.akutt-card__name {
-  font-size: 1.02rem; font-weight: 700; letter-spacing: .01em;
-  color: var(--ink);
-}
-.akutt-card__when {
-  font-size: .95rem; line-height: 1.6; color: var(--ink);
-  margin: 0;
-}
+/* ── Si fra: mørkt handlingsbånd med chips ── */
+.sifra-top { display: flex; justify-content: space-between; align-items: flex-end; gap: 26px; flex-wrap: wrap; margin-bottom: 28px; }
+.sifra-top__txt { max-width: 60ch; }
+.sifra-top .eyebrow { display: block; }
+.chips { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+@media (max-width: 760px) { .chips { grid-template-columns: repeat(2,1fr); } }
+@media (max-width: 460px) { .chips { grid-template-columns: 1fr; } }
+.chip { background: rgba(244,236,217,.06); border: 1px solid rgba(244,236,217,.14); border-radius: 6px; padding: 15px 16px; }
+.chip__ic { font-size: 1.1rem; }
+.chip b { font-family: var(--display); font-weight: 600; font-size: 1.16rem; display: block; margin: 5px 0 4px; color: var(--on-dark); }
+.chip p { margin: 0; color: rgba(244,236,217,.68); font-size: .84rem; line-height: 1.5; }
+.chip p a { color: var(--gold); text-decoration: underline; }
 
-@media (max-width: 600px) {
-  .role-grid, .sifra-grid, .help-nav, .akutt-grid { grid-template-columns: 1fr; }
+/* ── To-kolonne-bolker ── */
+/* Begge kolonner i ETT rutenett: align-items:stretch gjør at venstre og høyre
+   kort i samme rad blir like høye, så de ligger på lik linje. Overskriftene er
+   grid-rad 1 (også like høye). På mobil stables alt til én kolonne. */
+.hjelp-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 34px; align-items: stretch; }
+.hjelp-pair > * { min-width: 0; }
+@media (max-width: 820px) {
+  .hjelp-pair { grid-template-columns: 1fr; }
+  .hjelp-pair > * { grid-column: 1 !important; grid-row: auto !important; }
 }
+.hp-head .eyebrow { display: block; }
+.hp-head h3 { font-family: var(--display); font-weight: 600; font-size: 1.6rem; line-height: 1.06; margin: .22em 0 .3em; color: var(--ink); letter-spacing: -.01em; }
+.hp-head p { color: var(--ink-soft); font-size: .95rem; margin: 0; }
 
-/* ── Komprimert seksjonsspacing for denne siden ── */
-.section       { padding: 72px 0; }
-.section--tight{ padding: 52px 0; }
+/* ── Sammenleggbare rader ── */
+.row-stack { display: flex; flex-direction: column; gap: 10px; }
+.row { background: var(--card); border: 1px solid var(--line); border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(35,39,64,.05), 0 8px 22px -16px rgba(35,39,64,.4); overflow: hidden; }
+.row__head { width: 100%; text-align: left; background: none; border: 0; cursor: pointer; display: grid;
+  grid-template-columns: 1fr auto; align-items: center; gap: 12px; padding: 15px 18px; font-family: inherit; color: inherit; }
+.row__head:focus-visible { outline: 2px solid var(--gold-ink); outline-offset: -3px; }
+.row__title { font-family: var(--display); font-weight: 600; font-size: 1.3rem; line-height: 1.12; color: var(--ink); }
+.row__sum { display: block; color: var(--ink-soft); font-size: .92rem; margin-top: 2px; }
+.chev { width: 19px; height: 19px; color: var(--ink-soft); transition: transform .22s ease; flex: 0 0 auto; }
+.row.open .chev { transform: rotate(90deg); }
+.row__panel { display: none; padding: 14px 18px 18px; }
+.row.open .row__panel { display: block; }
+.row__eyebrow { display: block; font-family: var(--body); font-weight: 700; font-size: .6rem; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--gold-ink); margin-bottom: 8px; }
+.row__panel > p { margin: 0 0 10px; color: var(--ink); font-size: .96rem; line-height: 1.6; }
+.row__holder { display: inline-flex; align-items: center; gap: .5em; font-size: .92rem; color: var(--ink-soft); }
+.row__holder img { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(212,175,55,.6); }
+.row__note { font-size: .88rem; color: var(--ink-soft); font-style: italic; margin: 12px 0 0; }
+.row__note--warn { color: var(--warm, var(--maroon)); font-style: normal; font-weight: 600; margin: 0 0 8px; }
+.grid2 { display: grid; grid-template-columns: 1fr; gap: 14px 22px; padding-top: 14px; border-top: 1px solid var(--line); }
+.grid2 h4 { font-family: var(--body); font-weight: 700; font-size: .6rem; letter-spacing: .16em; text-transform: uppercase; color: var(--gold-ink); margin: 0 0 8px; }
+.grid2 ul { margin: 0; padding: 0; list-style: none; }
+.grid2 li { position: relative; padding-left: 15px; margin-bottom: 6px; font-size: .94rem; color: var(--ink); }
+.grid2 li::before { content: "–"; position: absolute; left: 0; color: var(--maroon); }
+.grid2 .contact { font-size: .93rem; margin: 0 0 5px; color: var(--ink); }
+.morelink { display: inline-flex; gap: 6px; margin-top: 12px; color: var(--gold-ink); font-family: var(--display);
+  font-size: 1.1rem; text-decoration: none; border-bottom: 1px solid rgba(138,109,24,.4); padding-bottom: 1px; }
+.morelink:hover { border-bottom-color: var(--gold-ink); }
 
-/* ── Marine-modus: kort-justeringer ── */
-html[data-mode="marine"] .akutt-card--life { background: #2e1c20; border-color: rgba(224,133,125,.4); }
+/* ── Akutt: stablede nødnummer-kort, tre per rad ── */
+.akutt-nums { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+@media (max-width: 820px) { .akutt-nums { grid-template-columns: repeat(2,1fr); } }
+@media (max-width: 520px) { .akutt-nums { grid-template-columns: 1fr; } }
+.akutt-card { display: flex; flex-direction: column; background: rgba(244,236,217,.06);
+  border: 1px solid rgba(244,236,217,.14); border-radius: 6px; padding: 18px; text-decoration: none;
+  transition: border-color .2s ease; }
+.akutt-card:hover { border-color: var(--gold); }
+.akutt-card--life { background: #3a1c22; border-color: rgba(224,85,90,.4); }
+.akutt-card__name { font-family: var(--display); font-weight: 600; font-size: 1.16rem; color: var(--on-dark); line-height: 1.15; }
+.akutt-card__num { font-family: var(--display); font-weight: 700; font-size: 2.1rem; color: var(--gold);
+  font-variant-numeric: tabular-nums; line-height: 1; margin: 5px 0 9px; }
+.akutt-card--life .akutt-card__num { color: #ef7b7f; }
+.akutt-card__when { color: rgba(244,236,217,.74); font-size: .86rem; line-height: 1.5; }
+
+@media (prefers-reduced-motion: reduce) { .chev { transition: none; } }
 </style>
 </head>
 <body data-mode="paper">
@@ -256,81 +141,48 @@ html[data-mode="marine"] .akutt-card--life { background: #2e1c20; border-color: 
   </div>
 </section>
 
-<!-- ============ SI FRA ============ -->
-<section class="section" id="sifra">
+<!-- ============ SI FRA (mørkt handlingsbånd) ============ -->
+<section class="section section--dark" id="sifra">
   <div class="wrap">
-    <div class="center" style="margin-bottom:28px">
-      <span class="eyebrow eyebrow--center" id="sifra-eyebrow"></span>
-      <h2 class="h-section" id="sifra-heading"></h2>
-      <p class="lede" id="sifra-lede"></p>
+    <div class="sifra-top">
+      <div class="sifra-top__txt">
+        <span class="eyebrow" id="sifra-eyebrow"></span>
+        <h2 class="h-section" id="sifra-heading"></h2>
+        <p class="lede" id="sifra-lede"></p>
+      </div>
+      <div id="sifra-cta-wrap"></div>
     </div>
-
     <!-- Auto-fylt fra hjelp-content.js -->
-    <div class="sifra-grid reveal" id="sifra-grid"></div>
-
-    <div class="center" style="margin-top:28px" id="sifra-cta-wrap"></div>
-
-    <h3 id="sifra-helpers-heading" style="font-family:var(--display);font-size:1.6rem;font-weight:600;color:var(--ink);text-align:center;margin:52px 0 8px;"></h3>
-    <p id="sifra-helpers-lede" style="text-align:center;color:var(--ink-soft,#4a4d6a);font-size:.97rem;max-width:54ch;margin:0 auto 28px;"></p>
-
-    <!-- Auto-fylt fra hjelp-content.js -->
-    <div class="role-grid" id="sifra-cards"></div>
+    <div class="chips reveal" id="sifra-chips"></div>
   </div>
 </section>
 
-<!-- ============ FAGLIG HJELP ============ -->
-<section class="section section--alt" id="studier">
+<!-- ============ HVEM KAN HJELPE DEG? + FAGLIG (to kolonner) ============ -->
+<section class="section" id="hjelpepar">
   <div class="wrap">
-    <div class="center" style="margin-bottom:28px">
-      <span class="eyebrow eyebrow--center" id="studier-eyebrow"></span>
-      <h2 class="h-section" id="studier-heading"></h2>
-      <p class="lede" id="studier-lede"></p>
-    </div>
-
-    <!-- Auto-fylt fra hjelp-content.js -->
-    <div class="role-grid" id="studier-cards"></div>
+    <!-- Auto-fylt fra hjelp-content.js (overskrifter + kort bygges i render for lik-linje-justering) -->
+    <div class="hjelp-pair" id="pair-hjelp"></div>
   </div>
 </section>
 
-<!-- ============ PSYKISK HELSE ============ -->
-<section class="section" id="helse">
+<!-- ============ PSYKISK + FYSISK HELSE (to kolonner) ============ -->
+<section class="section section--alt" id="helsepar">
   <div class="wrap">
-    <div class="center" style="margin-bottom:28px">
-      <span class="eyebrow eyebrow--center" id="helse-eyebrow"></span>
-      <h2 class="h-section" id="helse-heading"></h2>
-      <p class="lede" id="helse-lede"></p>
-    </div>
-
     <!-- Auto-fylt fra hjelp-content.js -->
-    <div class="role-grid" id="helse-cards"></div>
+    <div class="hjelp-pair" id="pair-helse"></div>
   </div>
 </section>
 
-<!-- ============ FYSISK HELSE ============ -->
-<section class="section section--alt" id="fysisk">
+<!-- ============ AKUTT HJELP (mørkt bånd) ============ -->
+<section class="section section--dark" id="akutt">
   <div class="wrap">
-    <div class="center" style="margin-bottom:28px">
-      <span class="eyebrow eyebrow--center" id="fysisk-eyebrow"></span>
-      <h2 class="h-section" id="fysisk-heading"></h2>
-      <p class="lede" id="fysisk-lede"></p>
-    </div>
-
-    <!-- Auto-fylt fra hjelp-content.js -->
-    <div class="role-grid" id="fysisk-cards"></div>
-  </div>
-</section>
-
-<!-- ============ AKUTT HJELP ============ -->
-<section class="section" id="akutt">
-  <div class="wrap">
-    <div class="center" style="margin-bottom:28px">
+    <div class="center center--head">
       <span class="eyebrow eyebrow--center" id="akutt-eyebrow"></span>
       <h2 class="h-section" id="akutt-heading"></h2>
       <p class="lede" id="akutt-lede"></p>
     </div>
-
     <!-- Auto-fylt fra hjelp-content.js -->
-    <div class="akutt-grid reveal" id="akutt-grid"></div>
+    <div class="akutt-nums reveal" id="akutt-grid"></div>
   </div>
 </section>
 
@@ -341,37 +193,14 @@ html[data-mode="marine"] .akutt-card--life { background: #2e1c20; border-color: 
 <script src="content/site-content.js"></script>
 <script src="content/nav-content.js"></script>
 <script src="js/site-chrome.js?v=20260704c"></script>
-
 <script src="js/image-slot.js"></script>
-<script src="js/palette.js"></script>
 <script src="content/hjelp-content.js"></script>
+
 <script>
 /* ── Render Hjelp-siden fra hjelp-content.js ── */
 (function () {
   var IS_PREVIEW = false;
   try { IS_PREVIEW = /[?&]preview\b/.test(location.search); } catch (e) {}
-
-  function applySectionOrder(order) {
-    var KEYS = ['hero', 'sifra', 'studier', 'helse', 'fysisk', 'akutt'];
-    var ord = (Array.isArray(order) ? order : []).filter(function (k) { return KEYS.indexOf(k) >= 0; });
-    KEYS.forEach(function (k) { if (ord.indexOf(k) < 0) ord.push(k); });
-    var els = ord.map(function (k) { return document.getElementById(k); }).filter(Boolean);
-    if (els.length < 2) return;
-    var parent = els[0].parentNode;
-    if (!els.every(function (e) { return e.parentNode === parent; })) return;
-    var kids = Array.prototype.slice.call(parent.children);
-    var maxIdx = Math.max.apply(null, els.map(function (e) { return kids.indexOf(e); }));
-    var endRef = kids[maxIdx + 1] || null;   // stabil node rett etter gruppen (f.eks. footer)
-    els.forEach(function (e) { parent.insertBefore(e, endRef); });
-    // vekslende bakgrunn på innholdsseksjonene (.section), uavhengig av hvor hero ligger
-    els.filter(function (e) { return e.classList.contains('section'); })
-      .forEach(function (e, i) { e.classList.toggle('section--alt', i % 2 === 1); });
-  }
-
-  function renderHjelp() {
-  var C = window.HJELP_CONTENT || {};
-  var sv = window.paletteStyleVars || function () { return ''; };
-  var STAGGER = ['', 'd1', 'd2', 'd3'];
 
   function esc(s) {
     return String(s == null ? '' : s)
@@ -383,108 +212,144 @@ html[data-mode="marine"] .akutt-card--life { background: #2e1c20; border-color: 
     if (IS_PREVIEW) { el.textContent = (val == null ? '' : val); return; }
     if (val != null && val !== '') el.textContent = val;
   }
-  // desc -> avsnitt (tom linje skiller)
+  // Første setning av en beskrivelse (skann-linja i sammenslått rad).
+  function firstSentence(txt) {
+    var s = String(txt || '').replace(/\s+/g, ' ').trim();
+    var m = s.match(/^.*?[.!?](\s|$)/);
+    return m ? m[0].trim() : s;
+  }
+  // desc -> avsnitt (tom linje skiller); første avsnitt får klassen row__lead.
   function paragraphs(txt) {
     return String(txt || '').split(/\n{2,}/).filter(function (p) { return p.trim(); })
       .map(function (p) { return '<p>' + esc(p).replace(/\n/g, '<br>') + '</p>'; }).join('');
   }
-  function btn(label, href) {
-    if (!label) return '';
-    return '<a class="btn btn--ghost" href="' + esc(href) + '" target="_blank" rel="noopener" style="margin-top:auto;">'
-      + esc(label) + ' <span class="arr">→</span></a>';
+
+  /* Ett sammenleggbart oppslagskort (role-card -> rad). */
+  function roleRow(c, gcol, grow) {
+    var sum = (c.sum && c.sum.trim()) ? c.sum : firstSentence(c.desc);
+    var resp = (c.resp || []).filter(function (x) { return x; }).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('');
+    var contacts = (c.contacts || []).filter(function (x) { return x; }).map(function (x) { return '<p class="contact">' + x + '</p>'; }).join('');
+    var respBlock = resp ? '<div><h4>Kan hjelpe med</h4><ul>' + resp + '</ul></div>' : '';
+    var contactBlock = contacts ? '<div><h4>Kontakt</h4>' + contacts + '</div>' : '';
+    var grid = (respBlock || contactBlock) ? '<div class="grid2">' + respBlock + contactBlock + '</div>' : '';
+    var holder = c.holder ? '<p class="row__holder">'
+      + (c.holderImg ? '<img src="' + esc(c.holderImg) + '" alt="">' : '')
+      + 'Nåværende: <strong>' + esc(c.holder) + '</strong></p>' : '';
+    var noteTop = c.noteTop ? '<p class="row__note row__note--warn">' + c.noteTop + '</p>' : '';
+    var note = c.note ? '<p class="row__note">' + c.note + '</p>' : '';
+    var more = c.btnLabel ? '<a class="morelink" href="' + esc(c.btnHref) + '" target="_blank" rel="noopener">' + esc(c.btnLabel) + ' →</a>' : '';
+    return '<article class="row reveal" style="grid-column:' + gcol + ';grid-row:' + grow + '">'
+      + '<button class="row__head" type="button" aria-expanded="false">'
+      +   '<span><span class="row__title">' + esc(c.name) + '</span><span class="row__sum">' + esc(sum) + '</span></span>'
+      +   '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>'
+      + '</button>'
+      + '<div class="row__panel">'
+      +   (c.eyebrow ? '<span class="row__eyebrow">' + esc(c.eyebrow) + '</span>' : '')
+      +   holder + noteTop + paragraphs(c.desc) + grid + note + more
+      + '</div></article>';
   }
-  function roleCard(c, i) {
-    // Tom accent => ingen variabler, CSS-fallback gir lys gull (standard).
-    var accentStyle = c.accent ? sv(c.accent) : '';
-    var resp = (c.resp || []).filter(function (x) { return x; })
-      .map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('');
-    var contacts = (c.contacts || []).filter(function (x) { return x; })
-      .map(function (x) { return '<p class="role-card__contact">' + x + '</p>'; }).join('');
-    return '<div class="role-card reveal ' + STAGGER[i % 4] + '" style="' + accentStyle + '">'
-      + (c.eyebrow ? '<div class="role-card__eyebrow">' + esc(c.eyebrow) + '</div>' : '')
-      + '<h3>' + esc(c.name) + '</h3>'
-      + (c.holder ? '<div class="role-card__holder">'
-          + (c.holderImg ? '<img class="role-card__holder-av" src="' + esc(c.holderImg) + '" alt="" loading="lazy">' : '<span class="role-card__holder-ic" aria-hidden="true">👤</span>')
-          + '<span>Nåværende: <strong>' + esc(c.holder) + '</strong></span></div>' : '')
-      + paragraphs(c.desc)
-      + (c.noteTop ? '<p class="role-card__note role-card__note--warn">' + c.noteTop + '</p>' : '')
-      + (resp ? '<ul class="role-card__resp">' + resp + '</ul>' : '')
-      + contacts
-      + (c.note ? '<p class="role-card__note">' + c.note + '</p>' : '')
-      + btn(c.btnLabel, c.btnHref)
+  function headHTML(col, gcol) {
+    return '<div class="hp-head"' + (col.id ? ' id="' + col.id + '"' : '') + ' style="grid-column:' + gcol + ';grid-row:1">'
+      + '<span class="eyebrow">' + esc(col.eyebrow) + '</span>'
+      + '<h3>' + esc(col.heading) + '</h3>'
+      + (col.lede ? '<p>' + esc(col.lede) + '</p>' : '')
       + '</div>';
   }
-  function renderCards(id, cards) {
+  // Bygg et to-kolonne-par i ETT rutenett: overskrifter i rad 1, kort i rad 2+.
+  function renderPair(id, left, right) {
     var el = document.getElementById(id);
-    if (el && Array.isArray(cards)) {
-      el.innerHTML = cards.map(roleCard).join('');
-    }
-  }
-  function renderMeta(sec, key) {
-    var s = C[key] || {};
-    setText(key + '-eyebrow', s.eyebrow);
-    setText(key + '-heading', s.heading);
-    setText(key + '-lede', s.lede);
+    if (!el) return;
+    var h = headHTML(left, 1);
+    (left.cards || []).forEach(function (c, i) { h += roleRow(c, 1, i + 2); });
+    h += headHTML(right, 2);
+    (right.cards || []).forEach(function (c, i) { h += roleRow(c, 2, i + 2); });
+    el.innerHTML = h;
   }
 
-  // Hero
-  if (C.hero) {
-    var back = document.getElementById('hero-back');
-    if (back) { if (C.hero.back) back.textContent = C.hero.back; if (C.hero.backHref) back.href = C.hero.backHref; }
-    setText('hero-heading', C.hero.heading);
-    setText('hero-lede', C.hero.lede);
-    var navEl = document.getElementById('help-nav');
-    if (navEl && Array.isArray(C.hero.nav)) {
-      navEl.innerHTML = C.hero.nav.map(function (n) {
-        return '<a class="help-nav__card' + (n.akutt ? ' help-nav__card--akutt' : '') + '" href="' + esc(n.target) + '">'
-          + '<strong>' + esc(n.title) + '</strong>'
-          + '<span>' + esc(n.desc) + '</span></a>';
-      }).join('');
+  function renderHjelp() {
+    var C = window.HJELP_CONTENT || {};
+
+    /* Subhero + hurtignav */
+    if (C.hero) {
+      var back = document.getElementById('hero-back');
+      if (back) { if (C.hero.back) back.textContent = C.hero.back; if (C.hero.backHref) back.href = C.hero.backHref; }
+      setText('hero-heading', C.hero.heading);
+      setText('hero-lede', C.hero.lede);
+      var navEl = document.getElementById('help-nav');
+      if (navEl && Array.isArray(C.hero.nav)) {
+        navEl.innerHTML = C.hero.nav.map(function (n) {
+          return '<a class="help-nav__card' + (n.akutt ? ' help-nav__card--akutt' : '') + '" href="' + esc(n.target) + '">'
+            + '<strong>' + esc(n.title) + '</strong><span>' + esc(n.desc) + '</span></a>';
+        }).join('');
+      }
     }
+
+    /* Si fra-bånd */
+    if (C.sifra) {
+      setText('sifra-eyebrow', C.sifra.eyebrow);
+      setText('sifra-heading', C.sifra.heading);
+      setText('sifra-lede', C.sifra.lede);
+      var chips = document.getElementById('sifra-chips');
+      if (chips && Array.isArray(C.sifra.items)) {
+        chips.innerHTML = C.sifra.items.map(function (it) {
+          return '<div class="chip"><span class="chip__ic">' + esc(it.icon) + '</span>'
+            + '<b>' + esc(it.title) + '</b>' + (it.body ? '<p>' + it.body + '</p>' : '') + '</div>';
+        }).join('');
+      }
+      var cta = document.getElementById('sifra-cta-wrap');
+      if (cta) {
+        cta.innerHTML = (C.sifra.cta && C.sifra.cta.label)
+          ? '<a class="btn btn--gold" href="' + esc(C.sifra.cta.href) + '" target="_blank" rel="noopener">' + esc(C.sifra.cta.label) + ' <span class="arr">→</span></a>'
+          : '';
+      }
+    }
+
+    /* To-kolonne-par bygges i render (overskrifter + kort i ETT rutenett) for lik-linje. */
+    var S = C.sifra || {}, ST = C.studier || {}, H = C.helse || {}, F = C.fysisk || {};
+    renderPair('pair-hjelp',
+      { eyebrow: 'Rådgivere & ombud', heading: S.helpersHeading, lede: S.helpersLede, cards: S.cards },
+      { eyebrow: ST.eyebrow, heading: ST.heading, lede: ST.lede, cards: ST.cards, id: 'studier' });
+    renderPair('pair-helse',
+      { eyebrow: H.eyebrow, heading: H.heading, lede: H.lede, cards: H.cards, id: 'helse' },
+      { eyebrow: F.eyebrow, heading: F.heading, lede: F.lede, cards: F.cards, id: 'fysisk' });
+
+    /* Akutt */
+    if (C.akutt) {
+      setText('akutt-eyebrow', C.akutt.eyebrow);
+      setText('akutt-heading', C.akutt.heading);
+      setText('akutt-lede', C.akutt.lede);
+      var ag = document.getElementById('akutt-grid');
+      if (ag && Array.isArray(C.akutt.cards)) {
+        ag.innerHTML = C.akutt.cards.map(function (a) {
+          return '<a class="akutt-card' + (a.life ? ' akutt-card--life' : '') + '" href="' + esc(a.numHref) + '">'
+            + '<span class="akutt-card__name">' + esc(a.name) + '</span>'
+            + '<span class="akutt-card__num">' + esc(a.num) + '</span>'
+            + '<span class="akutt-card__when">' + esc(a.when) + '</span></a>';
+        }).join('');
+      }
+    }
+
+    observeReveals();
   }
 
-  // Si fra
-  if (C.sifra) {
-    renderMeta('sifra', 'sifra');
-    var grid = document.getElementById('sifra-grid');
-    if (grid && Array.isArray(C.sifra.items)) {
-      grid.innerHTML = C.sifra.items.map(function (it) {
-        return '<div class="sifra-item">'
-          + '<span class="sifra-item__icon">' + esc(it.icon) + '</span>'
-          + '<strong>' + esc(it.title) + '</strong><br>'
-          + (it.body || '') + '</div>';
-      }).join('');
-    }
-    var ctaWrap = document.getElementById('sifra-cta-wrap');
-    if (ctaWrap && C.sifra.cta && C.sifra.cta.label) {
-      ctaWrap.innerHTML = '<a class="btn btn--gold" href="' + esc(C.sifra.cta.href) + '" target="_blank" rel="noopener">'
-        + esc(C.sifra.cta.label) + ' <span class="arr">→</span></a>';
-    }
-    setText('sifra-helpers-heading', C.sifra.helpersHeading);
-    setText('sifra-helpers-lede', C.sifra.helpersLede);
-    renderCards('sifra-cards', C.sifra.cards);
+  /* Scroll-reveal */
+  function observeReveals() {
+    var reveals = Array.prototype.slice.call(document.querySelectorAll('.reveal:not(.in)'));
+    if (!('IntersectionObserver' in window)) { reveals.forEach(function (el) { el.classList.add('in'); }); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+    }, { threshold: 0.1 });
+    reveals.forEach(function (el) { io.observe(el); });
   }
 
-  // Faglig hjelp / Psykisk / Fysisk
-  ['studier', 'helse', 'fysisk'].forEach(function (key) {
-    if (C[key]) { renderMeta(key, key); renderCards(key + '-cards', C[key].cards); }
+  /* Fold ut/inn sammenleggbare rader (delegert, tåler ny-rendring) */
+  document.addEventListener('click', function (e) {
+    var h = e.target.closest ? e.target.closest('.row__head') : null;
+    if (!h) return;
+    var row = h.closest('.row');
+    var open = row.classList.toggle('open');
+    h.setAttribute('aria-expanded', open ? 'true' : 'false');
   });
-
-  // Akutt
-  if (C.akutt) {
-    renderMeta('akutt', 'akutt');
-    var ag = document.getElementById('akutt-grid');
-    if (ag && Array.isArray(C.akutt.cards)) {
-      ag.innerHTML = C.akutt.cards.map(function (a) {
-        return '<div class="akutt-card' + (a.life ? ' akutt-card--life' : '') + '">'
-          + '<span class="akutt-card__name">' + esc(a.name) + '</span>'
-          + '<a class="akutt-card__num" href="' + esc(a.numHref) + '">' + esc(a.num) + '</a>'
-          + '<p class="akutt-card__when">' + esc(a.when) + '</p></div>';
-      }).join('');
-    }
-  }
-  applySectionOrder(C.sectionOrder);
-  } // /renderHjelp
 
   renderHjelp();
 
@@ -501,33 +366,6 @@ html[data-mode="marine"] .akutt-card--life { background: #2e1c20; border-color: 
     });
     document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
     try { parent.postMessage({ type: 'apeiron-hjelp-preview-ready' }, '*'); } catch (ev) {}
-  }
-})();
-</script>
-<script>
-(function () {
-  var nav = document.getElementById('nav');
-  function onScroll() { nav.classList.add('is-stuck'); }
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
-
-  var drawer = document.getElementById('drawer');
-  function closeDrawer() { drawer.classList.remove('is-open'); document.body.style.overflow = ''; }
-  /* Mobilmeny håndteres nå av site-chrome.js (ikke dupliser her) */
-  if (drawer) {
-    drawer.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', closeDrawer); });
-  }
-
-  var reveals = document.querySelectorAll('.reveal');
-  if ('IntersectionObserver' in window) {
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-      });
-    }, { threshold: 0.1 });
-    reveals.forEach(function (el) { io.observe(el); });
-  } else {
-    reveals.forEach(function (el) { el.classList.add('in'); });
   }
 })();
 </script>

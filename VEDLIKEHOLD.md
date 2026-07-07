@@ -263,6 +263,23 @@ admin. `meta` rommer bl.a. `email` og `orderFormUrl`.
 `contacts[]`, `noteTop`, `note`, `btnLabel`, `btnHref`. Tom linje i `desc` = nytt avsnitt.
 `contacts` og «Si fra»-tekst tillater HTML (lenker, `<strong>`).
 
+Layout (hjelp.html): «Si fra» vises som et mørkt bånd med chips (fra `sifra.items`, der
+`body`-teksten gir kanal-lenka). «Hvem kan hjelpe deg?» (`sifra.cards`) + «Faglig»
+(`studier`) og «Psykisk» (`helse`) + «Fysisk» (`fysisk`) vises som to-kolonne
+sammenleggbare rader, bygget i ETT rutenett så venstre og høyre kort ligger på lik linje.
+Nødnumrene (`akutt`) er stablet, tre per rad, med rødt kort på de livstruende. Skann-linja
+på sammenslått rad utledes fra første setning i `desc` (valgfritt `sum`-felt overstyrer);
+`accent` (fargestripe) brukes ikke lenger. Seksjonsrekkefølgen er fast i denne layouten, så
+«dra for å sortere» i admin-panelet påvirker ikke siden.
+
+### 🎓 Ny student: `content/ny-student-content.js`
+
+`window.NYSTUDENT_CONTENT` med `subhero` (banner + hurtignav `nav[]`), `praktisk`
+(nummerert sjekkliste `steps[]`), `blikjent` (velkomstkort `cards[]` + `engasjer`-CTA-felt),
+`dragvoll` (stedskort `cards[]`, ikon inline med tittel) og `faq` (`items[]`). `sectionOrder`
+styrer rekkefølgen på de flyttbare innholdsseksjonene (subhero ligger fast øverst).
+Redigeres i Admin → Ny student.
+
 ### 📰 Nyheter: `content/news-content.js`
 
 `window.NEWS_CONTENT = { items: [...] }`. Felt per nyhet (forklart øverst i fila):
@@ -524,6 +541,7 @@ ApeironLF/
 | `marked.html` | Kjøp & bytte (pensum-marked) |
 | `galleri.html` | Bildegalleri (henter automatisk fra Google Drive) |
 | `hjelp.html` | Hjelp & ressurser (fra `content/hjelp-content.js`) |
+| `ny-student.html` | Ny student? (guide for nye studenter, fra `content/ny-student-content.js`) |
 | `oppnaelser.html` | Oppnåelser / milepæler (fra `content/oppnaelser-content.js`) |
 | `utmerkelser.html` | Utmerkelser / priser (fra `content/utmerkelser-content.js`) |
 | `admin.html` | **Admin-senter**: én inngang for all redigering; mounter modulene |
@@ -539,6 +557,7 @@ ApeironLF/
 | `content/styret-content.js` | Styremedlemmer og verv (Admin → Styret) |
 | `content/begrep-content.js` | Begrep-siden (Admin → Begrep) |
 | `content/hjelp-content.js` | Hjelp-siden (Admin → Hjelp) |
+| `content/ny-student-content.js` | «Ny student?»-siden (Admin → Ny student) |
 | `content/oppnaelser-content.js` | Oppnåelser (Admin → Oppnåelser) |
 | `content/utmerkelser-content.js` | Utmerkelser (Admin → Utmerkelser) |
 | `content/merch-products.js` | Merch-produkter (Admin → Merch) |
@@ -587,7 +606,7 @@ ApeironLF/
 | `content/admin-shortcuts.js` | Egendefinerte snarveier i Admin-senteret (publiseres via `js/admin/modules/shortcuts.js`) |
 | `css/admin-common.css` | Delt stil for admin-skallet |
 | `css/admin-modules.css` | Per-modul admin-stil (klasse-scopet, f.eks. `.mod-merch`) |
-| `js/admin/modules/` | Én fil per editor: nyheter, oppslag, forsiden, om-oss, styret, merch, begrep, medlemskap, hjelp, meny, footer, oppnaelser, utmerkelser, pensum, galleri, marked — pluss `shortcuts` (usynlig, kun publisering av snarveier) |
+| `js/admin/modules/` | Én fil per editor: nyheter, oppslag, forsiden, om-oss, styret, merch, begrep, medlemskap, hjelp, ny-student, meny, footer, oppnaelser, utmerkelser, pensum, galleri, marked, pluss `shortcuts` (usynlig, kun publisering av snarveier) |
 
 **Dokumentasjon og oppsett**
 

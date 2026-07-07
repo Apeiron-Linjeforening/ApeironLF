@@ -25,8 +25,9 @@ som kan bli utdaterte (priser, statuser) med *«sjekket DD.MM.ÅÅ»*.
       - [ ] Hva gjør egentlig en PTV, ITV og FTV?
       - [ ] Hvordan får vi kontakt med våre egne TVer?
 - [ ] Legge til side for møtereferat -> Kan tas i egen wiki, muligens. Fylle ut SAK / utvide den kan tas på denne wiki siden.
-- [ ] Sammenlign med https://www.mfplacebo.no/
-- [ ] Avklare lagring av merch-bilder hvis `content/merch-products.js` blir stor: eksterne filer i `assets/merch/` vs. base64 i egen fil? (Base64 er ~33 % større enn binærfil — eksterne filer er mindre totalt, men krever at admin publiserer bildefiler ved siden av datafila, slik Styret-panelet alt gjør.)
+- [ ] Vurdere e-postliste/nyhetsbrev (Google Group el. gratis skjema) som infokanal ved siden av Instagram/Facebook, mer robust ved styreskifte. Nevnes i «Ny student?»-guiden.
+- [x] Sammenlign med https://www.mfplacebo.no/ (gjort: ledet til ny «Ny student?»-side og redesign av Hjelp-siden).
+
 
 ## Venter på svar
  - [ ] Vi har sendt melding til IFR om å muligens få API til studieretninger, emner og pensum. 

@@ -60,7 +60,7 @@ frittstående `*-admin.html`-filer er slettet.
 
 Alle panelene er migrert til moduler, og de frittstående `*-admin.html`-filene
 er slettet. Nye paneler har kommet til etter migreringen (pensum, galleri,
-marked, snarveier) — den autoritative lista er filstruktur-tabellen i
+marked, ny-student, snarveier). Den autoritative lista er filstruktur-tabellen i
 [VEDLIKEHOLD.md](../VEDLIKEHOLD.md#filstruktur).
 
 I tillegg deler alle panelene nå to redigeringsvisninger via

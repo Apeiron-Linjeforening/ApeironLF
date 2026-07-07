@@ -50,7 +50,16 @@
     setText('ix-hero-lede', hero.lede);
     if (hero.cta1) { setText('ix-hero-cta1-label', hero.cta1.label); setHref('ix-hero-cta1', hero.cta1.href); }
     if (hero.cta2) { setText('ix-hero-cta2-label', hero.cta2.label); setHref('ix-hero-cta2', hero.cta2.href); }
-    setText('ix-hero-bridge', hero.bridge);
+    /* Bro-lenke under knappene: «Ny student? Se våre tips og bli kjent med Apeiron»
+       (to lenker). hero.bridge = { intro, tips:{label,href}, about:{label,href} }. */
+    var br = hero.bridge, brEl = document.getElementById('ix-hero-bridge');
+    if (brEl && br && typeof br === 'object') {
+      var brLink = function (o) {
+        return (o && o.label) ? '<a href="' + esc(o.href || '#') + '">' + esc(o.label) + ' <span class="arr">→</span></a>' : '';
+      };
+      var brT = brLink(br.tips), brA = brLink(br.about);
+      brEl.innerHTML = (br.intro ? esc(br.intro) + ' ' : '') + brT + (brT && brA ? ' og ' : '') + brA;
+    }
 
     /* ── BLI MEDLEM (intro-kolonnen) rendres nå av membership.js fra
        MEMBERSHIP_CONFIG, slik at hele «Bli medlem»-blokken styres ett sted

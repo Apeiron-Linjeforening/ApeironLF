@@ -125,7 +125,7 @@ Hver del i menyen styrer én del av nettsiden:
 
 | Panel | Styrer |
 | --- | --- |
-| **Forsiden** | Toppbildet, «Om oss»-teksten, FAQ og kontaktinfo på forsiden |
+| **Forsiden** | Toppbildet (inkl. «Ny student?»-broen med to lenker under knappene), «Om oss»-teksten, FAQ og kontaktinfo på forsiden |
 | **Om oss** | Innholdet på Om oss-siden: seksjoner, lys/mørk tone per seksjon, og minimenyen «På denne siden» i toppbanneret |
 | **Nyheter** | Kunngjøringer og beskjeder (på forsiden + arkiv på Nyheter-siden) |
 | **Oppslagstavla** | Plakatene på oppslagstavla og forside-teaseren |
@@ -135,6 +135,7 @@ Hver del i menyen styrer én del av nettsiden:
 | **Medlemskap** | Priser, Vipps-nummer og innmeldingssteg |
 | **Pensum** | Emner gruppert per studieretning (Felles · Filosofi · Etikk · Master), inkl. seksjoner og farger |
 | **Hjelp** | Hjelp & ressurser-siden |
+| **Ny student** | «Ny student?»-siden: sjekkliste før semesterstart, «bli kjent med Apeiron», finn fram på Dragvoll og FAQ |
 | **Meny** | Lenkene i hovedmenyen (topp + mobil). Et underpunkt kan òg være en **gruppeoverskrift** («+ Overskrift») for å dele opp en lang nedtrekksmeny |
 | **Footer** | Bunnteksten og de sosiale lenkene |
 | **Oppnåelser** | Milepæler / oppnåelser |

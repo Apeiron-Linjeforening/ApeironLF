@@ -118,6 +118,10 @@ window.SITE_NAV = [
     ]
   },
   {
+    "label": "Ny student?",
+    "href": "ny-student.html"
+  },
+  {
     "label": "Hjelp & støtte",
     "href": "hjelp.html"
   },

@@ -3,6 +3,8 @@
 Nettsiden for **Apeiron**, linjeforeningen for filosofi og etikk ved NTNU.
 Statisk side (HTML/CSS/JS) på Cloudflare Pages, uten byggesteg og uten avhengigheter å installere.
 
+Siden er bygget opp for å dekke det meste av behov, slik at vi kan fortsette på vår nettverksbygger som vil dekke behovene som ikke er lett tilgjengelig i Admin-senteret.
+
 👉 **Se siden live: [apeironlf.pages.dev](https://apeironlf.pages.dev)**
 
 [![Live](https://img.shields.io/badge/live-apeironlf.pages.dev-2ea44f?style=flat-square)](https://apeironlf.pages.dev)

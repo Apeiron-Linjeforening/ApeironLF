@@ -140,7 +140,11 @@
             + '<div class="fg narrow"><label>Knapp 1: lenke</label><input type="text" id="hero-cta1-href" placeholder="#bli-medlem"></div></div>'
             + '<div class="frow"><div class="fg"><label>Knapp 2: tekst</label><input type="text" id="hero-cta2-label"></div>'
             + '<div class="fg narrow"><label>Knapp 2: lenke</label><input type="text" id="hero-cta2-href" placeholder="#arrangementer"></div></div>'
-            + '<div class="fg"><label>«Ny her?»-bro-lenke (tekst under knappene)</label><input type="text" id="hero-bridge"></div>'
+            + '<div class="fg"><label data-help="Bro-linja under knappene, delt i introtekst + to lenker: «[intro] [lenke 1] og [lenke 2]».">Bro under knappene: introtekst</label><input type="text" id="hero-bridge-intro" placeholder="Ny student?"></div>'
+            + '<div class="frow"><div class="fg"><label>Bro lenke 1: tekst</label><input type="text" id="hero-bridge-tips-label" placeholder="Se våre tips"></div>'
+            + '<div class="fg narrow"><label>Bro lenke 1: lenke</label><input type="text" id="hero-bridge-tips-href" placeholder="ny-student.html"></div></div>'
+            + '<div class="frow"><div class="fg"><label>Bro lenke 2: tekst</label><input type="text" id="hero-bridge-about-label" placeholder="bli kjent med Apeiron"></div>'
+            + '<div class="fg narrow"><label>Bro lenke 2: lenke</label><input type="text" id="hero-bridge-about-href" placeholder="om-oss.html"></div></div>'
           + '</div>'
         + '</div>'
         + '<div class="panel" data-sec-key="oppslagstavla-teaser"><h2>Oppslagstavla <small>teaser på Hjem</small></h2>'
@@ -265,7 +269,9 @@
         'hero-eyebrow': 'hero.eyebrow', 'hero-tag': 'hero.tag', 'hero-lede': 'hero.lede',
         'hero-cta1-label': 'hero.cta1.label', 'hero-cta1-href': 'hero.cta1.href',
         'hero-cta2-label': 'hero.cta2.label', 'hero-cta2-href': 'hero.cta2.href',
-        'hero-bridge': 'hero.bridge',
+        'hero-bridge-intro': 'hero.bridge.intro',
+        'hero-bridge-tips-label': 'hero.bridge.tips.label', 'hero-bridge-tips-href': 'hero.bridge.tips.href',
+        'hero-bridge-about-label': 'hero.bridge.about.label', 'hero-bridge-about-href': 'hero.bridge.about.href',
         'hero-wm-pre': 'hero.wordmark.pre', 'hero-wm-mid': 'hero.wordmark.mid', 'hero-wm-post': 'hero.wordmark.post',
         'arr-eyebrow': 'arr.eyebrow', 'arr-heading': 'arr.heading', 'arr-lede': 'arr.lede',
         'apo-eyebrow': 'apo.eyebrow', 'apo-title': 'apo.title', 'apo-lede': 'apo.lede',

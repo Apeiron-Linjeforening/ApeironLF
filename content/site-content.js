@@ -26,6 +26,7 @@ window.SITE_FOOTER = {
     { label: "Oppslagstavla", href: "oppslagstavla.html" },
     { label: "Aporetisk Aften", href: "index.html#aporetisk" },
     { label: "Fadderuke", href: "index.html#fadderuke" },
+    { label: "Ny student?", href: "ny-student.html" },
     { label: "Apeiron styret", href: "styret.html" },
     { label: "Tillitsvalgte", href: "styret.html#tillitsvalgte" },
     { label: "S.A.K", href: "styret.html#sak" },

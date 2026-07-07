@@ -45,7 +45,11 @@ window.INDEX_CONTENT = {
       "label": "Se hva som skjer",
       "href": "#oppslagstavla-teaser"
     },
-    "bridge": "Ny her? Bli kjent med Apeiron"
+    "bridge": {
+      "intro": "Ny student?",
+      "tips": { "label": "Se våre tips", "href": "ny-student.html" },
+      "about": { "label": "bli kjent med Apeiron", "href": "om-oss.html" }
+    }
   },
   "arr": {
     "eyebrow": "Hva skjer",

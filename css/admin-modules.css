@@ -330,6 +330,28 @@
 .mod-hjelp .btn-subadd { align-self: flex-start; margin-top: 2px; padding: 5px 11px; background: rgba(35,39,64,.05); color: var(--navy); border: 1px dashed var(--border); border-radius: 4px; font-family: var(--body); font-size: .78rem; cursor: pointer; }
 .mod-hjelp .btn-subadd:hover { background: rgba(35,39,64,.1); }
 
+/* ════════ NY STUDENT (samme kort-baserte stil som Hjelp) ════════ */
+.mod-ny-student .preview-top h3 { font-family: var(--display); font-size: 1.4rem; color: var(--navy); }
+.mod-ny-student .preview-top .pp-sub { font-size: .82rem; color: var(--ink-soft); margin: 2px 0 12px; line-height: 1.45; }
+.mod-ny-student .pv-page-wrap { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--paper); box-shadow: 0 4px 22px rgba(35,39,64,.07); }
+.mod-ny-student #pv-page { border: 0; display: block; background: var(--paper); transform-origin: top left; }
+.mod-ny-student .panel { background: rgba(255,255,255,.5); border: 1px solid var(--border); border-radius: 8px; padding: 8px 16px 18px; margin-bottom: 26px; }
+.mod-ny-student .panel > .panel-title { font-family: var(--display); font-size: 1.7rem; color: var(--navy); margin: 12px 4px 6px; display: flex; align-items: baseline; gap: 10px; }
+.mod-ny-student .panel > .panel-title small { font-family: var(--body); font-size: .76rem; font-weight: 400; color: var(--ink-soft); letter-spacing: .02em; }
+.mod-ny-student .meta-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 16px 18px; margin: 10px 0 18px; }
+.mod-ny-student .meta-panel h3 { font-family: var(--display); font-size: 1.1rem; color: var(--navy); margin-bottom: 10px; }
+.mod-ny-student .meta-grid { display: flex; gap: 14px; flex-wrap: wrap; }
+.mod-ny-student .sec { margin-bottom: 18px; }
+.mod-ny-student .card { background: var(--surface); border: 1px solid rgba(35,39,64,.18); border-radius: 8px; box-shadow: 0 1px 2px rgba(35,39,64,.05), 0 7px 16px -10px rgba(35,39,64,.24); transition: box-shadow .2s, border-color .2s; }
+.mod-ny-student .card:hover { border-color: rgba(35,39,64,.28); box-shadow: 0 2px 4px rgba(35,39,64,.06), 0 12px 28px -10px rgba(35,39,64,.32); }
+.mod-ny-student .card-head { display: flex; align-items: center; gap: 10px; padding: 11px 14px; background: rgba(35,39,64,.06); border-bottom: 1px solid rgba(35,39,64,.1); }
+.mod-ny-student .fields { padding: 16px 18px; display: flex; flex-direction: column; gap: 11px; }
+.mod-ny-student .fg textarea { min-height: 60px; line-height: 1.5; resize: vertical; }
+.mod-ny-student .hint { font-size: .72rem; color: var(--ink-soft); }
+/* Kortene skal fylle bredden (som meta-boksene), i alle visninger. */
+.mod-ny-student .sec .list { display: flex; flex-direction: column; gap: 14px; }
+.mod-ny-student .sec .list > .card { width: 100%; box-sizing: border-box; }
+
 /* ════════ OPPNÅELSER + UTMERKELSER (kort med bildeopplasting) ════════ */
 .mod-oppnaelser .meta-panel, .mod-utmerkelser .meta-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 16px 18px; margin-bottom: 28px; }
 .mod-oppnaelser .meta-panel h3, .mod-utmerkelser .meta-panel h3 { font-family: var(--display); font-size: 1.1rem; color: var(--navy); margin-bottom: 10px; }
