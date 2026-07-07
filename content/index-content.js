@@ -1,5 +1,5 @@
 /* Innhold for forsiden (index.html / «Hjem») — TEKST-delene som endres ofte.
-   Sist oppdatert: 6.7.2026
+   Sist oppdatert: 7.7.2026
    Rediger direkte her, eller åpne Admin-senteret → Forsiden.
 
    Dekker forsiden (Hjem): hero + seksjons-introer (arrangementer/aporetisk/fadderuke) + kontakt.
@@ -20,7 +20,7 @@ window.INDEX_CONTENT = {
     "speed": 100,
     "direction": "left",
     "animation": "crossfade",
-    "navClip": false,
+    "navClip": true,
     "dvdMotif": "photos",
     "mosaicSizes": "varied",
     "polaStyle": "framed",
@@ -47,8 +47,14 @@ window.INDEX_CONTENT = {
     },
     "bridge": {
       "intro": "Ny student?",
-      "tips": { "label": "Se våre tips", "href": "ny-student.html" },
-      "about": { "label": "bli kjent med Apeiron", "href": "om-oss.html" }
+      "tips": {
+        "label": "Se våre tips",
+        "href": "ny-student.html"
+      },
+      "about": {
+        "label": "bli kjent med Apeiron",
+        "href": "om-oss.html"
+      }
     }
   },
   "arr": {
