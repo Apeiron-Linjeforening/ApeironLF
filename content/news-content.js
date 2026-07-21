@@ -1,6 +1,6 @@
 /* ============================================================
-   news-content.js — nyheter, kunngjøringer og beskjeder
-   Sist oppdatert: 30.6.2026
+   content/news-content.js — nyheter, kunngjøringer og beskjeder
+   Sist oppdatert: 21.7.2026
    Redigeres i Admin-senteret → Nyheter, eller rett her.
 
    place: "panel" (Akkurat nå-kortet) | "arrangement" | "aporetisk" | "fadderuke"
@@ -18,6 +18,19 @@ window.NEWS_CONTENT = {
   },
   "items": [
     {
+      "id": "nmrur4vij6jk",
+      "place": "panel",
+      "urgent": false,
+      "title": "Vi trenger design og brukerorienterte hjerner!",
+      "text": "Vi bygger en nettsidebygger for små organisasjoner og foreninger, og vi trenger hjelp til design, innslag for brukervennlighet og testere.\nØnsker du å være med på et prosjekt som vil løfte alle de små linjeforeningene ved NTNU - ta kontakt og spør etter vår sosialansvarlig Iver!",
+      "date": "",
+      "kicker": "",
+      "link": "https://github.com/Artiscow/Urd",
+      "linkLabel": "Les mer",
+      "done": false,
+      "posted": "2026-07-21"
+    },
+    {
       "id": "n-symposion",
       "place": "panel",
       "urgent": false,
@@ -27,8 +40,9 @@ window.NEWS_CONTENT = {
       "kicker": "Kunngjøring",
       "link": "",
       "linkLabel": "",
-      "done": false,
-      "posted": "2026-06-15"
+      "done": true,
+      "posted": "2026-06-15",
+      "archivedAt": 1784644530647
     }
   ]
 };
