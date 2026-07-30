@@ -67,16 +67,23 @@
       place: e.place || '', desc: e.desc || '', link: ''
     };
   }
+  // Delte kalender-hjelpere (js/apeiron-cal-shared.js). Hentes defensivt:
+  // mangler fila, faller vi tilbake til lokale varianter uten kartlenke.
+  var CAL = window.ApeironCal || null;
+
   // Parser HTML trygt: DOMParser kjører ALDRI skript eller event-handlere
   // (f.eks. <img onerror>), i motsetning til å sette innerHTML på et element.
   // Kalender-beskrivelsen kommer fra vår egen Google-kalender, men dette
   // fjerner risikoen helt om en oppføring skulle inneholde ondsinnet markup.
   function parseHtml(s) {
+    if (CAL) return CAL.parseHtml(s);
     return new DOMParser().parseFromString(String(s == null ? '' : s), 'text/html');
   }
   function stripHtml(s) {
+    if (CAL) return CAL.stripHtml(s);
     return (parseHtml(s).body.textContent || '').trim();
   }
+  function placeLink(place) { return CAL ? CAL.placeLinkHTML(place) : esc(place); }
   function extractSignupUrl(rawHtml) {
     var doc = parseHtml(rawHtml);
     var anchors = doc.querySelectorAll('a[href]');
@@ -228,7 +235,7 @@
           '<div class="evrow__date"><span class="d">' + pad(d.getDate()) + '</span><span class="m">' + MONTHS[d.getMonth()] + '</span></div>' +
           '<div class="evrow__main">' +
             '<div class="evrow__tags"><span class="tag">' + esc(e.cat) + '</span>' +
-              '<span class="evrow__when">' + esc(whenStr(e)) + (e.place ? ' · ' + esc(e.place) : '') + '</span></div>' +
+              '<span class="evrow__when">' + esc(whenStr(e)) + (e.place ? ' · ' + placeLink(e.place) : '') + '</span></div>' +
             '<h3>' + esc(e.title) + '</h3>' +
             (e.desc ? '<p>' + esc(e.desc) + '</p>' : '') +
           '</div>' +
@@ -254,7 +261,9 @@
           '<div class="evcard__body">' +
             '<h3>' + esc(e.title) + '</h3>' +
             (e.desc ? '<p>' + esc(e.desc) + '</p>' : '') +
-            '<div class="evcard__meta"><b>' + esc(whenStr(e)) + '</b>' + (e.place ? ' · ' + esc(e.place) : '') + '</div>' +
+            // Ingen «·» mellom tid og sted her: meta-linja brekker (flex-wrap),
+            // og et skilletegn ville blitt hengende alene på slutten av linja.
+            '<div class="evcard__meta"><b>' + esc(whenStr(e)) + '</b>' + placeLink(e.place) + '</div>' +
             (e.signupUrl ? '<a class="ev-signup" href="' + esc(e.signupUrl) + '" target="_blank" rel="noopener">Meld deg på <span class="arr">→</span></a>' : '') +
           '</div>' +
         '</article>';

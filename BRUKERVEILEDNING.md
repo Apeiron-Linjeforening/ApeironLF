@@ -164,7 +164,12 @@ Legg til, endre eller slett arrangementer direkte i **Google Kalenderne** til Ap
 Nettsiden henter dem automatisk og oppdaterer seg selv.
 
 - Skriv kategorien først i tittelen, med kolon, for å tagge: `Fagkveld: Etikk & KI`
-- Sted hentes fra «Sted»-feltet i kalenderhendelsen
+- Sted hentes fra «Sted»-feltet i kalenderhendelsen, og vises som en **klikkbar
+  kartlenke**. Skriv derfor en adresse Google Maps kjenner igjen (f.eks.
+  `Dragvoll, Edvard Bulls veg 1, 7049 Trondheim`), ikke bare «rommet vårt»
+- Alt du skriver i **«Beskrivelse»-feltet vises på nettsiden** som et notat under
+  posten. Det gjelder alle tre kalenderne. Formatering (fet skrift, lenker) fjernes,
+  men linjeskiftene beholdes, så skriv gjerne kort og i avsnitt
 - Aktivitetskalenderen er for alt som ikke hører til Aporetisk Aften eller Fadderukene
   (de har egne kalendere)
 

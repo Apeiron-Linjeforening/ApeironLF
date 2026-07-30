@@ -15,6 +15,10 @@
 
   var state = { events: [], live: false, expanded: false };
 
+  // Delte kalender-hjelpere (js/apeiron-cal-shared.js). Hentes defensivt:
+  // mangler fila, faller vi tilbake til ren tekst uten kartlenke.
+  var CAL = window.ApeironCal || null;
+
   // ---- Parsing -----------------------------------------------------------
   function parseEvent(raw) {
     var s      = raw.start || {};
@@ -24,9 +28,14 @@
     var cat = 'Aporetisk Aften', title = summary;
     var m = summary.match(/^([^:]{2,22}):\s*(.+)$/);
     if (m) { cat = m[1].trim(); title = m[2].trim(); }
+    var description = (raw.description || '').trim();
     return { title: title, cat: cat, start: start, allDay: allDay,
              place: raw.location || '', link: raw.htmlLink || '',
-             description: (raw.description || '').trim() };
+             // `description` beholdes rå til «Om aftenen»-blokka (kan være
+             // HTML fra kalenderen). `descText` er den strippede versjonen
+             // som brukes i den kompakte datolista.
+             description: description,
+             descText: stripHtml(description) };
   }
 
   function isAporetisk(e) {
@@ -87,6 +96,18 @@
   function pad(n) { return n < 10 ? '0' + n : '' + n; }
   function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
 
+  function stripHtml(s) {
+    if (CAL) return CAL.stripHtml(s);
+    return String(s == null ? '' : s).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+  }
+
+  // Adresser lengre enn 36 tegn vises som kort «Se adresse» så de ikke
+  // fyller hele raden. Gjelder både Hvor-feltet og datolista.
+  function shortLabel(place) { return (place || '').length > 36 ? 'Se adresse' : ''; }
+  function placeLink(place) {
+    return CAL ? CAL.placeLinkHTML(place, shortLabel(place)) : esc(place);
+  }
+
   function upcoming(now) {
     return state.events.filter(function (e) { return e.start >= now; });
   }
@@ -121,17 +142,11 @@
         placeSpan.textContent = '';
         if (!place) {
           placeSpan.textContent = 'Kommer';
-        } else if (place.length <= 36) {
-          placeSpan.textContent = place;
         } else {
-          // Lang adresse: vis kort lenke til kart i stedet for å fylle hele raden.
-          var a = document.createElement('a');
-          a.href = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(place);
-          a.target = '_blank';
-          a.rel = 'noopener';
-          a.textContent = 'Se adresse';
-          a.title = place;
-          placeSpan.appendChild(a);
+          // Stedet er klikkbart og åpner kart.
+          var a = CAL ? CAL.placeLinkEl(place, shortLabel(place)) : null;
+          if (a) placeSpan.appendChild(a);
+          else placeSpan.textContent = place;
         }
       }
     }
@@ -179,8 +194,9 @@
         upc.forEach(function (e) {
           h += '<div class="apo-cal__ev" role="listitem">'
              + '<span class="apo-cal__ev-date">' + esc(fmtDate(e.start, e.allDay)) + '</span>'
-             + (e.place ? '<span class="apo-cal__ev-place">' + esc(e.place) + '</span>' : '')
+             + (e.place ? '<span class="apo-cal__ev-place">' + placeLink(e.place) + '</span>' : '')
              + (e.link  ? '<a class="apo-cal__ev-link" href="' + esc(e.link) + '" target="_blank" rel="noopener">Mer\u00a0\u2192</a>' : '')
+             + (e.descText ? '<p class="apo-cal__ev-desc">' + esc(e.descText) + '</p>' : '')
              + '</div>';
         });
       } else {

@@ -13,7 +13,6 @@ som kan bli utdaterte (priser, statuser) med *«sjekket DD.MM.ÅÅ»*.
 
 - [ ] Sjekke hvordan alt fungerer på mobil. (Husk å sjekke flere forskjellige størrelser på skjermer)
 - [ ] "Medlemskap" i medlemskap under "om oss" i Lys-modus er i en veldig svak farge. Dette kan hinte til en feil i koden. Medlemskap seksjonene burde være identiske utifra Admin.
-- [ ] Forhåndsvisning for mobil i admin suger og er ikke standarisert over alle panelene.
 
 ## Medium
 
@@ -26,7 +25,6 @@ som kan bli utdaterte (priser, statuser) med *«sjekket DD.MM.ÅÅ»*.
       - [ ] Hvordan får vi kontakt med våre egne TVer?
 - [ ] Legge til side for møtereferat -> Kan tas i egen wiki, muligens. Fylle ut SAK / utvide den kan tas på denne wiki siden.
 - [ ] Vurdere e-postliste/nyhetsbrev (Google Group el. gratis skjema) som infokanal ved siden av Instagram/Facebook, mer robust ved styreskifte. Nevnes i «Ny student?»-guiden.
-- [x] Sammenlign med https://www.mfplacebo.no/ (gjort: ledet til ny «Ny student?»-side og redesign av Hjelp-siden).
 
 
 ## Venter på svar

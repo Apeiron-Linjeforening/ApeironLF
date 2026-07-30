@@ -543,8 +543,10 @@ html[data-mode="marine"] .board-teaser{ background:#20233b; border-color:rgba(24
 .evcard__body{ padding:22px 22px 24px; display:flex; flex-direction:column; flex:1; }
 .tag{ align-self:flex-start; font-size:.68rem; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--accent-ink); border:1px solid currentColor; border-radius:999px; padding:.34em .9em; margin-bottom:14px; }
 .evcard h3{ font-size:1.5rem; margin-bottom:.3em; }
-.evcard__meta{ font-size:.92rem; color:var(--ink-soft); margin-top:auto; padding-top:16px; display:flex; align-items:center; gap:8px; }
-.evcard__meta b{ color:var(--ink); font-weight:600; }
+/* flex-wrap: lange adresser fra kalenderen skal legge seg på egen linje
+   i stedet for å presse sammen tidspunktet. */
+.evcard__meta{ font-size:.92rem; color:var(--ink-soft); margin-top:auto; padding-top:16px; display:flex; align-items:baseline; flex-wrap:wrap; gap:3px 12px; }
+.evcard__meta b{ color:var(--ink); font-weight:600; white-space:nowrap; }
 
 .events__foot{ margin-top:42px; display:flex; justify-content:center; }
 
@@ -708,7 +710,12 @@ html[data-mode="marine"] .apo__about-body{ color:rgba(244,236,217,.78); }
   border-radius:3px; font-size:.82rem;
 }
 .apo-cal__ev-date{ font-weight:600; color:var(--warm); white-space:nowrap; }
-.apo-cal__ev-place{ color:var(--ink-soft); font-size:.76rem; flex:1; }
+.apo-cal__ev-place{ color:var(--ink-soft); font-size:.76rem; flex:1; min-width:0; }
+/* Notatet fra kalenderhendelsen: egen linje under dato/sted i raden. */
+.apo-cal__ev-desc{
+  flex-basis:100%; margin:2px 0 0;
+  font-size:.76rem; line-height:1.5; color:var(--ink-soft);
+}
 .apo-cal__ev-link{
   font-size:.75rem; font-weight:600; color:var(--navy);
   opacity:.6; transition:opacity .15s;
@@ -803,6 +810,21 @@ html[data-mode="marine"] .lesesal{ background:#1a1e35; }
 html[data-mode="marine"] .cal-popup{ background:#1e2235; border-color:rgba(255,255,255,.12); }
 html[data-mode="marine"] .cal-popup__opt{ color:var(--gold); }
 html[data-mode="marine"] .cal-popup__opt:hover{ background:rgba(212,175,55,.1); }
+
+/* Klikkbart sted → kart. Brukes av alle tre kalender-modulene
+   (arrangementer, Aporetisk Aften, fadderuke), så den arver farge og
+   størrelse fra raden den står i og styrer bare ikon og understrek. */
+.cal-place{
+  /* inline (ikke inline-flex): lange adresser skal brekke over flere
+     linjer med understreken på hver linje, ikke som én bred blokk. */
+  display:inline; color:inherit; text-decoration:none;
+  border-bottom:1px dotted currentColor;
+  transition:color .18s ease, border-color .18s ease;
+}
+.cal-place__pin{ vertical-align:-.14em; margin-right:.35em; opacity:.65; transition:opacity .18s ease; }
+.cal-place:hover{ color:var(--accent-ink); border-bottom-color:currentColor; }
+.cal-place:hover .cal-place__pin{ opacity:1; }
+.cal-place:focus-visible{ outline:2px solid currentColor; outline-offset:3px; border-radius:2px; }
 
 /* ============================================================
    BLI MEDLEM  (maroon band)
@@ -1407,6 +1429,8 @@ html[data-mode="marine"] .nav.is-stuck{ background:rgba(10,12,24,.92); }
 .evrow__tags{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:8px; }
 .evrow__tags .tag{ margin-bottom:0; color:var(--warm); border-color:var(--warm); }
 .evrow__when{ font-size:.8rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft); }
+/* Adresser i versaler blir tunge å lese, så kartlenka står i normal skrift. */
+.evrow__when .cal-place{ text-transform:none; letter-spacing:.02em; }
 .evrow h3{ font-size:1.5rem; margin-bottom:.2em; }
 .evrow__main p{ color:var(--ink-soft); font-size:1rem; line-height:1.5; max-width:62ch; }
 .evrow__act{ display:flex; gap:16px; justify-content:flex-end; align-items:center; flex-wrap:wrap; }
@@ -1555,10 +1579,12 @@ html[data-mode="marine"] .nav.is-stuck{ background:rgba(10,12,24,.92); }
 /* shared item row */
 .fd-items{ display:flex; flex-direction:column; gap:10px; }
 .fd-item{ display:flex; gap:16px; align-items:baseline; padding:12px 16px; background:rgba(244,236,217,.04); border:1px solid rgba(212,175,55,.2); border-radius:4px; }
-.fd-item__time{ font-family:var(--display); font-weight:600; font-size:1.05rem; color:var(--gold); min-width:52px; }
-.fd-item__body{ display:flex; flex-direction:column; gap:2px; }
+.fd-item__time{ font-family:var(--display); font-weight:600; font-size:1.05rem; color:var(--gold); min-width:52px; flex-shrink:0; }
+.fd-item__body{ display:flex; flex-direction:column; gap:2px; min-width:0; }
 .fd-item__title{ font-size:1.05rem; color:var(--paper); }
 .fd-item__meta{ font-size:.74rem; letter-spacing:.1em; text-transform:uppercase; color:rgba(244,236,217,.55); }
+/* Notatet fra kalenderhendelsen: normal skriftstil, ikke versaler som meta. */
+.fd-item__desc{ margin:5px 0 0; font-size:.9rem; line-height:1.55; color:rgba(244,236,217,.72); max-width:62ch; white-space:pre-line; }
 .fd-rest{ font-style:italic; color:rgba(244,236,217,.55); padding:6px 2px; }
 .fd-empty{ text-align:center; font-style:italic; color:rgba(244,236,217,.7); padding:34px 16px; font-size:1.05rem; line-height:1.6; max-width:46ch; margin:0 auto; }
 .fd-empty.is-offline{
@@ -1624,9 +1650,18 @@ html[data-mode="marine"] .nav.is-stuck{ background:rgba(10,12,24,.92); }
 .fd-ov__items{ display:flex; flex-direction:column; gap:8px; }
 .fd-ov__it{ display:flex; gap:12px; align-items:baseline; }
 .fd-ov__t{ font-family:var(--display); font-weight:600; font-size:1rem; color:var(--gold); min-width:48px; flex-shrink:0; }
-.fd-ov__n{ display:flex; flex-direction:column; gap:1px; font-size:.96rem; color:var(--paper); }
+.fd-ov__n{ display:flex; flex-direction:column; gap:1px; font-size:.96rem; color:var(--paper); min-width:0; }
 .fd-ov__m{ font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; color:rgba(244,236,217,.5); }
+.fd-ov__desc{ margin-top:3px; font-size:.8rem; line-height:1.5; color:rgba(244,236,217,.66); white-space:pre-line; }
 .fd-ov__rest{ font-style:italic; font-size:.92rem; color:rgba(244,236,217,.5); padding-top:2px; }
+
+/* Kartlenka i fadderuke-seksjonen: meta-linjene er versaler, men adresser
+   blir tunge å lese slik, så stedet får normal skriftstil. Seksjonen er
+   mørk, derfor gull på hover i stedet for standardfargen. */
+.fd-item__meta .cal-place,
+.fd-ov__m .cal-place{ text-transform:none; letter-spacing:.02em; }
+.fadder .cal-place{ border-bottom-color:rgba(212,175,55,.45); }
+.fadder .cal-place:hover{ color:var(--gold); }
 
 /* marine-mode justeringer for arrangement-lista */
 html[data-mode="marine"] .ev-toolbar{ border-bottom-color:rgba(244,236,217,.16); }

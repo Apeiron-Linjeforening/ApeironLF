@@ -1,5 +1,17 @@
 ## Siste endringer
 
+**30.07.26 · Kalendernotater vises på forsiden, og «Sted» er blitt en klikkbar kartlenke**
+
+*Nytt*
+- **Beskrivelses-/notatfeltet i kalenderhendelsene vises nå i Fadderukene.** Programmet leste tidligere bare tittel, tidspunkt og sted, så alt som sto i «Beskrivelse» forsvant. Notatet vises nå både i dagsoversikten og under «Vis fullstendig program», med linjeskiftene i behold.
+- **Aporetisk Aften viser notatet per dato i «Vis alle datoer».** Tidligere sto beskrivelsen kun for neste dato, i «Om aftenen»-blokka (den er uendret).
+- **«Sted» er blitt en klikkbar kartlenke i alle tre kalenderseksjonene** (Arrangementer, Aporetisk Aften, Fadderukene). Lenka har en liten kartnål og åpner Google Maps i ny fane. Lange adresser (over 36 tegn) vises som kort «Se adresse» i Aporetisk-radene, slik at den kompakte lista ikke velter.
+- **`js/apeiron-cal-shared.js` (ny):** liten delt hjelpefil for de tre kalendermodulene, med kartlenka (`placeLinkHTML` / `placeLinkEl`) og HTML-strippingen (`stripHtml`). Modulene henter den defensivt, så feil skriptrekkefølge gir ren tekst i stedet for en tom seksjon. Må lastes før de tre kalenderfilene i `index.html`.
+
+*Endret*
+- **HTML fra kalenderbeskrivelser strippes nå med linjeskiftene i behold.** `<br>` og `</p>` blir til linjeskift og `&nbsp;` til vanlig mellomrom, i stedet for at setningene klistret seg sammen. Gjelder også Arrangementer, som brukte den gamle varianten. Beskrivelsene kjøres fortsatt gjennom `DOMParser`, som aldri kjører skript.
+- Berørt: `js/apeiron-cal-shared.js`, `js/apeiron-fadder.js`, `js/aporetisk-cal.js`, `js/apeiron-events.js`, `css/styles.css`, `index.html`, `BRUKERVEILEDNING.md`.
+
 **07.07.26 · Ny «Ny student?»-side + Hjelp-siden redesignet (lærdom fra sammenligning med MF Placebo)**
 
 *Nytt*

@@ -16,7 +16,9 @@
 
    ▸ TYPE: skriv typen først i tittelen med kolon, f.eks.
         «Grill: Bli-kjent-kveld»  →  tagges «Grill».
-     Sted hentes fra «Sted»-feltet i kalenderhendelsen.
+     Sted hentes fra «Sted»-feltet i kalenderhendelsen og vises som
+     klikkbar kartlenke. Skriver du noe i «Beskrivelse»-feltet, vises
+     det som notat under posten (HTML strippes til ren tekst).
 
    ▸ OPPSETT: lim inn fadderuke-kalenderens ID i CONFIG.calendarId
      under. API-nøkkelen er den samme som arrangementene bruker.
@@ -97,7 +99,16 @@
   var WD_SHORT = { 'Mandag': 'Man', 'Tirsdag': 'Tir', 'Onsdag': 'Ons', 'Torsdag': 'Tor', 'Fredag': 'Fre', 'Lørdag': 'Lør', 'Søndag': 'Søn' };
   var MONTHS   = ['jan', 'feb', 'mar', 'apr', 'mai', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'des'];
 
+  // Delte kalender-hjelpere (js/apeiron-cal-shared.js). Hentes defensivt:
+  // mangler fila, faller vi tilbake til ren tekst uten kartlenke.
+  var CAL = window.ApeironCal || null;
+
   function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML; }
+  function placeLink(place) { return CAL ? CAL.placeLinkHTML(place) : esc(place); }
+  function stripHtml(s) {
+    if (CAL) return CAL.stripHtml(s);
+    return String(s == null ? '' : s).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+  }
   function pad(n) { return n < 10 ? '0' + n : '' + n; }
   function dayMs() { return 86400000; }
   function midnight(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime(); }
@@ -162,7 +173,13 @@
     var kind = '', title = summary;
     var m = summary.match(/^([^:]{2,22}):\s*(.+)$/);
     if (m) { kind = m[1].trim(); title = m[2].trim(); }
-    return { start: start, allDay: allDay, title: title, kind: kind, place: raw.location || '' };
+    return {
+      start: start, allDay: allDay, title: title, kind: kind,
+      place: raw.location || '',
+      // Notatet fra kalenderhendelsen. Google sender ofte HTML her, så
+      // den strippes til ren tekst før den vises.
+      desc: stripHtml(raw.description || '')
+    };
   }
 
   // Flat liste med hendelser → { dates, weeks:[{label, days:[{wd,date,items}]}] }
@@ -196,7 +213,7 @@
       if (!weeks[wi]) return;
       weeks[wi].days[dw].items.push({
         time: e.allDay ? 'Heldag' : timeStr(e.start),
-        title: e.title, place: e.place, kind: e.kind
+        title: e.title, place: e.place, kind: e.kind, desc: e.desc
       });
     });
 
@@ -204,16 +221,20 @@
   }
 
   // ---- Delte byggesteiner -----------------------------------------------
-  function metaStr(it) { return [it.kind, it.place].filter(Boolean).join(' · '); }
+  // Returnerer HTML (ikke ren tekst): stedet er en klikkbar kartlenke.
+  function metaHTML(it) {
+    return [it.kind ? esc(it.kind) : '', placeLink(it.place)].filter(Boolean).join(' · ');
+  }
 
   function itemRow(it) {
-    var meta = metaStr(it);
+    var meta = metaHTML(it);
     return '' +
       '<div class="fd-item">' +
         '<span class="fd-item__time">' + esc(it.time) + '</span>' +
         '<div class="fd-item__body">' +
           '<span class="fd-item__title">' + esc(it.title) + '</span>' +
-          (meta ? '<span class="fd-item__meta">' + esc(meta) + '</span>' : '') +
+          (meta ? '<span class="fd-item__meta">' + meta + '</span>' : '') +
+          (it.desc ? '<p class="fd-item__desc">' + esc(it.desc) + '</p>' : '') +
         '</div>' +
       '</div>';
   }
@@ -294,11 +315,12 @@
       var days = w.days.map(function (d) {
         var body = d.items.length
           ? '<div class="fd-ov__items">' + d.items.map(function (it) {
-              var meta = metaStr(it);
+              var meta = metaHTML(it);
               return '<div class="fd-ov__it">' +
                 '<span class="fd-ov__t">' + esc(it.time) + '</span>' +
                 '<span class="fd-ov__n">' + esc(it.title) +
-                  (meta ? '<span class="fd-ov__m">' + esc(meta) + '</span>' : '') +
+                  (meta ? '<span class="fd-ov__m">' + meta + '</span>' : '') +
+                  (it.desc ? '<span class="fd-ov__desc">' + esc(it.desc) + '</span>' : '') +
                 '</span>' +
               '</div>';
             }).join('') + '</div>'
