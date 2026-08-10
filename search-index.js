@@ -230,6 +230,12 @@ window.SEARCH_INDEX = [
     "g": "Begrep"
   },
   {
+    "t": "Har du husket alt som ny student?",
+    "d": "Sjekk at du har fikset alt, er med i alle grupper, betalt alt og følger med på alt! Følg med på IG og våre kalendere på denne siden for informasjon :D",
+    "u": "nyheter.html",
+    "g": "Nyheter"
+  },
+  {
     "t": "Vi trenger design og brukerorienterte hjerner!",
     "d": "Vi bygger en nettsidebygger for små organisasjoner og foreninger, og vi trenger hjelp til design, innslag for brukervennlighet og testere. Ønsker du å være med på et prosjekt som…",
     "u": "nyheter.html",
