@@ -1,6 +1,6 @@
 /* ============================================================
    content/news-content.js — nyheter, kunngjøringer og beskjeder
-   Sist oppdatert: 10.8.2026
+   Sist oppdatert: 14.8.2026
    Redigeres i Admin-senteret → Nyheter, eller rett her.
 
    place: "panel" (Akkurat nå-kortet) | "arrangement" | "aporetisk" | "fadderuke"
@@ -22,11 +22,11 @@ window.NEWS_CONTENT = {
       "place": "panel",
       "urgent": false,
       "title": "Har du husket alt som ny student?",
-      "text": "Sjekk at du har fikset alt, er med i alle grupper, betalt alt og følger med på alt!\nFølg med på IG og våre kalendere på denne siden for informasjon :D",
+      "text": "Sjekk at du har fikset alt, er med i alle grupper, betalt alt og følger med på alt! \nSe https://apeironlf.pages.dev/ny-student\nog følg med på IG og våre kalendere på denne siden for informasjon :D",
       "date": "",
       "kicker": "Kunngjøring",
-      "link": "https://apeironlf.pages.dev/ny-student",
-      "linkLabel": "Ny Student?",
+      "link": "",
+      "linkLabel": "",
       "done": false,
       "posted": "2026-08-10"
     },

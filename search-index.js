@@ -231,7 +231,7 @@ window.SEARCH_INDEX = [
   },
   {
     "t": "Har du husket alt som ny student?",
-    "d": "Sjekk at du har fikset alt, er med i alle grupper, betalt alt og følger med på alt! Følg med på IG og våre kalendere på denne siden for informasjon :D",
+    "d": "Sjekk at du har fikset alt, er med i alle grupper, betalt alt og følger med på alt! Se https://apeironlf.pages.dev/ny-student og følg med på IG og våre kalendere på denne siden fo…",
     "u": "nyheter.html",
     "g": "Nyheter"
   },
