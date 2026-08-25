@@ -374,6 +374,12 @@ window.SEARCH_INDEX = [
     "g": "Begrep"
   },
   {
+    "t": "Emaljepin",
+    "d": "Emaljepin av tenkeren - Apeirons offisielle pin! · 50,– (25,– for medlemmer)",
+    "u": "merch.html#butikk",
+    "g": "Merch"
+  },
+  {
     "t": "Gensere er på vei!",
     "d": "HIV er i gang med å designe gensere, kopper og muligens skrivebøker. · Kommer snart",
     "u": "merch.html#butikk",
