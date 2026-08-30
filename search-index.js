@@ -350,6 +350,12 @@ window.SEARCH_INDEX = [
     "g": "Heder"
   },
   {
+    "t": "Martin Richard Skauge",
+    "d": "President av Plassen sin på Lesesalen · 2025/2026: M.R. Skauge har lenge blitt hedret som president av sin plass på lesesalen, og grunnet sitt positive og særegne nærvær til kaffe…",
+    "u": "utmerkelser.html",
+    "g": "Heder"
+  },
+  {
     "t": "Blir dette deg?",
     "d": "GOAT · 2026/2027: Et eksempelkort. Beskriv kort hva personen har betydd for Apeiron og hvorfor de fortjener heder. Bytt ut navn, bilde og tekst i admin.",
     "u": "utmerkelser.html",
