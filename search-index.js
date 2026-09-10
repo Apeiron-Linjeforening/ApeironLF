@@ -272,7 +272,7 @@ window.SEARCH_INDEX = [
     "g": "Styret"
   },
   {
-    "t": "Jacob Sinding Reiner-Holm",
+    "t": "Jacob S. Reiner-Holm",
     "d": "Økonomiansvarlig · Apeiron 2025/26",
     "u": "index.html#styret",
     "g": "Styret"
@@ -284,7 +284,7 @@ window.SEARCH_INDEX = [
     "g": "Styret"
   },
   {
-    "t": "Kristoffer Albert Holtskog Braadlie",
+    "t": "Kristoffer A.H. Braadlie",
     "d": "Fagansvarlig · Apeiron 2025/26 · Unionen",
     "u": "index.html#styret",
     "g": "Styret"

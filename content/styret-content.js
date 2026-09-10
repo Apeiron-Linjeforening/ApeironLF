@@ -81,7 +81,7 @@ window.STYRET_CONTENT = {
     },
     {
       "id": "mmtw4qc63nc3",
-      "name": "Jacob Sinding Reiner-Holm",
+      "name": "Jacob S. Reiner-Holm",
       "role": "Økonomiansvarlig",
       "initials": "JRH",
       "img": null,
@@ -97,7 +97,7 @@ window.STYRET_CONTENT = {
     },
     {
       "id": "mmtw4o7m88av",
-      "name": "Kristoffer Albert Holtskog Braadlie",
+      "name": "Kristoffer A.H. Braadlie",
       "role": "Fagansvarlig",
       "initials": "KB",
       "img": null,
