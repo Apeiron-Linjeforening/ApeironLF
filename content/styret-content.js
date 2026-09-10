@@ -1,5 +1,5 @@
 /* Innhold for Styret-siden (styret.html) + arkivsiden (styret-arkiv.html).
-   Sist oppdatert: 7.7.2026
+   Sist oppdatert: 11.9.2026
    Rediger direkte her, eller åpne Admin-senteret → Styret.
 
    members[].img : sti til egen bildefil (assets/styret/…webp). Bildene
@@ -30,67 +30,12 @@ window.STYRET_CONTENT = {
   },
   "members": [
     {
-      "id": "m1",
-      "name": "Stian Lauritzen",
-      "role": "Leder",
-      "initials": "SL",
-      "img": "assets/styret/m1.webp",
-      "tags": [
-        {
-          "label": "ITV",
-          "color": "maroon"
-        }
-      ]
-    },
-    {
-      "id": "m2",
-      "name": "Dennis Cleophas",
-      "role": "Nestleder",
-      "initials": "DC",
-      "img": "assets/styret/m2.webp",
-      "tags": [
-        {
-          "label": "HIV",
-          "color": ""
-        }
-      ]
-    },
-    {
-      "id": "m3",
-      "name": "Dagny Flakne",
-      "role": "Økonomiansvarlig",
-      "initials": "DN",
-      "img": "assets/styret/m3.webp",
-      "tags": [
-        {
-          "label": "HIV",
-          "color": ""
-        }
-      ]
-    },
-    {
       "id": "m4",
       "name": "Iver N. Edvardsen",
-      "role": "Sosialansvarlig",
+      "role": "Styreleder",
       "initials": "INE",
       "img": "assets/styret/m4.webp",
       "tags": [
-        {
-          "label": "S.A.K",
-          "color": "maroon"
-        },
-        {
-          "label": "ASAP",
-          "color": "gold"
-        },
-        {
-          "label": "HIV",
-          "color": ""
-        },
-        {
-          "label": "Unionen",
-          "color": "blue"
-        },
         {
           "label": "Nettside",
           "color": "plum"
@@ -98,17 +43,9 @@ window.STYRET_CONTENT = {
       ]
     },
     {
-      "id": "m5",
-      "name": "Natalie Bellingmo",
-      "role": "PR-ansvarlig",
-      "initials": "NB",
-      "img": "assets/styret/m5.webp",
-      "tags": []
-    },
-    {
       "id": "m6",
       "name": "Anna Fagerli",
-      "role": "Faddersjef",
+      "role": "Nest-leder",
       "initials": "AF",
       "img": "assets/styret/m6.webp",
       "tags": []
@@ -116,49 +53,104 @@ window.STYRET_CONTENT = {
     {
       "id": "m7",
       "name": "Robin M. Søraker",
-      "role": "Fagansvarlig",
+      "role": "Begrepskontakt",
       "initials": "RMS",
       "img": "assets/styret/m7.webp",
       "tags": []
     },
     {
-      "id": "m8",
-      "name": "Martin R. Skauge",
-      "role": "Potet",
-      "initials": "MRS",
-      "img": "assets/styret/m8.webp",
+      "id": "mmtw4m9i62lf",
+      "name": "Selmer Dahl",
+      "role": "Sosialansvarlig",
+      "initials": "SD",
+      "img": null,
       "tags": [
         {
-          "label": "PTV",
+          "label": "Unionen",
+          "color": ""
+        },
+        {
+          "label": "S.A.K",
+          "color": ""
+        },
+        {
+          "label": "ASAP",
           "color": ""
         }
       ]
     },
     {
-      "id": "m9",
-      "name": "Helene P. Ruud",
-      "role": "Potet",
-      "initials": "HPR",
-      "img": "assets/styret/m9.webp",
+      "id": "mmtw4qc63nc3",
+      "name": "Jacob Sinding Reiner-Holm",
+      "role": "Økonomiansvarlig",
+      "initials": "JRH",
+      "img": null,
       "tags": []
+    },
+    {
+      "id": "mmtw4nxx0aob",
+      "name": "Didrik Pedersen",
+      "role": "Faddersjef",
+      "initials": "DP",
+      "img": null,
+      "tags": []
+    },
+    {
+      "id": "mmtw4o7m88av",
+      "name": "Kristoffer Albert Holtskog Braadlie",
+      "role": "Fagansvarlig",
+      "initials": "KB",
+      "img": null,
+      "tags": [
+        {
+          "label": "Unionen",
+          "color": ""
+        }
+      ]
+    },
+    {
+      "id": "mmtw4psa08ox",
+      "name": "Eden Faiyaz",
+      "role": "Sosialemedier Ansvarlig",
+      "initials": "EF",
+      "img": null,
+      "tags": []
+    },
+    {
+      "id": "mmtw4r6gwovw",
+      "name": "Janne Holm",
+      "role": "Øvrig Styremedlem",
+      "initials": "JH",
+      "img": null,
+      "tags": [
+        {
+          "label": "Potet",
+          "color": ""
+        }
+      ]
     },
     {
       "id": "m10",
       "name": "Karoline B. Holthe",
-      "role": "Potet",
+      "role": "Øvrig Styremedlem",
       "initials": "KBH",
       "img": "assets/styret/m10.webp",
-      "tags": []
+      "tags": [
+        {
+          "label": "Potet",
+          "color": ""
+        }
+      ]
     },
     {
       "id": "m11",
       "name": "Fredrik C.F. Rosenfors",
-      "role": "S.A.K",
+      "role": "ASAP",
       "initials": "FCFR",
       "img": "assets/styret/m11.webp",
       "tags": [
         {
-          "label": "ASAP",
+          "label": "ASAP S.A.K",
           "color": "maroon"
         }
       ]
@@ -298,9 +290,15 @@ window.STYRET_CONTENT = {
     {
       "id": "amqmvwhqlxck",
       "period": "2025 / 2026",
-      "heading": "",
+      "heading": "Styret 2025/2026",
       "summary": "",
-      "highlights": [],
+      "highlights": [
+        "Lagde nye logoer",
+        "Forberedte merch design",
+        " Fortsatte gjennopplivingen av samarbeid mellom Apeiron og andre linjeforeninger",
+        "Satte i gang S.A.K for å engasjere flere studenter til å ta del i planlegging av det sosiale",
+        "H.I.V "
+      ],
       "members": [
         {
           "id": "ammqmvwhqlju7",

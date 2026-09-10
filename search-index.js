@@ -248,68 +248,68 @@ window.SEARCH_INDEX = [
     "g": "Nyheter"
   },
   {
-    "t": "Stian Lauritzen",
-    "d": "Leder · Apeiron 2025/26 · ITV",
-    "u": "index.html#styret",
-    "g": "Styret"
-  },
-  {
-    "t": "Dennis Cleophas",
-    "d": "Nestleder · Apeiron 2025/26 · HIV",
-    "u": "index.html#styret",
-    "g": "Styret"
-  },
-  {
-    "t": "Dagny Flakne",
-    "d": "Økonomiansvarlig · Apeiron 2025/26 · HIV",
-    "u": "index.html#styret",
-    "g": "Styret"
-  },
-  {
     "t": "Iver N. Edvardsen",
-    "d": "Sosialansvarlig · Apeiron 2025/26 · S.A.K, ASAP, HIV, Unionen, Nettside",
-    "u": "index.html#styret",
-    "g": "Styret"
-  },
-  {
-    "t": "Natalie Bellingmo",
-    "d": "PR-ansvarlig · Apeiron 2025/26",
+    "d": "Styreleder · Apeiron 2025/26 · Nettside",
     "u": "index.html#styret",
     "g": "Styret"
   },
   {
     "t": "Anna Fagerli",
-    "d": "Faddersjef · Apeiron 2025/26",
+    "d": "Nest-leder · Apeiron 2025/26",
     "u": "index.html#styret",
     "g": "Styret"
   },
   {
     "t": "Robin M. Søraker",
-    "d": "Fagansvarlig · Apeiron 2025/26",
+    "d": "Begrepskontakt · Apeiron 2025/26",
     "u": "index.html#styret",
     "g": "Styret"
   },
   {
-    "t": "Martin R. Skauge",
-    "d": "Potet · Apeiron 2025/26 · PTV",
+    "t": "Selmer Dahl",
+    "d": "Sosialansvarlig · Apeiron 2025/26 · Unionen, S.A.K, ASAP",
     "u": "index.html#styret",
     "g": "Styret"
   },
   {
-    "t": "Helene P. Ruud",
-    "d": "Potet · Apeiron 2025/26",
+    "t": "Jacob Sinding Reiner-Holm",
+    "d": "Økonomiansvarlig · Apeiron 2025/26",
+    "u": "index.html#styret",
+    "g": "Styret"
+  },
+  {
+    "t": "Didrik Pedersen",
+    "d": "Faddersjef · Apeiron 2025/26",
+    "u": "index.html#styret",
+    "g": "Styret"
+  },
+  {
+    "t": "Kristoffer Albert Holtskog Braadlie",
+    "d": "Fagansvarlig · Apeiron 2025/26 · Unionen",
+    "u": "index.html#styret",
+    "g": "Styret"
+  },
+  {
+    "t": "Eden Faiyaz",
+    "d": "Sosialemedier Ansvarlig · Apeiron 2025/26",
+    "u": "index.html#styret",
+    "g": "Styret"
+  },
+  {
+    "t": "Janne Holm",
+    "d": "Øvrig Styremedlem · Apeiron 2025/26 · Potet",
     "u": "index.html#styret",
     "g": "Styret"
   },
   {
     "t": "Karoline B. Holthe",
-    "d": "Potet · Apeiron 2025/26",
+    "d": "Øvrig Styremedlem · Apeiron 2025/26 · Potet",
     "u": "index.html#styret",
     "g": "Styret"
   },
   {
     "t": "Fredrik C.F. Rosenfors",
-    "d": "S.A.K · Apeiron 2025/26 · ASAP",
+    "d": "ASAP · Apeiron 2025/26 · ASAP S.A.K",
     "u": "index.html#styret",
     "g": "Styret"
   },
