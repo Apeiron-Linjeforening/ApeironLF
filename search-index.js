@@ -249,7 +249,7 @@ window.SEARCH_INDEX = [
   },
   {
     "t": "Iver N. Edvardsen",
-    "d": "Styreleder · Apeiron 2025/26 · Nettside",
+    "d": "Styreleder · Apeiron 2025/26 · H.I.V, Nettside",
     "u": "index.html#styret",
     "g": "Styret"
   },
@@ -315,7 +315,7 @@ window.SEARCH_INDEX = [
   },
   {
     "t": "Om vervene (Styret)",
-    "d": "Beskrivelse av styrevervene i Apeiron: Leder, Nestleder, Økonomiansvarlig, Sosialansvarlig, PR-ansvarlig, Faddersjef, Fagansvarlig, Potet, S.A.K: Sosiale Arrangement Komité, H.I.V…",
+    "d": "Beskrivelse av styrevervene i Apeiron: Leder, Nestleder, Økonomiansvarlig, Sosialansvarlig, PR-ansvarlig, Faddersjef, Fagansvarlig, Øvrig Styremedlem, S.A.K: Sosiale Arrangement K…",
     "u": "styret.html",
     "g": "Styret"
   },

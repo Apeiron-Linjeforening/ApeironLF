@@ -37,6 +37,10 @@ window.STYRET_CONTENT = {
       "img": "assets/styret/m4.webp",
       "tags": [
         {
+          "label": "H.I.V",
+          "color": "teal"
+        },
+        {
           "label": "Nettside",
           "color": "plum"
         }
@@ -243,9 +247,9 @@ window.STYRET_CONTENT = {
     },
     {
       "id": "r8",
-      "name": "Potet",
+      "name": "Øvrig Styremedlem",
       "accent": "",
-      "desc": "Poteten er styrets allrounder, alltid klar til å ta tak der det trengs, uten fast portefølje.",
+      "desc": "Øvrig Styremedlem, også kalt Potet, er styrets allrounder, alltid klar til å ta tak der det trengs, uten fast portefølje.",
       "resp": [
         "Bistår andre styremedlemmer ved behov",
         "Tar tak i praktiske oppgaver der det trengs, for ingen dag er lik",
